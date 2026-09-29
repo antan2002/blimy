@@ -1,4 +1,4 @@
-use super::path_guard::{require_path_under_home, require_symlink_container_under_home};
+use super::path_guard::{require_absolute_canonical_path, require_canonical_symlink_container};
 use crate::app_runtime::AppHandle;
 use serde::Serialize;
 use std::{fs, path::Path, time::Instant};
@@ -32,7 +32,7 @@ fn calculate_directory_size(path: &Path) -> Result<u64, String> {
 #[command]
 pub async fn get_local_directory_size(path: String) -> Result<u64, String> {
    tauri::async_runtime::spawn_blocking(move || {
-      let resolved = require_path_under_home(&path)?;
+      let resolved = require_absolute_canonical_path(&path)?;
       calculate_directory_size(&resolved)
    })
    .await
@@ -51,7 +51,7 @@ pub async fn read_local_file(path: String) -> Result<tauri::ipc::Response, Strin
       tauri::async_runtime::spawn_blocking(move || {
          let worker_started_at = Instant::now();
          let guard_started_at = Instant::now();
-         let resolved = require_path_under_home(&path)?;
+         let resolved = require_absolute_canonical_path(&path)?;
          let guard_elapsed = guard_started_at.elapsed();
          let read_started_at = Instant::now();
          let bytes =
@@ -124,10 +124,10 @@ mod directory_size_tests {
 
 #[command]
 pub fn open_file_external(path: String) -> Result<(), String> {
-   // Canonicalize and confine to $HOME so the platform opener cannot be
-   // invoked on system locations or on a scheme-like string that would be
-   // interpreted as a URL by xdg-open.
-   let resolved = require_path_under_home(&path)?;
+   // Resolve to an absolute canonical path so the platform opener is never
+   // handed a scheme-like string that xdg-open would read as a URL. This does
+   // not confine the path to the home directory.
+   let resolved = require_absolute_canonical_path(&path)?;
    let resolved_str = resolved.to_string_lossy().to_string();
 
    #[cfg(target_os = "macos")]
@@ -156,7 +156,7 @@ pub fn open_file_external(path: String) -> Result<(), String> {
 
 #[command]
 pub async fn toggle_quick_look(app: AppHandle, path: String) -> Result<(), String> {
-   let resolved = require_path_under_home(&path)?;
+   let resolved = require_absolute_canonical_path(&path)?;
    if !resolved.is_file() {
       return Err("Quick Look is only available for local files".to_string());
    }
@@ -184,7 +184,7 @@ pub async fn show_share_picker(
    window: tauri::WebviewWindow<crate::app_runtime::AthasRuntime>,
    path: String,
 ) -> Result<(), String> {
-   let resolved = require_path_under_home(&path)?;
+   let resolved = require_absolute_canonical_path(&path)?;
    if !resolved.is_file() {
       return Err("Share is only available for local files".to_string());
    }
@@ -224,10 +224,10 @@ pub fn get_symlink_info(
    path: String,
    workspace_root: Option<String>,
 ) -> Result<SymlinkInfo, String> {
-   // Require the symlink container itself to live under $HOME. We intentionally
+   // Resolve the symlink container without following the leaf. We intentionally
    // inspect symlink_metadata of the raw path (not the canonical target) so the
    // caller can still discover symlinks that point outside the scope.
-   let file_path_buf = require_symlink_container_under_home(&path)?;
+   let file_path_buf = require_canonical_symlink_container(&path)?;
    let file_path = file_path_buf.as_path();
 
    // Use symlink_metadata to get info without following the symlink
@@ -281,8 +281,8 @@ pub fn get_symlink_info(
 
 #[command]
 pub fn rename_file(source_path: String, target_path: String) -> Result<(), String> {
-   let source_buf = require_path_under_home(&source_path)?;
-   let target_buf = require_path_under_home(&target_path)?;
+   let source_buf = require_absolute_canonical_path(&source_path)?;
+   let target_buf = require_absolute_canonical_path(&target_path)?;
    let source = source_buf.as_path();
    let target = target_buf.as_path();
 
@@ -301,8 +301,8 @@ pub fn rename_file(source_path: String, target_path: String) -> Result<(), Strin
 
 #[command]
 pub fn move_file(source_path: String, target_path: String) -> Result<(), String> {
-   let source_buf = require_path_under_home(&source_path)?;
-   let target_buf = require_path_under_home(&target_path)?;
+   let source_buf = require_absolute_canonical_path(&source_path)?;
+   let target_buf = require_absolute_canonical_path(&target_path)?;
    let source = source_buf.as_path();
    let target = target_buf.as_path();
 

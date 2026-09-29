@@ -1,4 +1,4 @@
-use super::path_guard::require_path_under_home;
+use super::path_guard::require_absolute_canonical_path;
 use crate::app_runtime::AppHandle;
 use chrono::Utc;
 use serde::{Deserialize, Serialize};
@@ -39,7 +39,7 @@ fn history_root(app: &AppHandle) -> Result<PathBuf, String> {
 }
 
 fn canonical_file_path(path: &str) -> Result<PathBuf, String> {
-   let file_path = require_path_under_home(path)?;
+   let file_path = require_absolute_canonical_path(path)?;
    if !file_path.is_file() {
       return Err("Local history is only available for files".to_string());
    }
