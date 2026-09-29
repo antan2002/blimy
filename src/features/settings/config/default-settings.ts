@@ -1,4 +1,5 @@
 import { DEFAULT_INTELLIGENCE_AGENT_STEPS } from "@/features/ai/intelligence/lib/intelligence-agent-steps";
+import { DEFAULT_AGENT_BUDGET_USD } from "@/features/ai/lib/agent-budget";
 import { normalizeUiFontSize, UI_FONT_SIZE_DEFAULT } from "@/features/settings/lib/ui-font-size";
 import {
   DEFAULT_CODE_FONT_SIZE,
@@ -100,6 +101,7 @@ export const defaultSettings: Settings = {
   aiAgentNotificationSound: false,
   aiFollowAgent: false,
   aiAgentMaxSteps: DEFAULT_INTELLIGENCE_AGENT_STEPS,
+  aiAgentBudgetUsd: DEFAULT_AGENT_BUDGET_USD,
   aiSkills: [],
   mcpServers: [],
   v0DesignSystems: [],

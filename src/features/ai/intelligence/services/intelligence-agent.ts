@@ -6,6 +6,7 @@ import {
   type ModelMessage,
   type ToolSet,
 } from "ai";
+import { TurnBudget, formatBudgetStopMessage } from "@/features/ai/cost/budget-tracker";
 import { z } from "zod";
 import { invoke } from "@tauri-apps/api/core";
 import type { AIMessage } from "@/features/ai/types/messages.types";
@@ -139,6 +140,11 @@ export async function runIntelligenceAgent(params: {
   readOnly: boolean;
   /** Model requests this turn may make; defaults to `DEFAULT_INTELLIGENCE_AGENT_STEPS`. */
   maxSteps?: number;
+  /**
+   * Dollars this turn may spend before it stops, or `null` for no limit. Applied
+   * to direct providers, whose responses report tokens but no cost.
+   */
+  budgetUsd?: number | null;
   maxOutputTokens?: number;
   /**
    * Notes about how the request was prepared, such as images left out for a text-only model;
@@ -164,6 +170,10 @@ export async function runIntelligenceAgent(params: {
   let steps = 0;
   let costUsd: number | undefined;
   const notices: string[] = [];
+  // Athas's own server reports each response's cost; a key the user supplies does
+  // not, so the budget is metered locally from the model's own price.
+  const budget = new TurnBudget(params.providerId === "athas" ? null : params.budgetUsd);
+  let budgetStop: string | undefined;
   const summary = () => ({
     steps,
     ...(costUsd !== undefined ? { costUsd } : {}),
@@ -665,10 +675,20 @@ export async function runIntelligenceAgent(params: {
       model,
       ...prompt,
       tools,
-      stopWhen: isStepCount(maxSteps),
+      // Either ceiling ends the turn: the step count the user configured, or the
+      // budget they set, whichever is reached first.
+      //
+      // The budget is checked before each request, so a step that starts under the
+      // limit runs to completion and the turn stops on the next one. The overspend
+      // is therefore up to one step's cost, not the amount past the limit.
+      stopWhen: [isStepCount(maxSteps), budget.isStopCondition],
       // Every step resends all earlier tool results, so older ones are trimmed before a request
       // would outgrow what the provider accepts.
       prepareStep: ({ messages: stepMessages, instructions }) => {
+        // Checked before each request so a task stops on the step that would take it
+        // past the limit, rather than one request later.
+        const stop = budget.check();
+        if (stop) budgetStop = formatBudgetStopMessage(stop);
         const fitted = fitStepMessages(stepMessages, stepLimits, {
           firstStep: prompt.messages.length,
           instructionBytes: serializedBytes(instructions) + toolBytes,
@@ -685,11 +705,31 @@ export async function runIntelligenceAgent(params: {
     let failure: unknown;
     for await (const part of result.fullStream) {
       if (part.type === "text-delta") params.onChunk(part.text);
-      if (part.type === "finish-step") steps++;
+      if (part.type === "finish-step") {
+        steps++;
+        // Metered as each step lands, so the next step is checked against the total
+        // this turn has actually spent.
+        budget.addUsage(
+          params.modelId,
+          part.usage.inputTokens ?? 0,
+          part.usage.outputTokens ?? 0,
+          params.providerId,
+        );
+      }
       if (part.type === "error") failure = part.error;
     }
     if (signal.aborted) return settleAbort();
     if (failure) throw toIntelligenceAgentError(failure);
+    if (budgetStop) {
+      const usage = toTurnUsage(await result.totalUsage);
+      return {
+        outcome: "completed",
+        stopReason: "budget_exceeded",
+        ...(usage ? { usage } : {}),
+        ...summary(),
+        notices: [...notices, `_${budgetStop}_`],
+      };
+    }
     const usage = toTurnUsage(await result.totalUsage);
     const finishReason = await result.finishReason;
     return {
