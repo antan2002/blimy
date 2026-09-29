@@ -251,36 +251,3 @@ pub async fn cache_themes(
    }
    Ok(())
 }
-
-#[tauri::command]
-pub async fn get_temp_dir() -> Result<String, String> {
-   let temp_dir = std::env::temp_dir();
-   temp_dir
-      .to_str()
-      .map(|s| s.to_string())
-      .ok_or_else(|| "Failed to convert temp directory path to string".to_string())
-}
-
-#[tauri::command]
-pub async fn write_temp_file(file_name: String, content: String) -> Result<(), String> {
-   let temp_dir = std::env::temp_dir();
-   let file_path = temp_dir.join(&file_name);
-
-   fs::write(&file_path, content)
-      .map_err(|e| format!("Failed to write temp file {}: {}", file_name, e))?;
-
-   Ok(())
-}
-
-#[tauri::command]
-pub async fn delete_temp_file(file_name: String) -> Result<(), String> {
-   let temp_dir = std::env::temp_dir();
-   let file_path = temp_dir.join(&file_name);
-
-   if file_path.exists() {
-      fs::remove_file(&file_path)
-         .map_err(|e| format!("Failed to delete temp file {}: {}", file_name, e))?;
-   }
-
-   Ok(())
-}
