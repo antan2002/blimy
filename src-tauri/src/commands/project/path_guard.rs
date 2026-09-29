@@ -9,11 +9,15 @@ use std::path::{Path, PathBuf};
 
 /// Resolve `path` to an absolute canonical form.
 ///
-/// If the path exists it is canonicalized directly. For not-yet-existing
+/// Rejects empty, NUL-containing, and relative paths, then canonicalizes the
+/// result. If the path exists it is canonicalized directly. For not-yet-existing
 /// targets (e.g. the destination of a rename) the parent directory is
-/// canonicalized and the final file name is joined back on, mirroring how
-/// path_guard already works for create-like operations elsewhere in the code.
-pub fn require_path_under_home(path: &str) -> Result<PathBuf, String> {
+/// canonicalized and the final file name is joined back on.
+///
+/// This does not confine the path to any particular directory. Callers that
+/// need a location restriction, such as a workspace or the home directory,
+/// must enforce it themselves.
+pub fn require_absolute_canonical_path(path: &str) -> Result<PathBuf, String> {
    if path.trim().is_empty() {
       return Err("path must not be empty".to_string());
    }
@@ -51,7 +55,10 @@ pub fn require_path_under_home(path: &str) -> Result<PathBuf, String> {
 
 /// Resolve the *parent directory* of `path` without resolving `path` itself.
 /// Used for operations that want to inspect a symlink without following it.
-pub fn require_symlink_container_under_home(path: &str) -> Result<PathBuf, String> {
+///
+/// Like [`require_absolute_canonical_path`], this does not confine the path to
+/// any particular directory.
+pub fn require_canonical_symlink_container(path: &str) -> Result<PathBuf, String> {
    if path.trim().is_empty() {
       return Err("path must not be empty".to_string());
    }
@@ -87,7 +94,7 @@ mod tests {
 
    #[test]
    fn rejects_relative_path() {
-      let result = require_path_under_home("notes.md");
+      let result = require_absolute_canonical_path("notes.md");
       assert!(result.is_err(), "expected rejection, got {:?}", result);
    }
 
@@ -96,7 +103,7 @@ mod tests {
       let tmp = tempfile::tempdir().unwrap();
       let file = tmp.path().join("notes.md");
       fs::write(&file, "hi").unwrap();
-      let ok = require_path_under_home(file.to_str().unwrap());
+      let ok = require_absolute_canonical_path(file.to_str().unwrap());
       assert!(ok.is_ok(), "expected acceptance, got {:?}", ok);
    }
 
@@ -105,7 +112,7 @@ mod tests {
       let tmp = tempfile::tempdir().unwrap();
       let target = tmp.path().join("subdir").join("new.txt");
       fs::create_dir_all(target.parent().unwrap()).unwrap();
-      let ok = require_path_under_home(target.to_str().unwrap());
+      let ok = require_absolute_canonical_path(target.to_str().unwrap());
       assert!(ok.is_ok(), "expected acceptance, got {:?}", ok);
    }
 
@@ -113,14 +120,14 @@ mod tests {
    fn resolves_symlink_container_without_following_leaf() {
       let tmp = tempfile::tempdir().unwrap();
       let target = tmp.path().join("link");
-      let ok = require_symlink_container_under_home(target.to_str().unwrap());
+      let ok = require_canonical_symlink_container(target.to_str().unwrap());
       assert!(ok.is_ok(), "expected acceptance, got {:?}", ok);
    }
 
    #[test]
    fn rejects_empty_and_nul_paths() {
-      assert!(require_path_under_home("").is_err());
-      assert!(require_path_under_home("   ").is_err());
-      assert!(require_path_under_home("foo\0bar").is_err());
+      assert!(require_absolute_canonical_path("").is_err());
+      assert!(require_absolute_canonical_path("   ").is_err());
+      assert!(require_absolute_canonical_path("foo\0bar").is_err());
    }
 }
