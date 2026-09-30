@@ -1,4 +1,4 @@
-use BLIMY_version_control::git as git_backend;
+use blimy_version_control::git as git_backend;
 use std::{path::Path, time::Instant};
 
 async fn run_blocking<T, F>(operation: F) -> Result<T, String>
@@ -20,7 +20,7 @@ fn short_repo_path(path: &str) -> String {
 }
 
 fn resolve_backend_path(path: String) -> String {
-   BLIMY_wsl::resolve_windows_path(&path).unwrap_or(path)
+   blimy_wsl::resolve_windows_path(&path).unwrap_or(path)
 }
 
 /// Maps a path reported by the git backend back into the form the frontend
@@ -29,28 +29,28 @@ fn resolve_backend_path(path: String) -> String {
 /// own git did, so both are folded back into a `wsl://` URI or a share path
 /// matching the original.
 fn restore_provider_path(original_path: &str, backend_path: String) -> String {
-   let Some(location) = BLIMY_wsl::parse_wsl_location(original_path) else {
+   let Some(location) = blimy_wsl::parse_wsl_location(original_path) else {
       return backend_path;
    };
 
-   let linux_path = if let Some((parsed, _)) = BLIMY_wsl::parse_windows_unc_path(&backend_path) {
+   let linux_path = if let Some((parsed, _)) = blimy_wsl::parse_windows_unc_path(&backend_path) {
       parsed.linux_path
-   } else if BLIMY_wsl::is_wsl_path(&backend_path) {
+   } else if blimy_wsl::is_wsl_path(&backend_path) {
       return backend_path;
    } else if backend_path.starts_with('/') {
-      BLIMY_wsl::normalize_linux_path(&backend_path)
+      blimy_wsl::normalize_linux_path(&backend_path)
    } else {
       return backend_path;
    };
 
-   if BLIMY_wsl::is_wsl_path(original_path) {
-      return BLIMY_wsl::build_wsl_uri(&location.distro, &linux_path);
+   if blimy_wsl::is_wsl_path(original_path) {
+      return blimy_wsl::build_wsl_uri(&location.distro, &linux_path);
    }
 
-   let flavor = BLIMY_wsl::parse_windows_unc_path(original_path)
+   let flavor = blimy_wsl::parse_windows_unc_path(original_path)
       .map(|(_, flavor)| flavor)
-      .unwrap_or(BLIMY_wsl::WslUncFlavor::Localhost);
-   BLIMY_wsl::wsl_path_to_windows_unc(&location.distro, &linux_path, flavor)
+      .unwrap_or(blimy_wsl::WslUncFlavor::Localhost);
+   blimy_wsl::wsl_path_to_windows_unc(&location.distro, &linux_path, flavor)
 }
 
 #[tauri::command]

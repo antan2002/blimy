@@ -1,11 +1,11 @@
 {
-  "$schema": "https://Blimy.dev/schemas/extension.json",
-  "id": "Blimy.database.mongodb",
+  "$schema": "https://raw.githubusercontent.com/antan2002/blimy/main/extensions/schema/extension.schema.json",
+  "id": "blimy.database.mongodb",
   "name": "MongoDB",
   "displayName": "MongoDB Provider",
   "version": "1.0.0",
   "description": "MongoDB connection, collection, and document provider.",
-  "publisher": "Blimy",
+  "publisher": "antan2002",
   "categories": ["Database"],
   "activationEvents": ["onDatabase:mongodb"],
   "license": "MIT",
@@ -22,11 +22,11 @@
       "protocolVersion": 1,
       "defaultPort": 27017,
       "sidecar": {
-        "darwin-arm64": "bin/Blimy-db-mongodb",
-        "darwin-x64": "bin/Blimy-db-mongodb",
-        "linux-arm64": "bin/Blimy-db-mongodb",
-        "linux-x64": "bin/Blimy-db-mongodb",
-        "win32-x64": "bin/Blimy-db-mongodb.exe"
+        "darwin-arm64": "bin/blimy-db-mongodb",
+        "darwin-x64": "bin/blimy-db-mongodb",
+        "linux-arm64": "bin/blimy-db-mongodb",
+        "linux-x64": "bin/blimy-db-mongodb",
+        "win32-x64": "bin/blimy-db-mongodb.exe"
       }
     }
   ]

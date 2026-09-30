@@ -239,7 +239,7 @@ export function BlimyModelSections({
           models={recommended}
           selected={selected}
           onSelect={onSelect}
-          providerId="Blimy"
+          providerId="blimy"
           search={search}
         />
       ) : null}
@@ -249,7 +249,7 @@ export function BlimyModelSections({
         models={models}
         selected={selected}
         onSelect={onSelect}
-        providerId="Blimy"
+        providerId="blimy"
         search={search}
         loading={isLoadingModels}
         error={modelFetchError}

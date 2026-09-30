@@ -100,11 +100,11 @@ describe("parseWindowOpenUrl", () => {
   });
 
   it("parses external URL requests", () => {
-    const url = new URL("blimy://open?type=web&url=https%3A%2F%2FBlimy.dev%2Fdocs");
+    const url = new URL("blimy://open?type=web&url=https%3A%2F%2Fgithub.com/antan2002/blimy%2Fdocs");
     const result = parseWindowOpenUrl(url);
     expect(result).toEqual({
       type: "web",
-      url: "https://Blimy.dev/docs",
+      url: "https://github.com/antan2002/blimy/docs",
     });
   });
 

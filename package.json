@@ -3,6 +3,16 @@
   "version": "0.15.1",
   "private": true,
   "type": "module",
+  "author": "antan2002 <antanroy502@gmail.com>",
+  "homepage": "https://github.com/antan2002/blimy#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/antan2002/blimy.git"
+  },
+  "bugs": {
+    "url": "https://github.com/antan2002/blimy/issues"
+  },
+  "license": "AGPL-3.0",
   "scripts": {
     "test": "vp test run",
     "check": "bash scripts/check.sh",

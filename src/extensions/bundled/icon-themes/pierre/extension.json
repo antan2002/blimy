@@ -1,6 +1,6 @@
 {
-  "$schema": "https://Blimy.dev/schemas/extension.json",
-  "id": "Blimy.icon-theme.pierre",
+  "$schema": "https://raw.githubusercontent.com/antan2002/blimy/main/extensions/schema/extension.schema.json",
+  "id": "blimy.icon-theme.pierre",
   "name": "pierre-icons",
   "displayName": "Pierre Icons",
   "version": "0.0.9",

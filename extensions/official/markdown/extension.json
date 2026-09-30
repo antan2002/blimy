@@ -1,11 +1,11 @@
 {
-  "$schema": "https://Blimy.dev/schemas/extension.json",
-  "id": "Blimy.markdown",
+  "$schema": "https://raw.githubusercontent.com/antan2002/blimy/main/extensions/schema/extension.schema.json",
+  "id": "blimy.markdown",
   "name": "Markdown",
   "displayName": "Markdown",
   "version": "1.0.0",
   "description": "Markdown language support with LSP and formatting",
-  "publisher": "Blimy",
+  "publisher": "antan2002",
   "categories": ["Language"],
   "languages": [
     {
@@ -23,7 +23,7 @@
     "lsp": {
       "name": "marksman",
       "runtime": "binary",
-      "downloadUrl": "https://Blimy.dev/extensions/markdown/markdown-${os}-${arch}.tar.gz",
+      "downloadUrl": "https://github.com/antan2002/blimy/extensions/markdown/markdown-${os}-${arch}.tar.gz",
       "args": ["server"]
     },
     "formatter": {

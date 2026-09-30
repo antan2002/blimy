@@ -21,28 +21,16 @@ import Section, { SettingBlock, SettingsView, SettingRow } from "../settings-sec
 
 const REPORT_BUG_CHANNELS = [
   {
-    id: "discord",
-    label: "Discord",
-    detail: "Ask in the community server",
-    url: "https://discord.gg/DD8F38wFMv",
-  },
-  {
     id: "github",
     label: "GitHub",
     detail: "Open a bug report issue",
     url: "https://github.com/antan2002/blimy/issues/new?template=01-bug.yml",
   },
   {
-    id: "twitter",
-    label: "X",
-    detail: "Message Blimy on X",
-    url: "https://x.com/Blimyindustries",
-  },
-  {
-    id: "email",
-    label: "Email",
-    detail: "Send a report to hey@Blimy.dev",
-    url: "mailto:hey@Blimy.dev",
+    id: "discussions",
+    label: "Discussions",
+    detail: "Search or start a discussion",
+    url: "https://github.com/antan2002/blimy/discussions",
   },
 ] as const;
 

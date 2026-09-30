@@ -68,7 +68,7 @@ describe("Local AI connections", () => {
       ),
     ).toEqual({ providerId: "ollama", modelId: "qwen3-coder" });
     expect(
-      getLocalChatConnection({ agentId: "custom", providerId: "Blimy", modelId: "auto" }, settings),
+      getLocalChatConnection({ agentId: "custom", providerId: "blimy", modelId: "auto" }, settings),
     ).toBeNull();
     expect(
       getLocalChatConnection({ agentId: "claude-code", providerId: "ollama" }, settings),
@@ -114,7 +114,7 @@ describe("Tab completion connection", () => {
         personalConnection: openai,
         isLocalProvider,
       }),
-    ).toEqual({ providerId: "Blimy", modelId: "auto" });
+    ).toEqual({ providerId: "blimy", modelId: "auto" });
   });
 
   it("stays off Blimy when the default model is local", () => {
@@ -170,7 +170,7 @@ describe("Tab completion connection", () => {
       resolveAutocompleteConnection({
         preferences: defaultIntelligencePreferences(),
         hasIntelligence: false,
-        personalConnection: { providerId: "Blimy", modelId: "auto" },
+        personalConnection: { providerId: "blimy", modelId: "auto" },
         isLocalProvider,
       }),
     ).toBeNull();
@@ -189,7 +189,7 @@ describe("Tab completion connection", () => {
       }),
     ).toEqual(openai);
 
-    preferences.tasks.autocomplete = { providerId: "Blimy", modelId: "" };
+    preferences.tasks.autocomplete = { providerId: "blimy", modelId: "" };
     expect(
       resolveAutocompleteConnection({
         preferences,
@@ -197,6 +197,6 @@ describe("Tab completion connection", () => {
         personalConnection: ollama,
         isLocalProvider,
       }),
-    ).toEqual({ providerId: "Blimy", modelId: "auto" });
+    ).toEqual({ providerId: "blimy", modelId: "auto" });
   });
 });

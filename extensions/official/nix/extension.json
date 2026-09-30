@@ -1,11 +1,11 @@
 {
-  "$schema": "https://Blimy.dev/schemas/extension.json",
-  "id": "Blimy.nix",
+  "$schema": "https://raw.githubusercontent.com/antan2002/blimy/main/extensions/schema/extension.schema.json",
+  "id": "blimy.nix",
   "name": "Nix",
   "displayName": "Nix",
   "version": "1.0.0",
   "description": "Nix language support with syntax highlighting",
-  "publisher": "Blimy",
+  "publisher": "antan2002",
   "categories": ["Language"],
   "languages": [
     {

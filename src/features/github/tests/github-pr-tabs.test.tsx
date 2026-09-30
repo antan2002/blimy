@@ -9,7 +9,7 @@ const pr: PullRequestDetails = {
   title: "Standardize Rust test validation",
   body: "",
   state: "open",
-  author: { login: "mehmetozguldev" },
+  author: { login: "blimydev" },
   createdAt: "2026-08-08T00:00:00.000Z",
   updatedAt: "2026-08-14T00:00:00.000Z",
   isDraft: false,
@@ -40,7 +40,7 @@ const commits: Commit[] = [
     messageHeadline: "Standardize Rust test validation",
     messageBody: "Run formatting, checks, Clippy, and workspace tests.",
     authoredDate: "2026-08-08T00:00:00.000Z",
-    authors: [{ login: "mehmetozguldev", name: "Mehmet", email: "mehmet@example.com" }],
+    authors: [{ login: "blimydev", name: "Blimy User", email: "you@example.com" }],
   },
 ];
 

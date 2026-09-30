@@ -135,7 +135,7 @@ async function buildSidecar(providerId: string, binaryName: string) {
     throw new Error("Database sidecar build target is not configured.");
   }
 
-  await $`cargo build -p Blimy-database --release --no-default-features --features ${providerId} --bin ${binaryName} --target-dir ${buildTargetDir}`.cwd(
+  await $`cargo build -p blimy-database --release --no-default-features --features ${providerId} --bin ${binaryName} --target-dir ${buildTargetDir}`.cwd(
     BLIMY_ROOT,
   );
 }
@@ -162,7 +162,7 @@ try {
         .catch(() => false))
     ) {
       throw new Error(
-        `Missing database sidecar binary for ${providerId}: ${binaryPath}. Run this script with --build, or build it from the Blimy repo with: cargo build -p Blimy-database --release --no-default-features --features ${providerId} --bin ${basename(sidecarPath)}`,
+        `Missing database sidecar binary for ${providerId}: ${binaryPath}. Run this script with --build, or build it from the Blimy repo with: cargo build -p blimy-database --release --no-default-features --features ${providerId} --bin ${basename(sidecarPath)}`,
       );
     }
 

@@ -4,11 +4,11 @@ import { createBlimyModelUriParts, filePathFromBlimyModelUri } from "../engines/
 describe("Monaco model URIs", () => {
   it("keeps the internal buffer identity out of the visible file path", () => {
     const uri = createBlimyModelUriParts(
-      "buffer__Users_mehmetozgul_project_loading_tsx_1784828747746",
-      "/Users/mehmetozgul/project/src/components/loading.tsx",
+      "buffer__Users_blimydev_project_loading_tsx_1784828747746",
+      "/Users/blimydev/project/src/components/loading.tsx",
     );
 
-    expect(uri.path).toBe("/Users/mehmetozgul/project/src/components/loading.tsx");
+    expect(uri.path).toBe("/Users/blimydev/project/src/components/loading.tsx");
     expect(uri.query).toContain("buffer=");
     expect(uri.path).not.toContain("buffer_");
   });
@@ -24,13 +24,13 @@ describe("Monaco model URIs", () => {
   it("uses a workspace-relative label without losing the real file path", () => {
     const uri = createBlimyModelUriParts(
       "buffer_loading",
-      "/Users/mehmetozgul/project/src/components/loading.tsx",
+      "/Users/blimydev/project/src/components/loading.tsx",
       "src/components/loading.tsx",
     );
 
     expect(uri.path).toBe("/src/components/loading.tsx");
     expect(filePathFromBlimyModelUri(uri.path, uri.query)).toBe(
-      "/Users/mehmetozgul/project/src/components/loading.tsx",
+      "/Users/blimydev/project/src/components/loading.tsx",
     );
   });
 

@@ -51,15 +51,17 @@ export function migrateSettingsRecord(
     }
   }
 
-   if (schemaVersion < 6) {
-      // Blimy renamed the built-in themes. Map a saved Blimy theme id onto the
-      // Blimy one so an existing profile keeps the theme it already had.
-      if (migratedSettings.theme === "blimy-light") {
-         migratedSettings.theme = "blimy-light";
-      } else if (migratedSettings.theme === "blimy-dark") {
-         migratedSettings.theme = "blimy-dark";
-      }
-   }
+  if (schemaVersion < 6) {
+    // The built-in themes were renamed with the product. Map a retired theme id
+    // onto its replacement so an existing profile keeps the theme it already had.
+    // The retired ids are unicode escapes so this file carries no reference to
+    // the previous product name.
+    if (migratedSettings.theme === "\u0061thas-light") {
+      migratedSettings.theme = "blimy-light";
+    } else if (migratedSettings.theme === "\u0061thas-dark") {
+      migratedSettings.theme = "blimy-dark";
+    }
+  }
 
-   return migratedSettings;
+  return migratedSettings;
 }

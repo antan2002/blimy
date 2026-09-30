@@ -139,15 +139,15 @@ export function ModelConnectionPicker({
                   label="Blimy"
                   models={[{ id: "auto", name: BLIMY_TAB_MODEL_LABEL, keywords: ["automatic"] }]}
                   selected={value && providerId === "Blimy" ? modelId || "auto" : ""}
-                  onSelect={(id) => onChange({ providerId: "Blimy", modelId: id })}
-                  providerId="Blimy"
+                  onSelect={(id) => onChange({ providerId: "blimy", modelId: id })}
+                  providerId="blimy"
                   search={search}
                 />
               ) : (
                 <BlimyModelSections
                   selected={value && providerId === "Blimy" ? modelId || "auto" : ""}
                   search={search}
-                  onSelect={(id) => onChange({ providerId: "Blimy", modelId: id })}
+                  onSelect={(id) => onChange({ providerId: "blimy", modelId: id })}
                 />
               )}
               {providers.map((item) => (

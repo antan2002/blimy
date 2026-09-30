@@ -241,7 +241,7 @@ unsafe extern "C" fn continue_spotlight_activity(
 }
 
 #[cfg(target_os = "macos")]
-unsafe extern "C" fn open_in_BLIMY_service(
+unsafe extern "C" fn open_in_blimy_service(
    _provider: *mut Object,
    _selector: runtime::Sel,
    pasteboard: *mut Object,
@@ -484,7 +484,7 @@ pub fn install_services_provider(app: &tauri::AppHandle<BlimyRuntime>) -> Result
                *mut *mut Object,
             ),
             Imp,
-         >(open_in_BLIMY_service),
+         >(open_in_blimy_service),
          b"v@:@@^@\0",
       )?;
 

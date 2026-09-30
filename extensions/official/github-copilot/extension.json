@@ -1,6 +1,6 @@
 {
-  "$schema": "https://Blimy.dev/schemas/extension.json",
-  "id": "Blimy.agent.github-copilot",
+  "$schema": "https://raw.githubusercontent.com/antan2002/blimy/main/extensions/schema/extension.schema.json",
+  "id": "blimy.agent.github-copilot",
   "name": "GitHub Copilot",
   "displayName": "GitHub Copilot",
   "description": "GitHub's command-line coding agent with native ACP support.",

@@ -56,7 +56,7 @@ async function render(props: Partial<Parameters<typeof ModelConnectionPicker>[0]
     root.render(
       <ModelConnectionPicker
         aria-label="Default model"
-        value={{ providerId: "Blimy", modelId: "auto" }}
+        value={{ providerId: "blimy", modelId: "auto" }}
         onChange={onChange}
         {...props}
       />,
@@ -148,9 +148,9 @@ describe("settings model picker", () => {
         .find((row) => row.textContent?.startsWith("Blimy Tab model"))!
         .click(),
     );
-    expect(onChange).toHaveBeenCalledExactlyOnceWith({ providerId: "Blimy", modelId: "auto" });
+    expect(onChange).toHaveBeenCalledExactlyOnceWith({ providerId: "blimy", modelId: "auto" });
 
-    await render({ value: { providerId: "Blimy", modelId: "auto" }, purpose: "completion" });
+    await render({ value: { providerId: "blimy", modelId: "auto" }, purpose: "completion" });
     expect(trigger().textContent).toBe("Blimy Tab model");
   });
 });

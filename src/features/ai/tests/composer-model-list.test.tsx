@@ -105,7 +105,7 @@ beforeEach(async () => {
       <ComposerAgentSelector
         cwd="/repo"
         currentAgentId="custom"
-        providerId="Blimy"
+        providerId="blimy"
         modelId="auto"
         sessionConfigOptions={[]}
         onModelChange={onModelChange}

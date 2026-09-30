@@ -186,7 +186,7 @@ describe("sql highlight segments", () => {
     );
     expect(
       buildSqlHighlightSegments(
-        "select * from users where email ilike '%@Blimy.dev' and exists (select 1)",
+        "select * from users where email ilike '%@github.com/antan2002/blimy' and exists (select 1)",
         [],
       ),
     ).toEqual(

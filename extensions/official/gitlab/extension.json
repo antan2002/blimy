@@ -1,11 +1,11 @@
 {
-  "$schema": "https://Blimy.dev/schemas/extension.json",
-  "id": "Blimy.gitlab",
+  "$schema": "https://raw.githubusercontent.com/antan2002/blimy/main/extensions/schema/extension.schema.json",
+  "id": "blimy.gitlab",
   "name": "gitlab",
   "displayName": "GitLab",
   "description": "Review merge requests, issues, and pipelines for the current GitLab repository.",
   "version": "1.0.0",
-  "publisher": "Blimy",
+  "publisher": "antan2002",
   "categories": ["Integration"],
   "integrations": [
     {

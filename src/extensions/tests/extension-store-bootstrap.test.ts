@@ -61,7 +61,7 @@ describe("extension-store bootstrap", () => {
           categories: ["Theme"],
           installation: {
             downloadUrl:
-              "https://Blimy.dev/extensions/packages/theme/vercel/Blimy.theme.vercel.tar.gz",
+              "https://github.com/antan2002/blimy/extensions/packages/theme/vercel/Blimy.theme.vercel.tar.gz",
             size: 100,
             checksum: "checksum",
           },
@@ -116,7 +116,7 @@ describe("extension-store bootstrap", () => {
       publisher: "Blimy",
       categories: ["AI"],
       installation: {
-        downloadUrl: "https://Blimy.dev/extensions/packages/ai/v0/Blimy.ai.v0.tar.gz",
+        downloadUrl: "https://github.com/antan2002/blimy/extensions/packages/ai/v0/Blimy.ai.v0.tar.gz",
         size: 100,
         checksum: "checksum",
       },

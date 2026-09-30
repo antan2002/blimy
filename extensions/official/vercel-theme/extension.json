@@ -1,11 +1,11 @@
 {
-  "$schema": "https://Blimy.dev/schemas/extension.json",
-  "id": "Blimy.theme.vercel",
+  "$schema": "https://raw.githubusercontent.com/antan2002/blimy/main/extensions/schema/extension.schema.json",
+  "id": "blimy.theme.vercel",
   "name": "vercel",
   "displayName": "Vercel Theme",
   "description": "Light and dark themes inspired by Vercel's dashboard and documentation.",
   "version": "1.0.0",
-  "publisher": "Blimy",
+  "publisher": "antan2002",
   "categories": ["Theme"],
   "activationEvents": ["onTheme:vercel-light", "onTheme:vercel-dark"],
   "themes": [

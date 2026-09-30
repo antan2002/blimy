@@ -96,12 +96,12 @@ fn unix_cli_script(binary: &std::path::Path) -> String {
    format!(
       r#"#!/bin/bash
 # Blimy CLI launcher
-BLIMY_binary='{binary}'
+blimy_binary='{binary}'
 case "${{1:-}}" in
-    help|-h|--help) exec "$BLIMY_binary" --help ;;
+    help|-h|--help) exec "$blimy_binary" --help ;;
 esac
-"$BLIMY_binary" --validate-cli "$@" || exit $?
-nohup "$BLIMY_binary" "$@" >/dev/null 2>&1 &
+"$blimy_binary" --validate-cli "$@" || exit $?
+nohup "$blimy_binary" "$@" >/dev/null 2>&1 &
 "#
    )
 }
@@ -189,7 +189,7 @@ fn ensure_installable_location() -> Result<(), String> {
 fn launcher_binary(script: &str) -> Option<std::path::PathBuf> {
    let quoted = script
       .lines()
-      .find_map(|line| line.strip_prefix("BLIMY_binary="))?;
+      .find_map(|line| line.strip_prefix("blimy_binary="))?;
    let inner = quoted.strip_prefix('\'')?.strip_suffix('\'')?;
    Some(std::path::PathBuf::from(inner.replace("'\\''", "'")))
 }

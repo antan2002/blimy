@@ -56,7 +56,7 @@
       "frameworks": [],
       "minimumSystemVersion": "10.15",
       "exceptionDomain": "",
-      "signingIdentity": "Developer ID Application: Mehmet Ozgul (N43BXFX4H4)",
+      "signingIdentity": null,
       "providerShortName": null,
       "entitlements": null
     },

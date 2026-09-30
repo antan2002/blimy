@@ -79,7 +79,7 @@ pub fn has_personal_access_token(app: &AppHandle) -> bool {
    read_stored_secret(app, PERSONAL_ACCESS_TOKEN_SECRET_KEY).is_some()
 }
 
-pub fn has_BLIMY_account_token(app: &AppHandle) -> bool {
+pub fn has_blimy_account_token(app: &AppHandle) -> bool {
    read_stored_secret(app, BLIMY_ACCOUNT_SECRET_KEY).is_some()
 }
 
@@ -92,7 +92,7 @@ pub fn cached_gh_cli_token() -> Option<String> {
       return token.clone();
    }
 
-   let token = BLIMY_github::gh_cli_token();
+   let token = blimy_github::gh_cli_token();
    *cache = Some((Instant::now(), token.clone()));
    token
 }
@@ -115,7 +115,7 @@ pub fn resolve_github_token(app: &AppHandle) -> ResolvedGitHubToken {
       read_stored_secret(app, PERSONAL_ACCESS_TOKEN_SECRET_KEY)
          .map(|token| (token, GitHubTokenSource::PersonalAccessToken))
    };
-   let BLIMY_account_token = || {
+   let blimy_account_token = || {
       read_stored_secret(app, BLIMY_ACCOUNT_SECRET_KEY)
          .map(|token| (token, GitHubTokenSource::Blimy))
    };
@@ -123,10 +123,10 @@ pub fn resolve_github_token(app: &AppHandle) -> ResolvedGitHubToken {
 
    let resolved = match preference {
       TokenSourcePreference::Auto => personal_access_token()
-         .or_else(BLIMY_account_token)
+         .or_else(blimy_account_token)
          .or_else(gh_cli_token),
       TokenSourcePreference::PersonalAccessToken => personal_access_token(),
-      TokenSourcePreference::Blimy => BLIMY_account_token(),
+      TokenSourcePreference::Blimy => blimy_account_token(),
       TokenSourcePreference::GhCli => gh_cli_token(),
    };
 

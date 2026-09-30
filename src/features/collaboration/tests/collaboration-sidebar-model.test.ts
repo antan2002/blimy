@@ -29,8 +29,8 @@ function collaborationSnapshot(
       {
         id: 1,
         userId: 1,
-        name: "Mehmet",
-        email: "mehmet@example.com",
+        name: "Blimy User",
+        email: "you@example.com",
         role: "owner",
         status: "active",
         lastSeenAt: null,
@@ -56,7 +56,7 @@ function collaborationSnapshot(
     channelNotes: [
       {
         channelId: 10,
-        contentMarkdown: "- **Mehmet**: Ship the sidebar",
+        contentMarkdown: "- **Blimy User**: Ship the sidebar",
         version: 1,
         updatedAt: null,
       },
@@ -94,8 +94,8 @@ describe("collaboration sidebar model", () => {
     expect(model?.selectedChannel?.slug).toBe("general");
     expect(model?.chatEntries).toEqual([
       {
-        id: "0-Mehmet",
-        author: "Mehmet",
+        id: "0-Blimy User",
+        author: "Blimy User",
         body: "Ship the sidebar",
         kind: "message",
       },
@@ -129,7 +129,7 @@ describe("collaboration sidebar model", () => {
     });
 
     expect(model?.participants[0]).toMatchObject({
-      name: "Mehmet",
+      name: "Blimy User",
       online: true,
       microphone: true,
       screen: true,
@@ -139,14 +139,14 @@ describe("collaboration sidebar model", () => {
   it("appends compact markdown chat lines", () => {
     expect(
       appendCollaborationChatMessage({
-        contentMarkdown: "- **Mehmet**: First",
+        contentMarkdown: "- **Blimy User**: First",
         author: "Teammate",
         message: "  second   message ",
       }),
     ).toBe(
       [
         "<!-- blimy:threads -->",
-        "- **Mehmet**: First",
+        "- **Blimy User**: First",
         "- **Teammate**: second message",
         "<!-- /blimy:threads -->",
         "",
@@ -161,14 +161,14 @@ describe("collaboration sidebar model", () => {
     expect(
       appendCollaborationSharedDocuments({
         contentMarkdown: "",
-        author: "Mehmet",
+        author: "Blimy User",
         documentNames: ["Roadmap.pdf", "Meeting Notes.docx"],
       }),
     ).toBe(
       [
         "<!-- blimy:threads -->",
-        "- **Mehmet**: shared document: Roadmap.pdf",
-        "- **Mehmet**: shared document: Meeting Notes.docx",
+        "- **Blimy User**: shared document: Roadmap.pdf",
+        "- **Blimy User**: shared document: Meeting Notes.docx",
         "<!-- /blimy:threads -->",
         "",
         "<!-- blimy:notes -->",
@@ -180,7 +180,7 @@ describe("collaboration sidebar model", () => {
 
   it("stores notes separately from thread lines", () => {
     const contentMarkdown = updateCollaborationNotesMarkdown({
-      contentMarkdown: "- **Mehmet**: First",
+      contentMarkdown: "- **Blimy User**: First",
       notesMarkdown: "## Plan\n\nShip the sidebar tabs.",
     });
     const model = buildCollaborationSidebarModel({

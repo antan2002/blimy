@@ -1,11 +1,11 @@
 {
-  "$schema": "https://Blimy.dev/schemas/extension.json",
-  "id": "Blimy.toml",
+  "$schema": "https://raw.githubusercontent.com/antan2002/blimy/main/extensions/schema/extension.schema.json",
+  "id": "blimy.toml",
   "name": "TOML",
   "displayName": "TOML",
   "version": "1.0.0",
   "description": "TOML language support with LSP and formatting",
-  "publisher": "Blimy",
+  "publisher": "antan2002",
   "categories": ["Language"],
   "languages": [
     {

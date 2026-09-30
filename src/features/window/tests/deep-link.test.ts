@@ -6,8 +6,8 @@ const { isSupportedDeepLinkProtocol, parseDeepLinkAction } = __test__;
 describe("isSupportedDeepLinkProtocol", () => {
   it("accepts registered stable, preview, and dev schemes", () => {
     expect(isSupportedDeepLinkProtocol("blimy:")).toBe(true);
-    expect(isSupportedDeepLinkProtocol("Blimy-preview:")).toBe(true);
-    expect(isSupportedDeepLinkProtocol("Blimy-dev:")).toBe(true);
+    expect(isSupportedDeepLinkProtocol("blimy-preview:")).toBe(true);
+    expect(isSupportedDeepLinkProtocol("blimy-dev:")).toBe(true);
   });
 
   it("rejects unrelated schemes", () => {

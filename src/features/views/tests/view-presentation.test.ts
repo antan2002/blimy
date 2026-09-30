@@ -9,9 +9,9 @@ import type { CustomViewDefinition, ViewTable } from "@/features/views/types/vie
 const table: ViewTable = {
   columns: ["title", "status", "author.login", "created_at"],
   rows: [
-    ["Fix sidebar", "open", "mehmet", "2026-08-27T10:00:00Z"],
+    ["Fix sidebar", "open", "Blimy User", "2026-08-27T10:00:00Z"],
     ["Ship views", "closed", "codex", "2026-08-27T12:00:00Z"],
-    ["Improve table", "open", "mehmet", "2026-08-27T13:00:00Z"],
+    ["Improve table", "open", "Blimy User", "2026-08-27T13:00:00Z"],
   ],
 };
 

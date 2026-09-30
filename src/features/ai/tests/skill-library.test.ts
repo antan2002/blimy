@@ -48,7 +48,7 @@ describe("skill library", () => {
       expect.objectContaining({
         id: "Blimy.review",
         title: "Review",
-        detailUrl: "https://Blimy.dev/extensions/skills/review/SKILL.md",
+        detailUrl: "https://github.com/antan2002/blimy/extensions/skills/review/SKILL.md",
       }),
     ]);
     expect(fetchMock).toHaveBeenCalledTimes(1);
@@ -71,7 +71,7 @@ describe("skill library", () => {
         id: "Blimy.review",
         title: "Review",
         description: "Review code changes",
-        detailUrl: "https://Blimy.dev/extensions/skills/review/SKILL.md",
+        detailUrl: "https://github.com/antan2002/blimy/extensions/skills/review/SKILL.md",
         tags: [],
       }),
     ).resolves.toMatchObject({
@@ -99,14 +99,14 @@ describe("skill library", () => {
         id: "skills-sh:review",
         title: "Review",
         description: "Review code changes",
-        detailUrl: "https://Blimy.dev/api/skills/details/review",
+        detailUrl: "https://github.com/antan2002/blimy/api/skills/details/review",
         tags: ["skills.sh"],
       }),
     ).resolves.toMatchObject({
       content: "Review this diff carefully.",
       version: "abc123",
     });
-    expect(fetchMock).toHaveBeenCalledWith("https://Blimy.dev/api/skills/details/review");
+    expect(fetchMock).toHaveBeenCalledWith("https://github.com/antan2002/blimy/api/skills/details/review");
   });
 
   it("creates installable Agent skills from marketplace entries", () => {

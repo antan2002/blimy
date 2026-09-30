@@ -44,12 +44,12 @@ describe("workspace session repository", () => {
       buffers: [
         {
           type: "webViewer",
-          path: "web-viewer://https://Blimy.dev",
-          url: "https://Blimy.dev",
+          path: "web-viewer://https://github.com/antan2002/blimy",
+          url: "https://github.com/antan2002/blimy",
         } as unknown as BufferSession,
         { type: "editor", path: "/workspace/main.ts", name: "main.ts", isPinned: true },
       ],
-      activeBufferPath: "web-viewer://https://Blimy.dev",
+      activeBufferPath: "web-viewer://https://github.com/antan2002/blimy",
     });
     const saved = workspaceSessionRepository.load("/workspace").session;
     expect(saved?.buffers).toHaveLength(1);

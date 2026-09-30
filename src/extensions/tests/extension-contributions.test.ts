@@ -91,7 +91,7 @@ describe("integration contribution normalization", () => {
           label: "DuckDB",
           isFileBased: true,
           protocolVersion: 1,
-          sidecar: { "darwin-arm64": "bin/Blimy-db-duckdb" },
+          sidecar: { "darwin-arm64": "bin/blimy-db-duckdb" },
         },
       ],
     });

@@ -1,11 +1,11 @@
 {
-  "$schema": "https://Blimy.dev/schemas/extension.json",
-  "id": "Blimy.database.postgres",
+  "$schema": "https://raw.githubusercontent.com/antan2002/blimy/main/extensions/schema/extension.schema.json",
+  "id": "blimy.database.postgres",
   "name": "PostgreSQL",
   "displayName": "PostgreSQL Provider",
   "version": "1.0.0",
   "description": "PostgreSQL connection, schema, and query provider.",
-  "publisher": "Blimy",
+  "publisher": "antan2002",
   "categories": ["Database"],
   "activationEvents": ["onDatabase:postgres"],
   "license": "MIT",
@@ -22,11 +22,11 @@
       "protocolVersion": 1,
       "defaultPort": 5432,
       "sidecar": {
-        "darwin-arm64": "bin/Blimy-db-postgres",
-        "darwin-x64": "bin/Blimy-db-postgres",
-        "linux-arm64": "bin/Blimy-db-postgres",
-        "linux-x64": "bin/Blimy-db-postgres",
-        "win32-x64": "bin/Blimy-db-postgres.exe"
+        "darwin-arm64": "bin/blimy-db-postgres",
+        "darwin-x64": "bin/blimy-db-postgres",
+        "linux-arm64": "bin/blimy-db-postgres",
+        "linux-x64": "bin/blimy-db-postgres",
+        "win32-x64": "bin/blimy-db-postgres.exe"
       }
     }
   ]

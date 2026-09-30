@@ -36,7 +36,7 @@ describe("extension artifact metadata", () => {
   it("adds installation metadata without mutating the source manifest", () => {
     const source = { id: "Blimy.example", name: "Example" };
     const installation = {
-      downloadUrl: "https://Blimy.dev/extensions/example.tar.gz",
+      downloadUrl: "https://github.com/antan2002/blimy/extensions/example.tar.gz",
       size: 42,
       checksum: "checksum",
     };

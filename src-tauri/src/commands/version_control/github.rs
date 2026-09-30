@@ -1,10 +1,10 @@
 use super::github_token::{
    GitHubTokenSource, PERSONAL_ACCESS_TOKEN_SECRET_KEY, cached_gh_cli_token,
-   has_BLIMY_account_token, has_personal_access_token, invalidate_gh_cli_token_cache,
+   has_blimy_account_token, has_personal_access_token, invalidate_gh_cli_token_cache,
    resolve_github_token,
 };
 use crate::secure_storage::{get_secret, remove_secret, store_secret};
-pub use BLIMY_github::{
+pub use blimy_github::{
    GitHubNotification, IssueComment, IssueDetails, IssueListItem, IssueMilestone, IssueType, Label,
    PullRequest, PullRequestComment, PullRequestDetails, PullRequestFile, WorkflowListItem,
    WorkflowRunDetails, WorkflowRunListItem,
@@ -32,9 +32,9 @@ async fn resolve_github_token_async(app: &crate::app_runtime::AppHandle) -> Opti
 #[tauri::command]
 pub async fn github_check_auth(
    app: crate::app_runtime::AppHandle,
-) -> Result<BLIMY_github::GitHubAuthStatus, String> {
+) -> Result<blimy_github::GitHubAuthStatus, String> {
    let github_token = resolve_github_token_async(&app).await;
-   run_blocking(move || BLIMY_github::github_check_auth(github_token)).await
+   run_blocking(move || blimy_github::github_check_auth(github_token)).await
 }
 
 #[tauri::command]
@@ -44,13 +44,13 @@ pub async fn github_list_prs(
    filter: String,
 ) -> Result<Vec<PullRequest>, String> {
    let github_token = resolve_github_token_async(&app).await;
-   run_blocking(move || BLIMY_github::github_list_prs(repo_path, filter, github_token)).await
+   run_blocking(move || blimy_github::github_list_prs(repo_path, filter, github_token)).await
 }
 
 #[tauri::command]
 pub async fn github_get_current_user(app: crate::app_runtime::AppHandle) -> Result<String, String> {
    let github_token = resolve_github_token_async(&app).await;
-   run_blocking(move || BLIMY_github::github_get_current_user(github_token)).await
+   run_blocking(move || blimy_github::github_get_current_user(github_token)).await
 }
 
 #[tauri::command]
@@ -58,7 +58,7 @@ pub async fn github_list_notifications(
    app: crate::app_runtime::AppHandle,
 ) -> Result<Vec<GitHubNotification>, String> {
    let github_token = resolve_github_token_async(&app).await;
-   run_blocking(move || BLIMY_github::github_list_notifications(github_token)).await
+   run_blocking(move || blimy_github::github_list_notifications(github_token)).await
 }
 
 #[tauri::command]
@@ -71,7 +71,7 @@ pub async fn github_resolve_notification_workflow_run(
 ) -> Result<Option<WorkflowRunListItem>, String> {
    let github_token = resolve_github_token_async(&app).await;
    run_blocking(move || {
-      BLIMY_github::github_resolve_notification_workflow_run(
+      blimy_github::github_resolve_notification_workflow_run(
          repository_full_name,
          check_suite_id,
          notification_title,
@@ -90,7 +90,7 @@ pub async fn github_list_issues(
 ) -> Result<Vec<IssueListItem>, String> {
    let github_token = resolve_github_token_async(&app).await;
    run_blocking(move || {
-      BLIMY_github::github_list_issues(
+      blimy_github::github_list_issues(
          repo_path,
          state.unwrap_or_else(|| "open".to_string()),
          github_token,
@@ -105,7 +105,7 @@ pub async fn github_list_workflow_runs(
    repo_path: String,
 ) -> Result<Vec<WorkflowRunListItem>, String> {
    let github_token = resolve_github_token_async(&app).await;
-   run_blocking(move || BLIMY_github::github_list_workflow_runs(repo_path, github_token)).await
+   run_blocking(move || blimy_github::github_list_workflow_runs(repo_path, github_token)).await
 }
 
 #[tauri::command]
@@ -114,7 +114,7 @@ pub async fn github_list_workflows(
    repo_path: String,
 ) -> Result<Vec<WorkflowListItem>, String> {
    let github_token = resolve_github_token_async(&app).await;
-   run_blocking(move || BLIMY_github::github_list_workflows(repo_path, github_token)).await
+   run_blocking(move || blimy_github::github_list_workflows(repo_path, github_token)).await
 }
 
 #[tauri::command]
@@ -123,7 +123,7 @@ pub async fn github_list_labels(
    repo_path: String,
 ) -> Result<Vec<Label>, String> {
    let github_token = resolve_github_token_async(&app).await;
-   run_blocking(move || BLIMY_github::github_list_labels(repo_path, github_token)).await
+   run_blocking(move || blimy_github::github_list_labels(repo_path, github_token)).await
 }
 
 #[tauri::command]
@@ -132,7 +132,7 @@ pub async fn github_list_milestones(
    repo_path: String,
 ) -> Result<Vec<IssueMilestone>, String> {
    let github_token = resolve_github_token_async(&app).await;
-   run_blocking(move || BLIMY_github::github_list_milestones(repo_path, github_token)).await
+   run_blocking(move || blimy_github::github_list_milestones(repo_path, github_token)).await
 }
 
 #[tauri::command]
@@ -141,7 +141,7 @@ pub async fn github_list_issue_types(
    repo_path: String,
 ) -> Result<Vec<IssueType>, String> {
    let github_token = resolve_github_token_async(&app).await;
-   run_blocking(move || BLIMY_github::github_list_issue_types(repo_path, github_token)).await
+   run_blocking(move || blimy_github::github_list_issue_types(repo_path, github_token)).await
 }
 
 #[tauri::command]
@@ -157,7 +157,7 @@ pub async fn github_create_issue(
 ) -> Result<IssueListItem, String> {
    let github_token = resolve_github_token_async(&app).await;
    run_blocking(move || {
-      BLIMY_github::github_create_issue(
+      blimy_github::github_create_issue(
          repo_path,
          title,
          body,
@@ -185,7 +185,7 @@ pub async fn github_update_issue(
 ) -> Result<IssueDetails, String> {
    let github_token = resolve_github_token_async(&app).await;
    run_blocking(move || {
-      BLIMY_github::github_update_issue(
+      blimy_github::github_update_issue(
          repo_path,
          issue_number,
          title,
@@ -210,7 +210,7 @@ pub async fn github_update_issue_state(
 ) -> Result<IssueDetails, String> {
    let github_token = resolve_github_token_async(&app).await;
    run_blocking(move || {
-      BLIMY_github::github_update_issue_state(
+      blimy_github::github_update_issue_state(
          repo_path,
          issue_number,
          state,
@@ -230,7 +230,7 @@ pub async fn github_add_issue_comment(
 ) -> Result<IssueComment, String> {
    let github_token = resolve_github_token_async(&app).await;
    run_blocking(move || {
-      BLIMY_github::github_add_issue_comment(repo_path, issue_number, body, github_token)
+      blimy_github::github_add_issue_comment(repo_path, issue_number, body, github_token)
    })
    .await
 }
@@ -244,7 +244,7 @@ pub async fn github_update_issue_comment(
 ) -> Result<IssueComment, String> {
    let github_token = resolve_github_token_async(&app).await;
    run_blocking(move || {
-      BLIMY_github::github_update_issue_comment(repo_path, comment_id, body, github_token)
+      blimy_github::github_update_issue_comment(repo_path, comment_id, body, github_token)
    })
    .await
 }
@@ -257,7 +257,7 @@ pub async fn github_delete_issue_comment(
 ) -> Result<(), String> {
    let github_token = resolve_github_token_async(&app).await;
    run_blocking(move || {
-      BLIMY_github::github_delete_issue_comment(repo_path, comment_id, github_token)
+      blimy_github::github_delete_issue_comment(repo_path, comment_id, github_token)
    })
    .await
 }
@@ -271,7 +271,7 @@ pub async fn github_lock_issue(
 ) -> Result<(), String> {
    let github_token = resolve_github_token_async(&app).await;
    run_blocking(move || {
-      BLIMY_github::github_lock_issue(repo_path, issue_number, lock_reason, github_token)
+      blimy_github::github_lock_issue(repo_path, issue_number, lock_reason, github_token)
    })
    .await
 }
@@ -283,7 +283,7 @@ pub async fn github_unlock_issue(
    issue_number: i64,
 ) -> Result<(), String> {
    let github_token = resolve_github_token_async(&app).await;
-   run_blocking(move || BLIMY_github::github_unlock_issue(repo_path, issue_number, github_token))
+   run_blocking(move || blimy_github::github_unlock_issue(repo_path, issue_number, github_token))
       .await
 }
 
@@ -301,7 +301,7 @@ pub async fn github_create_pull_request(
 ) -> Result<PullRequest, String> {
    let github_token = resolve_github_token_async(&app).await;
    run_blocking(move || {
-      BLIMY_github::github_create_pull_request(
+      blimy_github::github_create_pull_request(
          repo_path,
          title,
          body,
@@ -328,7 +328,7 @@ pub async fn github_update_pull_request(
 ) -> Result<PullRequestDetails, String> {
    let github_token = resolve_github_token_async(&app).await;
    run_blocking(move || {
-      BLIMY_github::github_update_pull_request(
+      blimy_github::github_update_pull_request(
          repo_path,
          pr_number,
          title,
@@ -350,7 +350,7 @@ pub async fn github_add_pr_comment(
 ) -> Result<PullRequestComment, String> {
    let github_token = resolve_github_token_async(&app).await;
    run_blocking(move || {
-      BLIMY_github::github_add_pr_comment(repo_path, pr_number, body, github_token)
+      blimy_github::github_add_pr_comment(repo_path, pr_number, body, github_token)
    })
    .await
 }
@@ -365,7 +365,7 @@ pub async fn github_submit_pr_review(
 ) -> Result<(), String> {
    let github_token = resolve_github_token_async(&app).await;
    run_blocking(move || {
-      BLIMY_github::github_submit_pr_review(repo_path, pr_number, event, body, github_token)
+      blimy_github::github_submit_pr_review(repo_path, pr_number, event, body, github_token)
    })
    .await
 }
@@ -379,7 +379,7 @@ pub async fn github_merge_pull_request(
 ) -> Result<PullRequestDetails, String> {
    let github_token = resolve_github_token_async(&app).await;
    run_blocking(move || {
-      BLIMY_github::github_merge_pull_request(repo_path, pr_number, method, github_token)
+      blimy_github::github_merge_pull_request(repo_path, pr_number, method, github_token)
    })
    .await
 }
@@ -391,7 +391,7 @@ pub async fn github_close_pull_request(
    pr_number: i64,
 ) -> Result<PullRequestDetails, String> {
    let github_token = resolve_github_token_async(&app).await;
-   run_blocking(move || BLIMY_github::github_close_pull_request(repo_path, pr_number, github_token))
+   run_blocking(move || blimy_github::github_close_pull_request(repo_path, pr_number, github_token))
       .await
 }
 
@@ -404,7 +404,7 @@ pub async fn github_dispatch_workflow(
 ) -> Result<(), String> {
    let github_token = resolve_github_token_async(&app).await;
    run_blocking(move || {
-      BLIMY_github::github_dispatch_workflow(repo_path, workflow_id, reference, github_token)
+      blimy_github::github_dispatch_workflow(repo_path, workflow_id, reference, github_token)
    })
    .await
 }
@@ -416,7 +416,7 @@ pub async fn github_checkout_pr(
    pr_number: i64,
 ) -> Result<(), String> {
    let github_token = resolve_github_token_async(&app).await;
-   run_blocking(move || BLIMY_github::github_checkout_pr(repo_path, pr_number, github_token)).await
+   run_blocking(move || blimy_github::github_checkout_pr(repo_path, pr_number, github_token)).await
 }
 
 #[tauri::command]
@@ -426,7 +426,7 @@ pub async fn github_get_pr_details(
    pr_number: i64,
 ) -> Result<PullRequestDetails, String> {
    let github_token = resolve_github_token_async(&app).await;
-   run_blocking(move || BLIMY_github::github_get_pr_details(repo_path, pr_number, github_token))
+   run_blocking(move || blimy_github::github_get_pr_details(repo_path, pr_number, github_token))
       .await
 }
 
@@ -437,7 +437,7 @@ pub async fn github_get_pr_diff(
    pr_number: i64,
 ) -> Result<String, String> {
    let github_token = resolve_github_token_async(&app).await;
-   run_blocking(move || BLIMY_github::github_get_pr_diff(repo_path, pr_number, github_token)).await
+   run_blocking(move || blimy_github::github_get_pr_diff(repo_path, pr_number, github_token)).await
 }
 
 #[tauri::command]
@@ -447,7 +447,7 @@ pub async fn github_get_pr_files(
    pr_number: i64,
 ) -> Result<Vec<PullRequestFile>, String> {
    let github_token = resolve_github_token_async(&app).await;
-   run_blocking(move || BLIMY_github::github_get_pr_files(repo_path, pr_number, github_token)).await
+   run_blocking(move || blimy_github::github_get_pr_files(repo_path, pr_number, github_token)).await
 }
 
 #[tauri::command]
@@ -457,7 +457,7 @@ pub async fn github_get_pr_comments(
    pr_number: i64,
 ) -> Result<Vec<PullRequestComment>, String> {
    let github_token = resolve_github_token_async(&app).await;
-   run_blocking(move || BLIMY_github::github_get_pr_comments(repo_path, pr_number, github_token))
+   run_blocking(move || blimy_github::github_get_pr_comments(repo_path, pr_number, github_token))
       .await
 }
 
@@ -469,7 +469,7 @@ pub async fn github_get_issue_details(
 ) -> Result<IssueDetails, String> {
    let github_token = resolve_github_token_async(&app).await;
    run_blocking(move || {
-      BLIMY_github::github_get_issue_details(repo_path, issue_number, github_token)
+      blimy_github::github_get_issue_details(repo_path, issue_number, github_token)
    })
    .await
 }
@@ -482,7 +482,7 @@ pub async fn github_get_workflow_run_details(
 ) -> Result<WorkflowRunDetails, String> {
    let github_token = resolve_github_token_async(&app).await;
    run_blocking(move || {
-      BLIMY_github::github_get_workflow_run_details(repo_path, run_id, github_token)
+      blimy_github::github_get_workflow_run_details(repo_path, run_id, github_token)
    })
    .await
 }
@@ -496,7 +496,7 @@ pub async fn github_rerun_workflow_run(
 ) -> Result<(), String> {
    let github_token = resolve_github_token_async(&app).await;
    run_blocking(move || {
-      BLIMY_github::github_rerun_workflow_run(repo_path, run_id, failed_jobs_only, github_token)
+      blimy_github::github_rerun_workflow_run(repo_path, run_id, failed_jobs_only, github_token)
    })
    .await
 }
@@ -508,7 +508,7 @@ pub async fn github_cancel_workflow_run(
    run_id: i64,
 ) -> Result<(), String> {
    let github_token = resolve_github_token_async(&app).await;
-   run_blocking(move || BLIMY_github::github_cancel_workflow_run(repo_path, run_id, github_token))
+   run_blocking(move || blimy_github::github_cancel_workflow_run(repo_path, run_id, github_token))
       .await
 }
 
@@ -519,7 +519,7 @@ pub async fn github_get_workflow_job_logs(
    job_id: i64,
 ) -> Result<String, String> {
    let github_token = resolve_github_token_async(&app).await;
-   run_blocking(move || BLIMY_github::github_get_workflow_job_logs(repo_path, job_id, github_token))
+   run_blocking(move || blimy_github::github_get_workflow_job_logs(repo_path, job_id, github_token))
       .await
 }
 
@@ -548,9 +548,9 @@ pub async fn github_list_releases(
    app: crate::app_runtime::AppHandle,
    repo_path: String,
    page: u32,
-) -> Result<Vec<BLIMY_github::Release>, String> {
+) -> Result<Vec<blimy_github::Release>, String> {
    let token = resolve_github_token_async(&app).await;
-   run_blocking(move || BLIMY_github::github_list_releases(repo_path, page, token)).await
+   run_blocking(move || blimy_github::github_list_releases(repo_path, page, token)).await
 }
 
 #[tauri::command]
@@ -558,9 +558,9 @@ pub async fn github_get_release(
    app: crate::app_runtime::AppHandle,
    repo_path: String,
    id: i64,
-) -> Result<BLIMY_github::Release, String> {
+) -> Result<blimy_github::Release, String> {
    let token = resolve_github_token_async(&app).await;
-   run_blocking(move || BLIMY_github::github_get_release(repo_path, id, token)).await
+   run_blocking(move || blimy_github::github_get_release(repo_path, id, token)).await
 }
 
 #[tauri::command]
@@ -568,10 +568,10 @@ pub async fn github_save_release(
    app: crate::app_runtime::AppHandle,
    repo_path: String,
    id: Option<i64>,
-   input: BLIMY_github::ReleaseInput,
-) -> Result<BLIMY_github::Release, String> {
+   input: blimy_github::ReleaseInput,
+) -> Result<blimy_github::Release, String> {
    let token = resolve_github_token_async(&app).await;
-   run_blocking(move || BLIMY_github::github_save_release(repo_path, id, input, token)).await
+   run_blocking(move || blimy_github::github_save_release(repo_path, id, input, token)).await
 }
 
 #[tauri::command]
@@ -580,9 +580,9 @@ pub async fn github_publish_release(
    repo_path: String,
    id: i64,
    make_latest: bool,
-) -> Result<BLIMY_github::Release, String> {
+) -> Result<blimy_github::Release, String> {
    let token = resolve_github_token_async(&app).await;
-   run_blocking(move || BLIMY_github::github_publish_release(repo_path, id, make_latest, token))
+   run_blocking(move || blimy_github::github_publish_release(repo_path, id, make_latest, token))
       .await
 }
 
@@ -593,7 +593,7 @@ pub async fn github_delete_release(
    id: i64,
 ) -> Result<(), String> {
    let token = resolve_github_token_async(&app).await;
-   run_blocking(move || BLIMY_github::github_delete_release(repo_path, id, token)).await
+   run_blocking(move || blimy_github::github_delete_release(repo_path, id, token)).await
 }
 
 #[tauri::command]
@@ -606,7 +606,7 @@ pub async fn github_generate_release_notes(
 ) -> Result<serde_json::Value, String> {
    let token = resolve_github_token_async(&app).await;
    run_blocking(move || {
-      BLIMY_github::github_generate_release_notes(repo_path, tag, target, previous_tag, token)
+      blimy_github::github_generate_release_notes(repo_path, tag, target, previous_tag, token)
    })
    .await
 }
@@ -616,9 +616,9 @@ pub async fn github_list_deployments(
    app: crate::app_runtime::AppHandle,
    repo_path: String,
    page: u32,
-) -> Result<Vec<BLIMY_github::Deployment>, String> {
+) -> Result<Vec<blimy_github::Deployment>, String> {
    let token = resolve_github_token_async(&app).await;
-   run_blocking(move || BLIMY_github::github_list_deployments(repo_path, page, token)).await
+   run_blocking(move || blimy_github::github_list_deployments(repo_path, page, token)).await
 }
 
 #[tauri::command]
@@ -626,9 +626,9 @@ pub async fn github_get_deployment(
    app: crate::app_runtime::AppHandle,
    repo_path: String,
    id: i64,
-) -> Result<BLIMY_github::Deployment, String> {
+) -> Result<blimy_github::Deployment, String> {
    let token = resolve_github_token_async(&app).await;
-   run_blocking(move || BLIMY_github::github_get_deployment(repo_path, id, token)).await
+   run_blocking(move || blimy_github::github_get_deployment(repo_path, id, token)).await
 }
 
 #[tauri::command]
@@ -636,9 +636,9 @@ pub async fn github_deactivate_deployment(
    app: crate::app_runtime::AppHandle,
    repo_path: String,
    id: i64,
-) -> Result<BLIMY_github::DeploymentStatus, String> {
+) -> Result<blimy_github::DeploymentStatus, String> {
    let token = resolve_github_token_async(&app).await;
-   run_blocking(move || BLIMY_github::github_deactivate_deployment(repo_path, id, token)).await
+   run_blocking(move || blimy_github::github_deactivate_deployment(repo_path, id, token)).await
 }
 
 #[tauri::command]
@@ -647,9 +647,9 @@ pub async fn github_upload_release_asset(
    repo_path: String,
    id: i64,
    file_path: String,
-) -> Result<BLIMY_github::ReleaseAsset, String> {
+) -> Result<blimy_github::ReleaseAsset, String> {
    let token = resolve_github_token_async(&app).await;
-   run_blocking(move || BLIMY_github::github_upload_release_asset(repo_path, id, file_path, token))
+   run_blocking(move || blimy_github::github_upload_release_asset(repo_path, id, file_path, token))
       .await
 }
 
@@ -660,7 +660,7 @@ pub async fn github_delete_release_asset(
    asset_id: i64,
 ) -> Result<(), String> {
    let token = resolve_github_token_async(&app).await;
-   run_blocking(move || BLIMY_github::github_delete_release_asset(repo_path, asset_id, token)).await
+   run_blocking(move || blimy_github::github_delete_release_asset(repo_path, asset_id, token)).await
 }
 
 /// What the GitHub auth indicator in Settings shows.
@@ -670,7 +670,7 @@ pub struct GitHubTokenStatus {
    /// Which source supplied the active token, or `None` when there is none.
    pub source: Option<GitHubTokenSource>,
    pub has_personal_access_token: bool,
-   pub has_BLIMY_account_token: bool,
+   pub has_blimy_account_token: bool,
    pub gh_cli_installed: bool,
    /// The account the active token belongs to; `None` when GitHub rejected it.
    pub login: Option<String>,
@@ -684,13 +684,13 @@ pub async fn github_token_status(
 ) -> Result<GitHubTokenStatus, String> {
    run_blocking(move || {
       let resolved = resolve_github_token(&app);
-      let identity = BLIMY_github::github_describe_token(resolved.token)?;
+      let identity = blimy_github::github_describe_token(resolved.token)?;
 
       Ok(GitHubTokenStatus {
          source: resolved.source,
          has_personal_access_token: has_personal_access_token(&app),
-         has_BLIMY_account_token: has_BLIMY_account_token(&app),
-         gh_cli_installed: BLIMY_github::is_gh_cli_installed(),
+         has_blimy_account_token: has_blimy_account_token(&app),
+         gh_cli_installed: blimy_github::is_gh_cli_installed(),
          login: identity.as_ref().map(|identity| identity.login.clone()),
          scopes: identity.and_then(|identity| identity.scopes),
       })
@@ -737,7 +737,7 @@ pub struct GhCliAvailability {
 #[tauri::command]
 pub async fn github_gh_cli_availability() -> Result<GhCliAvailability, String> {
    run_blocking(|| {
-      let installed = BLIMY_github::is_gh_cli_installed();
+      let installed = blimy_github::is_gh_cli_installed();
       Ok(GhCliAvailability {
          installed,
          has_token: installed && cached_gh_cli_token().is_some(),

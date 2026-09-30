@@ -1,11 +1,11 @@
 {
-  "$schema": "https://Blimy.dev/schemas/extension.json",
-  "id": "Blimy.r",
+  "$schema": "https://raw.githubusercontent.com/antan2002/blimy/main/extensions/schema/extension.schema.json",
+  "id": "blimy.r",
   "name": "R",
   "displayName": "R",
   "version": "1.0.0",
   "description": "R language support for statistical programming and reproducible analysis",
-  "publisher": "Blimy",
+  "publisher": "antan2002",
   "categories": ["Language"],
   "languages": [
     {

@@ -1,6 +1,10 @@
 [package]
 name = "blimy-ai"
 version = "0.1.0"
+repository = "https://github.com/antan2002/blimy"
+homepage = "https://github.com/antan2002/blimy#readme"
+authors = ["antan2002 <antanroy502@gmail.com>"]
+license = "AGPL-3.0"
 edition = "2024"
 
 [features]

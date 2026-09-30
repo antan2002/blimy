@@ -99,8 +99,8 @@ describe("composer notice slot", () => {
   it("retries an unverified session instead of offering sign-in", async () => {
     state.auth.sessionCheck = {
       reason: "unreachable",
-      message: "Could not reach Blimy.dev.",
-      host: "Blimy.dev",
+      message: "Could not reach github.com/antan2002/blimy.",
+      host: "github.com/antan2002/blimy",
       attempt: 1,
       nextRetryAt: null,
     };

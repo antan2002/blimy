@@ -5,7 +5,7 @@ vi.mock("@/utils/tauri-fetch", () => ({ tauriFetch: mocks.fetch }));
 vi.mock("@/features/window/services/auth-api", () => ({ getAuthToken: async () => "token" }));
 vi.mock("../intelligence/services/intelligence-connection", () => ({
   getIntelligenceConnection: async () => ({
-    providerId: "Blimy",
+    providerId: "blimy",
     modelId: "",
     userId: null,
     scope: "personal",

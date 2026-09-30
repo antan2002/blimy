@@ -25,12 +25,12 @@ if [[ "$channel" == "preview" ]]; then
   product_name="Blimy Preview"
   app_dir_name="Blimy-preview.app"
   icon_dir="preview"
-  desktop_id="com.code.Blimy.preview"
+  desktop_id="dev.blimy.editor.preview"
 else
   product_name="Blimy"
   app_dir_name="Blimy.app"
   icon_dir="prod"
-  desktop_id="com.code.Blimy"
+  desktop_id="dev.blimy.editor"
 fi
 
 version="$(bun -e 'console.log(JSON.parse(await Bun.file("package.json").text()).version)')"

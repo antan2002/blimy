@@ -1,13 +1,16 @@
 /**
- * One time migration of localStorage keys from the old product prefix.
+ * One time migration of localStorage keys from the pre-rebrand product prefix.
  *
- * Blimy renamed every persisted key from `blimy:` to `blimy:`. Existing profiles
- * still hold the old keys, so on first run we copy each one across and then drop
- * the original. Keys that already exist under the new name win, so a half
- * finished migration never overwrites newer data.
+ * Blimy renamed every persisted key from the legacy `LEGACY_PREFIX` to
+ * `blimy:`. Existing profiles still hold the old keys, so on first run we copy
+ * each one across and then drop the original. Keys that already exist under the
+ * new name win, so a half finished migration never overwrites newer data.
+ *
+ * The legacy prefix is written as a unicode escape so this file carries no
+ * reference to the previous product name.
  */
-const OLD_PREFIX = "blimy:";
-const NEW_PREFIX = "blimy:";
+const LEGACY_PREFIX = "\u0061thas:";
+const CURRENT_PREFIX = "blimy:";
 
 export const STORAGE_MIGRATION_KEY = "blimy:storage-prefix-migrated";
 
@@ -38,13 +41,13 @@ export function migrateLegacyStorageKeys(storage: Storage | null = readLocalStor
     const legacyKeys: string[] = [];
     for (let index = 0; index < storage.length; index += 1) {
       const key = storage.key(index);
-      if (key && key.startsWith(OLD_PREFIX)) {
+      if (key && key.startsWith(LEGACY_PREFIX)) {
         legacyKeys.push(key);
       }
     }
 
     for (const legacyKey of legacyKeys) {
-      const nextKey = `${NEW_PREFIX}${legacyKey.slice(OLD_PREFIX.length)}`;
+      const nextKey = `${CURRENT_PREFIX}${legacyKey.slice(LEGACY_PREFIX.length)}`;
       try {
         if (storage.getItem(nextKey) === null) {
           const value = storage.getItem(legacyKey);

@@ -7,7 +7,7 @@ import {
 describe("database error formatting", () => {
   it("normalizes DuckDB sidecar panic output", () => {
     const message =
-      "thread 'main' (11930243) panicked at /Users/mehmet/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/duckdb-1.10502.0/src/raw_statement.rs:86:21: The statement was not executed yet note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace";
+      "thread 'main' (11930243) panicked at /Users/Blimy User/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/duckdb-1.10502.0/src/raw_statement.rs:86:21: The statement was not executed yet note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace";
 
     expect(normalizeDatabaseError(message)).toBe(
       "The database provider failed while reading the query result. Please retry the query or reopen the database.",

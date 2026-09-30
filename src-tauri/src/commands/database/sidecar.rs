@@ -280,7 +280,7 @@ pub async fn run_database_sidecar(
    if is_builtin_database_provider(&provider_id) {
       return run_with_database_sidecar_timeout(
          DATABASE_SIDECAR_TIMEOUT,
-         BLIMY_database::sidecar::run_provider_command(provider_id, command, payload),
+         blimy_database::sidecar::run_provider_command(provider_id, command, payload),
       )
       .await;
    }

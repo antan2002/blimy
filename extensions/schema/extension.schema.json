@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://Blimy.dev/schemas/extension.json",
+  "$id": "https://raw.githubusercontent.com/antan2002/blimy/main/extensions/schema/extension.schema.json",
   "title": "Blimy Extension Manifest",
   "type": "object",
   "additionalProperties": false,
@@ -16,7 +16,7 @@
   ],
   "properties": {
     "$schema": {
-      "const": "https://Blimy.dev/schemas/extension.json"
+      "const": "https://raw.githubusercontent.com/antan2002/blimy/main/extensions/schema/extension.schema.json"
     },
     "id": {
       "type": "string",

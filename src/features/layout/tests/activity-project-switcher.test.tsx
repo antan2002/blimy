@@ -3,10 +3,10 @@ import { getProjectNameFromPath, isRemoteProjectPath } from "../components/sideb
 
 describe("activity project switcher", () => {
   it("uses the shared project path rules for local and remote projects", () => {
-    expect(getProjectNameFromPath("/Users/mehmet/Git/Blimy")).toBe("Blimy");
-    expect(getProjectNameFromPath("C:\\Users\\mehmet\\Blimy")).toBe("Blimy");
+    expect(getProjectNameFromPath("/Users/Blimy User/Git/Blimy")).toBe("Blimy");
+    expect(getProjectNameFromPath("C:\\Users\\Blimy User\\Blimy")).toBe("Blimy");
     expect(getProjectNameFromPath()).toBe("Open Project");
     expect(isRemoteProjectPath("remote://server/workspace")).toBe(true);
-    expect(isRemoteProjectPath("/Users/mehmet/Git/Blimy")).toBe(false);
+    expect(isRemoteProjectPath("/Users/Blimy User/Git/Blimy")).toBe(false);
   });
 });

@@ -1,11 +1,11 @@
 {
-  "$schema": "https://Blimy.dev/schemas/extension.json",
-  "id": "Blimy.database.sqlite",
+  "$schema": "https://raw.githubusercontent.com/antan2002/blimy/main/extensions/schema/extension.schema.json",
+  "id": "blimy.database.sqlite",
   "name": "SQLite",
   "displayName": "SQLite Provider",
   "version": "1.0.0",
   "description": "SQLite database browser and query provider.",
-  "publisher": "Blimy",
+  "publisher": "antan2002",
   "categories": ["Database"],
   "activationEvents": ["onDatabase:sqlite"],
   "license": "MIT",
@@ -22,11 +22,11 @@
       "protocolVersion": 1,
       "fileExtensions": [".sqlite", ".db", ".sqlite3"],
       "sidecar": {
-        "darwin-arm64": "bin/Blimy-db-sqlite",
-        "darwin-x64": "bin/Blimy-db-sqlite",
-        "linux-arm64": "bin/Blimy-db-sqlite",
-        "linux-x64": "bin/Blimy-db-sqlite",
-        "win32-x64": "bin/Blimy-db-sqlite.exe"
+        "darwin-arm64": "bin/blimy-db-sqlite",
+        "darwin-x64": "bin/blimy-db-sqlite",
+        "linux-arm64": "bin/blimy-db-sqlite",
+        "linux-x64": "bin/blimy-db-sqlite",
+        "win32-x64": "bin/blimy-db-sqlite.exe"
       }
     }
   ]

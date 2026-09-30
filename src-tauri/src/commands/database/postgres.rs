@@ -1,4 +1,4 @@
-use BLIMY_database::{
+use blimy_database::{
    ConnectionManager,
    providers::{
       create_postgres_subscription as db_create_postgres_subscription,

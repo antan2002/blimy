@@ -7,9 +7,9 @@ import {
 
 describe("custom view GitHub integration", () => {
   it.each([
-    ["https://github.com/antan2002/blimy.git", { owner: "Blimydev", repo: "Blimy" }],
-    ["git@github.com:antan2002/blimy.git", { owner: "Blimydev", repo: "Blimy" }],
-    ["github://antan2002/blimy", { owner: "Blimydev", repo: "Blimy" }],
+    ["https://github.com/antan2002/blimy.git", { owner: "antan2002", repo: "Blimy" }],
+    ["git@github.com:antan2002/blimy.git", { owner: "antan2002", repo: "Blimy" }],
+    ["github://antan2002/blimy", { owner: "antan2002", repo: "Blimy" }],
   ])("parses GitHub repository references", (value, expected) => {
     expect(parseGitHubRepository(value)).toEqual(expected);
   });
@@ -26,13 +26,13 @@ describe("custom view GitHub integration", () => {
     ]);
 
     await expect(resolveProjectGitHubRepository("/projects/Blimy", loadRemotes)).resolves.toEqual({
-      owner: "Blimydev",
+      owner: "antan2002",
       repo: "Blimy",
     });
   });
 
   it("builds project-scoped API URLs and rejects unsafe paths", () => {
-    const repository = { owner: "Blimydev", repo: "Blimy" };
+    const repository = { owner: "antan2002", repo: "Blimy" };
 
     expect(buildProjectGitHubApiUrl(repository, "/releases?per_page=100")).toBe(
       "https://api.github.com/repos/antan2002/blimy/releases?per_page=100",

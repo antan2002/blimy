@@ -1,16 +1,16 @@
 {
-  "$schema": "https://Blimy.dev/schemas/extension.json",
-  "id": "Blimy.skill.code-review",
+  "$schema": "https://raw.githubusercontent.com/antan2002/blimy/main/extensions/schema/extension.schema.json",
+  "id": "blimy.skill.code-review",
   "name": "code-review",
   "displayName": "Code Review",
   "description": "Review code changes for correctness, regressions, and missing validation.",
   "version": "1.0.0",
-  "publisher": "Blimy",
+  "publisher": "antan2002",
   "categories": ["Skill"],
   "contributes": {
     "skills": [
       {
-        "id": "Blimy.code-review",
+        "id": "blimy.code-review",
         "name": "Code Review",
         "description": "Review code changes for correctness, regressions, and missing validation.",
         "path": "SKILL.md",

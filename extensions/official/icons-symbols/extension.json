@@ -1,6 +1,6 @@
 {
-  "$schema": "https://Blimy.dev/schemas/extension.json",
-  "id": "Blimy.icon-theme.symbols",
+  "$schema": "https://raw.githubusercontent.com/antan2002/blimy/main/extensions/schema/extension.schema.json",
+  "id": "blimy.icon-theme.symbols",
   "name": "symbols-icons",
   "displayName": "Symbols Icons",
   "version": "0.0.25",

@@ -3,14 +3,14 @@
 //! `<app data>/tools/acp`, where installed agents are detected.
 
 use crate::app_runtime::AppHandle;
-use BLIMY_ai::{
+use blimy_ai::{
    AgentConfig,
    acp::registry::{
       self, RegistrySnapshot, RegistryStore, ResolvedDistribution, current_registry_platform,
       install, store::https_client,
    },
 };
-use BLIMY_runtime::NodeRuntime;
+use blimy_runtime::NodeRuntime;
 use std::{fs, path::PathBuf, sync::OnceLock};
 use tauri::Manager;
 use tokio::sync::Mutex;

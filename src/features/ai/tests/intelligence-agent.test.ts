@@ -520,7 +520,7 @@ describe("Intelligence local agent loop", () => {
         step(),
       ],
     });
-    await runIntelligenceAgent({ ...params(), providerId: "Blimy", modelId: "Blimy/model" });
+    await runIntelligenceAgent({ ...params(), providerId: "blimy", modelId: "Blimy/model" });
 
     const sizes = mocks.model.doStreamCalls.map(
       (call) => new TextEncoder().encode(JSON.stringify(call.prompt)).length,
@@ -597,7 +597,7 @@ describe("Intelligence local agent loop", () => {
     const options = params();
     const result = await runIntelligenceAgent({
       ...options,
-      providerId: "Blimy",
+      providerId: "blimy",
       notices: ["An image was not sent: it is over the size limit."],
       messages: [
         {

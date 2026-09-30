@@ -23,7 +23,7 @@ describe("provider access", () => {
   it("allows signed-in free users to access the prepaid Blimy provider", () => {
     expect(
       canUseProviderWithoutApiKey({
-        providerId: "Blimy",
+        providerId: "blimy",
         subscription: {
           ...subscription,
           status: "free",
@@ -35,7 +35,7 @@ describe("provider access", () => {
     ).toBe(true);
     expect(
       canUseProviderWithoutApiKey({
-        providerId: "Blimy",
+        providerId: "blimy",
         subscription: null,
         hasStoredKey: false,
         requiresApiKey: false,

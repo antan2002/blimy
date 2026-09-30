@@ -19,60 +19,14 @@
 
 ## Installation
 
-### Quick install
-
-macOS and Linux:
-
-```bash
-curl -fsSL https://Blimy.dev/install.sh | sh
-```
-
-Windows (PowerShell):
-
-```powershell
-powershell -ExecutionPolicy ByPass -c "irm https://Blimy.dev/install.ps1 | iex"
-```
-
-The install scripts detect your operating system and architecture, download the latest stable
-release, and verify its SHA256 checksum when one is available. You can review the
-[macOS and Linux script](https://Blimy.dev/install.sh) or
-[Windows script](https://Blimy.dev/install.ps1) before running it.
-
-To install the latest preview release on macOS or Linux:
-
-```bash
-curl -fsSL https://Blimy.dev/install.sh | sh -s -- --preview
-```
-
-### Package managers
-
-Homebrew on macOS:
-
-```bash
-brew install --cask Blimy
-```
-
-WinGet on Windows:
-
-```powershell
-winget install --id=Blimydev.Blimy -e
-```
-
-Scoop on Windows:
-
-```powershell
-scoop bucket add Blimy https://github.com/Blimydev/scoop-Blimy
-scoop install Blimy
-```
-
-### Manual download
-
-Prebuilt packages for macOS, Windows, and Linux are available on the
+Prebuilt packages for macOS, Windows, and Linux are published on the
 [GitHub Releases page](https://github.com/antan2002/blimy/releases). Linux releases include native
 `.deb` and `.rpm` packages as well as a portable `.tar.gz` bundle.
 
-See the [installation guide](https://Blimy.dev/docs/installation) for detailed platform steps,
-install locations, and uninstall instructions.
+Download the asset for your platform, then check it against the SHA256 checksum published on the
+same release before you run it.
+
+There are no install scripts, Homebrew casks, WinGet manifests, or Scoop buckets published yet.
 
 ## Development
 
@@ -81,7 +35,7 @@ To build Blimy from source, install [Node.js 24](https://nodejs.org),
 
 ```bash
 git clone https://github.com/antan2002/blimy.git
-cd Blimy
+cd blimy
 bun setup
 bun dev
 ```
@@ -92,7 +46,7 @@ guidelines.
 
 ## Documentation
 
-See the [documentation](https://Blimy.dev/docs).
+Documentation lives in this repository: see [CONTRIBUTING.md](CONTRIBUTING.md) for development setup and the doc comments in `src/` for feature detail.
 
 ## Contributing
 
@@ -102,7 +56,6 @@ Contributions are welcome! See the [contributing guide](CONTRIBUTING.md) and [Co
 
 - [Issues](https://github.com/antan2002/blimy/issues)
 - [Discussions](https://github.com/antan2002/blimy/discussions)
-- [Discord](https://discord.gg/DD8F38wFMv)
 
 ## License
 

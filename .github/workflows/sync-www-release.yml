@@ -19,8 +19,8 @@ jobs:
         run: |
           jq -n \
             --arg tag "$RELEASE_TAG" \
-            '{event_type: "Blimy-stable-release", client_payload: {tag: $tag}}' \
+            '{event_type: "blimy-stable-release", client_payload: {tag: $tag}}' \
             | gh api \
                 --method POST \
-                repos/Blimydev/www/dispatches \
+                repos/antan2002/www/dispatches \
                 --input -

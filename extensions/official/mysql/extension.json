@@ -1,11 +1,11 @@
 {
-  "$schema": "https://Blimy.dev/schemas/extension.json",
-  "id": "Blimy.database.mysql",
+  "$schema": "https://raw.githubusercontent.com/antan2002/blimy/main/extensions/schema/extension.schema.json",
+  "id": "blimy.database.mysql",
   "name": "MySQL",
   "displayName": "MySQL Provider",
   "version": "1.0.0",
   "description": "MySQL connection, schema, and query provider.",
-  "publisher": "Blimy",
+  "publisher": "antan2002",
   "categories": ["Database"],
   "activationEvents": ["onDatabase:mysql"],
   "license": "MIT",
@@ -22,11 +22,11 @@
       "protocolVersion": 1,
       "defaultPort": 3306,
       "sidecar": {
-        "darwin-arm64": "bin/Blimy-db-mysql",
-        "darwin-x64": "bin/Blimy-db-mysql",
-        "linux-arm64": "bin/Blimy-db-mysql",
-        "linux-x64": "bin/Blimy-db-mysql",
-        "win32-x64": "bin/Blimy-db-mysql.exe"
+        "darwin-arm64": "bin/blimy-db-mysql",
+        "darwin-x64": "bin/blimy-db-mysql",
+        "linux-arm64": "bin/blimy-db-mysql",
+        "linux-x64": "bin/blimy-db-mysql",
+        "win32-x64": "bin/blimy-db-mysql.exe"
       }
     }
   ]

@@ -1,11 +1,11 @@
 {
-  "$schema": "https://Blimy.dev/schemas/extension.json",
-  "id": "Blimy.ai.v0",
+  "$schema": "https://raw.githubusercontent.com/antan2002/blimy/main/extensions/schema/extension.schema.json",
+  "id": "blimy.ai.v0",
   "name": "v0",
   "displayName": "v0",
   "description": "Generate apps with v0 and optional shadcn registry design-system context.",
   "version": "1.0.0",
-  "publisher": "Blimy",
+  "publisher": "antan2002",
   "categories": ["AI"],
   "activationEvents": ["onAIProvider:v0"],
   "aiProviders": [

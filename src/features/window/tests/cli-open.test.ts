@@ -75,12 +75,12 @@ describe("CLI open request mapping", () => {
     expect(
       mapCliOpenPayloadToWindowOpenRequest({
         kind: "web",
-        url: "https://Blimy.dev/docs",
+        url: "https://github.com/antan2002/blimy/docs",
       }),
     ).toEqual({
       type: "web",
       source: "cli",
-      url: "https://Blimy.dev/docs",
+      url: "https://github.com/antan2002/blimy/docs",
     });
 
     expect(

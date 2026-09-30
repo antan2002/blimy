@@ -68,7 +68,7 @@ describe("Intelligence connection choices", () => {
 
   it("gives a hosted connection without a model the automatic model", () => {
     const preferences = defaultIntelligencePreferences();
-    preferences.tasks.agent = { providerId: "Blimy", modelId: "" };
+    preferences.tasks.agent = { providerId: "blimy", modelId: "" };
     expect(
       resolveIntelligenceConnection({
         task: "agent",
@@ -76,7 +76,7 @@ describe("Intelligence connection choices", () => {
         hasIntelligence: true,
         personalConnection: { providerId: "anthropic", modelId: "personal-model" },
       }),
-    ).toEqual({ providerId: "Blimy", modelId: "auto" });
+    ).toEqual({ providerId: "blimy", modelId: "auto" });
   });
 });
 

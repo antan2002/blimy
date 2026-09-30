@@ -95,7 +95,7 @@ export function ShareAccessDialog({
           </Field>
         )}
         {visibility !== "public" && !options.pro && (
-          <FieldDescription>Email and organization access require Blimy Pro.</FieldDescription>
+          <FieldDescription>Email and organization access is not available in this build.</FieldDescription>
         )}
         {error && (
           <p role="alert" className="ui-text-sm text-destructive">

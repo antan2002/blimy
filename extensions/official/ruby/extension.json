@@ -1,11 +1,11 @@
 {
-  "$schema": "https://Blimy.dev/schemas/extension.json",
-  "id": "Blimy.ruby",
+  "$schema": "https://raw.githubusercontent.com/antan2002/blimy/main/extensions/schema/extension.schema.json",
+  "id": "blimy.ruby",
   "name": "Ruby",
   "displayName": "Ruby",
   "version": "1.0.0",
   "description": "Ruby language support (Ruby, ERB and common Rails templates)",
-  "publisher": "Blimy",
+  "publisher": "antan2002",
   "categories": ["Language"],
   "languages": [
     {

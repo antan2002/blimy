@@ -86,8 +86,8 @@ describe("normalizeGitHubMarkdown", () => {
   });
 
   it("links cross-repository references to the referenced repository", () => {
-    expect(normalizeGitHubMarkdown("See Blimydev/www#42", repositoryUrl)).toBe(
-      "See [Blimydev/www#42](https://github.com/Blimydev/www/issues/42)",
+    expect(normalizeGitHubMarkdown("See antan2002/www#42", repositoryUrl)).toBe(
+      "See [antan2002/www#42](https://github.com/antan2002/www/issues/42)",
     );
   });
 

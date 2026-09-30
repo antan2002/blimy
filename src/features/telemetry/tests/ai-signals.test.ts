@@ -6,7 +6,7 @@ describe("AI telemetry signals", () => {
     expect(
       createAiFailurePayload({
         kind: "builtin",
-        providerId: "Blimy",
+        providerId: "blimy",
         modelId: "openai/gpt-5-mini",
         code: "allowance_exhausted",
         status: 402,

@@ -25,7 +25,7 @@ describe("AI model preferences", () => {
         personalConnection: openai,
         personalConnectionIsLocal: false,
       }),
-    ).toEqual({ providerId: "Blimy", modelId: "auto" });
+    ).toEqual({ providerId: "blimy", modelId: "auto" });
     expect(
       getEffectiveDefaultConnection({
         preferences,
@@ -45,8 +45,8 @@ describe("AI model preferences", () => {
   });
 
   it("treats Blimy as unavailable without a plan that includes it", () => {
-    expect(isConnectionAvailable({ providerId: "Blimy", modelId: "auto" }, false)).toBe(false);
-    expect(isConnectionAvailable({ providerId: "Blimy", modelId: "auto" }, true)).toBe(true);
+    expect(isConnectionAvailable({ providerId: "blimy", modelId: "auto" }, false)).toBe(false);
+    expect(isConnectionAvailable({ providerId: "blimy", modelId: "auto" }, true)).toBe(true);
     expect(isConnectionAvailable(ollama, false)).toBe(true);
   });
 

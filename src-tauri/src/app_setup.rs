@@ -6,10 +6,10 @@ use crate::{
    file_events::TauriFileChangeEmitter,
    terminal::{FrontendTerminalSessions, ManagedTerminalManager as TerminalManager},
 };
-use BLIMY_ai::{AcpAgentBridge, CodexAppServer};
-use BLIMY_debugger::DebugManager;
-use BLIMY_lsp::LspManager;
-use BLIMY_project::FileWatcher;
+use blimy_ai::{AcpAgentBridge, CodexAppServer};
+use blimy_debugger::DebugManager;
+use blimy_lsp::LspManager;
+use blimy_project::FileWatcher;
 use log::{debug, info};
 use serde::Serialize;
 use std::{path::PathBuf, sync::Arc, time::Instant};
@@ -22,7 +22,7 @@ use tokio::sync::Mutex;
 pub fn configure_app(app: &mut tauri::App<BlimyRuntime>) -> Result<(), Box<dyn std::error::Error>> {
    app.state::<commands::ui::StartupTiming>()
       .record("native:setup:start");
-   BLIMY_version_control::configure_libgit2();
+   blimy_version_control::configure_libgit2();
    #[cfg(all(target_os = "linux", feature = "linux"))]
    if commands::development::cli_windows::requests_need_workbench(
       &commands::development::cli_args::parse_cli_argv(

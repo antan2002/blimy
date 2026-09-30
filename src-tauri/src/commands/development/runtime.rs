@@ -1,5 +1,5 @@
 use crate::app_runtime::AppHandle;
-use BLIMY_runtime::{BunRuntime, NodeRuntime, RuntimeManager, RuntimeStatus, RuntimeType};
+use blimy_runtime::{BunRuntime, NodeRuntime, RuntimeManager, RuntimeStatus, RuntimeType};
 use std::path::PathBuf;
 use tauri::Manager;
 

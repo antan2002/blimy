@@ -116,7 +116,7 @@ function ShareSnapshotDialog({ draft, onClose }: { draft: ShareDraft; onClose: (
       }
     >
       <div className="flex flex-col gap-4">
-        <FieldDescription>Share a read-only view on Blimy.dev.</FieldDescription>
+        <FieldDescription>Create a read-only share link for the current snapshot.</FieldDescription>
         <Field>
           <FieldLabel>Content</FieldLabel>
           <p className="font-medium ui-text-sm">{draft.title}</p>
@@ -172,11 +172,8 @@ function ShareSnapshotDialog({ draft, onClose }: { draft: ShareDraft; onClose: (
             {restricted && !options?.pro ? (
               <Field>
                 <FieldDescription>
-                  Email and organization restrictions require Blimy Pro.
+                  Email and organization restrictions are not available in this build.
                 </FieldDescription>
-                <Button onClick={() => void openUrl("https://Blimy.dev/pricing")}>
-                  View Pro plan
-                </Button>
               </Field>
             ) : null}
             {visibility === "email" && options?.pro ? (

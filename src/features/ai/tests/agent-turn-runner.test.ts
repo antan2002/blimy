@@ -164,7 +164,7 @@ describe("agent turn runner", () => {
     expect(mocks.recordAiFailure).toHaveBeenCalledWith(
       expect.objectContaining({
         kind: "builtin",
-        providerId: "Blimy",
+        providerId: "blimy",
         code: "allowance_exhausted",
         status: 402,
         phase: "provider",

@@ -25,7 +25,7 @@ describe("GitHub entity URLs", () => {
 
   it("builds links for users, branches, commits, labels and milestones", () => {
     const repo = "https://github.com/antan2002/blimy/";
-    expect(getGitHubUserUrl("mehmet ozgul")).toBe("https://github.com/mehmet%20ozgul");
+    expect(getGitHubUserUrl("Blimy User")).toBe("https://github.com/Blimy%20User");
     expect(getGitHubBranchUrl(repo, "feature/split panes")).toBe(
       "https://github.com/antan2002/blimy/tree/feature/split%20panes",
     );

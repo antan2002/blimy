@@ -6,7 +6,7 @@ import { toIntelligenceAgentError } from "../intelligence/lib/intelligence-agent
 const describeFailure = (error: string, overrides: { isAcp?: boolean; offline?: boolean } = {}) =>
   describeAgentTurnFailure({
     error,
-    providerId: "Blimy",
+    providerId: "blimy",
     isAcp: overrides.isAcp ?? false,
     offline: overrides.offline ?? false,
   });
@@ -25,7 +25,7 @@ describe("agent turn failures", () => {
       title: "Included credit used up",
       message: failure.message,
       details: failure.details,
-      providerId: "Blimy",
+      providerId: "blimy",
       retryable: false,
     });
   });

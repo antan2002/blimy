@@ -163,7 +163,7 @@ export function buildExtensionCatalog({
         isBundled: false,
         runtimeIssues: ext.runtimeIssues,
         agentId: contribution.id,
-        // The bundled brand art Blimy.dev also shows; registry icons are monochrome fallbacks.
+        // The bundled brand art the product site also shows; registry icons are monochrome fallbacks.
         icon: agentBrandImages[contribution.id] ?? agent?.icon ?? ext.manifest.icon,
         canInstall: agent?.canInstall ?? Boolean(contribution.install),
         hasUpdate: agent?.updateAvailable ?? false,

@@ -16,7 +16,7 @@ function pullRequest(number: number, title: string): PullRequest {
     number,
     title,
     state: "OPEN",
-    author: { login: "Blimydev" },
+    author: { login: "antan2002" },
     createdAt: "2026-08-04T00:00:00.000Z",
     updatedAt: "2026-08-04T00:00:00.000Z",
     isDraft: false,

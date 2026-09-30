@@ -1,11 +1,11 @@
 {
-  "$schema": "https://Blimy.dev/schemas/extension.json",
-  "id": "Blimy.database.duckdb",
+  "$schema": "https://raw.githubusercontent.com/antan2002/blimy/main/extensions/schema/extension.schema.json",
+  "id": "blimy.database.duckdb",
   "name": "DuckDB",
   "displayName": "DuckDB Provider",
   "version": "1.0.0",
   "description": "DuckDB database browser and query provider.",
-  "publisher": "Blimy",
+  "publisher": "antan2002",
   "categories": ["Database"],
   "activationEvents": ["onDatabase:duckdb"],
   "license": "MIT",
@@ -22,11 +22,11 @@
       "protocolVersion": 1,
       "fileExtensions": [".duckdb", ".duck"],
       "sidecar": {
-        "darwin-arm64": "bin/Blimy-db-duckdb",
-        "darwin-x64": "bin/Blimy-db-duckdb",
-        "linux-arm64": "bin/Blimy-db-duckdb",
-        "linux-x64": "bin/Blimy-db-duckdb",
-        "win32-x64": "bin/Blimy-db-duckdb.exe"
+        "darwin-arm64": "bin/blimy-db-duckdb",
+        "darwin-x64": "bin/blimy-db-duckdb",
+        "linux-arm64": "bin/blimy-db-duckdb",
+        "linux-x64": "bin/blimy-db-duckdb",
+        "win32-x64": "bin/blimy-db-duckdb.exe"
       }
     }
   ]

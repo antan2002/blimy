@@ -1,4 +1,4 @@
-use BLIMY_runtime::process::configure_background_command;
+use blimy_runtime::process::configure_background_command;
 use std::{collections::HashMap, path::Path, process::Command};
 
 pub(super) fn build_extension_command(

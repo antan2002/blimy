@@ -1,11 +1,11 @@
 {
-  "$schema": "https://Blimy.dev/schemas/extension.json",
-  "id": "Blimy.lua",
+  "$schema": "https://raw.githubusercontent.com/antan2002/blimy/main/extensions/schema/extension.schema.json",
+  "id": "blimy.lua",
   "name": "Lua",
   "displayName": "Lua",
   "version": "1.0.0",
   "description": "Lua language support with LSP",
-  "publisher": "Blimy",
+  "publisher": "antan2002",
   "categories": ["Language"],
   "languages": [
     {
@@ -18,7 +18,7 @@
     "lsp": {
       "name": "lua-language-server",
       "runtime": "binary",
-      "downloadUrl": "https://Blimy.dev/extensions/packages/lua/lua-${os}-${arch}.tar.gz"
+      "downloadUrl": "https://github.com/antan2002/blimy/extensions/packages/lua/lua-${os}-${arch}.tar.gz"
     },
     "formatter": {
       "name": "stylua",

@@ -1,16 +1,16 @@
 {
-  "$schema": "https://Blimy.dev/schemas/extension.json",
-  "id": "Blimy.skill.debugging",
+  "$schema": "https://raw.githubusercontent.com/antan2002/blimy/main/extensions/schema/extension.schema.json",
+  "id": "blimy.skill.debugging",
   "name": "systematic-debugging",
   "displayName": "Systematic Debugging",
   "description": "Trace failures to their real boundary before proposing a focused fix.",
   "version": "1.0.0",
-  "publisher": "Blimy",
+  "publisher": "antan2002",
   "categories": ["Skill"],
   "contributes": {
     "skills": [
       {
-        "id": "Blimy.systematic-debugging",
+        "id": "blimy.systematic-debugging",
         "name": "Systematic Debugging",
         "description": "Trace failures to their real boundary before proposing a focused fix.",
         "path": "SKILL.md",

@@ -33,18 +33,18 @@ describe("buildWhatsNewMarkdown", () => {
     const markdown = buildWhatsNewMarkdown({
       version: "1.2.0",
       body: [
-        "* Improve updater layout by @Blimydev in https://github.com/antan2002/blimy/commit/abc123",
+        "* Improve updater layout by @antan2002 in https://github.com/antan2002/blimy/commit/abc123",
         "**Full Changelog**: https://github.com/antan2002/blimy/compare/v1.1.0...v1.2.0",
       ].join("\n"),
     });
 
     expect(markdown).toContain(
-      "- [Improve updater layout](https://github.com/antan2002/blimy/commit/abc123) — @Blimydev",
+      "- [Improve updater layout](https://github.com/antan2002/blimy/commit/abc123) — @antan2002",
     );
     expect(markdown).toContain(
       "**Full changelog:** [Compare changes](https://github.com/antan2002/blimy/compare/v1.1.0...v1.2.0)",
     );
-    expect(markdown).not.toContain(" by @Blimydev in https://");
+    expect(markdown).not.toContain(" by @antan2002 in https://");
   });
 
   it("includes a useful fallback when release notes are missing", () => {
@@ -104,7 +104,7 @@ describe("resolveWhatsNewInfo", () => {
       body: "Fixed release notes.",
       date: "2026-07-08",
     });
-    expect(fetchCalls).toEqual(["https://Blimy.dev/api/update/stable"]);
+    expect(fetchCalls).toEqual(["https://github.com/antan2002/blimy/api/update/stable"]);
   });
 
   it("falls back to the GitHub release when the updater manifest is for another version", async () => {
@@ -113,7 +113,7 @@ describe("resolveWhatsNewInfo", () => {
       const href = String(url);
       fetchCalls.push(href);
 
-      if (href.includes("Blimy.dev")) {
+      if (href.includes("/api/update/")) {
         return Response.json({ version: "1.3.0", notes: "Newer release." });
       }
 
@@ -129,7 +129,7 @@ describe("resolveWhatsNewInfo", () => {
       date: "2026-07-07",
     });
     expect(fetchCalls).toEqual([
-      "https://Blimy.dev/api/update/stable",
+      "https://github.com/antan2002/blimy/api/update/stable",
       "https://api.github.com/repos/antan2002/blimy/releases/tags/v1.2.0",
     ]);
   });

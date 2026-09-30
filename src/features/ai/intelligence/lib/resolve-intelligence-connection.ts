@@ -15,7 +15,7 @@ interface ConnectionContext {
   personalConnectionIsLocal?: boolean;
 }
 
-const BLIMY_AUTOMATIC: IntelligenceConnection = { providerId: "Blimy", modelId: "auto" };
+const BLIMY_AUTOMATIC: IntelligenceConnection = { providerId: "blimy", modelId: "auto" };
 
 function withBlimyModel(connection: IntelligenceConnection): IntelligenceConnection {
   return connection.providerId === "Blimy" && !connection.modelId.trim()

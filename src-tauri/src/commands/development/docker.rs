@@ -993,7 +993,7 @@ async fn open_image_dev_container(
       Some(image) => image.clone(),
       None if dev_container.docker_file.is_some() => {
          let tag = format!(
-            "Blimy-devcontainer:{}",
+            "blimy-devcontainer:{}",
             slugify(&format!(
                "{}-{}",
                workspace_path.display(),
@@ -1024,7 +1024,7 @@ async fn open_image_dev_container(
       }
    };
    let container_name = format!(
-      "Blimy-devcontainer-{}",
+      "blimy-devcontainer-{}",
       slugify(&format!(
          "{}-{}",
          workspace_path.display(),
@@ -1211,7 +1211,7 @@ async fn run_docker_exec_shell(container_id: &str, command: &str) -> Result<Stri
 
 fn lifecycle_marker_path(dev_container: &DockerDevContainer) -> String {
    format!(
-      "/tmp/.Blimy-devcontainer-post-create-{}",
+      "/tmp/.blimy-devcontainer-post-create-{}",
       slugify(&dev_container.config_path)
    )
 }

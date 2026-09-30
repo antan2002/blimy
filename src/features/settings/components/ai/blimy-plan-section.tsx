@@ -39,7 +39,7 @@ export function BlimyPlanSection() {
     usage?.walletBalanceCents != null ? formatUsdCents(usage.walletBalanceCents) : null;
 
   return (
-    <Section title="Blimy" icon={<ProviderIcon providerId="Blimy" />}>
+    <Section title="Blimy" icon={<ProviderIcon providerId="blimy" />}>
       {!isAuthenticated ? (
         <SettingRow label="Plan" description="Sign in to use Blimy models">
           <Button

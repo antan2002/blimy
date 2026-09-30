@@ -1,16 +1,16 @@
 {
-  "$schema": "https://Blimy.dev/schemas/extension.json",
-  "id": "Blimy.skill.implementation-plan",
+  "$schema": "https://raw.githubusercontent.com/antan2002/blimy/main/extensions/schema/extension.schema.json",
+  "id": "blimy.skill.implementation-plan",
   "name": "implementation-plan",
   "displayName": "Implementation Plan",
   "description": "Turn a product request into a concrete, repository-grounded implementation plan.",
   "version": "1.0.0",
-  "publisher": "Blimy",
+  "publisher": "antan2002",
   "categories": ["Skill"],
   "contributes": {
     "skills": [
       {
-        "id": "Blimy.implementation-plan",
+        "id": "blimy.implementation-plan",
         "name": "Implementation Plan",
         "description": "Turn a product request into a concrete, repository-grounded implementation plan.",
         "path": "SKILL.md",

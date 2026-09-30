@@ -1,5 +1,5 @@
 use crate::app_runtime::AppHandle;
-use BLIMY_tooling::{
+use blimy_tooling::{
    LanguageToolConfigSet, LanguageToolStatus, ToolInstaller, ToolRegistry, ToolStatus, ToolType,
 };
 use serde_json::Value;

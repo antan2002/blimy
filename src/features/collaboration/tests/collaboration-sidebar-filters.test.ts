@@ -65,8 +65,8 @@ const participants: CollaborationParticipant[] = [
 
 describe("collaboration sidebar filters", () => {
   it("normalizes search once for every sidebar section", () => {
-    expect(normalizeCollaborationSearchQuery("  Mehmet Özgül ")).toBe("mehmet özgül");
-    expect(matchesCollaborationSearchQuery("özg", [12, "Mehmet Özgül", false])).toBe(true);
+    expect(normalizeCollaborationSearchQuery("  Blimy Author ")).toBe("Blimy Author");
+    expect(matchesCollaborationSearchQuery("özg", [12, "Blimy Author", false])).toBe(true);
     expect(matchesCollaborationSearchQuery("missing", [12, null, false])).toBe(false);
     expect(matchesCollaborationSearchQuery("", [])).toBe(true);
   });

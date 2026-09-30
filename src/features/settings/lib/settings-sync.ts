@@ -343,7 +343,7 @@ async function applyRemoteSnapshot(snapshot: CloudSettingsSyncSnapshot) {
     const importPayload =
       snapshot.schemaVersion > 0
         ? {
-            format: "Blimy.settings",
+            format: "blimy.settings",
             version: snapshot.schemaVersion,
             exportedAt: snapshot.updatedAt,
             settings: snapshot.settings,

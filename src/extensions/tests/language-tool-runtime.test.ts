@@ -35,7 +35,7 @@ describe("extension-store runtime manifest", () => {
     const url = resolveToolDownloadUrlForManifest(
       {
         name: "marksman",
-        downloadUrl: "https://Blimy.dev/extensions/markdown/markdown-${os}-${arch}.tar.gz",
+        downloadUrl: "https://github.com/antan2002/blimy/extensions/markdown/markdown-${os}-${arch}.tar.gz",
       },
       "1.0.0",
     );
@@ -49,7 +49,7 @@ describe("extension-store runtime manifest", () => {
     const url = resolveToolDownloadUrlForManifest(
       {
         name: "lua-language-server",
-        downloadUrl: "https://Blimy.dev/extensions/packages/lua/lua-${os}-${arch}.tar.gz",
+        downloadUrl: "https://github.com/antan2002/blimy/extensions/packages/lua/lua-${os}-${arch}.tar.gz",
       },
       "1.0.0",
     );
@@ -92,7 +92,7 @@ describe("extension-store runtime manifest", () => {
 
   it("defers generic platform URL templates to the Rust backend for libc-aware resolution", () => {
     const template =
-      "https://Blimy.dev/extensions/test/test-${targetArch}-${targetOs}.${archiveExt}";
+      "https://github.com/antan2002/blimy/extensions/test/test-${targetArch}-${targetOs}.${archiveExt}";
 
     expect(
       resolveToolDownloadUrlForBackend(
@@ -110,7 +110,7 @@ describe("extension-store runtime manifest", () => {
       lsp: {
         name: "marksman",
         runtime: "binary",
-        downloadUrl: "https://Blimy.dev/extensions/markdown/markdown-${os}-${arch}.tar.gz",
+        downloadUrl: "https://github.com/antan2002/blimy/extensions/markdown/markdown-${os}-${arch}.tar.gz",
         server: { default: "marksman" },
         args: ["server"],
         fileExtensions: [".md"],

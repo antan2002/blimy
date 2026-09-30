@@ -29,9 +29,9 @@ describe("new project model", () => {
   });
 
   it("builds the destination path with the location separator", () => {
-    expect(getNewProjectPath("/Users/mehmet/Code", "Blimy")).toBe("/Users/mehmet/Code/Blimy");
-    expect(getNewProjectPath("C:\\Users\\mehmet\\Code", "Blimy")).toBe(
-      "C:\\Users\\mehmet\\Code\\Blimy",
+    expect(getNewProjectPath("/Users/Blimy User/Code", "Blimy")).toBe("/Users/Blimy User/Code/Blimy");
+    expect(getNewProjectPath("C:\\Users\\Blimy User\\Code", "Blimy")).toBe(
+      "C:\\Users\\Blimy User\\Code\\Blimy",
     );
   });
 

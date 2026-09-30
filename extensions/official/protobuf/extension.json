@@ -1,11 +1,11 @@
 {
-  "$schema": "https://Blimy.dev/schemas/extension.json",
-  "id": "Blimy.protobuf",
+  "$schema": "https://raw.githubusercontent.com/antan2002/blimy/main/extensions/schema/extension.schema.json",
+  "id": "blimy.protobuf",
   "name": "Protobuf",
   "displayName": "Protocol Buffers",
   "version": "1.0.0",
   "description": "Protocol Buffers language support with syntax highlighting",
-  "publisher": "Blimy",
+  "publisher": "antan2002",
   "categories": ["Language"],
   "languages": [
     {

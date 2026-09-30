@@ -15,8 +15,8 @@ describe("workspace session buffer restore", () => {
     const context = createContext();
     const legacyBuffer = {
       type: "webViewer",
-      path: "web-viewer://https://Blimy.dev",
-      url: "https://Blimy.dev",
+      path: "web-viewer://https://github.com/antan2002/blimy",
+      url: "https://github.com/antan2002/blimy",
       isPinned: true,
     } as unknown as BufferSession;
     await expect(restoreWorkspaceSessionBuffer(legacyBuffer, context)).resolves.toBeNull();

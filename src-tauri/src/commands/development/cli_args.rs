@@ -484,11 +484,11 @@ mod tests {
    #[test]
    fn parse_cli_args_web_command() {
       let cwd = std::env::current_dir().unwrap();
-      let args = vec!["web".to_string(), "https://Blimy.dev".to_string()];
+      let args = vec!["web".to_string(), "https://github.com/antan2002/blimy".to_string()];
       assert_eq!(
          parse_cli_args(&args, &cwd),
          vec![CliRequest::Web {
-            url: "https://Blimy.dev".to_string()
+            url: "https://github.com/antan2002/blimy".to_string()
          }]
       );
    }
@@ -504,13 +504,13 @@ mod tests {
          "--disable-gpu-compositing".to_string(),
          "--disable-setuid-sandbox".to_string(),
          "web".to_string(),
-         "https://Blimy.dev".to_string(),
+         "https://github.com/antan2002/blimy".to_string(),
       ];
 
       assert_eq!(
          parse_cli_args(&args, &cwd),
          vec![CliRequest::Web {
-            url: "https://Blimy.dev".to_string()
+            url: "https://github.com/antan2002/blimy".to_string()
          }]
       );
    }
@@ -694,7 +694,7 @@ mod tests {
       state.push_all(
          "main-2",
          vec![CliRequest::Web {
-            url: "https://Blimy.dev".into(),
+            url: "https://github.com/antan2002/blimy".into(),
          }],
       );
       let mut pending = state.0.lock().unwrap();

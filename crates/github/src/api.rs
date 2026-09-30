@@ -2309,9 +2309,9 @@ mod api_tests {
       );
       assert_eq!(
          parse_workflow_notification_title(
-            "Check workflow run failed for mehmetozguldev/notification-routing branch"
+            "Check workflow run failed for blimydev/notification-routing branch"
          ),
-         Some(("Check", "failed", "mehmetozguldev/notification-routing"))
+         Some(("Check", "failed", "blimydev/notification-routing"))
       );
    }
 

@@ -9,7 +9,7 @@ function createBlameLine(overrides: Partial<GitBlameLine> = {}): GitBlameLine {
     commit_hash: "abcdef1234567890",
     is_uncommitted: false,
     author: "Blimy Developer",
-    email: "developer@Blimy.dev",
+    email: "developer@github.com/antan2002/blimy",
     time: 1_700_000_000,
     commit: "Restore inline blame hover\n\nInclude commit details.",
     ...overrides,
@@ -30,7 +30,7 @@ describe("inline Git blame presentation", () => {
     expect(getInlineGitBlamePresentation(createBlameLine())).toEqual({
       text: "  Blimy Developer, yesterday",
       author: "Blimy Developer",
-      email: "developer@Blimy.dev",
+      email: "developer@github.com/antan2002/blimy",
       relativeTime: "yesterday",
       commitSummary: "Restore inline blame hover",
       commitHash: "abcdef1234567890",

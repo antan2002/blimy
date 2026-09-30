@@ -10,7 +10,7 @@ const commit = (hash: string): GitCommit => ({
   hash,
   message: hash,
   author: "Blimy",
-  email: "dev@Blimy.dev",
+  email: "dev@github.com/antan2002/blimy",
   date: "2026-07-25",
 });
 

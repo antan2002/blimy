@@ -31,7 +31,7 @@ describe("file system drop controller", () => {
   it("does not call onDrop when the dropped payload contains no supported paths", async () => {
     let called = false;
 
-    await handleDroppedExternalPaths(["https://Blimy.dev", "relative/path.ts"], () => {
+    await handleDroppedExternalPaths(["https://github.com/antan2002/blimy", "relative/path.ts"], () => {
       called = true;
     });
 

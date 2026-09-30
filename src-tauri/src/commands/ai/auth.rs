@@ -1,7 +1,7 @@
 use crate::secure_storage::{get_secret, remove_secret, store_secret};
 use tauri::command;
 
-const AUTH_TOKEN_KEY: &str = "BLIMY_auth_token";
+const AUTH_TOKEN_KEY: &str = "blimy_auth_token";
 
 /// Store the auth token using OS keychain when available.
 #[command]

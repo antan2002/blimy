@@ -13,7 +13,7 @@ describe("parseGitHubEntityLink", () => {
       parseGitHubEntityLink("https://github.com/antan2002/blimy/pull/568/files#diff-123"),
     ).toMatchObject({
       kind: "pullRequest",
-      owner: "Blimydev",
+      owner: "antan2002",
       repo: "Blimy",
       number: 568,
     });
@@ -22,7 +22,7 @@ describe("parseGitHubEntityLink", () => {
   it("parses issue links with trailing slashes", () => {
     expect(parseGitHubEntityLink("https://github.com/antan2002/blimy/issues/570/")).toMatchObject({
       kind: "issue",
-      owner: "Blimydev",
+      owner: "antan2002",
       repo: "Blimy",
       number: 570,
     });
@@ -33,7 +33,7 @@ describe("parseGitHubEntityLink", () => {
       parseGitHubEntityLink("https://github.com/antan2002/blimy/actions/runs/23614391340"),
     ).toMatchObject({
       kind: "actionRun",
-      owner: "Blimydev",
+      owner: "antan2002",
       repo: "Blimy",
       runId: 23614391340,
     });
@@ -46,7 +46,7 @@ describe("parseGitHubEntityLink", () => {
       ),
     ).toMatchObject({
       kind: "commit",
-      owner: "Blimydev",
+      owner: "antan2002",
       repo: "Blimy",
       sha: "a507c60d7efaf08ec9823e16cf937a731ed2756d",
     });
@@ -55,7 +55,7 @@ describe("parseGitHubEntityLink", () => {
   it("accepts www.github.com links", () => {
     expect(parseGitHubEntityLink("https://www.github.com/antan2002/blimy/pull/568")).toMatchObject({
       kind: "pullRequest",
-      owner: "Blimydev",
+      owner: "antan2002",
       repo: "Blimy",
       number: 568,
     });
@@ -75,7 +75,7 @@ describe("parseGitHubEntityLink", () => {
     expect(isGitHubEntityLinkForRepository(entityLink, "https://github.com/antan2002/blimy")).toBe(
       true,
     );
-    expect(isGitHubEntityLinkForRepository(entityLink, "https://github.com/Blimydev/www")).toBe(
+    expect(isGitHubEntityLinkForRepository(entityLink, "https://github.com/antan2002/www")).toBe(
       false,
     );
     expect(isGitHubEntityLinkForRepository(entityLink, "git@github.com:antan2002/blimy.git")).toBe(

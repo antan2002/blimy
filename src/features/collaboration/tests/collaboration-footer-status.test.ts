@@ -9,8 +9,8 @@ function collaborationSnapshot(
     enabled: true,
     workspace: {
       id: 1,
-      name: "Mehmet's team",
-      slug: "mehmet",
+      name: "Blimy User's team",
+      slug: "Blimy User",
       role: "owner",
       visibility: "workspace",
       realtimeProtocolVersion: 1,
@@ -105,6 +105,6 @@ describe("buildCollaborationFooterStatus", () => {
       tone: "live",
       active: true,
     });
-    expect(status?.tooltip).toContain("Mehmet's team · 1 online");
+    expect(status?.tooltip).toContain("Blimy User's team · 1 online");
   });
 });

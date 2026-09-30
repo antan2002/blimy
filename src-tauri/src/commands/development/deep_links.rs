@@ -1,7 +1,7 @@
 use std::{collections::HashMap, sync::Mutex};
 use tauri::State;
 
-const APP_DEEP_LINK_SCHEMES: [&str; 3] = ["Blimy", "Blimy-dev", "Blimy-preview"];
+const APP_DEEP_LINK_SCHEMES: [&str; 3] = ["blimy", "blimy-dev", "blimy-preview"];
 
 /// Deep links waiting for a workbench window to pick them up. URLs that arrive
 /// before the frontend has subscribed (for example the one that launched the
@@ -53,9 +53,9 @@ mod tests {
    fn keeps_only_app_scheme_urls() {
       let urls = [
          "blimy://open?path=/tmp/file.txt",
-         "Blimy-dev://settings?tab=general",
+         "blimy-dev://settings?tab=general",
          "file:///tmp/file.txt",
-         "https://Blimy.dev",
+         "https://github.com/antan2002/blimy",
       ]
       .map(|url| tauri::Url::parse(url).expect("valid URL"));
 
@@ -63,7 +63,7 @@ mod tests {
          app_deep_links(&urls),
          vec![
             "blimy://open?path=/tmp/file.txt".to_string(),
-            "Blimy-dev://settings?tab=general".to_string(),
+            "blimy-dev://settings?tab=general".to_string(),
          ]
       );
    }

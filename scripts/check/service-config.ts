@@ -22,6 +22,10 @@ type ServiceConfigInput = {
   capability: CapabilityConfig;
 };
 
+function normalizeEndpoint(value: string | undefined): string {
+  return typeof value === "string" ? value.trim() : "";
+}
+
 export function getServiceConfigErrors({
   services,
   stable,
@@ -34,26 +38,41 @@ export function getServiceConfigErrors({
       typeof permission === "string" ? [] : permission.allow || [],
     ) || [];
 
+  // An empty value means the service is switched off for this build, which is
+  // valid. Anything that is configured still has to be a public HTTPS URL.
   for (const [name, value] of Object.entries(services)) {
+    if (normalizeEndpoint(value) === "") {
+      continue;
+    }
     if (typeof value !== "string" || !value.startsWith("https://")) {
       errors.push(`${name} must be a public HTTPS URL.`);
     }
   }
 
-  if (stable.plugins?.updater?.endpoints?.[0] !== services.stableUpdateUrl) {
+  if (
+    normalizeEndpoint(stable.plugins?.updater?.endpoints?.[0]) !==
+    normalizeEndpoint(services.stableUpdateUrl)
+  ) {
     errors.push("Stable Tauri updater endpoint does not match src/config/services.json.");
   }
 
-  if (preview.plugins?.updater?.endpoints?.[0] !== services.previewUpdateUrl) {
+  if (
+    normalizeEndpoint(preview.plugins?.updater?.endpoints?.[0]) !==
+    normalizeEndpoint(services.previewUpdateUrl)
+  ) {
     errors.push("Preview Tauri updater endpoint does not match src/config/services.json.");
   }
 
-  if (!stable.app?.security?.csp?.includes(services.websiteBaseUrl)) {
-    errors.push("Tauri CSP does not allow the configured Blimy website origin.");
-  }
+  // A build with no website has no origin to allow in the CSP or capabilities.
+  const websiteBaseUrl = normalizeEndpoint(services.websiteBaseUrl);
+  if (websiteBaseUrl !== "") {
+    if (!stable.app?.security?.csp?.includes(websiteBaseUrl)) {
+      errors.push("Tauri CSP does not allow the configured Blimy website origin.");
+    }
 
-  if (!allowedUrls.some((entry) => entry.url === `${services.websiteBaseUrl}/**`)) {
-    errors.push("Tauri capabilities do not allow the configured Blimy website origin.");
+    if (!allowedUrls.some((entry) => entry.url === `${websiteBaseUrl}/**`)) {
+      errors.push("Tauri capabilities do not allow the configured Blimy website origin.");
+    }
   }
 
   return errors;

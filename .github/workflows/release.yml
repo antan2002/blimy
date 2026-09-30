@@ -275,13 +275,13 @@ jobs:
       - name: Prepare Tauri macOS signing (macOS only)
         if: matrix.os == 'macos'
         env:
-          APPLE_SIGNING_IDENTITY: "${{ secrets.APPLE_SIGNING_IDENTITY || 'Developer ID Application: Mehmet Ozgul (N43BXFX4H4)' }}"
+          APPLE_SIGNING_IDENTITY: "${{ secrets.APPLE_SIGNING_IDENTITY }}"
         run: node scripts/release/macos/prepare-tauri-signing.mjs
 
       - name: Sign bundled macOS binaries (macOS only)
         if: matrix.os == 'macos'
         env:
-          APPLE_SIGNING_IDENTITY: "${{ secrets.APPLE_SIGNING_IDENTITY || 'Developer ID Application: Mehmet Ozgul (N43BXFX4H4)' }}"
+          APPLE_SIGNING_IDENTITY: "${{ secrets.APPLE_SIGNING_IDENTITY }}"
         shell: bash
         run: |
           set -euo pipefail
