@@ -134,6 +134,12 @@ export interface Settings {
   aiFollowAgent: boolean;
   /** Model requests one built-in agent turn may make before it pauses to ask to continue. */
   aiAgentMaxSteps: number;
+  /**
+   * Dollars one built-in agent turn may spend before it stops, or `null` for no
+   * limit. Costs are estimated from the model's price because direct providers
+   * report tokens, not dollars.
+   */
+  aiAgentBudgetUsd: number | null;
   aiSkills: AIChatSkill[];
   /** MCP servers offered to agents. Secrets live in secure storage, not here. */
   mcpServers: McpServerSetting[];

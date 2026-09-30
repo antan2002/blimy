@@ -15,10 +15,10 @@ use super::{
    },
    workspace_path::{path_to_string, resolve_workspace_path},
 };
-use crate::runtime::AthasAppHandle as AppHandle;
+use crate::runtime::BlimyAppHandle as AppHandle;
 use agent_client_protocol::schema::v1 as acp;
 use anyhow::{Context, Result, bail};
-use athas_terminal::TerminalManager;
+use blimy_terminal::TerminalManager;
 use std::{
    cell::RefCell,
    collections::{HashMap, HashSet},

@@ -54,7 +54,7 @@ fn handshake_failure_reports_endpoint_and_stage_without_reading_keys() {
 }
 
 fn connect_to_test_server(key: &str) -> Result<ssh2::Session, String> {
-   let port = std::env::var("ATHAS_SSH_TEST_PORT")
+   let port = std::env::var("BLIMY_SSH_TEST_PORT")
       .unwrap()
       .parse()
       .unwrap();
@@ -72,14 +72,14 @@ fn connect_to_test_server(key: &str) -> Result<ssh2::Session, String> {
 }
 
 #[test]
-#[ignore = "requires an isolated local SSH server and ATHAS_SSH_TEST_PORT, ATHAS_SSH_TEST_USER, \
+#[ignore = "requires an isolated local SSH server and BLIMY_SSH_TEST_PORT, ATHAS_SSH_TEST_USER, \
             ATHAS_SSH_TEST_HOME"]
 fn authenticates_with_home_relative_openssh_identity() {
    let session = connect_to_test_server("~/.ssh/custom_ed25519").unwrap();
    assert!(session.authenticated());
    assert_eq!(
-      super::exec_remote_command(&session, "printf athas-ssh-ok").unwrap(),
-      "athas-ssh-ok"
+      super::exec_remote_command(&session, "printf blimy-ssh-ok").unwrap(),
+      "blimy-ssh-ok"
    );
    session
       .sftp()
@@ -87,7 +87,7 @@ fn authenticates_with_home_relative_openssh_identity() {
 }
 
 #[test]
-#[ignore = "requires an isolated local SSH server and ATHAS_SSH_TEST_PORT, ATHAS_SSH_TEST_USER, \
+#[ignore = "requires an isolated local SSH server and BLIMY_SSH_TEST_PORT, ATHAS_SSH_TEST_USER, \
             ATHAS_SSH_TEST_HOME"]
 fn reports_configured_key_failure() {
    let error = connect_to_test_server("~/.ssh/missing_ed25519")

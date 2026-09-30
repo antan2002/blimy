@@ -26,7 +26,12 @@ export type AssistantResponsePhase = "starting" | "waiting" | "stalled" | "think
  * limit, hit its turn or tool request limit, refused the user's prompt, or
  * refused to continue after tool output.
  */
-export type AgentStopNotice = "max_tokens" | "max_turn_requests" | "prompt_refused" | "refused";
+export type AgentStopNotice =
+  | "max_tokens"
+  | "max_turn_requests"
+  | "prompt_refused"
+  | "refused"
+  | "budget_exceeded";
 
 export interface AgentMessageSubmitResult {
   accepted: boolean;

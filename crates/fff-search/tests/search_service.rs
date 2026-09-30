@@ -1,4 +1,4 @@
-use athas_fff_search::{FffGrepOptions, FffSearch};
+use blimy_fff_search::{FffGrepOptions, FffSearch};
 use fff_search::GrepMode;
 use std::{fs, sync::Mutex, time::Duration};
 use tempfile::TempDir;

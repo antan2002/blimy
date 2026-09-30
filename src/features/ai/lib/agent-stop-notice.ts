@@ -7,6 +7,7 @@ const STOP_NOTICES = new Set<string>([
   "max_turn_requests",
   "prompt_refused",
   "refused",
+  "budget_exceeded",
 ] satisfies AgentStopNotice[]);
 
 /** What the chat sends when the user asks the agent to pick up where it stopped. */
@@ -45,6 +46,7 @@ export function getAgentStopNotice(
   switch (stopReason) {
     case "max_tokens":
     case "max_turn_requests":
+    case "budget_exceeded":
       return stopReason;
     case "refusal":
       return refusedAfterToolOutput(message) ? "refused" : "prompt_refused";
@@ -83,6 +85,12 @@ export function describeAgentStopNotice(notice: AgentStopNotice): {
       return {
         title: "The agent refused to continue",
         description: "It stopped after reviewing tool output.",
+      };
+    case "budget_exceeded":
+      return {
+        title: "The task reached its spending budget",
+        description:
+          "It stopped to keep the turn's estimated cost under the limit you set. Raise the limit in AI settings to let it keep going.",
       };
   }
 }

@@ -1,5 +1,5 @@
 use anyhow::{Context, Result};
-use athas_runtime::process::configure_background_command;
+use blimy_runtime::process::configure_background_command;
 use std::{
    fs,
    path::{Path, PathBuf},

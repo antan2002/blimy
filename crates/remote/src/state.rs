@@ -1,4 +1,4 @@
-use athas_terminal::TerminalReaderControl;
+use blimy_terminal::TerminalReaderControl;
 use ssh2::{Channel, Session, Sftp};
 use std::{
    collections::HashMap,

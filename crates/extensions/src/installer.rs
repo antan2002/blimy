@@ -1,5 +1,5 @@
 use super::types::{DownloadInfo, ExtensionMetadata, InstallProgress, InstallStatus};
-use crate::runtime::AthasAppHandle as AppHandle;
+use crate::runtime::BlimyAppHandle as AppHandle;
 use anyhow::{Context, Result};
 use serde::Deserialize;
 use std::{

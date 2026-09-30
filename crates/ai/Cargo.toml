@@ -1,12 +1,12 @@
 [package]
-name = "athas-ai"
+name = "blimy-ai"
 version = "0.1.0"
 edition = "2024"
 
 [features]
 default = ["tauri-wry"]
-tauri-wry = ["athas-terminal/tauri-wry", "tauri/wry", "tauri/x11"]
-linux = ["athas-terminal/linux", "tauri/cef"]
+tauri-wry = ["blimy-terminal/tauri-wry", "tauri/wry", "tauri/x11"]
+linux = ["blimy-terminal/linux", "tauri/cef"]
 
 [dependencies]
 # Unstable ACP extensions that only add to the protocol: notices are sent only to clients that
@@ -36,8 +36,8 @@ tar = "0.4"
 tauri = { version = "2", default-features = false, features = ["test"] }
 tokio = { version = "1.0", features = ["full"] }
 tokio-util = { version = "0.7", features = ["compat"] }
-athas-exec-path = { path = "../exec-path" }
-athas-terminal = { path = "../terminal", default-features = false }
+blimy-exec-path = { path = "../exec-path" }
+blimy-terminal = { path = "../terminal", default-features = false }
 tempfile = "3"
 uuid = { version = "1.0", features = ["v4", "serde"] }
 which = "7.0"

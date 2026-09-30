@@ -1,8 +1,8 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "Athas",
+  "productName": "Blimy",
   "version": "0.15.1",
-  "identifier": "com.code.athas",
+  "identifier": "dev.blimy.editor",
   "build": {
     "beforeDevCommand": "vp dev",
     "devUrl": "http://127.0.0.1:1420",

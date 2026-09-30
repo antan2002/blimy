@@ -455,7 +455,7 @@ mod tests {
          id: "postgres".to_string(),
          protocol_version: Some(2),
          sidecar: PlatformArchExecutable {
-            darwin_arm64: Some("bin/athas-db-postgres".to_string()),
+            darwin_arm64: Some("bin/blimy-db-postgres".to_string()),
             darwin_x64: None,
             linux_arm64: None,
             linux_x64: None,
@@ -478,7 +478,7 @@ mod tests {
          id: "postgres".to_string(),
          protocol_version: None,
          sidecar: PlatformArchExecutable {
-            darwin_arm64: Some("bin/athas-db-postgres".to_string()),
+            darwin_arm64: Some("bin/blimy-db-postgres".to_string()),
             darwin_x64: None,
             linux_arm64: None,
             linux_x64: None,
@@ -514,13 +514,13 @@ mod tests {
 
    #[test]
    fn rejects_sidecar_manifest_paths_that_escape_the_extension_dir() {
-      assert!(validate_relative_sidecar_path("bin/athas-db-postgres").is_ok());
+      assert!(validate_relative_sidecar_path("bin/blimy-db-postgres").is_ok());
 
       for invalid_path in [
          "",
-         "../athas-db-postgres",
-         "bin/../athas-db-postgres",
-         "/tmp/athas-db-postgres",
+         "../blimy-db-postgres",
+         "bin/../blimy-db-postgres",
+         "/tmp/blimy-db-postgres",
       ] {
          assert_eq!(
             validate_relative_sidecar_path(invalid_path).expect_err("invalid sidecar path"),

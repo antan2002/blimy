@@ -242,6 +242,7 @@ export const getChatCompletionStream = async (
         root: context.projectRoot,
         readOnly: mode !== "chat",
         maxSteps: settings.aiAgentMaxSteps,
+        budgetUsd: settings.aiAgentBudgetUsd,
         notices,
         // Other providers keep the agent's own default output budget.
         ...(providerId === "athas"

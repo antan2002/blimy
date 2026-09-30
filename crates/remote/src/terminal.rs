@@ -2,7 +2,7 @@ use crate::{
    ssh_helpers::{create_ssh_session, shell_quote},
    state::{REMOTE_TERMINALS, RemoteTerminal},
 };
-use athas_terminal::{TerminalEvent, TerminalInput, TerminalReaderControl, TerminalSize};
+use blimy_terminal::{TerminalEvent, TerminalInput, TerminalReaderControl, TerminalSize};
 use std::{
    io::{Read, Write},
    sync::{Arc, Mutex},
@@ -39,7 +39,7 @@ pub(super) async fn create_remote_terminal(
       .map_err(|e| format!("Failed to create remote terminal channel: {}", e))?;
    for (name, value) in [
       ("COLORTERM", "truecolor"),
-      ("TERM_PROGRAM", "athas"),
+      ("TERM_PROGRAM", "blimy"),
       ("TERM_PROGRAM_VERSION", term_program_version.as_str()),
    ] {
       if let Err(error) = channel.setenv(name, value) {

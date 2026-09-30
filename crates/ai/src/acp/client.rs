@@ -15,9 +15,9 @@ use super::{
       SessionRoots, is_inside_roots, path_to_string, real_path, resolve_path_against_workspace,
    },
 };
-use crate::runtime::AthasAppHandle as AppHandle;
+use crate::runtime::BlimyAppHandle as AppHandle;
 use agent_client_protocol::{self as acp_sdk, schema::v1 as acp};
-use athas_terminal::{
+use blimy_terminal::{
    TerminalConfig, TerminalEvent, TerminalEventHandler, TerminalManager, TerminalSize,
 };
 use std::{
@@ -375,11 +375,11 @@ impl AthasAcpClient {
          }
          if let Err(e) = self
             .terminal_manager
-            .close_terminal(&released.state.athas_terminal_id)
+            .close_terminal(&released.state.blimy_terminal_id)
          {
             log::warn!(
                "Failed to close terminal {}: {}",
-               released.state.athas_terminal_id,
+               released.state.blimy_terminal_id,
                e
             );
          }
@@ -1340,10 +1340,10 @@ impl AthasAcpClient {
       });
 
       match self.terminal_manager.create_terminal(config, event_handler) {
-         Ok(athas_terminal_id) => {
-            let terminal_id = athas_terminal_id.clone();
+         Ok(blimy_terminal_id) => {
+            let terminal_id = blimy_terminal_id.clone();
             let output_limit = args.output_byte_limit.map(|l| l as u32);
-            let state = AcpTerminalState::new(athas_terminal_id.clone(), output_limit)
+            let state = AcpTerminalState::new(blimy_terminal_id.clone(), output_limit)
                .for_session(session_id.clone());
             self.emit_event(AcpEvent::TerminalStarted {
                session_id: session_id.clone(),
@@ -1428,7 +1428,7 @@ impl AthasAcpClient {
       if let Some(state) = removed_state
          && let Err(e) = self
             .terminal_manager
-            .close_terminal(&state.athas_terminal_id)
+            .close_terminal(&state.blimy_terminal_id)
       {
          log::warn!("Failed to close terminal {}: {}", terminal_id, e);
       }
@@ -1478,7 +1478,7 @@ impl AthasAcpClient {
       args: acp::KillTerminalRequest,
    ) -> acp::Result<acp::KillTerminalResponse> {
       let terminal_id = args.terminal_id.to_string();
-      let (athas_id, exited) = {
+      let (blimy_id, exited) = {
          let mut states = self
             .terminal_states
             .lock()
@@ -1493,10 +1493,10 @@ impl AthasAcpClient {
          } else {
             None
          };
-         (state.athas_terminal_id.clone(), exited)
+         (state.blimy_terminal_id.clone(), exited)
       };
 
-      if let Err(e) = self.terminal_manager.kill_terminal(&athas_id) {
+      if let Err(e) = self.terminal_manager.kill_terminal(&blimy_id) {
          log::warn!("Failed to kill terminal {}: {}", terminal_id, e);
       }
       if let Some(exited) = exited
@@ -1516,7 +1516,7 @@ impl AthasAcpClient {
          ext_request_session_id(&params, self.current_session_id.lock().await.as_deref());
 
       match &*args.method {
-         "_athas/open_terminal" => {
+         "_blimy/open_terminal" => {
             let command = params
                .get("command")
                .and_then(|v| v.as_str())
@@ -1532,14 +1532,14 @@ impl AthasAcpClient {
                serde_json::value::to_raw_value(&response).unwrap().into(),
             ))
          }
-         "_athas/set_chat_title" => {
+         "_blimy/set_chat_title" => {
             let title = params
                .get("title")
                .and_then(|v| v.as_str())
                .map(str::trim)
                .filter(|title| !title.is_empty())
                .ok_or_else(|| {
-                  acp::Error::new(-32602, "_athas/set_chat_title requires a title".to_string())
+                  acp::Error::new(-32602, "_blimy/set_chat_title requires a title".to_string())
                })?
                .to_string();
 

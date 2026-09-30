@@ -8,9 +8,9 @@ use super::{
    traffic::TrafficInspector,
    types::{AcpAgentStatus, AcpOpenedSession, AcpSessionList, AgentConfig, SessionConfigValue},
 };
-use crate::runtime::AthasAppHandle as AppHandle;
+use crate::runtime::BlimyAppHandle as AppHandle;
 use anyhow::Result;
-use athas_terminal::TerminalManager;
+use blimy_terminal::TerminalManager;
 use std::{sync::Arc, time::Instant};
 use tokio::sync::{Mutex, mpsc, oneshot};
 

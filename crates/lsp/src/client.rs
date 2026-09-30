@@ -1,6 +1,6 @@
-use crate::runtime::AthasAppHandle as AppHandle;
+use crate::runtime::BlimyAppHandle as AppHandle;
 use anyhow::{Context, Result, bail};
-use athas_runtime::{NodeRuntime, process::configure_background_command};
+use blimy_runtime::{NodeRuntime, process::configure_background_command};
 use crossbeam_channel::{Sender, bounded};
 use lsp_types::*;
 use serde_json::{Value, json};
@@ -273,7 +273,7 @@ impl LspClient {
                line.clear();
                match reader.read_line(&mut line) {
                   Ok(0) => {
-                     // EOF — server process has exited
+                // EOF, or the server process has exited
                      log::warn!("LSP server stdout closed (server crashed or exited)");
                      mark_stopped(
                         "LSP server stdout closed (server crashed or exited)".to_string(),

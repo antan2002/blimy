@@ -177,15 +177,15 @@ mod tests {
 
    #[test]
    fn clone_rejects_empty_repository_urls() {
-      let result = _git_clone(" ".to_string(), "/tmp/athas-clone-target".to_string());
+      let result = _git_clone(" ".to_string(), "/tmp/blimy-clone-target".to_string());
       assert!(result.is_err());
    }
 
    #[test]
    fn clone_requires_an_absolute_destination() {
       let result = _git_clone(
-         "https://github.com/athasdev/athas.git".to_string(),
-         "athas-clone-target".to_string(),
+         "https://github.com/blimydev/blimy.git".to_string(),
+         "blimy-clone-target".to_string(),
       );
       assert!(result.is_err());
    }

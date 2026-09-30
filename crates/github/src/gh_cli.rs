@@ -4,7 +4,7 @@
 //! `gh auth logout` and token rotation must take effect immediately, and Athas
 //! should not hold a second copy of a credential it did not mint.
 
-use athas_exec_path::{find_executable, probe_command, user_shell_path};
+use blimy_exec_path::{find_executable, probe_command, user_shell_path};
 use std::{process::Command, time::Duration};
 
 /// `gh auth token` reads a local keyring entry; it never blocks on the network.

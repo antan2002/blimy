@@ -288,7 +288,9 @@ export type AcpStopReason =
   | "max_tokens"
   | "max_turn_requests"
   | "refusal"
-  | "cancelled";
+  | "cancelled"
+  /** The turn's estimated cost passed the budget the user set. */
+  | "budget_exceeded";
 
 // UI action types that agents can request
 type UiAction =

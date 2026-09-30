@@ -20,11 +20,11 @@ use std::collections::HashMap;
 const ATHAS_AGENT_IDS: &[(&str, &str)] = &[("gemini", "gemini-cli"), ("kimi", "kimi-cli")];
 
 /// The Athas agent id for a registry id.
-pub fn athas_agent_id(registry_id: &str) -> &str {
+pub fn blimy_agent_id(registry_id: &str) -> &str {
    ATHAS_AGENT_IDS
       .iter()
       .find(|(registry, _)| *registry == registry_id)
-      .map_or(registry_id, |(_, athas)| athas)
+      .map_or(registry_id, |(_, blimy)| blimy)
 }
 
 /// Registry agents that sit next to an Athas integration for the same product. They stay
@@ -100,7 +100,7 @@ pub fn merge_registry_agents(
       .collect::<HashMap<_, _>>();
 
    for registry_agent in &snapshot.agents {
-      let agent_id = athas_agent_id(&registry_agent.id).to_string();
+      let agent_id = blimy_agent_id(&registry_agent.id).to_string();
       if !include(&agent_id) {
          continue;
       }

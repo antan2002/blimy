@@ -1,6 +1,6 @@
 ## Project Overview
 
-- Athas is a desktop code editor built with Tauri, React, TypeScript, and Rust.
+- Blimy is a desktop code editor built with Tauri, React, TypeScript, and Rust.
 - Frontend feature code lives under `src/features/`.
 - Shared frontend code lives under `src/components`, `src/hooks`, and `src/utils`.
 - Extension-specific code lives under `src/extensions/`.

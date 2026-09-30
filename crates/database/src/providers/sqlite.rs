@@ -778,7 +778,7 @@ mod tests {
    #[tokio::test]
    async fn test_get_sqlite_tables_includes_views() {
       let path = std::env::temp_dir().join(format!(
-         "athas-sqlite-views-{}.sqlite",
+         "blimy-sqlite-views-{}.sqlite",
          std::time::SystemTime::now()
             .duration_since(std::time::UNIX_EPOCH)
             .unwrap()

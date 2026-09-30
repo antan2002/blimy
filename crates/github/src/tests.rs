@@ -12,7 +12,7 @@ fn parses_pull_request_list_items_with_nullish_fields() {
       "updatedAt": "2026-03-27T10:00:00Z",
       "isDraft": null,
       "reviewDecision": null,
-      "url": "https://github.com/athasdev/athas/pull/570",
+      "url": "https://github.com/blimydev/blimy/pull/570",
       "headRefName": null,
       "baseRefName": "master",
       "additions": null,
@@ -89,7 +89,7 @@ fn parses_pull_request_status_check_urls() {
                   "status": "COMPLETED",
                   "conclusion": "SUCCESS",
                   "workflowName": "CI",
-                  "detailsUrl": "https://github.com/athasdev/athas/actions/runs/1/job/2"
+                  "detailsUrl": "https://github.com/blimydev/blimy/actions/runs/1/job/2"
                },
                {
                   "name": "terraform",
@@ -107,7 +107,7 @@ fn parses_pull_request_status_check_urls() {
 
    assert_eq!(
       details.status_checks[0].details_url.as_deref(),
-      Some("https://github.com/athasdev/athas/actions/runs/1/job/2")
+      Some("https://github.com/blimydev/blimy/actions/runs/1/job/2")
    );
    assert_eq!(
       details.status_checks[1].details_url.as_deref(),
@@ -174,7 +174,7 @@ fn parses_issue_comment_identity_and_edit_metadata() {
       "body": "Updated comment",
       "createdAt": "2026-08-01T10:00:00Z",
       "updatedAt": "2026-08-02T10:00:00Z",
-      "url": "https://github.com/athasdev/athas/issues/1#issuecomment-123"
+      "url": "https://github.com/blimydev/blimy/issues/1#issuecomment-123"
    });
 
    let comment: IssueComment =

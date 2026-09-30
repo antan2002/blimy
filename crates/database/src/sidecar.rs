@@ -788,7 +788,7 @@ mod tests {
          .duration_since(UNIX_EPOCH)
          .expect("system time")
          .as_nanos();
-      std::env::temp_dir().join(format!("athas-sidecar-{}-{}.sqlite", name, nanos))
+      std::env::temp_dir().join(format!("blimy-sidecar-{}-{}.sqlite", name, nanos))
    }
 
    #[tokio::test]

@@ -139,7 +139,7 @@ mod tests {
       index.write().expect("write index");
       let tree_id = index.write_tree().expect("write tree");
       let tree = repo.find_tree(tree_id).expect("find tree");
-      let signature = Signature::now("Athas Test", "test@athas.dev").expect("signature");
+      let signature = Signature::now("Athas Test", "test@blimy.dev").expect("signature");
       repo
          .commit(
             Some("HEAD"),

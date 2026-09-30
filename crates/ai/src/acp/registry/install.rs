@@ -307,7 +307,7 @@ pub fn install_npm(
       fs::create_dir_all(&staging).map_err(|error| error.to_string())?;
       fs::write(
          staging.join("package.json"),
-         r#"{ "name": "athas-acp-agent", "private": true }"#,
+         r#"{ "name": "blimy-acp-agent", "private": true }"#,
       )
       .map_err(|error| error.to_string())?;
 

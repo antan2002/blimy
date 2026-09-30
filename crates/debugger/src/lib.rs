@@ -1,5 +1,5 @@
 use anyhow::{Context, Result, anyhow};
-use athas_runtime::process::configure_background_command;
+use blimy_runtime::process::configure_background_command;
 use serde::{Deserialize, Serialize};
 use serde_json::{Value, json};
 use std::{
@@ -529,7 +529,7 @@ mod tests {
 
    #[test]
    fn encodes_content_length_in_bytes() {
-      let message = json!({ "message": "Athas ğ" });
+      let message = json!({ "message": "Athas ÄŸ" });
       let encoded = encode_protocol_message(&message).expect("protocol message");
       let (header, content) = encoded.split_once("\r\n\r\n").expect("header separator");
 

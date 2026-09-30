@@ -1,5 +1,5 @@
 use agent_client_protocol::schema::v1 as acp;
-use athas_terminal::TerminalEvent;
+use blimy_terminal::TerminalEvent;
 use std::collections::HashMap;
 use tokio::sync::oneshot;
 
@@ -14,7 +14,7 @@ pub(super) enum TerminalChange {
 
 /// Tracks state for an ACP terminal session
 pub(super) struct AcpTerminalState {
-   pub athas_terminal_id: String,
+   pub blimy_terminal_id: String,
    /// The session that created the terminal; it is released when that session closes.
    pub session_id: String,
    pub output_buffer: String,
@@ -26,9 +26,9 @@ pub(super) struct AcpTerminalState {
 }
 
 impl AcpTerminalState {
-   pub fn new(athas_terminal_id: String, max_output_bytes: Option<u32>) -> Self {
+   pub fn new(blimy_terminal_id: String, max_output_bytes: Option<u32>) -> Self {
       Self {
-         athas_terminal_id,
+         blimy_terminal_id,
          session_id: String::new(),
          output_buffer: String::new(),
          max_output_bytes: max_output_bytes.unwrap_or(1_000_000) as usize,
@@ -228,19 +228,19 @@ mod tests {
    #[test]
    fn releases_only_the_closed_sessions_terminals() {
       let mut states = HashMap::new();
-      let mut waiting = AcpTerminalState::new("athas-1".to_string(), None).for_session("a".into());
+      let mut waiting = AcpTerminalState::new("blimy-1".to_string(), None).for_session("a".into());
       let (exit_tx, mut exit_rx) = tokio::sync::oneshot::channel();
       waiting.exit_waiters.push(exit_tx);
       states.insert("t1".to_string(), waiting);
       states.insert(
          "t2".to_string(),
-         AcpTerminalState::new("athas-2".to_string(), None).for_session("b".into()),
+         AcpTerminalState::new("blimy-2".to_string(), None).for_session("b".into()),
       );
 
       let released = take_session_terminals(&mut states, Some("a"));
 
       assert_eq!(released.len(), 1);
-      assert_eq!(released[0].state.athas_terminal_id, "athas-1");
+      assert_eq!(released[0].state.blimy_terminal_id, "blimy-1");
       assert_eq!(released[0].terminal_id, "t1");
       assert!(
          released[0].exit.is_some(),
@@ -267,9 +267,9 @@ mod tests {
    #[test]
    fn append_output_preserves_utf8_boundaries_when_truncating() {
       let mut state = AcpTerminalState::new("terminal-2".to_string(), Some(5));
-      state.append_output("a🙂b");
+      state.append_output("aðŸ™‚b");
 
-      assert_eq!(state.output_buffer, "🙂b");
+      assert_eq!(state.output_buffer, "ðŸ™‚b");
       assert!(state.truncated);
    }
 
@@ -298,7 +298,7 @@ mod tests {
    #[test]
    fn output_response_truncates_from_start_at_char_boundary() {
       let mut state = AcpTerminalState::new("terminal-6".to_string(), Some(5));
-      state.append_output("ab🙂cd");
+      state.append_output("abðŸ™‚cd");
 
       let response = state.output_response();
       // Dropping 3 bytes would split the emoji, so the whole char goes.
@@ -335,10 +335,10 @@ mod tests {
    #[test]
    fn events_report_decoded_output_and_the_exit_once() {
       use super::TerminalChange;
-      use athas_terminal::TerminalEvent;
+      use blimy_terminal::TerminalEvent;
 
       let mut state = AcpTerminalState::new("terminal-10".to_string(), None);
-      let emoji = "🙂".as_bytes();
+      let emoji = "ðŸ™‚".as_bytes();
       assert_eq!(
          state.handle_event(TerminalEvent::Output {
             data: [b"ok ".as_slice(), &emoji[..2]].concat(),
@@ -349,7 +349,7 @@ mod tests {
          state.handle_event(TerminalEvent::Output {
             data: emoji[2..].to_vec(),
          }),
-         vec![TerminalChange::Output("🙂".to_string())]
+         vec![TerminalChange::Output("ðŸ™‚".to_string())]
       );
 
       let changes = state.handle_event(TerminalEvent::Exit {
@@ -360,13 +360,13 @@ mod tests {
          matches!(&changes[..], [TerminalChange::Exit(status)] if status.exit_code == Some(0))
       );
       assert!(state.handle_event(TerminalEvent::Closed).is_empty());
-      assert_eq!(state.output_buffer, "ok 🙂");
+      assert_eq!(state.output_buffer, "ok ðŸ™‚");
    }
 
    #[test]
    fn a_signal_exit_reports_the_signal_without_an_exit_code() {
       let mut state = AcpTerminalState::new("terminal-8".to_string(), None);
-      state.handle_event(athas_terminal::TerminalEvent::Exit {
+      state.handle_event(blimy_terminal::TerminalEvent::Exit {
          exit_code: Some(1),
          signal: Some("Killed".to_string()),
       });
@@ -375,7 +375,7 @@ mod tests {
       assert_eq!(status.signal.as_deref(), Some("Killed"));
 
       let mut state = AcpTerminalState::new("terminal-9".to_string(), None);
-      state.handle_event(athas_terminal::TerminalEvent::Exit {
+      state.handle_event(blimy_terminal::TerminalEvent::Exit {
          exit_code: Some(2),
          signal: None,
       });
@@ -388,12 +388,12 @@ mod tests {
    #[test]
    fn append_output_bytes_preserves_split_utf8_sequences() {
       let mut state = AcpTerminalState::new("terminal-4".to_string(), None);
-      let emoji = "🙂".as_bytes();
+      let emoji = "ðŸ™‚".as_bytes();
 
       state.append_output_bytes(&emoji[..2]);
       assert_eq!(state.output_buffer, "");
 
       state.append_output_bytes(&emoji[2..]);
-      assert_eq!(state.output_buffer, "🙂");
+      assert_eq!(state.output_buffer, "ðŸ™‚");
    }
 }
