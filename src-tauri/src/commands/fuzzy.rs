@@ -1,5 +1,5 @@
 use crate::app_runtime::AppHandle;
-use athas_fff_search::{FffIndexedFile, FffScanStatus, FffSearch, FffSearchHit};
+use blimy_fff_search::{FffIndexedFile, FffScanStatus, FffSearch, FffSearchHit};
 use nucleo_matcher::{
    Config, Matcher, Utf32Str,
    pattern::{Atom, AtomKind, CaseMatching, Normalization},

@@ -1,5 +1,5 @@
 use crate::app_runtime::AppHandle;
-use athas_extensions::ExtensionInstaller;
+use blimy_extensions::ExtensionInstaller;
 use serde::Deserialize;
 use serde_json::{Map, Value, json};
 use std::{
