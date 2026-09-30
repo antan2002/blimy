@@ -1,6 +1,6 @@
 {
-  "$schema": "https://athas.dev/schemas/extension.json",
-  "id": "athas.agent.antigravity",
+  "$schema": "https://blimy.dev/schemas/extension.json",
+  "id": "blimy.agent.antigravity",
   "name": "Google Antigravity",
   "displayName": "Google Antigravity",
   "description": "Google's consumer coding agent, connected through its official ACP server.",

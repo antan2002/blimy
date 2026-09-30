@@ -10,13 +10,13 @@ const state = vi.hoisted(() => ({
     ["ollama", true],
   ]),
   providers: [
-    { id: "athas", name: "Athas", models: [] },
+    { id: "blimy", name: "Blimy", models: [] },
     { id: "openai", name: "OpenAI", models: [{ id: "gpt-test", name: "GPT Test" }] },
     { id: "anthropic", name: "Anthropic", models: [] },
     { id: "ollama", name: "Ollama", models: [] },
   ],
   models: {
-    athas: [
+    blimy: [
       { id: "auto", name: "Automatic" },
       { id: "moonshotai/kimi-k2.6", name: "Kimi K2.6" },
     ],
@@ -56,7 +56,7 @@ async function render(props: Partial<Parameters<typeof ModelConnectionPicker>[0]
     root.render(
       <ModelConnectionPicker
         aria-label="Default model"
-        value={{ providerId: "athas", modelId: "auto" }}
+        value={{ providerId: "blimy", modelId: "auto" }}
         onChange={onChange}
         {...props}
       />,
@@ -95,9 +95,9 @@ afterEach(async () => {
 describe("settings model picker", () => {
   it("names the current choice and offers the same connections as the composer", async () => {
     await render();
-    expect(trigger().textContent).toBe("Athas Automatic");
+    expect(trigger().textContent).toBe("Blimy Automatic");
     await act(async () => trigger().click());
-    expect(sections()).toEqual(["Athas", "OpenAI", "Ollama"]);
+    expect(sections()).toEqual(["Blimy", "OpenAI", "Ollama"]);
   });
 
   it("chooses a local model from its connection", async () => {
@@ -136,21 +136,21 @@ describe("settings model picker", () => {
     expect(trigger().textContent).toBe("Automatic");
   });
 
-  it("offers Athas's one Tab model instead of its chat catalog for Tab completion", async () => {
+  it("offers Blimy's one Tab model instead of its chat catalog for Tab completion", async () => {
     await render({ value: null, inheritLabel: "Automatic", purpose: "completion" });
     expect(trigger().textContent).toBe("Automatic");
     await act(async () => trigger().click());
-    expect(sections()).toEqual(["Athas", "OpenAI", "Ollama"]);
-    expect(rows().map((row) => row.textContent)).toContain("Athas Tab model");
+    expect(sections()).toEqual(["Blimy", "OpenAI", "Ollama"]);
+    expect(rows().map((row) => row.textContent)).toContain("Blimy Tab model");
     expect(rows().some((row) => row.textContent?.includes("Kimi"))).toBe(false);
     await act(async () =>
       rows()
-        .find((row) => row.textContent?.startsWith("Athas Tab model"))!
+        .find((row) => row.textContent?.startsWith("Blimy Tab model"))!
         .click(),
     );
-    expect(onChange).toHaveBeenCalledExactlyOnceWith({ providerId: "athas", modelId: "auto" });
+    expect(onChange).toHaveBeenCalledExactlyOnceWith({ providerId: "blimy", modelId: "auto" });
 
-    await render({ value: { providerId: "athas", modelId: "auto" }, purpose: "completion" });
-    expect(trigger().textContent).toBe("Athas Tab model");
+    await render({ value: { providerId: "blimy", modelId: "auto" }, purpose: "completion" });
+    expect(trigger().textContent).toBe("Blimy Tab model");
   });
 });

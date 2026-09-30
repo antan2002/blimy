@@ -4,21 +4,21 @@ import { useBufferStore } from "@/features/editor/stores/buffer.store";
 import { useEditorStateStore } from "@/features/editor/stores/state.store";
 import { usePaneStore } from "@/features/panes/stores/pane.store";
 
-interface AthasLogFile {
+interface BlimyLogFile {
   path: string;
   content: string;
   targetLine: number;
   truncated: boolean;
 }
 
-interface AthasLogFileResponse {
+interface BlimyLogFileResponse {
   path: string;
   content: string;
   target_line: number;
   truncated: boolean;
 }
 
-function toAthasLogFile(response: AthasLogFileResponse): AthasLogFile {
+function toBlimyLogFile(response: BlimyLogFileResponse): BlimyLogFile {
   return {
     path: response.path,
     content: response.content,
@@ -28,7 +28,7 @@ function toAthasLogFile(response: AthasLogFileResponse): AthasLogFile {
 }
 
 function getFileName(path: string): string {
-  return path.split(/[\\/]/).filter(Boolean).pop() ?? "Athas.log";
+  return path.split(/[\\/]/).filter(Boolean).pop() ?? "Blimy.log";
 }
 
 function getLineStartOffset(content: string, targetLine: number): number {
@@ -67,8 +67,8 @@ function cacheLogViewState(bufferId: string, content: string, targetLine: number
   }
 }
 
-export async function openAthasLogBuffer() {
-  const logFile = toAthasLogFile(await invoke<AthasLogFileResponse>("read_athas_log"));
+export async function openBlimyLogBuffer() {
+  const logFile = toBlimyLogFile(await invoke<BlimyLogFileResponse>("read_blimy_log"));
   const bufferId = useBufferStore.getState().actions.openContent({
     type: "editor",
     path: logFile.path,

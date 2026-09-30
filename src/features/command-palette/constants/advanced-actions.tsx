@@ -39,7 +39,7 @@ import {
   restartAllLanguageServers,
   stopAllLanguageServers,
 } from "@/features/keymaps/commands/lsp-command-actions";
-import { openAthasLogBuffer } from "@/features/settings/services/athas-log-service";
+import { openBlimyLogBuffer } from "@/features/settings/services/blimy-log-service";
 import { useUIState } from "@/features/window/stores/ui-state.store";
 import { showAlertDialog } from "@/ui/dialog";
 import { keymapRegistry } from "@/features/keymaps/utils/registry";
@@ -258,7 +258,7 @@ export const createAdvancedActions = (params: AdvancedActionsParams): Action[] =
     {
       id: "ai-manage-allowed-commands",
       label: "AI: Manage Allowed Commands",
-      description: "Review the commands and MCP tools the Athas agent runs without asking",
+      description: "Review the commands and MCP tools the Blimy agent runs without asking",
       icon: <ShieldCheckIcon />,
       category: "AI",
       action: () => {
@@ -355,17 +355,17 @@ export const createAdvancedActions = (params: AdvancedActionsParams): Action[] =
       },
     },
     {
-      id: "developer-open-athas-log",
-      label: "Developer: Open Athas Log",
-      description: "Open the current Athas application log in a read-only editor tab",
+      id: "developer-open-blimy-log",
+      label: "Developer: Open Blimy Log",
+      description: "Open the current Blimy application log in a read-only editor tab",
       icon: <TerminalWindowIcon />,
       category: "Developer",
       action: async () => {
         try {
-          await openAthasLogBuffer();
+          await openBlimyLogBuffer();
         } catch (error) {
           showToast({
-            message: error instanceof Error ? error.message : "Failed to open Athas log",
+            message: error instanceof Error ? error.message : "Failed to open Blimy log",
             type: "error",
           });
         }
@@ -399,7 +399,7 @@ export const createAdvancedActions = (params: AdvancedActionsParams): Action[] =
     {
       id: "cli-install",
       label: "CLI: Install Terminal Command",
-      description: "Install 'athas' command for terminal",
+      description: "Install 'blimy' command for terminal",
       icon: <TerminalWindowIcon />,
       category: "CLI",
       action: async () => {

@@ -21,7 +21,7 @@ function findChatForAgentSession(agentId: AgentType, sessionId: string): string 
 }
 
 /**
- * Brings one of the agent's own sessions into Athas as a new chat and opens it. The agent loads
+ * Brings one of the agent's own sessions into Blimy as a new chat and opens it. The agent loads
  * the session and replays its conversation, which becomes the chat's saved messages. A session a
  * chat already holds opens that chat instead. Returns the chat id.
  */

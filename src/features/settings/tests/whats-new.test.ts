@@ -22,7 +22,7 @@ describe("buildWhatsNewMarkdown", () => {
       body: "Added workspace restore fixes.",
     });
 
-    expect(markdown).toContain("title: What's New in Athas");
+    expect(markdown).toContain("title: What's New in Blimy");
     expect(markdown).toContain("description: Version 1.2.0");
     expect(markdown).toContain("updated-from: 1.1.0");
     expect(markdown).toContain("released: July 17, 2026");
@@ -33,18 +33,18 @@ describe("buildWhatsNewMarkdown", () => {
     const markdown = buildWhatsNewMarkdown({
       version: "1.2.0",
       body: [
-        "* Improve updater layout by @athasdev in https://github.com/athasdev/athas/commit/abc123",
-        "**Full Changelog**: https://github.com/athasdev/athas/compare/v1.1.0...v1.2.0",
+        "* Improve updater layout by @blimydev in https://github.com/blimydev/blimy/commit/abc123",
+        "**Full Changelog**: https://github.com/blimydev/blimy/compare/v1.1.0...v1.2.0",
       ].join("\n"),
     });
 
     expect(markdown).toContain(
-      "- [Improve updater layout](https://github.com/athasdev/athas/commit/abc123) — @athasdev",
+      "- [Improve updater layout](https://github.com/blimydev/blimy/commit/abc123) â€” @blimydev",
     );
     expect(markdown).toContain(
-      "**Full changelog:** [Compare changes](https://github.com/athasdev/athas/compare/v1.1.0...v1.2.0)",
+      "**Full changelog:** [Compare changes](https://github.com/blimydev/blimy/compare/v1.1.0...v1.2.0)",
     );
-    expect(markdown).not.toContain(" by @athasdev in https://");
+    expect(markdown).not.toContain(" by @blimydev in https://");
   });
 
   it("includes a useful fallback when release notes are missing", () => {
@@ -61,7 +61,7 @@ describe("buildWhatsNewMarkdown", () => {
     });
 
     expect(markdown).toContain("Fixed the update experience.");
-    expect(markdown).not.toContain("title: What's New in Athas");
+    expect(markdown).not.toContain("title: What's New in Blimy");
     expect(markdown).not.toContain("description: Version 1.2.0");
     expect(markdown).not.toContain("## Changes");
     expect(markdown).not.toContain("---");
@@ -104,7 +104,7 @@ describe("resolveWhatsNewInfo", () => {
       body: "Fixed release notes.",
       date: "2026-07-08",
     });
-    expect(fetchCalls).toEqual(["https://athas.dev/api/update/stable"]);
+    expect(fetchCalls).toEqual(["https://blimy.dev/api/update/stable"]);
   });
 
   it("falls back to the GitHub release when the updater manifest is for another version", async () => {
@@ -113,7 +113,7 @@ describe("resolveWhatsNewInfo", () => {
       const href = String(url);
       fetchCalls.push(href);
 
-      if (href.includes("athas.dev")) {
+      if (href.includes("blimy.dev")) {
         return Response.json({ version: "1.3.0", notes: "Newer release." });
       }
 
@@ -129,8 +129,8 @@ describe("resolveWhatsNewInfo", () => {
       date: "2026-07-07",
     });
     expect(fetchCalls).toEqual([
-      "https://athas.dev/api/update/stable",
-      "https://api.github.com/repos/athasdev/athas/releases/tags/v1.2.0",
+      "https://blimy.dev/api/update/stable",
+      "https://api.github.com/repos/blimydev/blimy/releases/tags/v1.2.0",
     ]);
   });
 

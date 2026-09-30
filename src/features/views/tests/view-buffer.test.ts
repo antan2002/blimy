@@ -3,12 +3,12 @@ import { getViewBufferPath } from "@/features/views/lib/view-buffer";
 
 describe("view buffer paths", () => {
   it("keeps setup tabs project-scoped", () => {
-    expect(getViewBufferPath("/projects/athas")).toBe("view://create/%2Fprojects%2Fathas");
+    expect(getViewBufferPath("/projects/blimy")).toBe("view://create/%2Fprojects%2Fblimy");
   });
 
   it("gives each saved view a stable tab path", () => {
-    expect(getViewBufferPath("/projects/athas", "release-downloads")).toBe(
-      "view://%2Fprojects%2Fathas/release-downloads",
+    expect(getViewBufferPath("/projects/blimy", "release-downloads")).toBe(
+      "view://%2Fprojects%2Fblimy/release-downloads",
     );
   });
 });

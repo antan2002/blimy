@@ -12,7 +12,7 @@ function model() {
   let version = 4;
   let disposed = false;
   return {
-    uri: { toString: () => "athas:///repo/file.rs" },
+    uri: { toString: () => "blimy:///repo/file.rs" },
     getLineCount: () => 1,
     getLineMaxColumn: () => 4,
     getVersionId: () => version,
@@ -61,7 +61,7 @@ describe("Monaco semantic token provider", () => {
 
     expect(client.getSemanticTokens).toHaveBeenCalledWith("/repo/file.rs");
     expect(result).toEqual({
-      resultId: "athas:///repo/file.rs:4",
+      resultId: "blimy:///repo/file.rs:4",
       data: Uint32Array.from([0, 0, 3, 8, 0]),
     });
   });

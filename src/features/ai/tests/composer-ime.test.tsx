@@ -89,7 +89,7 @@ beforeEach(async () => {
   await act(async () => root.render(composer({ onSendMessage })));
   await act(async () => {
     const input = container.querySelector('[role="textbox"]')!;
-    input.textContent = "日本語";
+    input.textContent = "æ—¥æœ¬èªž";
     input.dispatchEvent(new Event("input", { bubbles: true }));
   });
 });
@@ -116,11 +116,11 @@ describe("Composer IME confirmation", () => {
       });
       expect(confirmation.defaultPrevented).toBe(false);
       expect(onSendMessage).not.toHaveBeenCalled();
-      expect(input.textContent).toBe("日本語");
+      expect(input.textContent).toBe("æ—¥æœ¬èªž");
       await act(async () => {
         input.dispatchEvent(new KeyboardEvent("keydown", { key: "Enter", bubbles: true }));
       });
-      expect(onSendMessage).toHaveBeenCalledExactlyOnceWith("日本語", []);
+      expect(onSendMessage).toHaveBeenCalledExactlyOnceWith("æ—¥æœ¬èªž", []);
       expect(input.textContent).toBe("");
     },
   );
@@ -156,7 +156,7 @@ describe("Composer model selection", () => {
     );
     expect(onAgentChange).not.toHaveBeenCalled();
     expect(updateSetting).not.toHaveBeenCalled();
-    expect(container.querySelector('[role="textbox"]')?.textContent).toBe("日本語");
+    expect(container.querySelector('[role="textbox"]')?.textContent).toBe("æ—¥æœ¬èªž");
   });
 });
 
@@ -171,7 +171,7 @@ describe("Composer terminal commands", () => {
       .spyOn(terminalCommands, "runChatTerminalCommand")
       .mockReturnValue("terminal-test");
     await act(async () => {
-      useProjectStore.getState().actions.setRootFolderPath("/workspace/athas");
+      useProjectStore.getState().actions.setRootFolderPath("/workspace/blimy");
       useSettingsStore.setState({
         settings: {
           ...originalSettings,
@@ -215,7 +215,7 @@ describe("Composer terminal commands", () => {
       command: "git status",
       chatId: undefined,
       agentId: "codex",
-      workingDirectory: "/workspace/athas",
+      workingDirectory: "/workspace/blimy",
     });
     expect(onSendMessage).not.toHaveBeenCalled();
     expect(input.textContent).toBe("");
@@ -281,7 +281,7 @@ describe("Composer terminal commands", () => {
       command: 'printf "%s" "hello world"',
       chatId: undefined,
       agentId: "codex",
-      workingDirectory: "/workspace/athas",
+      workingDirectory: "/workspace/blimy",
     });
     expect(onSendMessage).not.toHaveBeenCalled();
     expect(onStopStreaming).not.toHaveBeenCalled();

@@ -45,17 +45,17 @@ describe("Docker sidebar utilities", () => {
     expect(
       getDockerImageReference({
         id: "sha256:abc",
-        repository: "athas/app",
+        repository: "blimy/app",
         tag: "latest",
         digest: "sha256:abc",
         createdSince: "now",
         size: "1 MB",
       }),
-    ).toBe("athas/app:latest");
+    ).toBe("blimy/app:latest");
   });
 
   it("shares filtering and error detection semantics", () => {
-    expect(includesDockerQuery(["Athas", null], "ath")).toBe(true);
+    expect(includesDockerQuery(["Blimy", null], "ath")).toBe(true);
     expect(isDockerErrorLogLine("worker panic: failed to start")).toBe(true);
     expect(isDockerErrorLogLine("server listening")).toBe(false);
   });

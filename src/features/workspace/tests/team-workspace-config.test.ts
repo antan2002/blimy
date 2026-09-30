@@ -46,7 +46,7 @@ describe("team workspaces", () => {
   });
   it("discovers team commands alongside project commands with workspace-relative paths", async () => {
     const files: Record<string, string> = {
-      "/repo/athas.workspace.json": JSON.stringify(config),
+      "/repo/blimy.workspace.json": JSON.stringify(config),
       "/repo/package.json": JSON.stringify({ scripts: { test: "vitest" } }),
     };
     const actions = await discoverProjectRunActions("/repo", async (path) => {
@@ -62,7 +62,7 @@ describe("team workspaces", () => {
   });
   it("keeps the team name when the same root command is discovered in package.json", async () => {
     const actions = await discoverProjectRunActions("/repo", async (path) => {
-      if (path.endsWith("athas.workspace.json"))
+      if (path.endsWith("blimy.workspace.json"))
         return JSON.stringify({
           ...config,
           commands: [{ name: "Start team app", command: "npm run dev" }],
@@ -82,7 +82,7 @@ describe("team workspaces", () => {
         teamInstructions: "Use Bun.",
       });
       expect(prompt).toContain("Use Bun.");
-      expect(prompt).toContain("athas.workspace.json");
+      expect(prompt).toContain("blimy.workspace.json");
       expect(buildContextPrompt({ projectRoot: "/other", agentId })).not.toContain("Use Bun.");
     },
   );

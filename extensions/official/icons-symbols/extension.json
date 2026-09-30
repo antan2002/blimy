@@ -1,10 +1,10 @@
 {
-  "$schema": "https://athas.dev/schemas/extension.json",
-  "id": "athas.icon-theme.symbols",
+  "$schema": "https://blimy.dev/schemas/extension.json",
+  "id": "blimy.icon-theme.symbols",
   "name": "symbols-icons",
   "displayName": "Symbols Icons",
   "version": "0.0.25",
-  "description": "A simple, modern file icon theme for Athas.",
+  "description": "A simple, modern file icon theme for Blimy.",
   "publisher": "Miguel Solorio",
   "categories": ["Icon Theme"],
   "activationEvents": ["onIconTheme:symbols"],

@@ -1,11 +1,11 @@
 {
-  "$schema": "https://athas.dev/schemas/extension.json",
-  "id": "athas.csharp",
+  "$schema": "https://blimy.dev/schemas/extension.json",
+  "id": "blimy.csharp",
   "name": "CSharp",
   "displayName": "C#",
   "version": "1.0.0",
   "description": "C# language support with LSP",
-  "publisher": "Athas",
+  "publisher": "Blimy",
   "categories": ["Language"],
   "languages": [
     {

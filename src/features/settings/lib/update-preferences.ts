@@ -1,9 +1,9 @@
-const STORAGE_KEY = "athas-update-preferences";
+const STORAGE_KEY = "blimy-update-preferences";
 
 const DEFAULT_REMIND_LATER_MS = 24 * 60 * 60 * 1000;
 
-export const UPDATE_DISMISSED_EVENT = "athas:update-dismissed";
-export const UPDATE_PREFERENCES_CHANGED_EVENT = "athas:update-preferences-changed";
+export const UPDATE_DISMISSED_EVENT = "blimy:update-dismissed";
+export const UPDATE_PREFERENCES_CHANGED_EVENT = "blimy:update-preferences-changed";
 
 interface StorageLike {
   getItem(key: string): string | null;

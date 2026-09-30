@@ -5,7 +5,7 @@ import {
 import type { AgentConfig } from "@/features/ai/types/acp.types";
 import type { AgentType } from "@/features/ai/types/ai-chat.types";
 
-const ATHAS_AGENT_OPTION = {
+const BLIMY_AGENT_OPTION = {
   id: "custom",
   name: "AI Chat",
   description: "Chat directly with a configured model provider",
@@ -76,7 +76,7 @@ export function buildAgentOptions({
   codexInstalled: boolean;
   pendingAction: PendingAgentAction | null;
 }): AgentOption[] {
-  // The ACP Registry lists dozens of agents; the composer offers the ones Athas ships and the
+  // The ACP Registry lists dozens of agents; the composer offers the ones Blimy ships and the
   // registry agents the user installed. The rest are installed from the Agents catalog.
   const registryAgents = Array.from(agentConfigs.values())
     .filter(
@@ -84,7 +84,7 @@ export function buildAgentOptions({
     )
     .sort((left, right) => left.name.localeCompare(right.name));
   const availableAgents: Array<{ id: string; name: string; description?: string | null }> = [
-    ATHAS_AGENT_OPTION,
+    BLIMY_AGENT_OPTION,
     ...BUILT_IN_AI_INTEGRATIONS,
     ...registryAgents,
   ];
@@ -99,10 +99,10 @@ export function buildAgentOptions({
   return availableAgents.map((agent) => {
     const agentId = agent.id as AgentType;
     const agentConfig = agentConfigs.get(agent.id);
-    const isAthasAgent = agent.id === "custom";
+    const isBlimyAgent = agent.id === "custom";
     const isIntegration = agent.id === CODEX_INTEGRATION_ID;
     const isInstalled =
-      isAthasAgent || (isIntegration ? codexInstalled : (agentConfig?.installed ?? false));
+      isBlimyAgent || (isIntegration ? codexInstalled : (agentConfig?.installed ?? false));
     const canInstall = !isIntegration && (agentConfig?.canInstall ?? false);
     const updateAvailable = isInstalled && canInstall && (agentConfig?.updateAvailable ?? false);
     const isBusy = pendingAction?.agentId === agent.id;

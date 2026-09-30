@@ -1,11 +1,11 @@
 {
-  "$schema": "https://athas.dev/schemas/extension.json",
-  "id": "athas.systemrdl",
+  "$schema": "https://blimy.dev/schemas/extension.json",
+  "id": "blimy.systemrdl",
   "name": "SystemRDL",
   "displayName": "SystemRDL",
   "version": "1.0.0",
   "description": "SystemRDL language support",
-  "publisher": "Athas",
+  "publisher": "Blimy",
   "categories": ["Language"],
   "languages": [
     {

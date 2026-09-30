@@ -26,7 +26,7 @@ import { getServiceUrls } from "@/config/services";
 import { ReleaseNotesContent } from "./release-notes-content";
 
 const telemetryDescription =
-  "Athas sends anonymous operational metadata for updates and, when enabled, heartbeats, integrations, and crashes; it never sends file paths, project names, prompts, or editor content.";
+  "Blimy sends anonymous operational metadata for updates and, when enabled, heartbeats, integrations, and crashes; it never sends file paths, project names, prompts, or editor content.";
 const telemetryLearnMoreUrl = getServiceUrls().telemetryDocsUrl;
 
 interface OnboardingViewProps {
@@ -133,7 +133,7 @@ export default function OnboardingView({ bufferId, context }: OnboardingViewProp
               <span>{viewModel.description}</span>
               {releaseInfo.date ? (
                 <>
-                  <span aria-hidden="true">·</span>
+                  <span aria-hidden="true">Â·</span>
                   <span>Released {formatReleaseDate(releaseInfo.date)}</span>
                 </>
               ) : null}

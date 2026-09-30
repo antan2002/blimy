@@ -45,7 +45,7 @@ export function GithubMark({ size = "1em", ...props }: BrandMarkProps) {
 }
 
 export const agentBrandImages: Readonly<Record<string, string>> = {
-  athas: "/logo.png",
+  blimy: "/logo.png",
   "claude-acp": claudeImage,
   anthropic: claudeImage,
   "gemini-cli": geminiImage,
@@ -71,7 +71,7 @@ const databaseBrandImages = {
 type DatabaseBrand = keyof typeof databaseBrandImages;
 
 export function getDatabaseBrandImage(providerOrExtensionId: string): string | undefined {
-  const provider = providerOrExtensionId.replace(/^athas\.database\./, "");
+  const provider = providerOrExtensionId.replace(/^blimy\.database\./, "");
   return Object.prototype.hasOwnProperty.call(databaseBrandImages, provider)
     ? databaseBrandImages[provider as DatabaseBrand]
     : undefined;

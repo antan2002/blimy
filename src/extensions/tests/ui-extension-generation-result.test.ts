@@ -117,7 +117,7 @@ describe("UI extension generation result", () => {
             items: [
               {
                 title: "Deploy",
-                onSelect: { command: "athas.deploy.open" },
+                onSelect: { command: "blimy.deploy.open" },
               },
             ],
           },
@@ -151,7 +151,7 @@ describe("UI extension generation result", () => {
           view: {
             type: "form",
             submitLabel: "Connect",
-            onSubmit: { command: "athas.connect" },
+            onSubmit: { command: "blimy.connect" },
             children: [{ type: "input", name: "token" }],
           },
         },
@@ -176,7 +176,7 @@ describe("UI extension generation result", () => {
                   {
                     id: "src-main",
                     title: "main.ts",
-                    onSelect: { command: "athas.workspace.open" },
+                    onSelect: { command: "blimy.workspace.open" },
                   },
                 ],
               },

@@ -1,29 +1,29 @@
-export interface AthasModelUriParts {
-  scheme: "athas";
+export interface BlimyModelUriParts {
+  scheme: "blimy";
   authority: "editor";
   path: string;
   query: string;
 }
 
-export function createAthasModelUriParts(
+export function createBlimyModelUriParts(
   bufferId: string | undefined,
   filePath: string,
   displayPath = filePath,
-): AthasModelUriParts {
+): BlimyModelUriParts {
   const sanitizedPath = displayPath.replace(/^\/+/, "");
   const path = sanitizedPath.length > 0 ? sanitizedPath : `${bufferId ?? "untitled"}.txt`;
   const query = new URLSearchParams();
   if (bufferId) query.set("buffer", bufferId);
   if (displayPath !== filePath) query.set("file", filePath);
   return {
-    scheme: "athas",
+    scheme: "blimy",
     authority: "editor",
     path: `/${path}`,
     query: query.toString(),
   };
 }
 
-export function filePathFromAthasModelUri(path: string, query: string): string {
+export function filePathFromBlimyModelUri(path: string, query: string): string {
   const filePath = new URLSearchParams(query).get("file");
   if (filePath) return filePath;
 

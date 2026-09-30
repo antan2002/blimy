@@ -11,10 +11,10 @@ import { useAIChatStore } from "@/features/ai/stores/ai-chat.store";
 import { filePathFromUri } from "@/features/editor/lsp/workspace-edit";
 import { useKeymapStore } from "@/features/keymaps/stores/keymaps.store";
 import { showToast } from "@/features/layout/contexts/toast-context";
-import { filePathFromAthasModelUri } from "./model-uri";
+import { filePathFromBlimyModelUri } from "./model-uri";
 
-const KEEP_COMMAND = "athas.keepAgentHunk";
-const REJECT_COMMAND = "athas.rejectAgentHunk";
+const KEEP_COMMAND = "blimy.keepAgentHunk";
+const REJECT_COMMAND = "blimy.rejectAgentHunk";
 /** Keymap context: the focused editor shows unreviewed agent hunks. */
 export const AGENT_EDIT_HUNKS_CONTEXT = "agentEditHunks";
 /** Lets a burst of typing or store updates redraw the hunks once. */
@@ -29,8 +29,8 @@ let focusedEditor: CodeEditor | null = null;
 
 function filePathFromModel(model: Monaco.editor.ITextModel): string | null {
   if (model.uri.scheme === "file") return filePathFromUri(model.uri.toString());
-  if (model.uri.scheme === "athas") {
-    return filePathFromAthasModelUri(model.uri.path, model.uri.query);
+  if (model.uri.scheme === "blimy") {
+    return filePathFromBlimyModelUri(model.uri.path, model.uri.query);
   }
   return null;
 }

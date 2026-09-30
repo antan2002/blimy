@@ -8,7 +8,7 @@ import type {
 } from "../types/github-delivery.types";
 import { deliveryKey } from "../utils/github-delivery";
 
-export const DELIVERY_CHANGED = "athas:github-delivery-changed";
+export const DELIVERY_CHANGED = "blimy:github-delivery-changed";
 export const DELIVERY_TTL = 30_000;
 export const DELIVERY_LIST_TTL = 60_000;
 export const DELIVERY_PAGE_SIZE = 20;

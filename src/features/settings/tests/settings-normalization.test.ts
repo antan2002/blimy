@@ -201,7 +201,7 @@ describe("settings normalization", () => {
   it("drops legacy editor engine settings", () => {
     const normalized = normalizeSettings({
       ...getDefaultSettingsSnapshot(),
-      editorEngine: "athas",
+      editorEngine: "blimy",
       externalEditor: "helix",
     } as never);
 
@@ -267,10 +267,10 @@ describe("settings normalization", () => {
     expect(normalizeSettingValue("iconTheme", "material")).toBe("pierre-icons-complete");
     expect(normalizeSettingValue("iconTheme", "seti")).toBe("pierre-icons-complete");
     expect(normalizeSettingValue("iconTheme", "symbols")).toBe("pierre-icons-complete");
-    expect(normalizeSettingValue("iconTheme", "athas-icons")).toBe("pierre-icons-complete");
-    expect(normalizeSettingValue("iconTheme", "athas-icons-dimmed")).toBe("pierre-icons-complete");
-    expect(normalizeSettingValue("iconTheme", "athas-icons-light")).toBe("pierre-icons-complete");
-    expect(normalizeSettingValue("iconTheme", "athas-file-icons")).toBe("pierre-icons-complete");
+    expect(normalizeSettingValue("iconTheme", "blimy-icons")).toBe("pierre-icons-complete");
+    expect(normalizeSettingValue("iconTheme", "blimy-icons-dimmed")).toBe("pierre-icons-complete");
+    expect(normalizeSettingValue("iconTheme", "blimy-icons-light")).toBe("pierre-icons-complete");
+    expect(normalizeSettingValue("iconTheme", "blimy-file-icons")).toBe("pierre-icons-complete");
   });
 
   it("drops retired core feature flags", () => {
@@ -278,12 +278,12 @@ describe("settings normalization", () => {
       ...getDefaultSettingsSnapshot(),
       coreFeatures: {
         ...getDefaultSettingsSnapshot().coreFeatures,
-        athasEditorEngine: true,
+        blimyEditorEngine: true,
         energyEdge: true,
       },
     } as never);
 
-    expect("athasEditorEngine" in normalized.coreFeatures).toBe(false);
+    expect("blimyEditorEngine" in normalized.coreFeatures).toBe(false);
     expect("energyEdge" in normalized.coreFeatures).toBe(false);
   });
 
@@ -407,11 +407,11 @@ describe("settings normalization", () => {
         title: " Review Skill ",
         description: " ".repeat(2) + "Helpful review instructions",
         content: "Review this diff",
-        author: "Athas",
+        author: "Blimy",
         license: "MIT",
-        sourceUrl: "https://github.com/athasdev/athas",
+        sourceUrl: "https://github.com/blimydev/blimy",
         source: "marketplace",
-        sourceId: "athas.review",
+        sourceId: "blimy.review",
         version: "1.0.0",
         tags: ["review", " code "],
         localOverride: true,
@@ -428,11 +428,11 @@ describe("settings normalization", () => {
       id: "skill-one",
       title: "Review Skill",
       description: "Helpful review instructions",
-      author: "Athas",
+      author: "Blimy",
       license: "MIT",
-      sourceUrl: "https://github.com/athasdev/athas",
+      sourceUrl: "https://github.com/blimydev/blimy",
       source: "marketplace",
-      sourceId: "athas.review",
+      sourceId: "blimy.review",
       version: "1.0.0",
       tags: ["review", "code"],
       localOverride: true,

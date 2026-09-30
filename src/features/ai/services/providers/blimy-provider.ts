@@ -12,7 +12,7 @@ import {
 import { toOpenAIMessage } from "@/features/ai/lib/image-attachments";
 
 /**
- * The server offers hosted models only to accounts with Athas Pro or a pay-as-you-go balance.
+ * The server offers hosted models only to accounts with Blimy Pro or a pay-as-you-go balance.
  * Carries a 402 so chat recovery offers billing instead of provider settings.
  */
 export class HostedEntitlementError extends Error {
@@ -21,13 +21,13 @@ export class HostedEntitlementError extends Error {
 
   constructor() {
     super(
-      "Athas models need Pro or pay-as-you-go credit. Upgrade or add credit in billing to use them.",
+      "Blimy models need Pro or pay-as-you-go credit. Upgrade or add credit in billing to use them.",
     );
     this.name = "HostedEntitlementError";
   }
 }
 
-export class AthasProvider extends AIProvider {
+export class BlimyProvider extends AIProvider {
   async buildHeaders(): Promise<ProviderHeaders> {
     const userId = useAuthStore.getState().user?.id;
     const scope = useIntelligenceSettingsStore.getState().scope;
@@ -37,12 +37,12 @@ export class AthasProvider extends AIProvider {
       useIntelligenceSettingsStore.getState().scope !== scope
     )
       throw new Error("The active account or team changed. Try again.");
-    if (!token) throw new Error("Sign in to Athas to use hosted models.");
+    if (!token) throw new Error("Sign in to Blimy to use hosted models.");
     return {
       "Content-Type": "application/json",
       Accept: "text/event-stream, application/json",
       Authorization: `Bearer ${token}`,
-      "X-Athas-Intelligence-Scope": scope,
+      "X-Blimy-Intelligence-Scope": scope,
     };
   }
 
@@ -78,19 +78,19 @@ export class AthasProvider extends AIProvider {
       const host = new URL(getApiBase()).host;
       throw new Error(
         error instanceof DOMException && error.name === "TimeoutError"
-          ? `Athas at ${host} took too long to answer.`
-          : `Could not reach Athas at ${host}.`,
+          ? `Blimy at ${host} took too long to answer.`
+          : `Could not reach Blimy at ${host}.`,
       );
     }
     if (response.status === 401)
-      throw new Error("Your Athas session has expired. Sign out and sign in again.");
+      throw new Error("Your Blimy session has expired. Sign out and sign in again.");
     if (response.status === 402) throw new HostedEntitlementError();
-    if (!response.ok) throw new Error(`Could not connect to Athas (${response.status}).`);
+    if (!response.ok) throw new Error(`Could not connect to Blimy (${response.status}).`);
     const result = (await response.json()) as { enabled: boolean; data: ProviderModel[] };
     if (!result.enabled) {
       // A Pro account is entitled; then the server itself has hosted models turned off.
       if (useAuthStore.getState().subscription?.status === "pro")
-        throw new Error("Hosted models are not available on this Athas server.");
+        throw new Error("Hosted models are not available on this Blimy server.");
       throw new HostedEntitlementError();
     }
     return result.data;

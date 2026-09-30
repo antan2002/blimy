@@ -228,7 +228,7 @@ function convertLanguageManifest(
     displayName: manifest.displayName || manifest.name,
     description: manifest.description || `${manifest.name} language support`,
     version: manifest.version || "1.0.0",
-    publisher: manifest.publisher || "Athas",
+    publisher: manifest.publisher || "Blimy",
     categories: normalizeExtensionCategories(manifest.categories, "Language"),
     icon: resolveExtensionAssetUrl(folder, manifest.icon, "icon.svg"),
     languages,

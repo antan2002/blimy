@@ -1,11 +1,11 @@
 {
-  "$schema": "https://athas.dev/schemas/extension.json",
-  "id": "athas.nix",
+  "$schema": "https://blimy.dev/schemas/extension.json",
+  "id": "blimy.nix",
   "name": "Nix",
   "displayName": "Nix",
   "version": "1.0.0",
   "description": "Nix language support with syntax highlighting",
-  "publisher": "Athas",
+  "publisher": "Blimy",
   "categories": ["Language"],
   "languages": [
     {

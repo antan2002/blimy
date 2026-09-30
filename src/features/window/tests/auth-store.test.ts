@@ -8,11 +8,11 @@ import {
 
 const user: AuthUser = {
   id: 1,
-  email: "dev@athas.dev",
-  name: "Athas Dev",
+  email: "dev@blimy.dev",
+  name: "Blimy Dev",
   avatar_url: null,
   provider: "github",
-  github_username: "athasdev",
+  github_username: "blimydev",
   subscription_status: "pro",
   created_at: "2026-08-04T00:00:00.000Z",
 };

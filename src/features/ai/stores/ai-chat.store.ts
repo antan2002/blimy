@@ -20,7 +20,7 @@ const useAIChatStoreBase = create<AIChatStore>()(
       },
     })),
     {
-      name: "athas-ai-chat-settings-v7",
+      name: "blimy-ai-chat-settings-v7",
       version: 3,
       partialize: (state) => ({
         mode: state.mode,

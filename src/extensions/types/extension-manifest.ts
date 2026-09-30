@@ -21,13 +21,13 @@ export type ToolRuntime =
   | "r"
   // Uses a system executable from PATH or known toolchain locations.
   | "system"
-  // Uses a system executable when present, otherwise an Athas-managed binary.
+  // Uses a system executable when present, otherwise an Blimy-managed binary.
   | "binary";
 type ExtensionKind = "ui" | "workspace" | "web";
 
 export interface ExtensionManifest {
   // Core metadata
-  id: string; // Unique identifier (e.g., "athas.rust")
+  id: string; // Unique identifier (e.g., "blimy.rust")
   name: string; // Display name (e.g., "Rust")
   displayName: string; // Human-readable name
   description: string;
@@ -39,7 +39,7 @@ export interface ExtensionManifest {
 
   // Engine compatibility metadata from declarative package manifests.
   engines?: {
-    athas?: string;
+    blimy?: string;
     vscode?: string;
     [engine: string]: string | undefined;
   };
@@ -110,7 +110,7 @@ export interface ExtensionManifest {
   // Explicit host capabilities granted to executable extension code.
   permissions?: ExtensionPermissions;
 
-  // Runtime capability metadata used by Athas extension packages before they
+  // Runtime capability metadata used by Blimy extension packages before they
   // are normalized into concrete LSP/formatter/linter/grammar fields.
   capabilities?: Record<string, unknown>;
 

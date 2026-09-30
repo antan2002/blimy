@@ -21,7 +21,7 @@ export function ReleaseEditor({
   onCancel?: () => void;
 }) {
   const fieldId = useId();
-  const draftKey = `athas:release-draft:${JSON.stringify([repoPath, release?.id ?? "new"])}`;
+  const draftKey = `blimy:release-draft:${JSON.stringify([repoPath, release?.id ?? "new"])}`;
   const [input, setInput] = useState<ReleaseInput>(() => {
     const initial = {
       tag_name: release?.tag_name ?? "",
@@ -191,7 +191,7 @@ export function ReleaseEditor({
           value={input.body}
           onChange={(body) => setInput((current) => ({ ...current, body }))}
           disabled={Boolean(busy)}
-          placeholder="Describe what changed in this release…"
+          placeholder="Describe what changed in this releaseâ€¦"
         />
       </div>
       {error && <ViewerErrorState layout="section" message={error} />}

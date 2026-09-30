@@ -19,8 +19,8 @@ function collaborationSnapshot(
     enabled: true,
     workspace: {
       id: 1,
-      name: "Athas Team",
-      slug: "athas-team",
+      name: "Blimy Team",
+      slug: "blimy-team",
       role: "owner",
       visibility: "workspace",
       realtimeProtocolVersion: 1,
@@ -90,7 +90,7 @@ describe("collaboration sidebar model", () => {
       selectedChannelId: 10,
     });
 
-    expect(model?.workspaceName).toBe("Athas Team");
+    expect(model?.workspaceName).toBe("Blimy Team");
     expect(model?.selectedChannel?.slug).toBe("general");
     expect(model?.chatEntries).toEqual([
       {
@@ -145,14 +145,14 @@ describe("collaboration sidebar model", () => {
       }),
     ).toBe(
       [
-        "<!-- athas:threads -->",
+        "<!-- blimy:threads -->",
         "- **Mehmet**: First",
         "- **Teammate**: second message",
-        "<!-- /athas:threads -->",
+        "<!-- /blimy:threads -->",
         "",
-        "<!-- athas:notes -->",
+        "<!-- blimy:notes -->",
         "",
-        "<!-- /athas:notes -->",
+        "<!-- /blimy:notes -->",
       ].join("\n"),
     );
   });
@@ -166,14 +166,14 @@ describe("collaboration sidebar model", () => {
       }),
     ).toBe(
       [
-        "<!-- athas:threads -->",
+        "<!-- blimy:threads -->",
         "- **Mehmet**: shared document: Roadmap.pdf",
         "- **Mehmet**: shared document: Meeting Notes.docx",
-        "<!-- /athas:threads -->",
+        "<!-- /blimy:threads -->",
         "",
-        "<!-- athas:notes -->",
+        "<!-- blimy:notes -->",
         "",
-        "<!-- /athas:notes -->",
+        "<!-- /blimy:notes -->",
       ].join("\n"),
     );
   });

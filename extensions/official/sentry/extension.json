@@ -1,11 +1,11 @@
 {
-  "$schema": "https://athas.dev/schemas/extension.json",
-  "id": "athas.sentry",
+  "$schema": "https://blimy.dev/schemas/extension.json",
+  "id": "blimy.sentry",
   "name": "sentry",
   "displayName": "Sentry",
-  "description": "Inspect unresolved Sentry issues for a project without leaving Athas.",
+  "description": "Inspect unresolved Sentry issues for a project without leaving Blimy.",
   "version": "1.0.0",
-  "publisher": "Athas",
+  "publisher": "Blimy",
   "categories": ["Integration"],
   "integrations": [
     {
@@ -27,6 +27,6 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/athasdev/athas"
+    "url": "https://github.com/blimydev/blimy"
   }
 }

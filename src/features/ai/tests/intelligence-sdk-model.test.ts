@@ -32,7 +32,7 @@ vi.mock("@/features/ai/services/providers/ai-provider-registry", () => ({
     buildHeaders: async () => ({ Authorization: "Bearer local-test-key" }),
   }),
 }));
-vi.mock("@/utils/api-base", () => ({ getApiBase: () => "https://athas.test" }));
+vi.mock("@/utils/api-base", () => ({ getApiBase: () => "https://blimy.test" }));
 
 beforeEach(() => {
   vi.clearAllMocks();
@@ -52,7 +52,7 @@ describe("Intelligence SDK connections", () => {
       expect.objectContaining({ baseURL: "http://localhost:9001/v1", apiKey: "custom-test-key" }),
     );
   });
-  it("connects personal OpenRouter directly without an Athas account", async () => {
+  it("connects personal OpenRouter directly without an Blimy account", async () => {
     await getIntelligenceSdkModel("openrouter", "user/model");
     expect(mocks.compatible).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -63,15 +63,15 @@ describe("Intelligence SDK connections", () => {
   });
   it("pins the first routed hosted model for following agent steps", async () => {
     mocks.fetch.mockResolvedValue(
-      new Response("", { headers: { "x-athas-model": "routed-model" } }),
+      new Response("", { headers: { "x-blimy-model": "routed-model" } }),
     );
-    await getIntelligenceSdkModel("athas", "auto");
+    await getIntelligenceSdkModel("blimy", "auto");
     const connection = mocks.compatible.mock.calls[0][0];
-    expect(connection.baseURL).toBe("https://athas.test/api/ai");
-    await connection.fetch("https://athas.test/api/ai/chat/completions", {
+    expect(connection.baseURL).toBe("https://blimy.test/api/ai");
+    await connection.fetch("https://blimy.test/api/ai/chat/completions", {
       body: JSON.stringify({ model: "auto" }),
     });
-    await connection.fetch("https://athas.test/api/ai/chat/completions", {
+    await connection.fetch("https://blimy.test/api/ai/chat/completions", {
       body: JSON.stringify({ model: "auto" }),
     });
     expect(JSON.parse(mocks.fetch.mock.calls[1][1].body).model).toBe("routed-model");

@@ -48,7 +48,7 @@ export async function fetchIntelligenceSettings(
     !Number.isSafeInteger(data.revision) ||
     data.revision < 0
   ) {
-    throw new IntelligenceSettingsError("Athas returned invalid AI settings.", 502);
+    throw new IntelligenceSettingsError("Blimy returned invalid AI settings.", 502);
   }
   return { ...data, preferences: parseIntelligencePreferences(data.preferences) };
 }

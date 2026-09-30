@@ -19,8 +19,8 @@ export function GitHubAuthStatusMessage({
   const authError = useGitHubStore.use.authError();
   const isCheckingAuth = useGitHubStore.use.isCheckingAuth();
   const checkAuth = useGitHubStore.use.actions().checkAuth;
-  const isAthasAuthenticated = useAuthStore((s) => s.isAuthenticated);
-  const isAthasAuthLoading = useAuthStore((s) => s.isLoading);
+  const isBlimyAuthenticated = useAuthStore((s) => s.isAuthenticated);
+  const isBlimyAuthLoading = useAuthStore((s) => s.isLoading);
   const openSettings = useUIState((s) => s.openSettings);
   const updateSetting = useSettingsStore((state) => state.actions.updateSetting);
   const [canUseGhCli, setCanUseGhCli] = useState(false);
@@ -51,7 +51,7 @@ export function GitHubAuthStatusMessage({
     await checkAuth({ force: true });
   };
 
-  // An organization that has not approved the Athas GitHub app stays unreachable with
+  // An organization that has not approved the Blimy GitHub app stays unreachable with
   // the account token, so offer a per-user credential as a first-class way out: the
   // `gh` token when it is already there, the settings for a pasted token otherwise.
   const ownCredentialAction = canUseGhCli
@@ -63,9 +63,9 @@ export function GitHubAuthStatusMessage({
       } as const);
 
   if (
-    isAthasAuthLoading ||
+    isBlimyAuthLoading ||
     isCheckingAuth ||
-    (isAthasAuthenticated && githubAccountStatus === "unknown")
+    (isBlimyAuthenticated && githubAccountStatus === "unknown")
   ) {
     return (
       <EmptyState
@@ -87,7 +87,7 @@ export function GitHubAuthStatusMessage({
     );
   }
 
-  if (!isAthasAuthenticated || githubAccountStatus === "notSignedIn") {
+  if (!isBlimyAuthenticated || githubAccountStatus === "notSignedIn") {
     return (
       <EmptyState
         layout={layout}

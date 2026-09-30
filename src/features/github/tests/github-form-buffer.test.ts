@@ -4,15 +4,15 @@ import { getRepositoryDisplayName } from "../utils/github-viewer-utils";
 
 describe("GitHub form buffers", () => {
   it("uses only the repository name in form chrome", () => {
-    expect(getRepositoryDisplayName("/Users/mehmetozgul/Documents/Git/athasdev/athas")).toBe(
-      "athas",
+    expect(getRepositoryDisplayName("/Users/mehmetozgul/Documents/Git/blimydev/blimy")).toBe(
+      "blimy",
     );
   });
 
   it("creates a normal tab-backed pull request form", () => {
     const buffer = createPaneContent("github-form", {
       type: "githubForm",
-      repoPath: "/workspace/athas",
+      repoPath: "/workspace/blimy",
       formKind: "pull-request",
       operation: "create",
       defaultHead: "feature/forms",
@@ -22,7 +22,7 @@ describe("GitHub form buffers", () => {
       type: "githubForm",
       name: "New Pull Request",
       isPreview: false,
-      repoPath: "/workspace/athas",
+      repoPath: "/workspace/blimy",
       defaultHead: "feature/forms",
     });
     expect(buffer.path).toContain("github-form://create/pull-request/");
@@ -31,13 +31,13 @@ describe("GitHub form buffers", () => {
   it("gives each creation form a distinct tab identity", () => {
     const issue = createPaneContent("issue", {
       type: "githubForm",
-      repoPath: "/workspace/athas",
+      repoPath: "/workspace/blimy",
       formKind: "issue",
       operation: "create",
     });
     const workflow = createPaneContent("workflow", {
       type: "githubForm",
-      repoPath: "/workspace/athas",
+      repoPath: "/workspace/blimy",
       formKind: "action",
       operation: "create",
     });

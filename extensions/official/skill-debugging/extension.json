@@ -1,16 +1,16 @@
 {
-  "$schema": "https://athas.dev/schemas/extension.json",
-  "id": "athas.skill.debugging",
+  "$schema": "https://blimy.dev/schemas/extension.json",
+  "id": "blimy.skill.debugging",
   "name": "systematic-debugging",
   "displayName": "Systematic Debugging",
   "description": "Trace failures to their real boundary before proposing a focused fix.",
   "version": "1.0.0",
-  "publisher": "Athas",
+  "publisher": "Blimy",
   "categories": ["Skill"],
   "contributes": {
     "skills": [
       {
-        "id": "athas.systematic-debugging",
+        "id": "blimy.systematic-debugging",
         "name": "Systematic Debugging",
         "description": "Trace failures to their real boundary before proposing a focused fix.",
         "path": "SKILL.md",
@@ -22,6 +22,6 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/athasdev/athas"
+    "url": "https://github.com/blimydev/blimy"
   }
 }

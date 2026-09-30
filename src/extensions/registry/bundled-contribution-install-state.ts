@@ -1,4 +1,4 @@
-const INSTALLED_BUNDLED_CONTRIBUTIONS_KEY = "athas.installedBundledContributionExtensions";
+const INSTALLED_BUNDLED_CONTRIBUTIONS_KEY = "blimy.installedBundledContributionExtensions";
 
 function canUseStorage(): boolean {
   return typeof window !== "undefined" && typeof window.localStorage !== "undefined";

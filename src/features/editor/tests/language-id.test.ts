@@ -9,7 +9,7 @@ import {
 } from "../utils/line-based-syntax";
 import {
   MONACO_HIGHLIGHT_LANGUAGE_IDS,
-  MONACO_LANGUAGE_BY_ATHAS_ID,
+  MONACO_LANGUAGE_BY_BLIMY_ID,
   toMonacoLanguageId,
 } from "../engines/monaco/language";
 import { getLanguageOverlayTokens } from "../lib/wasm-parser/language-overlays";
@@ -96,13 +96,13 @@ describe("getLanguageIdFromPath", () => {
 });
 
 describe("toMonacoLanguageId", () => {
-  it("maps every Monaco-backed Athas language to a bundled highlight contribution", () => {
-    for (const [athasLanguageId, monacoLanguageId] of Object.entries(MONACO_LANGUAGE_BY_ATHAS_ID)) {
+  it("maps every Monaco-backed Blimy language to a bundled highlight contribution", () => {
+    for (const [blimyLanguageId, monacoLanguageId] of Object.entries(MONACO_LANGUAGE_BY_BLIMY_ID)) {
       if (monacoLanguageId === "plaintext") continue;
 
       expect(
-        MONACO_HIGHLIGHT_LANGUAGE_IDS.has(toMonacoLanguageId(athasLanguageId)),
-        `${athasLanguageId} maps to ${monacoLanguageId}`,
+        MONACO_HIGHLIGHT_LANGUAGE_IDS.has(toMonacoLanguageId(blimyLanguageId)),
+        `${blimyLanguageId} maps to ${monacoLanguageId}`,
       ).toBe(true);
     }
   });

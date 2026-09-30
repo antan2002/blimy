@@ -7,12 +7,12 @@ import { ComposerAgentSelector } from "../components/input/composer-agent-select
 const state = vi.hoisted(() => ({
   keys: new Map([["openai", true]]),
   providers: [
-    { id: "athas", name: "Athas", models: [] },
+    { id: "blimy", name: "Blimy", models: [] },
     { id: "openai", name: "OpenAI", models: [] },
     { id: "anthropic", name: "Anthropic", models: [] },
   ],
   models: {
-    athas: [
+    blimy: [
       { id: "auto", name: "Automatic" },
       { id: "moonshotai/kimi-k2.6", name: "Kimi K2.6", contextWindow: 262144 },
       { id: "anthropic/claude-sonnet-5", name: "Claude Sonnet 5", input: 3, output: 15 },
@@ -105,7 +105,7 @@ beforeEach(async () => {
       <ComposerAgentSelector
         cwd="/repo"
         currentAgentId="custom"
-        providerId="athas"
+        providerId="blimy"
         modelId="auto"
         sessionConfigOptions={[]}
         onModelChange={onModelChange}
@@ -127,7 +127,7 @@ async function open() {
 }
 async function search(value: string) {
   await act(async () => {
-    const input = document.querySelector<HTMLInputElement>('input[placeholder="Select a model…"]')!;
+    const input = document.querySelector<HTMLInputElement>('input[placeholder="Select a modelâ€¦"]')!;
     Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value")!.set!.call(input, value);
     input.dispatchEvent(new Event("input", { bubbles: true }));
   });
@@ -148,21 +148,21 @@ describe("composer model selector", () => {
   it("lists every connection as a headed section in one flat list", async () => {
     await open();
     expect(document.querySelector('[data-slot="dropdown-menu-sub-trigger"]')).toBeNull();
-    expect(sections()).toEqual(["Recommended", "Athas", "OpenAI", "Codex", "Agents"]);
+    expect(sections()).toEqual(["Recommended", "Blimy", "OpenAI", "Codex", "Agents"]);
     expect(names(rowsIn("Recommended"))).toEqual(["Automatic", "Claude Sonnet 5"]);
-    expect(names(rowsIn("Athas"))).toEqual([
+    expect(names(rowsIn("Blimy"))).toEqual([
       "Automatic",
       "Kimi K2.6",
       "Claude Sonnet 5",
       "DeepSeek V4 Pro",
     ]);
     expect(names(rowsIn("Codex"))).toEqual(["Default", "Codex Test"]);
-    const sonnet = rowsIn("Athas")[2];
+    const sonnet = rowsIn("Blimy")[2];
     expect(sonnet.getAttribute("title")).toContain("Anthropic");
     expect(sonnet.getAttribute("title")).toContain("billed at list price +10%");
-    expect(rowsIn("Athas")[0].getAttribute("aria-checked")).toBe("true");
-    await act(async () => rowsIn("Athas")[1].click());
-    expect(onModelChange).toHaveBeenCalledExactlyOnceWith("moonshotai/kimi-k2.6", "athas");
+    expect(rowsIn("Blimy")[0].getAttribute("aria-checked")).toBe("true");
+    await act(async () => rowsIn("Blimy")[1].click());
+    expect(onModelChange).toHaveBeenCalledExactlyOnceWith("moonshotai/kimi-k2.6", "blimy");
     expect(state.loadModels).not.toHaveBeenCalledWith("anthropic");
   });
   it("selects a configured provider model from its section", async () => {
@@ -180,7 +180,7 @@ describe("composer model selector", () => {
     expect(rows()).toHaveLength(0);
     expect(document.body.textContent).toContain("No matching models");
     await search("kimi");
-    expect(sections()).toEqual(["Athas"]);
+    expect(sections()).toEqual(["Blimy"]);
     expect(names(rows())).toEqual(["Kimi K2.6"]);
     await search("anthropic");
     expect(names(rows())).toEqual(["Claude Sonnet 5"]);
@@ -202,7 +202,7 @@ describe("composer model selector", () => {
     await open();
     await act(async () =>
       [...document.querySelectorAll<HTMLElement>('[role="menuitem"]')]
-        .find((row) => row.textContent === "Configure models…")!
+        .find((row) => row.textContent === "Configure modelsâ€¦")!
         .click(),
     );
     expect(state.configure).toHaveBeenCalledExactlyOnceWith("ai");

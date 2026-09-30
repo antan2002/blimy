@@ -7,7 +7,7 @@ import { tmpdir } from "node:os";
 import SERVICE_DEFAULTS from "@/config/services.json";
 import { basename, dirname, join, resolve } from "node:path";
 import {
-  ATHAS_ROOT,
+  BLIMY_ROOT,
   getContributionArray,
   getExtensionCdnPath,
   getExtensionSourceDir,
@@ -58,7 +58,7 @@ async function createPackage(params: {
   binaryPath: string;
   packagePath: string;
 }) {
-  const tempDir = await mkdtemp(join(tmpdir(), "athas-db-extension-"));
+  const tempDir = await mkdtemp(join(tmpdir(), "blimy-db-extension-"));
 
   try {
     await $`rsync -az --exclude='.DS_Store' ${params.extensionDir}/ ${tempDir}/`;
@@ -106,9 +106,9 @@ async function findDatabaseExtensionFolders(providerFilter?: string) {
 
 const platformArch = argValue("--platform") || process.env.PLATFORM_ARCH || currentPlatformArch();
 const shouldBuild = process.argv.includes("--build") || process.env.BUILD_DATABASE_SIDECARS === "1";
-const requestedBinDir = argValue("--bin-dir") || process.env.ATHAS_DATABASE_SIDECAR_BIN_DIR;
+const requestedBinDir = argValue("--bin-dir") || process.env.BLIMY_DATABASE_SIDECAR_BIN_DIR;
 const requestedBuildTargetDir =
-  argValue("--target-dir") || process.env.ATHAS_DATABASE_SIDECAR_TARGET_DIR;
+  argValue("--target-dir") || process.env.BLIMY_DATABASE_SIDECAR_TARGET_DIR;
 const providerFilter = argValue("--provider");
 let packagedCount = 0;
 const artifacts = await readExtensionArtifacts();
@@ -119,24 +119,24 @@ if (shouldBuild && requestedBinDir) {
 
 const temporaryBuildTargetDir =
   shouldBuild && !requestedBuildTargetDir
-    ? await mkdtemp(join(tmpdir(), "athas-db-sidecars-"))
+    ? await mkdtemp(join(tmpdir(), "blimy-db-sidecars-"))
     : undefined;
 const buildTargetDir = shouldBuild
   ? requestedBuildTargetDir
-    ? resolve(ATHAS_ROOT, requestedBuildTargetDir)
+    ? resolve(BLIMY_ROOT, requestedBuildTargetDir)
     : temporaryBuildTargetDir
   : undefined;
 const binDir = buildTargetDir
   ? join(buildTargetDir, "release")
-  : resolve(ATHAS_ROOT, requestedBinDir || "target/release");
+  : resolve(BLIMY_ROOT, requestedBinDir || "target/release");
 
 async function buildSidecar(providerId: string, binaryName: string) {
   if (!buildTargetDir) {
     throw new Error("Database sidecar build target is not configured.");
   }
 
-  await $`cargo build -p athas-database --release --no-default-features --features ${providerId} --bin ${binaryName} --target-dir ${buildTargetDir}`.cwd(
-    ATHAS_ROOT,
+  await $`cargo build -p blimy-database --release --no-default-features --features ${providerId} --bin ${binaryName} --target-dir ${buildTargetDir}`.cwd(
+    BLIMY_ROOT,
   );
 }
 
@@ -162,7 +162,7 @@ try {
         .catch(() => false))
     ) {
       throw new Error(
-        `Missing database sidecar binary for ${providerId}: ${binaryPath}. Run this script with --build, or build it from the Athas repo with: cargo build -p athas-database --release --no-default-features --features ${providerId} --bin ${basename(sidecarPath)}`,
+        `Missing database sidecar binary for ${providerId}: ${binaryPath}. Run this script with --build, or build it from the Blimy repo with: cargo build -p blimy-database --release --no-default-features --features ${providerId} --bin ${basename(sidecarPath)}`,
       );
     }
 

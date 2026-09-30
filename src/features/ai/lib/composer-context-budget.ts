@@ -23,7 +23,7 @@ const ERROR_RATIO = 0.95;
 const CHARS_PER_TOKEN = 4;
 
 /**
- * The window the meter measures against. Hosted Athas requests are capped by size, so the request
+ * The window the meter measures against. Hosted Blimy requests are capped by size, so the request
  * cap is the limit, unless the model's own context window (from the catalog) is smaller.
  */
 export function resolveComposerContextWindow(

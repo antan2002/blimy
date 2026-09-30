@@ -234,7 +234,7 @@ const useSessionStoreBase = create<SessionState>()(
       },
     }),
     {
-      name: "athas-tab-sessions",
+      name: "blimy-tab-sessions",
       version: 1,
       storage: createSafeJSONStorage<Pick<SessionState, "sessions">>(),
       partialize: ({ sessions }) => ({ sessions }),

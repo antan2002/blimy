@@ -1,6 +1,6 @@
 {
-  "$schema": "https://athas.dev/schemas/extension.json",
-  "id": "athas.agent.claude-acp",
+  "$schema": "https://blimy.dev/schemas/extension.json",
+  "id": "blimy.agent.claude-acp",
   "name": "Claude Agent",
   "displayName": "Claude Agent",
   "description": "Claude's coding agent, connected through the ACP adapter powered by Anthropic's Claude Agent SDK.",

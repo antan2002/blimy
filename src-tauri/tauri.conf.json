@@ -13,7 +13,7 @@
     "windows": [
       {
         "label": "main",
-        "title": "Athas",
+        "title": "Blimy",
         "width": 1200,
         "height": 800,
         "decorations": true,
@@ -29,7 +29,7 @@
       }
     ],
     "security": {
-      "csp": "default-src 'self' ipc: http://ipc.localhost; connect-src 'self' ipc: http://ipc.localhost http://localhost:3000 http://127.0.0.1:3000 https://athas.dev https://*.athas.dev https://api.github.com https://api.anthropic.com https://api.openai.com https://api.mistral.ai https://openrouter.ai https://generativelanguage.googleapis.com https://*.githubusercontent.com; img-src 'self' asset: http://asset.localhost https: data: blob:; font-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self' blob: 'wasm-unsafe-eval'; worker-src 'self' blob:",
+      "csp": "default-src 'self' ipc: http://ipc.localhost; connect-src 'self' ipc: http://ipc.localhost http://localhost:3000 http://127.0.0.1:3000 https://blimy.dev https://*.blimy.dev https://api.github.com https://api.anthropic.com https://api.openai.com https://api.mistral.ai https://openrouter.ai https://generativelanguage.googleapis.com https://*.githubusercontent.com; img-src 'self' asset: http://asset.localhost https: data: blob:; font-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self' blob: 'wasm-unsafe-eval'; worker-src 'self' blob:",
       "capabilities": ["main-capability"],
       "assetProtocol": {
         "enable": true,
@@ -62,10 +62,10 @@
     },
     "linux": {
       "deb": {
-        "desktopTemplate": "linux/athas.desktop"
+        "desktopTemplate": "linux/blimy.desktop"
       },
       "rpm": {
-        "desktopTemplate": "linux/athas.desktop"
+        "desktopTemplate": "linux/blimy.desktop"
       }
     },
     "windows": {
@@ -77,7 +77,7 @@
   "plugins": {
     "deep-link": {
       "desktop": {
-        "schemes": ["athas"]
+        "schemes": ["blimy"]
       }
     },
     "fs": {
@@ -85,7 +85,7 @@
     },
     "updater": {
       "active": true,
-      "endpoints": ["https://athas.dev/api/update/stable"],
+      "endpoints": ["https://blimy.dev/api/update/stable"],
       "dialog": false,
       "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IEJBNDk0QjI4NkVDNDQwRUUKUldUdVFNUnVLRXRKdXV2elJZL3RsOWkvRDJueUwvQjh1UzdMbFBHZmZjV01Ec3lXZ1hFY3V6RkYK"
     }

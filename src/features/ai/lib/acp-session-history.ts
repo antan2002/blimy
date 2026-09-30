@@ -228,7 +228,7 @@ export function acpHistoryToMessages(events: AcpEvent[], options: HistoryOptions
     }
   }
 
-  // A prompt Athas sent carries the chat's context before the user's words; show only the words.
+  // A prompt Blimy sent carries the chat's context before the user's words; show only the words.
   for (const message of messages) {
     if (message.role === "user") message.content = stripAcpContextPreamble(message.content);
   }

@@ -57,7 +57,7 @@ describe("feedback draft", () => {
       }),
     );
 
-    expect(url.pathname).toBe("/athasdev/athas/issues/new");
+    expect(url.pathname).toBe("/blimydev/blimy/issues/new");
     expect(url.searchParams.get("title")).toBe("Feedback: Compare two files");
     expect(url.searchParams.get("template")).toBeNull();
   });

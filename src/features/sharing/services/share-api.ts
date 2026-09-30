@@ -25,7 +25,7 @@ export async function shareRequest<T>(
   const body = await response.json();
   if (!response.ok)
     throw new ShareRequestError(
-      body.error || "Could not reach Athas sharing. Try again.",
+      body.error || "Could not reach Blimy sharing. Try again.",
       response.status,
     );
   return body as T;

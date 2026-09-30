@@ -14,7 +14,7 @@ export function canLogOutOfAcpAgent(
 }
 
 /**
- * Logs out of `agentId`. Athas does not sign it back in on its own: the next prompt that needs
+ * Logs out of `agentId`. Blimy does not sign it back in on its own: the next prompt that needs
  * sign-in shows the agent's methods to choose from.
  */
 export async function logOutOfAcpAgent(agentId: string): Promise<void> {

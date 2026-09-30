@@ -10,7 +10,7 @@ interface BuiltInCommand {
   name: string;
   description: string;
   action: ComposerCommandAction;
-  /** Only the built-in agent keeps its history in Athas, so only it can clear or compact it. */
+  /** Only the built-in agent keeps its history in Blimy, so only it can clear or compact it. */
   builtInAgentOnly?: boolean;
 }
 
@@ -55,7 +55,7 @@ export function toSkillCommandName(title: string): string {
 }
 
 /**
- * One list for the "/" menu: the agent's own commands first, then Athas's commands, then the
+ * One list for the "/" menu: the agent's own commands first, then Blimy's commands, then the
  * user's skills. A name the agent already provides keeps the agent's version.
  */
 export function mergeComposerSlashCommands({
@@ -121,7 +121,7 @@ export function filterComposerSlashCommands<T extends SlashCommand>(
 }
 
 /**
- * A message that starts with an Athas mode command, such as "/plan add dark mode": the mode to
+ * A message that starts with an Blimy mode command, such as "/plan add dark mode": the mode to
  * switch to and the prompt to send in it.
  */
 export function parseLeadingModeCommand(

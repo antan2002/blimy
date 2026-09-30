@@ -14,13 +14,13 @@ describe("terminal link activation", () => {
   });
 
   it("describes the hint with the platform modifier", () => {
-    expect(describeTerminalLinkHint("file", "macos")).toBe("⌘+click to open in editor");
+    expect(describeTerminalLinkHint("file", "macos")).toBe("âŒ˜+click to open in editor");
     expect(describeTerminalLinkHint("url", "linux")).toBe("Ctrl+click to open link");
   });
 
   it("only opens web and mail links externally", () => {
-    expect(resolveExternalLinkTarget("https://athas.dev/docs")).toBe("https://athas.dev/docs");
-    expect(resolveExternalLinkTarget(" mailto:hey@athas.dev ")).toBe("mailto:hey@athas.dev");
+    expect(resolveExternalLinkTarget("https://blimy.dev/docs")).toBe("https://blimy.dev/docs");
+    expect(resolveExternalLinkTarget(" mailto:hey@blimy.dev ")).toBe("mailto:hey@blimy.dev");
     expect(resolveExternalLinkTarget("file:///etc/passwd")).toBeNull();
     expect(resolveExternalLinkTarget("javascript:alert(1)")).toBeNull();
     expect(resolveExternalLinkTarget("not a url")).toBeNull();

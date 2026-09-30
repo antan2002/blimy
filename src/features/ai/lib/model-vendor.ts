@@ -42,7 +42,7 @@ export function getModelVendorName(modelId: string): string | undefined {
 }
 
 /**
- * The icon for one model row. Gateways such as Athas and OpenRouter serve models from many
+ * The icon for one model row. Gateways such as Blimy and OpenRouter serve models from many
  * vendors under `vendor/model` ids, so those rows show the vendor's mark; everything else, and
  * vendors without a mark, keep the connection's own icon.
  */
@@ -63,7 +63,7 @@ const RECOMMENDED_FAMILIES: readonly (readonly RegExp[])[] = [
 ];
 
 /**
- * Athas Automatic plus the catalog's first match for each recommended family, in catalog order
+ * Blimy Automatic plus the catalog's first match for each recommended family, in catalog order
  * within a family. Empty when the catalog has none of them.
  */
 export function pickRecommendedModels<T extends { id: string }>(models: readonly T[]): T[] {

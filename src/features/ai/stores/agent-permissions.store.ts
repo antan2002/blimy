@@ -19,11 +19,11 @@ interface AgentPermissionsState {
     /** Refuses every prompt of a chat nobody will answer (the chat was deleted). */
     cancelChat: (chatId: string) => void;
     /**
-     * Drops a chat's prompts after its turn was stopped. ACP and Athas's own agent close theirs
+     * Drops a chat's prompts after its turn was stopped. ACP and Blimy's own agent close theirs
      * when the turn is cancelled; Codex prompts are refused here because Codex does not.
      */
     dropStoppedTurn: (chatId: string) => Promise<void>;
-    /** Drops a chat's prompts from Athas's own agent that its finished turn no longer waits on. */
+    /** Drops a chat's prompts from Blimy's own agent that its finished turn no longer waits on. */
     dropSettled: (chatId: string) => void;
   };
 }

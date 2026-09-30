@@ -9,7 +9,7 @@ import {
   selectionContent,
 } from "../lib/snapshot-content";
 
-export const OPEN_SHARE_EVENT = "athas:open-share";
+export const OPEN_SHARE_EVENT = "blimy:open-share";
 
 export function openShare(draft: ShareDraft) {
   window.dispatchEvent(new CustomEvent<ShareDraft>(OPEN_SHARE_EVENT, { detail: draft }));

@@ -9,7 +9,7 @@ describe("WorkbenchFullscreenSurface", () => {
     );
 
     expect(markup).toContain('data-slot="workbench-fullscreen-surface"');
-    expect(markup).toContain("top:var(--athas-title-bar-height)");
+    expect(markup).toContain("top:var(--blimy-title-bar-height)");
     expect(markup).toContain("bottom-0");
     expect(markup).toContain("inset-x-0");
     expect(markup).not.toContain("rounded");

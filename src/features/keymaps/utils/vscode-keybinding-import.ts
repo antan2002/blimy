@@ -22,7 +22,7 @@ interface VsCodeImportOptions {
 }
 
 interface VsCodeImportResult {
-  format: "athas" | "vscode";
+  format: "blimy" | "vscode";
   keybindings: Keybinding[];
   issues: KeybindingImportIssue[];
 }
@@ -141,7 +141,7 @@ for (let index = 1; index <= 9; index++) {
   VSCODE_COMMANDS[`workbench.action.openEditorAtIndex${index}`] = `workbench.switchToTab${index}`;
 }
 
-const ATHAS_BUILT_IN_COMMAND_IDS = new Set(Object.values(VSCODE_COMMANDS));
+const BLIMY_BUILT_IN_COMMAND_IDS = new Set(Object.values(VSCODE_COMMANDS));
 
 const CONTEXT_ALIASES: Record<string, string> = {
   editorTextFocus: "editorFocus",
@@ -316,7 +316,7 @@ function translateCommand(command: string, commandIds: Set<string>): string | nu
 }
 
 export function getDefaultImportCommandIds(): Set<string> {
-  return new Set(ATHAS_BUILT_IN_COMMAND_IDS);
+  return new Set(BLIMY_BUILT_IN_COMMAND_IDS);
 }
 
 export function importVsCodeKeybindings(
@@ -394,7 +394,7 @@ export function importVsCodeKeybindings(
   }
 
   return {
-    format: usesVsCodeSyntax ? "vscode" : "athas",
+    format: usesVsCodeSyntax ? "vscode" : "blimy",
     keybindings: usesVsCodeSyntax
       ? keybindings.map((keybinding) => ({ ...keybinding, replaceDefaults: false }))
       : keybindings.reverse(),

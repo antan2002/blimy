@@ -18,27 +18,27 @@
 }
 
 html:is(.platform-macos, .platform-windows):not([data-window-transparency="disabled"]) {
-  --athas-glass-shell-bg: color-mix(in srgb, var(--surface) 12%, transparent);
-  --athas-glass-island-bg: color-mix(in srgb, var(--background) 70%, transparent);
-  --athas-glass-surface: color-mix(in srgb, var(--surface) 48%, transparent);
-  --athas-glass-border: color-mix(in srgb, var(--foreground) 14%, transparent);
-  --athas-glass-border-strong: color-mix(in srgb, var(--foreground) 32%, transparent);
-  --athas-glass-hover: color-mix(in srgb, var(--foreground) 9%, transparent);
-  --athas-glass-active: color-mix(in srgb, var(--foreground) 16%, transparent);
-  --athas-navigation-material: color-mix(in srgb, var(--surface) 74%, transparent);
+  --blimy-glass-shell-bg: color-mix(in srgb, var(--surface) 12%, transparent);
+  --blimy-glass-island-bg: color-mix(in srgb, var(--background) 70%, transparent);
+  --blimy-glass-surface: color-mix(in srgb, var(--surface) 48%, transparent);
+  --blimy-glass-border: color-mix(in srgb, var(--foreground) 14%, transparent);
+  --blimy-glass-border-strong: color-mix(in srgb, var(--foreground) 32%, transparent);
+  --blimy-glass-hover: color-mix(in srgb, var(--foreground) 9%, transparent);
+  --blimy-glass-active: color-mix(in srgb, var(--foreground) 16%, transparent);
+  --blimy-navigation-material: color-mix(in srgb, var(--surface) 74%, transparent);
 }
 
 html:is(.platform-macos, .platform-windows):not(
     [data-window-transparency="disabled"]
   )[data-theme-type="light"] {
-  --athas-glass-shell-bg: color-mix(in srgb, var(--surface) 46%, transparent);
-  --athas-glass-island-bg: color-mix(in srgb, var(--background) 84%, transparent);
-  --athas-glass-surface: color-mix(in srgb, var(--surface) 62%, transparent);
-  --athas-glass-border: color-mix(in srgb, var(--foreground) 12%, transparent);
-  --athas-glass-border-strong: color-mix(in srgb, var(--foreground) 28%, transparent);
-  --athas-glass-hover: color-mix(in srgb, var(--foreground) 7%, transparent);
-  --athas-glass-active: color-mix(in srgb, var(--foreground) 13%, transparent);
-  --athas-navigation-material: color-mix(in srgb, var(--surface) 80%, transparent);
+  --blimy-glass-shell-bg: color-mix(in srgb, var(--surface) 46%, transparent);
+  --blimy-glass-island-bg: color-mix(in srgb, var(--background) 84%, transparent);
+  --blimy-glass-surface: color-mix(in srgb, var(--surface) 62%, transparent);
+  --blimy-glass-border: color-mix(in srgb, var(--foreground) 12%, transparent);
+  --blimy-glass-border-strong: color-mix(in srgb, var(--foreground) 28%, transparent);
+  --blimy-glass-hover: color-mix(in srgb, var(--foreground) 7%, transparent);
+  --blimy-glass-active: color-mix(in srgb, var(--foreground) 13%, transparent);
+  --blimy-navigation-material: color-mix(in srgb, var(--surface) 80%, transparent);
 }
 
 html:is(.platform-macos, .platform-windows):not([data-window-transparency="disabled"])
@@ -48,55 +48,55 @@ html:is(.platform-macos, .platform-windows):not([data-window-transparency="disab
 
 /* The shell: see-through, and the token remap for everything inside it. */
 html:is(.platform-macos, .platform-windows):not([data-window-transparency="disabled"])
-  .athas-layout-shell:not([data-window-surface="content"]) {
-  --accent: var(--athas-glass-hover);
-  --selected: var(--athas-glass-active);
-  --surface: var(--athas-glass-surface);
-  --border: var(--athas-glass-border);
-  --border-strong: var(--athas-glass-border-strong);
-  background: var(--athas-glass-shell-bg) !important;
+  .blimy-layout-shell:not([data-window-surface="content"]) {
+  --accent: var(--blimy-glass-hover);
+  --selected: var(--blimy-glass-active);
+  --surface: var(--blimy-glass-surface);
+  --border: var(--blimy-glass-border);
+  --border-strong: var(--blimy-glass-border-strong);
+  background: var(--blimy-glass-shell-bg) !important;
   -webkit-backdrop-filter: none;
   backdrop-filter: none;
 }
 
 /* Rail and panes: the OS provides the material on macOS, we blur on Windows. */
 html:is(.platform-macos, .platform-windows):not([data-window-transparency="disabled"])
-  :is(.athas-resizable-pane, .athas-sidebar-rail) {
-  background: var(--athas-navigation-material) !important;
+  :is(.blimy-resizable-pane, .blimy-sidebar-rail) {
+  background: var(--blimy-navigation-material) !important;
   -webkit-backdrop-filter: none;
   backdrop-filter: none;
 }
 
 html.platform-macos:not([data-window-transparency="disabled"])
-  :is(.athas-resizable-pane, .athas-sidebar-rail) {
+  :is(.blimy-resizable-pane, .blimy-sidebar-rail) {
   background: transparent !important;
 }
 
 html.platform-windows:not([data-window-transparency="disabled"])
-  :is(.athas-resizable-pane, .athas-sidebar-rail) {
+  :is(.blimy-resizable-pane, .blimy-sidebar-rail) {
   -webkit-backdrop-filter: blur(18px) saturate(1.08);
   backdrop-filter: blur(18px) saturate(1.08);
 }
 
 /* Islands: editor, sidebar contents, bottom pane. */
 html:is(.platform-macos, .platform-windows):not([data-window-transparency="disabled"])
-  .athas-glass-island {
-  background: var(--athas-glass-island-bg) !important;
+  .blimy-glass-island {
+  background: var(--blimy-glass-island-bg) !important;
 }
 
 html:is(.platform-macos, .platform-windows):not([data-window-transparency="disabled"])
-  .athas-glass-island
+  .blimy-glass-island
   :is(.monaco-editor-shell, .monaco-editor, .monaco-editor-background, .monaco-editor .margin) {
   background-color: transparent !important;
 }
 
 html:is(.platform-macos, .platform-windows):not([data-window-transparency="disabled"])
-  .athas-workbench-glass {
+  .blimy-workbench-glass {
   background: transparent !important;
 }
 
 html:is(.platform-macos, .platform-windows):not([data-window-transparency="disabled"])
-  .athas-title-bar {
+  .blimy-title-bar {
   background: transparent !important;
   border-color: transparent;
   -webkit-backdrop-filter: none;
@@ -108,20 +108,20 @@ html[data-window-transparency="disabled"] .window-container {
   background: var(--background) !important;
 }
 
-html[data-window-transparency="disabled"] .athas-layout-shell:not([data-window-surface="content"]),
-html[data-window-transparency="disabled"] .athas-resizable-pane {
+html[data-window-transparency="disabled"] .blimy-layout-shell:not([data-window-surface="content"]),
+html[data-window-transparency="disabled"] .blimy-resizable-pane {
   background: var(--surface) !important;
 }
 
 /* OS "reduce transparency": keep the layout, drop the see-through materials. */
 html[data-reduce-transparency="true"] {
-  --athas-navigation-material: var(--surface);
-  --athas-glass-island-bg: var(--background);
-  --athas-glass-shell-bg: var(--surface);
+  --blimy-navigation-material: var(--surface);
+  --blimy-glass-island-bg: var(--background);
+  --blimy-glass-shell-bg: var(--surface);
 }
 
 html[data-reduce-transparency="true"]
-  :is(.athas-layout-shell, .athas-resizable-pane, .athas-sidebar-rail, .athas-title-bar) {
+  :is(.blimy-layout-shell, .blimy-resizable-pane, .blimy-sidebar-rail, .blimy-title-bar) {
   -webkit-backdrop-filter: none !important;
   backdrop-filter: none !important;
 }

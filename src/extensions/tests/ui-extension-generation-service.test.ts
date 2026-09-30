@@ -23,13 +23,13 @@ beforeEach(() => {
 describe("UI extension generation failures", () => {
   it("tells a Pro user their included usage is used up instead of offering Pro", async () => {
     state.fetch.mockResolvedValue(Response.json({ error: "Allowance used" }, { status: 402 }));
-    await expect(request()).rejects.toThrow("included Athas AI credit is used up");
+    await expect(request()).rejects.toThrow("included Blimy AI credit is used up");
   });
 
   it("offers Pro to a free user", async () => {
     state.plan = "free";
     state.fetch.mockResolvedValue(Response.json({}, { status: 402 }));
-    await expect(request()).rejects.toThrow("included with Athas Pro");
+    await expect(request()).rejects.toThrow("included with Blimy Pro");
   });
 
   it("gives the request a timeout and explains when it expires", async () => {

@@ -93,7 +93,7 @@ describe("agent permission store", () => {
     });
   });
 
-  it("drops only the prompts a finished turn of Athas's own agent no longer waits on", () => {
+  it("drops only the prompts a finished turn of Blimy's own agent no longer waits on", () => {
     actions.add(permission("intelligence:done", "chat-a", "intelligence"));
     actions.add(permission("intelligence:open", "chat-a", "intelligence"));
     actions.add(permission("p3", "chat-a"));

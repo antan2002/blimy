@@ -21,9 +21,9 @@ function describeDefault(params: {
   providerName: string | undefined;
 }) {
   const { connection, available, isLocal, isAuthenticated, providerName } = params;
-  if (!available) return isAuthenticated ? "Athas models need Pro" : "Choose a model to start";
-  if (connection.providerId === "athas")
-    return connection.modelId === "auto" ? "Picks a model per request" : "Hosted by Athas";
+  if (!available) return isAuthenticated ? "Blimy models need Pro" : "Choose a model to start";
+  if (connection.providerId === "blimy")
+    return connection.modelId === "auto" ? "Picks a model per request" : "Hosted by Blimy";
   if (isLocal) return "Runs locally";
   return `Your ${providerName ?? connection.providerId} key`;
 }
@@ -57,7 +57,7 @@ export function DefaultModelSection() {
       {!available && keyProviders.length === 0 ? (
         <SettingRow
           label="No model yet"
-          description="Use Athas, your own API key, or Ollama"
+          description="Use Blimy, your own API key, or Ollama"
           activateOnClick={false}
         >
           <div className="flex items-center gap-1">

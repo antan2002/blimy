@@ -44,7 +44,7 @@ export function buildFeedbackIssueBody(draft: FeedbackDraft, environment?: Feedb
       : "- None recorded";
 
     sections.push(
-      `## Sanitized environment\n\n- App: Athas ${environment.appVersion}\n- OS: ${environment.os}\n\nRecent content-free friction signals:\n${signals}`,
+      `## Sanitized environment\n\n- App: Blimy ${environment.appVersion}\n- OS: ${environment.os}\n\nRecent content-free friction signals:\n${signals}`,
     );
   }
 
@@ -58,5 +58,5 @@ export function buildFeedbackIssueUrl(draft: FeedbackDraft, environment?: Feedba
     body: buildFeedbackIssueBody(draft, environment),
   });
 
-  return `https://github.com/athasdev/athas/issues/new?${params.toString()}`;
+  return `https://github.com/blimydev/blimy/issues/new?${params.toString()}`;
 }

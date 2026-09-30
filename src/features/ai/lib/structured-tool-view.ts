@@ -1,7 +1,7 @@
 import type { GenerativeUIView } from "@/extensions/ui/types/generative-ui";
 
 interface StructuredToolViewEnvelope {
-  type: "athas_ui";
+  type: "blimy_ui";
   view: GenerativeUIView;
 }
 
@@ -10,7 +10,7 @@ export function isStructuredToolViewEnvelope(value: unknown): value is Structure
     value &&
     typeof value === "object" &&
     !Array.isArray(value) &&
-    (value as { type?: unknown }).type === "athas_ui" &&
+    (value as { type?: unknown }).type === "blimy_ui" &&
     "view" in value,
   );
 }

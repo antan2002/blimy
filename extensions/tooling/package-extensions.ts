@@ -48,7 +48,7 @@ async function createStablePackage(
   manifest: Record<string, unknown>,
   packagePath: string,
 ) {
-  const tempDir = await mkdtemp(join(tmpdir(), "athas-extension-"));
+  const tempDir = await mkdtemp(join(tmpdir(), "blimy-extension-"));
 
   try {
     await $`rsync -az --exclude='.DS_Store' ${extensionDir}/ ${tempDir}/`;

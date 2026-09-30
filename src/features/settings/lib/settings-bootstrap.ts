@@ -11,11 +11,11 @@ import {
 import type { Settings } from "@/features/settings/types/settings.types";
 
 async function detectInitialTheme() {
-  let detectedTheme = getSystemThemePreference() === "dark" ? "athas-dark" : "athas-light";
+  let detectedTheme = getSystemThemePreference() === "dark" ? "blimy-dark" : "blimy-light";
 
   try {
     const tauriDetectedTheme = await invoke<string>("get_system_theme");
-    detectedTheme = tauriDetectedTheme === "dark" ? "athas-dark" : "athas-light";
+    detectedTheme = tauriDetectedTheme === "dark" ? "blimy-dark" : "blimy-light";
   } catch {
     console.log("Tauri theme detection not available, using browser detection");
   }

@@ -1,11 +1,11 @@
 {
-  "$schema": "https://athas.dev/schemas/extension.json",
-  "id": "athas.svelte",
+  "$schema": "https://blimy.dev/schemas/extension.json",
+  "id": "blimy.svelte",
   "name": "Svelte",
   "displayName": "Svelte",
   "version": "1.0.0",
   "description": "Svelte language support with LSP and formatting",
-  "publisher": "Athas",
+  "publisher": "Blimy",
   "categories": ["Language"],
   "languages": [
     {

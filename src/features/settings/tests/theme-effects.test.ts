@@ -75,7 +75,7 @@ describe("theme side effects", () => {
     dark = false;
     listeners.forEach((callback) => callback());
     await vi.dynamicImportSettled();
-    expect(mocks.applyTheme).toHaveBeenLastCalledWith("athas-light");
+    expect(mocks.applyTheme).toHaveBeenLastCalledWith("blimy-light");
 
     settings.autoThemeDark = "vitesse-dark";
     applySettingSideEffect("autoThemeDark", settings.autoThemeDark, () => settings);
@@ -112,7 +112,7 @@ describe("theme side effects", () => {
     applySettingSideEffect("theme", settings.theme, () => settings);
     await vi.dynamicImportSettled();
     const staleReady = [...mocks.readyListeners][0];
-    settings.theme = "athas-light";
+    settings.theme = "blimy-light";
     applySettingSideEffect("theme", settings.theme, () => settings);
     await vi.dynamicImportSettled();
     expect(mocks.readyListeners.size).toBe(1);
@@ -120,7 +120,7 @@ describe("theme side effects", () => {
     expect(mocks.applyTheme).not.toHaveBeenCalled();
     mocks.ready = true;
     mocks.readyListeners.forEach((callback) => callback());
-    expect(mocks.applyTheme).toHaveBeenCalledExactlyOnceWith("athas-light");
+    expect(mocks.applyTheme).toHaveBeenCalledExactlyOnceWith("blimy-light");
   });
 
   it("does not apply a late extension theme after a newer theme was selected", async () => {
@@ -132,12 +132,12 @@ describe("theme side effects", () => {
     applySettingSideEffect("theme", settings.theme, () => settings);
     await vi.dynamicImportSettled();
     const staleRegistration = [...mocks.registryListeners][0];
-    settings.theme = "athas-light";
+    settings.theme = "blimy-light";
     applySettingSideEffect("theme", settings.theme, () => settings);
     await vi.dynamicImportSettled();
     mocks.getTheme.mockImplementation((id: string) => ({ id, isDark: id.includes("dark") }));
     staleRegistration();
     expect(mocks.registryListeners.size).toBe(0);
-    expect(mocks.applyTheme).toHaveBeenCalledExactlyOnceWith("athas-light");
+    expect(mocks.applyTheme).toHaveBeenCalledExactlyOnceWith("blimy-light");
   });
 });

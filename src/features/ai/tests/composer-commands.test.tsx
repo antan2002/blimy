@@ -104,7 +104,7 @@ beforeEach(() => {
     vi.fn(() => 0),
   );
   useAIChatStore.getState().actions.setMode("chat");
-  useAIChatStore.setState({ hasApiKey: true, providerApiKeys: new Map([["athas", true]]) });
+  useAIChatStore.setState({ hasApiKey: true, providerApiKeys: new Map([["blimy", true]]) });
   container = document.createElement("div");
   document.body.append(container);
   root = createRoot(container);

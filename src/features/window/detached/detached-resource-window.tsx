@@ -56,7 +56,7 @@ export default function DetachedResourceWindow() {
 
   return (
     <DetachedWindowShell
-      title={resource?.name ?? "Athas"}
+      title={resource?.name ?? "Blimy"}
       icon={
         resource ? (
           avatarUrl ? (

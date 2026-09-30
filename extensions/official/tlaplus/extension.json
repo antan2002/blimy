@@ -1,11 +1,11 @@
 {
-  "$schema": "https://athas.dev/schemas/extension.json",
-  "id": "athas.tlaplus",
+  "$schema": "https://blimy.dev/schemas/extension.json",
+  "id": "blimy.tlaplus",
   "name": "TLAPLUS",
   "displayName": "TLA+",
   "version": "1.0.0",
   "description": "TLA+ language support",
-  "publisher": "Athas",
+  "publisher": "Blimy",
   "categories": ["Language"],
   "languages": [
     {

@@ -243,7 +243,7 @@ const useContinuousAgentsStoreBase = create<ContinuousAgentsState>()(
       },
     }),
     {
-      name: "athas-continuous-agents-v1",
+      name: "blimy-continuous-agents-v1",
       version: 2,
       storage: createSafeJSONStorage<PersistedContinuousAgentsState>(),
       partialize: (state) => ({ tasks: state.tasks }),

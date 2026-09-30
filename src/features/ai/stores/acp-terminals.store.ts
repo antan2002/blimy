@@ -6,7 +6,7 @@ import { createSelectors } from "@/utils/zustand-selectors";
 export interface AcpTerminalView extends AcpTerminalSnapshot {
   sessionId: string;
   cwd: string | null;
-  /** The agent runs the command itself and only streams its output; Athas has no terminal. */
+  /** The agent runs the command itself and only streams its output; Blimy has no terminal. */
   displayOnly: boolean;
 }
 

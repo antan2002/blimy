@@ -33,7 +33,7 @@ const postgresConnection: SavedConnection = {
   host: "localhost",
   port: 5432,
   database: "app",
-  username: "athas",
+  username: "blimy",
 };
 
 describe("connection store reliability", () => {
@@ -106,7 +106,7 @@ describe("connection store reliability", () => {
         db_type: " postgres ",
         host: " localhost ",
         database: " app ",
-        username: " athas ",
+        username: " blimy ",
         connection_string: " ",
       },
       {
@@ -354,7 +354,7 @@ describe("connection store reliability", () => {
       db_type: " postgres " as SavedConnection["db_type"],
       host: " localhost ",
       database: " app ",
-      username: " athas ",
+      username: " blimy ",
       connection_string: " ",
     };
     mockInvoke.mockResolvedValueOnce(undefined).mockRejectedValueOnce(new Error("store offline"));
@@ -483,7 +483,7 @@ describe("connection store reliability", () => {
         db_type: " postgres " as SavedConnection["db_type"],
         host: " localhost ",
         database: " app ",
-        username: " athas ",
+        username: " blimy ",
         connection_string: " ",
       }),
     ).resolves.toBe("pg-prod");
@@ -496,7 +496,7 @@ describe("connection store reliability", () => {
         host: "localhost",
         port: 5432,
         database: "app",
-        username: "athas",
+        username: "blimy",
         connection_string: null,
       },
       password: null,
@@ -529,7 +529,7 @@ describe("connection store reliability", () => {
         host: "localhost",
         port: 5432,
         database: "app",
-        username: "athas",
+        username: "blimy",
         connection_string: null,
       },
       password: "secret",

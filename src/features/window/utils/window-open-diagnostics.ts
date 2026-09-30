@@ -1,7 +1,7 @@
 import { frontendTrace } from "@/utils/frontend-trace";
 
-const WINDOW_TRACE_ID_PARAM = "athasWindowTraceId";
-const WINDOW_CREATED_AT_PARAM = "athasWindowCreatedAtMs";
+const WINDOW_TRACE_ID_PARAM = "blimyWindowTraceId";
+const WINDOW_CREATED_AT_PARAM = "blimyWindowCreatedAtMs";
 
 function roundDuration(value: number) {
   return Math.round(value * 100) / 100;

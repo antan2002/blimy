@@ -1,6 +1,6 @@
 import type { AcpAgentStatus } from "@/features/ai/types/acp.types";
 
-export const OPEN_AGENT_SESSIONS_EVENT = "athas:open-agent-sessions";
+export const OPEN_AGENT_SESSIONS_EVENT = "blimy:open-agent-sessions";
 
 function advertisesSessionCapability(
   status: AcpAgentStatus | null | undefined,

@@ -1,11 +1,11 @@
 {
-  "$schema": "https://athas.dev/schemas/extension.json",
-  "id": "athas.sql",
+  "$schema": "https://blimy.dev/schemas/extension.json",
+  "id": "blimy.sql",
   "name": "SQL",
   "displayName": "SQL",
   "version": "1.0.0",
   "description": "SQL language support with LSP and formatting",
-  "publisher": "Athas",
+  "publisher": "Blimy",
   "categories": ["Language"],
   "languages": [
     {

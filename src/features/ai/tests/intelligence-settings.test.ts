@@ -57,7 +57,7 @@ describe("Intelligence connection choices", () => {
     };
     expect(resolveIntelligenceConnection(params)).toEqual(params.personalConnection);
     expect(resolveIntelligenceConnection({ ...params, hasIntelligence: true }).providerId).toBe(
-      "athas",
+      "blimy",
     );
     params.preferences.tasks["commit-message"] = { providerId: "vercel", modelId: "user/model" };
     expect(resolveIntelligenceConnection({ ...params, hasIntelligence: true })).toEqual({
@@ -68,7 +68,7 @@ describe("Intelligence connection choices", () => {
 
   it("gives a hosted connection without a model the automatic model", () => {
     const preferences = defaultIntelligencePreferences();
-    preferences.tasks.agent = { providerId: "athas", modelId: "" };
+    preferences.tasks.agent = { providerId: "blimy", modelId: "" };
     expect(
       resolveIntelligenceConnection({
         task: "agent",
@@ -76,7 +76,7 @@ describe("Intelligence connection choices", () => {
         hasIntelligence: true,
         personalConnection: { providerId: "anthropic", modelId: "personal-model" },
       }),
-    ).toEqual({ providerId: "athas", modelId: "auto" });
+    ).toEqual({ providerId: "blimy", modelId: "auto" });
   });
 });
 
@@ -87,7 +87,7 @@ describe("Intelligence settings sync", () => {
     store.getState().actions.change(snapshot().preferences);
     await store.getState().actions.save();
     expect(request).not.toHaveBeenCalled();
-    expect(cache.has("athas.intelligence.local.personal")).toBe(true);
+    expect(cache.has("blimy.intelligence.local.personal")).toBe(true);
     expect(store.getState().dirty).toBe(false);
   });
 
@@ -148,6 +148,6 @@ describe("Intelligence settings sync", () => {
     request.mockRejectedValueOnce(new Error("Offline"));
     await store.getState().actions.save();
     expect(store.getState().dirty).toBe(true);
-    expect(cache.get("athas.intelligence.1.personal")).toContain("offline");
+    expect(cache.get("blimy.intelligence.1.personal")).toContain("offline");
   });
 });

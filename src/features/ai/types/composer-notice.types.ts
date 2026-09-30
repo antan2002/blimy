@@ -51,7 +51,7 @@ export interface ComposerNotice {
 }
 
 export interface ComposerNoticeInput {
-  /** The built-in agent talks to Athas hosted models. */
+  /** The built-in agent talks to Blimy hosted models. */
   hosted: boolean;
   /** The built-in agent's provider has no key or account, so nothing can be sent. */
   providerBlocked: boolean;

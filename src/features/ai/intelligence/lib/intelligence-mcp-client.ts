@@ -43,7 +43,7 @@ export class McpClient {
       {
         protocolVersion: MCP_PROTOCOL_VERSION,
         capabilities: {},
-        clientInfo: { name: "athas", version: "1" },
+        clientInfo: { name: "blimy", version: "1" },
       },
       signal,
       timeoutMs,
@@ -151,7 +151,7 @@ export class McpClient {
             : {
                 jsonrpc: "2.0",
                 id: message.id,
-                error: { code: -32601, message: `Athas does not support ${message.method}` },
+                error: { code: -32601, message: `Blimy does not support ${message.method}` },
               },
         )
         .catch(() => {});
@@ -217,7 +217,7 @@ export function normalizeMcpInputSchema(schema: unknown): Record<string, unknown
 function clipResult(text: string): { text: string; truncated: boolean } {
   if (text.length <= MCP_RESULT_CHARS) return { text, truncated: false };
   return {
-    text: `${text.slice(0, MCP_RESULT_CHARS)}\n… [${text.length - MCP_RESULT_CHARS} more characters not shown]`,
+    text: `${text.slice(0, MCP_RESULT_CHARS)}\nâ€¦ [${text.length - MCP_RESULT_CHARS} more characters not shown]`,
     truncated: true,
   };
 }

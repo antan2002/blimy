@@ -23,7 +23,7 @@ export function normalizeDatabaseError(error: unknown): string {
   }
 
   if (/^Unsupported database sidecar protocol version(?: for provider .+)?:/i.test(message)) {
-    return "The database provider version is not compatible with this Athas build. Please update or reinstall the database integration.";
+    return "The database provider version is not compatible with this Blimy build. Please update or reinstall the database integration.";
   }
 
   if (/^Invalid database sidecar (response|envelope):/i.test(message)) {

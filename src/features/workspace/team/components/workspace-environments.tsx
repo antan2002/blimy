@@ -68,7 +68,7 @@ export function WorkspaceEnvironments({ root, reportError }: WorkspaceSectionPro
         </ItemContent>
         <ItemActions>
           <Button disabled={loading} onClick={() => setRevision((value) => value + 1)}>
-            {loading ? "Inspecting…" : "Refresh"}
+            {loading ? "Inspectingâ€¦" : "Refresh"}
           </Button>
         </ItemActions>
       </Item>
@@ -93,7 +93,7 @@ export function WorkspaceEnvironments({ root, reportError }: WorkspaceSectionPro
       </ResourceSection>
       <ResourceSection title="Saved SSH connections on this device">
         <FieldDescription>
-          Open a saved remote environment using Athas's existing SSH connection and authentication
+          Open a saved remote environment using Blimy's existing SSH connection and authentication
           flow.
         </FieldDescription>
         {connections.map((connection) => (
@@ -107,7 +107,7 @@ export function WorkspaceEnvironments({ root, reportError }: WorkspaceSectionPro
             </ItemContent>
             <ItemActions>
               <Button disabled={!!connecting} onClick={() => void connect(connection)}>
-                {connecting === connection.id ? "Connecting…" : "Connect"}
+                {connecting === connection.id ? "Connectingâ€¦" : "Connect"}
               </Button>
             </ItemActions>
           </Item>
@@ -121,7 +121,7 @@ export function WorkspaceEnvironments({ root, reportError }: WorkspaceSectionPro
       </ResourceSection>
       {info?.files.includes(".devcontainer") || info?.files.includes(".devcontainer.json") ? (
         <FieldDescription>
-          This project contains Dev Container configuration. Starting a Dev Container from Athas is
+          This project contains Dev Container configuration. Starting a Dev Container from Blimy is
           not supported yet.
         </FieldDescription>
       ) : null}

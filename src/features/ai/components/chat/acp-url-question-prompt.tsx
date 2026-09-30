@@ -44,7 +44,7 @@ export function AcpUrlQuestionPrompt({
       if (!waiting) onAnswer({ action: "accept" });
     } catch (error) {
       console.error("Failed to open agent link:", error);
-      setOpenError("Athas could not open your browser. Copy the link instead.");
+      setOpenError("Blimy could not open your browser. Copy the link instead.");
     }
   };
 

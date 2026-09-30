@@ -5,7 +5,7 @@ export function canUseIntelligenceProvider(
   providerId: string,
   subscription: SubscriptionInfo | null,
 ): boolean {
-  return providerId === "athas" && hasProductCapability(subscription, "intelligence");
+  return providerId === "blimy" && hasProductCapability(subscription, "intelligence");
 }
 
 export function canUseProviderWithoutApiKey(params: {
@@ -15,7 +15,7 @@ export function canUseProviderWithoutApiKey(params: {
   requiresApiKey: boolean;
 }): boolean {
   const { hasStoredKey, requiresApiKey } = params;
-  if (params.providerId === "athas") return params.subscription !== null;
+  if (params.providerId === "blimy") return params.subscription !== null;
 
   if (!requiresApiKey) {
     return true;

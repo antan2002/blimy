@@ -71,7 +71,7 @@ export const createGitHubActions = (params: GitHubActionsParams): Action[] => {
 
     window.setTimeout(() => {
       window.dispatchEvent(
-        new CustomEvent("athas:github-palette-action", {
+        new CustomEvent("blimy:github-palette-action", {
           detail: { type: "show-section", section },
         }),
       );
@@ -180,7 +180,7 @@ export const createGitHubActions = (params: GitHubActionsParams): Action[] => {
         onClose();
         window.setTimeout(() => {
           window.dispatchEvent(
-            new CustomEvent("athas:github-palette-action", {
+            new CustomEvent("blimy:github-palette-action", {
               detail: { type: "refresh" },
             }),
           );

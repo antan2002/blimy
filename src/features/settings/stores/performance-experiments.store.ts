@@ -23,7 +23,7 @@ export const usePerformanceExperiments = createSelectors(
         },
       }),
       {
-        name: "athas-performance-experiments",
+        name: "blimy-performance-experiments",
         partialize: ({ webgpu, showMonitor }) => ({ webgpu, showMonitor }),
       },
     ),

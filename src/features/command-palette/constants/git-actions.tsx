@@ -50,7 +50,7 @@ export const createGitActions = (params: GitActionsParams): Action[] => {
     onClose();
     window.setTimeout(() => {
       window.dispatchEvent(
-        new CustomEvent("athas:git-palette-action", {
+        new CustomEvent("blimy:git-palette-action", {
           detail: { type: "manage-branches", tab },
         }),
       );
@@ -62,7 +62,7 @@ export const createGitActions = (params: GitActionsParams): Action[] => {
     setActiveView("git");
     onClose();
     window.setTimeout(() => {
-      window.dispatchEvent(new CustomEvent("athas:git-palette-action", { detail }));
+      window.dispatchEvent(new CustomEvent("blimy:git-palette-action", { detail }));
     }, 0);
   };
 
@@ -446,7 +446,7 @@ export const createGitActions = (params: GitActionsParams): Action[] => {
       category: "Git",
       action: () => {
         window.dispatchEvent(
-          new CustomEvent("athas:git-palette-action", { detail: { type: "refresh" } }),
+          new CustomEvent("blimy:git-palette-action", { detail: { type: "refresh" } }),
         );
         showToast({ message: "Refreshing Git status...", type: "info" });
         onClose();

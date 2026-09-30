@@ -1,11 +1,11 @@
 {
-  "$schema": "https://athas.dev/schemas/extension.json",
-  "id": "athas.ruby",
+  "$schema": "https://blimy.dev/schemas/extension.json",
+  "id": "blimy.ruby",
   "name": "Ruby",
   "displayName": "Ruby",
   "version": "1.0.0",
   "description": "Ruby language support (Ruby, ERB and common Rails templates)",
-  "publisher": "Athas",
+  "publisher": "Blimy",
   "categories": ["Language"],
   "languages": [
     {

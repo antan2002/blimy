@@ -1,6 +1,6 @@
 import type { TeamWorkspace } from "../types/team-workspace";
 
-export const TEAM_WORKSPACE_FILE = "athas.workspace.json";
+export const TEAM_WORKSPACE_FILE = "blimy.workspace.json";
 
 function record(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);

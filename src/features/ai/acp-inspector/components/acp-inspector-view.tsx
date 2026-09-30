@@ -145,7 +145,7 @@ export default function AcpInspectorView() {
         ) : null
       }
       description={
-        selectedProcess?.workspacePath ?? "JSON-RPC traffic between Athas and its ACP agents"
+        selectedProcess?.workspacePath ?? "JSON-RPC traffic between Blimy and its ACP agents"
       }
       actions={
         <>

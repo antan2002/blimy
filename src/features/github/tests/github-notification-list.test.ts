@@ -14,8 +14,8 @@ const notification = (id: string, subjectType: string, updatedAt: string): GitHu
   unread: true,
   updatedAt,
   lastReadAt: null,
-  repositoryFullName: "athasdev/athas",
-  url: "https://github.com/athasdev/athas",
+  repositoryFullName: "blimydev/blimy",
+  url: "https://github.com/blimydev/blimy",
   subjectUrl: "",
 });
 

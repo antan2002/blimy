@@ -54,18 +54,18 @@ describe("agent model choices", () => {
   it("sends a hosted chat without a stored model to the automatic model", () => {
     expect(
       resolveAgentModel({
-        provider: { ...provider, id: "athas", models: [{ id: "auto", name: "Automatic" }] },
+        provider: { ...provider, id: "blimy", models: [{ id: "auto", name: "Automatic" }] },
         modelId: "",
         dynamicModels: [],
       })?.id,
     ).toBe("auto");
   });
-  it("prefers the hosted catalog's limits over the bundled Athas placeholder", () => {
+  it("prefers the hosted catalog's limits over the bundled Blimy placeholder", () => {
     expect(
       resolveAgentModel({
         provider: {
           ...provider,
-          id: "athas",
+          id: "blimy",
           models: [{ id: "auto", name: "Automatic", maxOutputTokens: 32_000 }],
         },
         modelId: "auto",

@@ -25,8 +25,8 @@ function useConnectionName(connection: IntelligenceConnection | null) {
 }
 
 /**
- * Tab completion has its own model. On Automatic it uses Athas's Tab model, or the default model
- * when it runs locally or when Athas is not available, so a local setup never sends code to Athas
+ * Tab completion has its own model. On Automatic it uses Blimy's Tab model, or the default model
+ * when it runs locally or when Blimy is not available, so a local setup never sends code to Blimy
  * without the user choosing it.
  */
 export function TabCompletionSection() {
@@ -48,13 +48,13 @@ export function TabCompletionSection() {
 
   const describeModel = () => {
     if (!resolved) {
-      if (defaultIsLocal) return "Choose a local model; Automatic never uses Athas here";
+      if (defaultIsLocal) return "Choose a local model; Automatic never uses Blimy here";
       return state.isAuthenticated
-        ? "Athas Tab needs Pro, or choose your own model"
-        : "Sign in for Athas Tab, or choose your own model";
+        ? "Blimy Tab needs Pro, or choose your own model"
+        : "Sign in for Blimy Tab, or choose your own model";
     }
     const prefix = choice ? "" : "Automatic: ";
-    if (resolved.providerId === "athas") return `${prefix}Athas Tab, included in Pro`;
+    if (resolved.providerId === "blimy") return `${prefix}Blimy Tab, included in Pro`;
     if (resolvedIsLocal) return `${prefix}${resolvedName.model}, runs locally`;
     return `${prefix}${resolvedName.model} on your ${resolvedName.provider} key${
       defaultIsLocal ? ", sends code off your network" : ""

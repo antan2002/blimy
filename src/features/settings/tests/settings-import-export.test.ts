@@ -13,7 +13,7 @@ describe("settings import/export", () => {
       fontSize: 15,
     });
 
-    expect(payload.format).toBe("athas.settings");
+    expect(payload.format).toBe("blimy.settings");
     expect(payload.version).toBe(SETTINGS_SCHEMA_VERSION);
     expect(payload.settings.fontSize).toBe(15);
   });
@@ -35,7 +35,7 @@ describe("settings import/export", () => {
   it("imports versioned settings payloads", () => {
     const imported = parseSettingsImportJson(
       JSON.stringify({
-        format: "athas.settings",
+        format: "blimy.settings",
         version: 1,
         exportedAt: "2026-04-25T00:00:00.000Z",
         settings: {
@@ -56,7 +56,7 @@ describe("settings import/export", () => {
   it("preserves Debugger preferences from the current settings schema", () => {
     const imported = parseSettingsImportJson(
       JSON.stringify({
-        format: "athas.settings",
+        format: "blimy.settings",
         version: SETTINGS_SCHEMA_VERSION,
         exportedAt: "2026-08-29T00:00:00.000Z",
         settings: {
@@ -75,7 +75,7 @@ describe("settings import/export", () => {
   it("disables compact folders when importing settings from the previous schema", () => {
     const imported = parseSettingsImportJson(
       JSON.stringify({
-        format: "athas.settings",
+        format: "blimy.settings",
         version: 3,
         exportedAt: "2026-08-30T00:00:00.000Z",
         settings: {
@@ -91,7 +91,7 @@ describe("settings import/export", () => {
   it("preserves a compact folders opt-in from the current settings schema", () => {
     const imported = parseSettingsImportJson(
       JSON.stringify({
-        format: "athas.settings",
+        format: "blimy.settings",
         version: SETTINGS_SCHEMA_VERSION,
         exportedAt: "2026-08-31T00:00:00.000Z",
         settings: {

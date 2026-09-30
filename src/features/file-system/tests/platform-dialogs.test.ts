@@ -45,7 +45,7 @@ describe("platform dialogs", () => {
     mocks.openDialog.mockReset();
     mocks.fallbackFolderPicker.mockReset();
     mocks.homeDir.mockReset();
-    mocks.homeDir.mockResolvedValue("/home/athas");
+    mocks.homeDir.mockResolvedValue("/home/blimy");
     mocks.prompt.mockReset();
     vi.stubGlobal("window", { prompt: mocks.prompt });
     vi.spyOn(console, "warn").mockImplementation(() => undefined);
@@ -73,7 +73,7 @@ describe("platform dialogs", () => {
     expect(mocks.fallbackFolderPicker).not.toHaveBeenCalled();
   });
 
-  it("uses the Athas folder picker when the Linux native dialog invocation fails", async () => {
+  it("uses the Blimy folder picker when the Linux native dialog invocation fails", async () => {
     mocks.openDialog.mockRejectedValue(new Error("portal unavailable"));
     mocks.fallbackFolderPicker.mockResolvedValue("/workspace/fallback");
 
@@ -82,7 +82,7 @@ describe("platform dialogs", () => {
     expect(mocks.fallbackFolderPicker).toHaveBeenCalledOnce();
   });
 
-  it("preserves cancellation from the Athas folder picker fallback", async () => {
+  it("preserves cancellation from the Blimy folder picker fallback", async () => {
     mocks.openDialog.mockRejectedValue(new Error("portal unavailable"));
     mocks.fallbackFolderPicker.mockResolvedValue(null);
 
@@ -109,7 +109,7 @@ describe("platform dialogs", () => {
     mocks.openDialog.mockRejectedValue(new Error("portal unavailable"));
     mocks.prompt.mockReturnValue("~/src/file.ts");
 
-    await expect(openFile()).resolves.toBe("/home/athas/src/file.ts");
+    await expect(openFile()).resolves.toBe("/home/blimy/src/file.ts");
   });
 
   it("uses native multi-file selection on Linux", async () => {

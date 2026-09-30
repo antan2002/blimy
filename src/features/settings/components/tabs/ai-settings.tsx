@@ -15,7 +15,7 @@ import { useSettingsStore } from "@/features/settings/stores/settings.store";
 import NumberInput from "@/ui/number-input";
 import Switch from "@/ui/switch";
 import { AgentsSection } from "../ai/agents-section";
-import { AthasPlanSection } from "../ai/athas-plan-section";
+import { BlimyPlanSection } from "../ai/blimy-plan-section";
 import { CustomEndpointSection } from "../ai/custom-endpoint-section";
 import { DefaultModelSection } from "../ai/default-model-section";
 import { FeatureModelsSection } from "../ai/feature-models-section";
@@ -24,18 +24,18 @@ import { ProviderKeysSection } from "../ai/provider-keys-section";
 import { TabCompletionSection } from "../ai/tab-completion-section";
 import Section, { SettingsView, SettingRow } from "../settings-section";
 
-/** Settings > AI: the Athas plan and the model everything uses unless told otherwise. */
+/** Settings > AI: the Blimy plan and the model everything uses unless told otherwise. */
 export function AIOverviewSettings() {
   return (
     <SettingsView>
-      <AthasPlanSection />
+      <BlimyPlanSection />
       <DefaultModelSection />
       <FeatureModelsSection />
     </SettingsView>
   );
 }
 
-/** Settings > AI > Models & keys: where models come from besides Athas. */
+/** Settings > AI > Models & keys: where models come from besides Blimy. */
 export function AIModelsSettings() {
   return (
     <SettingsView>

@@ -37,7 +37,7 @@ export function ContinuousAgentsCallout() {
           )}
         </ItemTitle>
         <ItemDescription>
-          Set a goal once. Athas keeps moving it forward in fresh Agent sessions.
+          Set a goal once. Blimy keeps moving it forward in fresh Agent sessions.
         </ItemDescription>
       </ItemContent>
       <ItemActions className="text-subtle-foreground">

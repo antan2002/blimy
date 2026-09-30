@@ -182,7 +182,7 @@ export function ExtensionDetailView({
     [
       "Distribution",
       extension.distribution ??
-        (extension.isBundled ? "Built-in" : extension.isMarketplace ? "Athas catalog" : "Local"),
+        (extension.isBundled ? "Built-in" : extension.isMarketplace ? "Blimy catalog" : "Local"),
     ],
   ].filter((entry) => entry[1]);
 

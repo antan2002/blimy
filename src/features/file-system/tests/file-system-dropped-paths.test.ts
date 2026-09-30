@@ -24,7 +24,7 @@ describe("dropped-file-paths", () => {
   it("ignores unsupported tokens and comments", () => {
     expect(parseDroppedPathCandidate("relative/path.ts")).toBeNull();
     expect(parseDroppedPathCandidate("# comment")).toBeNull();
-    expect(parseDroppedPathCandidate("https://athas.dev")).toBeNull();
+    expect(parseDroppedPathCandidate("https://blimy.dev")).toBeNull();
   });
 
   it("parses mixed payload entries and deduplicates paths", () => {

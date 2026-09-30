@@ -49,7 +49,7 @@ export async function loadMarketplaceContributionExtensions(): Promise<Extension
         displayName: manifest.displayName || manifest.name,
         description: manifest.description || `${manifest.name} integration`,
         version: manifest.version || "1.0.0",
-        publisher: manifest.publisher || "Athas",
+        publisher: manifest.publisher || "Blimy",
         categories: normalizeExtensionCategories(manifest.categories),
       })),
     ).filter(isContributionExtension);

@@ -1,11 +1,11 @@
 {
-  "$schema": "https://athas.dev/schemas/extension.json",
-  "id": "athas.tsx",
+  "$schema": "https://blimy.dev/schemas/extension.json",
+  "id": "blimy.tsx",
   "name": "TSX",
   "displayName": "TypeScript JSX",
   "version": "1.0.0",
   "description": "TypeScript JSX/React support with LSP and tooling",
-  "publisher": "Athas",
+  "publisher": "Blimy",
   "categories": ["Language"],
   "languages": [
     {

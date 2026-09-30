@@ -77,7 +77,7 @@ interface GitFileDiffStats {
   deletions: number;
 }
 
-const GIT_VIEW_BRANCH_MANAGER_EVENT = "athas:open-git-view-branch-manager";
+const GIT_VIEW_BRANCH_MANAGER_EVENT = "blimy:open-git-view-branch-manager";
 type GitRemoteAction = "push" | "pull" | "fetch";
 
 const REMOTE_ACTION_LABELS: Record<GitRemoteAction, { present: string; past: string }> = {
@@ -554,8 +554,8 @@ const GitView = ({ repoPath, onFileSelect, isActive }: GitViewProps) => {
       }
     };
 
-    window.addEventListener("athas:git-palette-action", handlePaletteAction);
-    return () => window.removeEventListener("athas:git-palette-action", handlePaletteAction);
+    window.addEventListener("blimy:git-palette-action", handlePaletteAction);
+    return () => window.removeEventListener("blimy:git-palette-action", handlePaletteAction);
   }, [
     handleInitializeRepository,
     handleSelectGitSection,

@@ -7,7 +7,7 @@ function input(overrides: Partial<ComposerNoticeInput> = {}): ComposerNoticeInpu
   return {
     hosted: true,
     providerBlocked: false,
-    providerName: "Athas",
+    providerName: "Blimy",
     auth: {
       isAuthenticated: true,
       isLoading: false,
@@ -55,7 +55,7 @@ describe("composer notice", () => {
     const notice = resolveComposerNotice(input({ providerBlocked: true, auth: signedOut }));
     expect(notice).toMatchObject({
       category: "auth",
-      title: "Sign in to use Athas models",
+      title: "Sign in to use Blimy models",
       primary: { id: "sign-in" },
       dismissible: false,
     });
@@ -86,7 +86,7 @@ describe("composer notice", () => {
     );
     expect(notice).toMatchObject({
       tone: "warning",
-      title: "Local Athas server is not running",
+      title: "Local Blimy server is not running",
       primary: { id: "retry-session", label: "Retry now" },
     });
     expect(notice?.description).toContain("localhost:3000");

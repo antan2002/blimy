@@ -55,7 +55,7 @@ function createHost(chatId: string): AgentTurnHost & { finishRun: ReturnType<typ
   return {
     surfaceChatId: chatId,
     isBoundToChat: true,
-    fallbackProviderId: "athas",
+    fallbackProviderId: "blimy",
     outputStyle: "default",
     allProjectFiles: [],
     selectedFilesPaths: new Set(),
@@ -77,12 +77,12 @@ function hostedChat(messages: Message[] = []) {
   const chatId = actions.createNewChat("custom");
   useAIChatStore.setState((state) => {
     const chat = state.chats.find((candidate) => candidate.id === chatId)!;
-    chat.providerId = "athas";
+    chat.providerId = "blimy";
     chat.modelId = "auto";
     chat.messages = messages;
   });
   useAIChatStore.setState({
-    providerApiKeys: new Map(useAIChatStore.getState().providerApiKeys).set("athas", true),
+    providerApiKeys: new Map(useAIChatStore.getState().providerApiKeys).set("blimy", true),
   });
   return chatId;
 }
@@ -150,7 +150,7 @@ describe("agent turn runner", () => {
   it("stores a structured error beside the legacy block and refreshes credits after a 402", async () => {
     const chatId = hostedChat();
     mocks.stream.mockImplementation(async (...args: StreamArgs) => {
-      args[7]('athas API error: 402|||{"error":{"code":"allowance_exhausted"}}');
+      args[7]('blimy API error: 402|||{"error":{"code":"allowance_exhausted"}}');
     });
     const host = createHost(chatId);
 
@@ -164,7 +164,7 @@ describe("agent turn runner", () => {
     expect(mocks.recordAiFailure).toHaveBeenCalledWith(
       expect.objectContaining({
         kind: "builtin",
-        providerId: "athas",
+        providerId: "blimy",
         code: "allowance_exhausted",
         status: 402,
         phase: "provider",

@@ -343,7 +343,7 @@ async function validateExtension(folder: string): Promise<void> {
     if (reservedTheme) {
       error(
         folder,
-        `Theme '${theme.id}' uses reserved built-in Athas theme identity '${reservedTheme.name || reservedTheme.id}'`,
+        `Theme '${theme.id}' uses reserved built-in Blimy theme identity '${reservedTheme.name || reservedTheme.id}'`,
       );
     }
     if (theme.appearance !== "dark" && theme.appearance !== "light") {

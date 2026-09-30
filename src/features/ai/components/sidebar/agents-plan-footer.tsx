@@ -20,7 +20,7 @@ const USAGE_REFRESH_INTERVAL_MS = 3 * 60 * 1000;
 
 /**
  * The bottom of the agents sidebar: on Pro, a usage ring whose card shows this period's included
- * Athas credit and the pay-as-you-go balance on hover or click; otherwise an upgrade prompt.
+ * Blimy credit and the pay-as-you-go balance on hover or click; otherwise an upgrade prompt.
  */
 export function AgentsPlanFooter() {
   useSubscriptionRefresh({ intervalMs: USAGE_REFRESH_INTERVAL_MS });
@@ -50,8 +50,8 @@ export function AgentsPlanFooter() {
     return (
       <div className="shrink-0 px-chrome-inline py-2">
         <SidebarIconButton
-          tooltip="Athas AI usage"
-          aria-label="Open Athas AI usage"
+          tooltip="Blimy AI usage"
+          aria-label="Open Blimy AI usage"
           onClick={() => void openUrl(services.dashboardBillingUrl)}
         >
           <SparkleIcon />
@@ -70,7 +70,7 @@ export function AgentsPlanFooter() {
           delay={200}
           render={
             <SidebarIconButton
-              aria-label={`Athas AI usage: ${usage.usedPercent}% of included credit used, ${headline}`}
+              aria-label={`Blimy AI usage: ${usage.usedPercent}% of included credit used, ${headline}`}
             />
           }
         >

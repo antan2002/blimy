@@ -1,19 +1,19 @@
-import athasThemes from "./builtin/athas.json";
+import blimyThemes from "./builtin/blimy.json";
 import { toThemeDefinition } from "./theme-file";
 import type { ThemeFile } from "./theme-schema";
 import type { ThemeDefinition } from "./theme.types";
 
-export type AthasDefaultThemeType = "dark" | "light";
+export type BlimyDefaultThemeType = "dark" | "light";
 
-interface AthasDefaultTheme {
+interface BlimyDefaultTheme {
   id: string;
-  type: AthasDefaultThemeType;
+  type: BlimyDefaultThemeType;
   colors: Record<string, string>;
   syntax: Record<string, string>;
   definition: ThemeDefinition;
 }
 
-const athasThemeFile = athasThemes as ThemeFile;
+const blimyThemeFile = blimyThemes as ThemeFile;
 
 function prefixRecord(prefix: string, value: Record<string, string>): Record<string, string> {
   const result: Record<string, string> = {};
@@ -33,10 +33,10 @@ function toStringRecord(value: object): Record<string, string> {
   return result;
 }
 
-function buildDefaultTheme(type: AthasDefaultThemeType): AthasDefaultTheme {
-  const theme = athasThemeFile.themes.find((entry) => entry.appearance === type);
+function buildDefaultTheme(type: BlimyDefaultThemeType): BlimyDefaultTheme {
+  const theme = blimyThemeFile.themes.find((entry) => entry.appearance === type);
   if (!theme) {
-    throw new Error(`Missing Athas ${type} default theme`);
+    throw new Error(`Missing Blimy ${type} default theme`);
   }
 
   return {
@@ -48,53 +48,53 @@ function buildDefaultTheme(type: AthasDefaultThemeType): AthasDefaultTheme {
   };
 }
 
-const ATHAS_DEFAULT_THEMES: Record<AthasDefaultThemeType, AthasDefaultTheme> = {
+const BLIMY_DEFAULT_THEMES: Record<BlimyDefaultThemeType, BlimyDefaultTheme> = {
   dark: buildDefaultTheme("dark"),
   light: buildDefaultTheme("light"),
 };
 
-export function getAthasDefaultTheme(type: AthasDefaultThemeType): AthasDefaultTheme {
-  return ATHAS_DEFAULT_THEMES[type];
+export function getBlimyDefaultTheme(type: BlimyDefaultThemeType): BlimyDefaultTheme {
+  return BLIMY_DEFAULT_THEMES[type];
 }
 
-export function getAthasDefaultCssVariables(type: AthasDefaultThemeType): Record<string, string> {
-  return prefixRecord("--", getAthasDefaultTheme(type).colors);
+export function getBlimyDefaultCssVariables(type: BlimyDefaultThemeType): Record<string, string> {
+  return prefixRecord("--", getBlimyDefaultTheme(type).colors);
 }
 
-export function getAthasDefaultSyntaxTokens(type: AthasDefaultThemeType): Record<string, string> {
-  return prefixRecord("--syntax-", getAthasDefaultTheme(type).syntax);
+export function getBlimyDefaultSyntaxTokens(type: BlimyDefaultThemeType): Record<string, string> {
+  return prefixRecord("--syntax-", getBlimyDefaultTheme(type).syntax);
 }
 
-export function getAthasDefaultColor(
-  type: AthasDefaultThemeType,
+export function getBlimyDefaultColor(
+  type: BlimyDefaultThemeType,
   name: string,
 ): string | undefined {
-  return getAthasDefaultTheme(type).colors[name];
+  return getBlimyDefaultTheme(type).colors[name];
 }
 
-export function getRequiredAthasDefaultColor(type: AthasDefaultThemeType, name: string): string {
-  const color = getAthasDefaultColor(type, name);
+export function getRequiredBlimyDefaultColor(type: BlimyDefaultThemeType, name: string): string {
+  const color = getBlimyDefaultColor(type, name);
   if (!color) {
-    throw new Error(`Missing Athas ${type} default color: ${name}`);
+    throw new Error(`Missing Blimy ${type} default color: ${name}`);
   }
 
   return color;
 }
 
-export function getAthasDefaultSyntaxColor(
-  type: AthasDefaultThemeType,
+export function getBlimyDefaultSyntaxColor(
+  type: BlimyDefaultThemeType,
   name: string,
 ): string | undefined {
-  return getAthasDefaultTheme(type).syntax[name];
+  return getBlimyDefaultTheme(type).syntax[name];
 }
 
-export function getRequiredAthasDefaultSyntaxColor(
-  type: AthasDefaultThemeType,
+export function getRequiredBlimyDefaultSyntaxColor(
+  type: BlimyDefaultThemeType,
   name: string,
 ): string {
-  const color = getAthasDefaultSyntaxColor(type, name);
+  const color = getBlimyDefaultSyntaxColor(type, name);
   if (!color) {
-    throw new Error(`Missing Athas ${type} default syntax color: ${name}`);
+    throw new Error(`Missing Blimy ${type} default syntax color: ${name}`);
   }
 
   return color;

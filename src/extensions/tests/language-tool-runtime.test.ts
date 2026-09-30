@@ -13,12 +13,12 @@ import {
 
 function createManifest(overrides: Partial<ExtensionManifest> = {}): ExtensionManifest {
   return {
-    id: "athas.test",
+    id: "blimy.test",
     name: "Test",
     displayName: "Test",
     description: "Test language support",
     version: "1.0.0",
-    publisher: "Athas",
+    publisher: "Blimy",
     categories: ["Language"],
     languages: [
       {
@@ -35,7 +35,7 @@ describe("extension-store runtime manifest", () => {
     const url = resolveToolDownloadUrlForManifest(
       {
         name: "marksman",
-        downloadUrl: "https://athas.dev/extensions/markdown/markdown-${os}-${arch}.tar.gz",
+        downloadUrl: "https://blimy.dev/extensions/markdown/markdown-${os}-${arch}.tar.gz",
       },
       "1.0.0",
     );
@@ -49,7 +49,7 @@ describe("extension-store runtime manifest", () => {
     const url = resolveToolDownloadUrlForManifest(
       {
         name: "lua-language-server",
-        downloadUrl: "https://athas.dev/extensions/packages/lua/lua-${os}-${arch}.tar.gz",
+        downloadUrl: "https://blimy.dev/extensions/packages/lua/lua-${os}-${arch}.tar.gz",
       },
       "1.0.0",
     );
@@ -92,7 +92,7 @@ describe("extension-store runtime manifest", () => {
 
   it("defers generic platform URL templates to the Rust backend for libc-aware resolution", () => {
     const template =
-      "https://athas.dev/extensions/test/test-${targetArch}-${targetOs}.${archiveExt}";
+      "https://blimy.dev/extensions/test/test-${targetArch}-${targetOs}.${archiveExt}";
 
     expect(
       resolveToolDownloadUrlForBackend(
@@ -110,7 +110,7 @@ describe("extension-store runtime manifest", () => {
       lsp: {
         name: "marksman",
         runtime: "binary",
-        downloadUrl: "https://athas.dev/extensions/markdown/markdown-${os}-${arch}.tar.gz",
+        downloadUrl: "https://blimy.dev/extensions/markdown/markdown-${os}-${arch}.tar.gz",
         server: { default: "marksman" },
         args: ["server"],
         fileExtensions: [".md"],
@@ -173,10 +173,10 @@ describe("extension-store runtime manifest", () => {
     });
 
     const runtimeManifest = buildRuntimeManifest(manifest, {
-      lsp: "/tmp/athas-tools/bin/marksman",
+      lsp: "/tmp/blimy-tools/bin/marksman",
     });
 
-    expect(runtimeManifest.lsp?.server.default).toBe("/tmp/athas-tools/bin/marksman");
+    expect(runtimeManifest.lsp?.server.default).toBe("/tmp/blimy-tools/bin/marksman");
   });
 
   it("adds managed language server bundles to initialization options", () => {
@@ -193,12 +193,12 @@ describe("extension-store runtime manifest", () => {
 
     const runtimeManifest = buildRuntimeManifest(
       manifest,
-      { lsp: "/tmp/athas-tools/jdtls/bin/jdtls" },
-      ["/tmp/athas-tools/jdtls/java-debug/com.microsoft.java.debug.plugin.jar"],
+      { lsp: "/tmp/blimy-tools/jdtls/bin/jdtls" },
+      ["/tmp/blimy-tools/jdtls/java-debug/com.microsoft.java.debug.plugin.jar"],
     );
 
     expect(runtimeManifest.lsp?.initializationOptions).toMatchObject({
-      bundles: ["/tmp/athas-tools/jdtls/java-debug/com.microsoft.java.debug.plugin.jar"],
+      bundles: ["/tmp/blimy-tools/jdtls/java-debug/com.microsoft.java.debug.plugin.jar"],
       settings: { java: { autobuild: { enabled: true } } },
     });
   });
@@ -218,7 +218,7 @@ describe("extension-store runtime manifest", () => {
     });
 
     const runtimeManifest = buildRuntimeManifest(manifest, {
-      lsp: "/tmp/athas-tools/bun/@vtsls/language-server/node_modules/@vtsls/language-server/bin/vtsls.js",
+      lsp: "/tmp/blimy-tools/bun/@vtsls/language-server/node_modules/@vtsls/language-server/bin/vtsls.js",
     });
 
     expect(runtimeManifest.lsp?.server.default).toContain("vtsls.js");

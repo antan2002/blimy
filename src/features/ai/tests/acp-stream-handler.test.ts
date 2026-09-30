@@ -337,10 +337,10 @@ describe("AcpStreamHandler", () => {
     expect(
       handler.formatStartupError(
         new Error(
-          "codex is currently unavailable: The agent uses ACP protocol version 2, but Athas supports version 1.",
+          "codex is currently unavailable: The agent uses ACP protocol version 2, but Blimy supports version 1.",
         ),
       ),
-    ).toBe("codex uses a protocol version Athas does not support. Update the agent or Athas.");
+    ).toBe("codex uses a protocol version Blimy does not support. Update the agent or Blimy.");
   });
 
   it("waits for ACP prompt completion instead of completing after inactivity", () => {

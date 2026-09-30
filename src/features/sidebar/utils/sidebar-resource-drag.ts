@@ -1,7 +1,7 @@
 import type { GitFile } from "@/features/git/types/git.types";
 
-const SIDEBAR_RESOURCE_MIME = "application/x-athas-sidebar-resource";
-export const SIDEBAR_RESOURCE_DROP_ON_AI_EVENT = "athas-sidebar-resource-drop-on-ai";
+const SIDEBAR_RESOURCE_MIME = "application/x-blimy-sidebar-resource";
+export const SIDEBAR_RESOURCE_DROP_ON_AI_EVENT = "blimy-sidebar-resource-drop-on-ai";
 
 export type SidebarDragResource =
   | {

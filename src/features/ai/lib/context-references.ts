@@ -14,7 +14,7 @@ import type { Diagnostic } from "@/features/diagnostics/types/diagnostics.types"
 import type { GitDiff } from "@/features/git/types/git.types";
 import { getBaseName, getRelativePath, joinPath, normalizePath } from "@/utils/path-helpers";
 
-const PREFIX = "athas-context:";
+const PREFIX = "blimy-context:";
 
 /** Token budgets per reference; one reference never crowds out the rest of the request. */
 export const CONTEXT_REFERENCE_BUDGETS = {

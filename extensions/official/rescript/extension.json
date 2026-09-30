@@ -1,11 +1,11 @@
 {
-  "$schema": "https://athas.dev/schemas/extension.json",
-  "id": "athas.rescript",
+  "$schema": "https://blimy.dev/schemas/extension.json",
+  "id": "blimy.rescript",
   "name": "ReScript",
   "displayName": "ReScript",
   "version": "1.0.0",
   "description": "ReScript language support with LSP",
-  "publisher": "Athas",
+  "publisher": "Blimy",
   "categories": ["Language"],
   "languages": [
     {

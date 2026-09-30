@@ -156,12 +156,12 @@ export interface Settings {
   showGitHubDeployments: boolean;
   githubActionNotifications: boolean;
   /**
-   * Which credential Athas authenticates GitHub with. "auto" prefers a pasted
-   * personal access token, then the Athas account token, then the `gh` CLI.
-   * Pin a source when the Athas token authenticates but cannot see the repos
-   * you need — an organization that has not approved the Athas OAuth app.
+   * Which credential Blimy authenticates GitHub with. "auto" prefers a pasted
+   * personal access token, then the Blimy account token, then the `gh` CLI.
+   * Pin a source when the Blimy token authenticates but cannot see the repos
+   * you need â€” an organization that has not approved the Blimy OAuth app.
    */
-  githubTokenSource: "auto" | "athas" | "pat" | "gh";
+  githubTokenSource: "auto" | "blimy" | "pat" | "gh";
   // Keyboard
   keybindingPreset:
     | "none"

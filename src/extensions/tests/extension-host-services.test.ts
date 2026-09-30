@@ -54,7 +54,7 @@ const manifest = {
   displayName: "Status",
   description: "Loads service status.",
   version: "0.0.0",
-  publisher: "athas.generated",
+  publisher: "blimy.generated",
   categories: ["UI"],
   permissions: { network: ["https://status.example.com"] },
 } satisfies ExtensionManifest;

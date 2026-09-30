@@ -37,10 +37,10 @@ describe("custom view service", () => {
   it("loads a public JSON view as CSV", async () => {
     mocks.fetch.mockResolvedValue({
       ok: true,
-      json: async () => [{ name: "Athas", downloads: 42 }],
+      json: async () => [{ name: "Blimy", downloads: 42 }],
     });
 
-    await expect(loadViewData(createView())).resolves.toBe("name,downloads\nAthas,42");
+    await expect(loadViewData(createView())).resolves.toBe("name,downloads\nBlimy,42");
     expect(mocks.fetch).toHaveBeenCalledWith("https://api.example.com/releases", {
       headers: { Accept: "application/json" },
     });
@@ -49,18 +49,18 @@ describe("custom view service", () => {
   it("returns structured rows for the module table view", async () => {
     mocks.fetch.mockResolvedValue({
       ok: true,
-      json: async () => [{ name: "Athas", downloads: 42 }],
+      json: async () => [{ name: "Blimy", downloads: 42 }],
     });
 
     await expect(loadViewTable(createView())).resolves.toEqual({
       columns: ["name", "downloads"],
-      rows: [["Athas", 42]],
+      rows: [["Blimy", 42]],
     });
   });
 
   it("uses the connected account only for GitHub API sources", async () => {
     mocks.getRemotes.mockResolvedValue([
-      { name: "origin", url: "git@github.com:athasdev/athas.git" },
+      { name: "origin", url: "git@github.com:blimydev/blimy.git" },
     ]);
     mocks.invoke.mockResolvedValue("github-token");
     mocks.fetch.mockResolvedValue({
@@ -76,12 +76,12 @@ describe("custom view service", () => {
         endpointPath: "/releases?per_page=100",
         rowsPath: "",
       },
-      "/projects/athas",
+      "/projects/blimy",
     );
 
     expect(mocks.invoke).toHaveBeenCalledWith("get_github_token");
     expect(mocks.fetch).toHaveBeenCalledWith(
-      "https://api.github.com/repos/athasdev/athas/releases?per_page=100",
+      "https://api.github.com/repos/blimydev/blimy/releases?per_page=100",
       {
         headers: {
           Accept: "application/json",

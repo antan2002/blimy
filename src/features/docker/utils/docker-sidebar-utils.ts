@@ -21,20 +21,20 @@ export function getDockerUnavailableCopy(error: string) {
   if (error.toLowerCase().includes("docker cli was not found")) {
     return {
       title: "Docker CLI isn't available",
-      description: "Install Docker or make sure the Docker CLI is available in Athas.",
+      description: "Install Docker or make sure the Docker CLI is available in Blimy.",
     };
   }
 
   if (isDockerConnectionError(error)) {
     return {
       title: "Docker isn't running",
-      description: "Athas can't connect to the active Docker context.",
+      description: "Blimy can't connect to the active Docker context.",
     };
   }
 
   return {
     title: "Docker is unavailable",
-    description: "Athas couldn't load Docker resources.",
+    description: "Blimy couldn't load Docker resources.",
   };
 }
 

@@ -35,7 +35,7 @@ export function parseDetachedWindowUrl(url: URL): DetachedWindowTarget | null {
 }
 
 export function getDetachedWindowChannelName(channel: string) {
-  return `athas-window-${channel}`;
+  return `blimy-window-${channel}`;
 }
 
 /**

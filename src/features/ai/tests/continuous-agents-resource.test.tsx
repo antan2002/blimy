@@ -7,7 +7,7 @@ import { useContinuousAgentsStore } from "../continuous-agents/continuous-agents
 describe("ContinuousAgentsResource", () => {
   beforeEach(() => {
     useContinuousAgentsStore.setState({ tasks: [] });
-    useProjectStore.setState({ rootFolderPath: "/workspace/athas", projectName: "Athas" });
+    useProjectStore.setState({ rootFolderPath: "/workspace/blimy", projectName: "Blimy" });
   });
 
   it("renders as an editor resource with its own sidebar instead of a dialog", () => {
@@ -15,7 +15,7 @@ describe("ContinuousAgentsResource", () => {
       name: "Keep tests green",
       prompt: "Run focused tests and fix regressions.",
       agentId: "codex",
-      workspacePath: "/workspace/athas",
+      workspacePath: "/workspace/blimy",
       cadence: "hourly",
     });
 

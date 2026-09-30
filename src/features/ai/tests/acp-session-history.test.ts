@@ -189,7 +189,7 @@ describe("acpHistoryToMessages", () => {
     });
   });
 
-  it("shows only the user's words of prompts Athas sent with its context", () => {
+  it("shows only the user's words of prompts Blimy sent with its context", () => {
     const [prompt] = buildAcpPrompt(
       "Fix the build\n\nIt fails on CI.",
       { projectRoot: "/work", agentId: "gemini-cli" },

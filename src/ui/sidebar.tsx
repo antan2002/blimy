@@ -508,7 +508,7 @@ export function SidebarListActionRow({
   const actionItems = Children.toArray(actions).filter(Boolean);
   // Room the actions need: the label makes way for them instead of sitting under them, since
   // sidebar fills can be translucent.
-  const actionsWidth = `calc(${actionItems.length} * var(--athas-chrome-control-height) + ${
+  const actionsWidth = `calc(${actionItems.length} * var(--blimy-chrome-control-height) + ${
     Math.max(0, actionItems.length - 1) * 2 + 4
   }px)`;
 

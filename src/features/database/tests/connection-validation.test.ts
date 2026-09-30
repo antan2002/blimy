@@ -8,21 +8,21 @@ describe("database connection validation", () => {
   it("returns built-in database provider types in registry order", () => {
     const extensions = new Map([
       [
-        "athas.database.redis",
+        "blimy.database.redis",
         {
           isInstalled: true,
           manifest: { databases: [{ id: "redis", protocolVersion: 1 }] },
         },
       ],
       [
-        "athas.database.postgres",
+        "blimy.database.postgres",
         {
           isInstalled: true,
           manifest: { databases: [{ id: " postgres ", protocolVersion: 1 }] },
         },
       ],
       [
-        "athas.database.mysql",
+        "blimy.database.mysql",
         {
           isInstalled: false,
           manifest: { databases: [{ id: "mysql", protocolVersion: 1 }] },
@@ -43,21 +43,21 @@ describe("database connection validation", () => {
   it("does not hide built-in providers when extension metadata is incomplete", () => {
     const extensions = new Map([
       [
-        "athas.database.sqlite",
+        "blimy.database.sqlite",
         {
           isInstalled: true,
           manifest: { databases: [{ id: "sqlite" }] },
         },
       ],
       [
-        "athas.database.postgres",
+        "blimy.database.postgres",
         {
           isInstalled: true,
           manifest: { databases: [{ id: "postgres", protocolVersion: 2 }] },
         },
       ],
       [
-        "athas.database.redis",
+        "blimy.database.redis",
         {
           isInstalled: true,
           manifest: { databases: [{ id: "redis", protocolVersion: 1 }] },

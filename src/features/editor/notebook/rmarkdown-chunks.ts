@@ -37,8 +37,8 @@ interface ChunkMarker {
 
 const OPENING_FENCE_PATTERN = /^\s*```\s*(?:\{\s*([A-Za-z0-9_-]+)([^}]*)\}|([A-Za-z0-9_-]+)(.*))$/;
 const CLOSING_FENCE_PATTERN = /^\s*```\s*$/;
-const ATHAS_OUTPUT_START_PATTERN = /^\s*<!--\s*athas:r-output:start\b.*-->\s*$/;
-const ATHAS_OUTPUT_END_PATTERN = /^\s*<!--\s*athas:r-output:end\s*-->\s*$/;
+const BLIMY_OUTPUT_START_PATTERN = /^\s*<!--\s*blimy:r-output:start\b.*-->\s*$/;
+const BLIMY_OUTPUT_END_PATTERN = /^\s*<!--\s*blimy:r-output:end\s*-->\s*$/;
 
 function lineStartOffsets(content: string): number[] {
   const offsets = [0];
@@ -137,10 +137,10 @@ function findOutputRange(
 ): { startOffset: number; endOffset: number } | null {
   for (let line = closeLine + 1; line < lines.length; line += 1) {
     if (lines[line].trim() === "") continue;
-    if (!ATHAS_OUTPUT_START_PATTERN.test(lines[line])) return null;
+    if (!BLIMY_OUTPUT_START_PATTERN.test(lines[line])) return null;
 
     for (let endLine = line + 1; endLine < lines.length; endLine += 1) {
-      if (ATHAS_OUTPUT_END_PATTERN.test(lines[endLine])) {
+      if (BLIMY_OUTPUT_END_PATTERN.test(lines[endLine])) {
         return {
           startOffset: offsets[line] ?? content.length,
           endOffset: lineEndOffset(content, offsets[endLine] ?? content.length),
@@ -181,11 +181,11 @@ export function formatRMarkdownChunkOutput(output: {
   const fence = outputFenceFor(body);
 
   return [
-    "<!-- athas:r-output:start -->",
+    "<!-- blimy:r-output:start -->",
     `${fence}text`,
     body,
     fence,
-    "<!-- athas:r-output:end -->",
+    "<!-- blimy:r-output:end -->",
     "",
   ].join("\n");
 }

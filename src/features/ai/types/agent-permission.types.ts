@@ -10,7 +10,7 @@ export interface AgentPermissionRequest {
   preview?: AcpPermissionPreview;
 }
 
-/** Who is waiting on the answer: an ACP agent, the Codex integration, or Athas's own agent. */
+/** Who is waiting on the answer: an ACP agent, the Codex integration, or Blimy's own agent. */
 export type AgentPermissionResponder = "acp" | "codex" | "intelligence";
 
 export interface PendingAgentPermission extends AgentPermissionRequest {

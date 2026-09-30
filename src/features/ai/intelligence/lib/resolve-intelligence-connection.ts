@@ -10,16 +10,16 @@ interface ConnectionContext {
   personalConnection: IntelligenceConnection;
   /**
    * Whether the personal connection runs on this machine or the local network. "Auto" then keeps
-   * every task on it instead of routing prompts and code to hosted Athas.
+   * every task on it instead of routing prompts and code to hosted Blimy.
    */
   personalConnectionIsLocal?: boolean;
 }
 
-const ATHAS_AUTOMATIC: IntelligenceConnection = { providerId: "athas", modelId: "auto" };
+const BLIMY_AUTOMATIC: IntelligenceConnection = { providerId: "blimy", modelId: "auto" };
 
-function withAthasModel(connection: IntelligenceConnection): IntelligenceConnection {
-  return connection.providerId === "athas" && !connection.modelId.trim()
-    ? ATHAS_AUTOMATIC
+function withBlimyModel(connection: IntelligenceConnection): IntelligenceConnection {
+  return connection.providerId === "blimy" && !connection.modelId.trim()
+    ? BLIMY_AUTOMATIC
     : connection;
 }
 
@@ -30,19 +30,19 @@ function withAthasModel(connection: IntelligenceConnection): IntelligenceConnect
 export function resolveIntelligenceConnection(
   params: ConnectionContext & { task: Exclude<IntelligenceTask, "autocomplete"> },
 ): IntelligenceConnection {
-  const connection = withAthasModel(
+  const connection = withBlimyModel(
     params.preferences.tasks[params.task] ?? params.preferences.defaultConnection,
   );
   if (connection.providerId !== "auto") return connection;
   if (params.personalConnectionIsLocal) return params.personalConnection;
-  if (params.hasIntelligence) return ATHAS_AUTOMATIC;
+  if (params.hasIntelligence) return BLIMY_AUTOMATIC;
   return params.personalConnection;
 }
 
 /**
- * Tab completion's connection. An explicit choice always wins. On Automatic it uses Athas's Tab
+ * Tab completion's connection. An explicit choice always wins. On Automatic it uses Blimy's Tab
  * model when the account has access, unless the default model runs locally: then Tab uses that
- * local model, so code typed in the editor never leaves the machine. Without Athas access it falls
+ * local model, so code typed in the editor never leaves the machine. Without Blimy access it falls
  * back to the default model the user already set up with their own key. Null when there is
  * nothing to run on, and Tab stays off until the user picks a model.
  */
@@ -53,7 +53,7 @@ export function resolveAutocompleteConnection(
   },
 ): IntelligenceConnection | null {
   const choice = params.preferences.tasks.autocomplete;
-  if (choice && choice.providerId !== "auto") return withAthasModel(choice);
+  if (choice && choice.providerId !== "auto") return withBlimyModel(choice);
 
   // The default model itself, not the "New chats" override, decides whether Tab stays local.
   const chatDefault = resolveIntelligenceConnection({
@@ -66,7 +66,7 @@ export function resolveAutocompleteConnection(
     : Boolean(params.personalConnectionIsLocal) &&
       chatDefault.providerId === params.personalConnection.providerId;
   if (defaultIsLocal) return chatDefault.modelId.trim() ? chatDefault : null;
-  if (params.hasIntelligence) return ATHAS_AUTOMATIC;
-  if (chatDefault.providerId !== "athas" && chatDefault.modelId.trim()) return chatDefault;
+  if (params.hasIntelligence) return BLIMY_AUTOMATIC;
+  if (chatDefault.providerId !== "blimy" && chatDefault.modelId.trim()) return chatDefault;
   return null;
 }

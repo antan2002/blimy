@@ -13,12 +13,12 @@ import {
 
 function createManifest(overrides: Partial<ExtensionManifest> = {}): ExtensionManifest {
   return {
-    id: "athas.test",
+    id: "blimy.test",
     name: "Test",
     displayName: "Test",
     description: "Test integration",
     version: "1.0.0",
-    publisher: "Athas",
+    publisher: "Blimy",
     categories: ["Language"],
     ...overrides,
   };
@@ -91,7 +91,7 @@ describe("integration contribution normalization", () => {
           label: "DuckDB",
           isFileBased: true,
           protocolVersion: 1,
-          sidecar: { "darwin-arm64": "bin/athas-db-duckdb" },
+          sidecar: { "darwin-arm64": "bin/blimy-db-duckdb" },
         },
       ],
     });
@@ -158,7 +158,7 @@ describe("integration contribution normalization", () => {
       contributes: {
         skills: [
           {
-            id: "athas.review",
+            id: "blimy.review",
             name: "Review",
             description: "Review code changes",
             path: "SKILL.md",
@@ -170,7 +170,7 @@ describe("integration contribution normalization", () => {
 
     expect(getManifestSkillContributions(manifest)).toEqual([
       {
-        id: "athas.review",
+        id: "blimy.review",
         name: "Review",
         description: "Review code changes",
         path: "SKILL.md",

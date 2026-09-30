@@ -5,8 +5,8 @@ import {
   summarizeConversationExtractively,
   fitMessagesToProviderLimits,
   getProviderRequestLimits,
-  HOSTED_ATHAS_REQUEST_LIMITS,
-  HOSTED_ATHAS_TOOL_LOOP_RESERVE,
+  HOSTED_BLIMY_REQUEST_LIMITS,
+  HOSTED_BLIMY_TOOL_LOOP_RESERVE,
   currentImageCount,
   imagesOmittedNotice,
   providerAcceptsImages,
@@ -189,7 +189,7 @@ describe("buildConversationHistory", () => {
     expect(compacted[0].content).toContain("- User: request 0");
   });
 
-  it("keeps hosted Athas requests under its message and size limits", () => {
+  it("keeps hosted Blimy requests under its message and size limits", () => {
     const images = [{ mediaType: "image/png", data: "YWJj" }];
     const messages: AIMessage[] = [
       { role: "system", content: "system" },
@@ -201,37 +201,37 @@ describe("buildConversationHistory", () => {
       { role: "user", content: "latest", images },
     ];
 
-    const fitted = fitMessagesToProviderLimits(messages, "athas");
+    const fitted = fitMessagesToProviderLimits(messages, "blimy");
     const bytes = new TextEncoder().encode(JSON.stringify(fitted)).length;
 
-    const loopMessages = HOSTED_ATHAS_TOOL_LOOP_RESERVE.messages;
+    const loopMessages = HOSTED_BLIMY_TOOL_LOOP_RESERVE.messages;
     expect(fitted.length + loopMessages).toBeLessThanOrEqual(
-      HOSTED_ATHAS_REQUEST_LIMITS.maxMessages,
+      HOSTED_BLIMY_REQUEST_LIMITS.maxMessages,
     );
-    expect(bytes + HOSTED_ATHAS_TOOL_LOOP_RESERVE.bytes).toBeLessThanOrEqual(
-      HOSTED_ATHAS_REQUEST_LIMITS.maxBytes,
+    expect(bytes + HOSTED_BLIMY_TOOL_LOOP_RESERVE.bytes).toBeLessThanOrEqual(
+      HOSTED_BLIMY_REQUEST_LIMITS.maxBytes,
     );
-    expect(getProviderRequestLimits("athas")?.maxMessages).toBe(310);
+    expect(getProviderRequestLimits("blimy")?.maxMessages).toBe(310);
     expect(fitted[0]).toEqual({ role: "system", content: "system" });
     expect(fitted[fitted.length - 1].content).toContain("latest");
     expect(fitted.some((entry) => entry.role === "user" && entry.images)).toBe(false);
     expect(fitted[1].content).toMatch(/^\[Summary of \d+ earlier messages/);
   });
 
-  it("truncates a single oversized message for hosted Athas", () => {
+  it("truncates a single oversized message for hosted Blimy", () => {
     const fitted = fitMessagesToProviderLimits(
       [
         { role: "system", content: "s".repeat(500_000) },
         { role: "user", content: "u".repeat(500_000) },
       ],
-      "athas",
+      "blimy",
     );
     expect(new TextEncoder().encode(JSON.stringify(fitted)).length).toBeLessThanOrEqual(
-      getProviderRequestLimits("athas")?.maxBytes ?? 0,
+      getProviderRequestLimits("blimy")?.maxBytes ?? 0,
     );
     expect(
       fitted.every(
-        (entry) => entry.content.length <= HOSTED_ATHAS_REQUEST_LIMITS.maxMessageChars + 100,
+        (entry) => entry.content.length <= HOSTED_BLIMY_REQUEST_LIMITS.maxMessageChars + 100,
       ),
     ).toBe(true);
   });
@@ -244,13 +244,13 @@ describe("buildConversationHistory", () => {
     expect(providerAcceptsImages("deepseek")).toBe(false);
   });
 
-  it("decides image support for Athas per model from the catalog", () => {
-    expect(providerAcceptsImages("athas")).toBe(false);
-    expect(providerAcceptsImages("athas", { supportsImages: false })).toBe(false);
-    expect(providerAcceptsImages("athas", { supportsImages: true })).toBe(true);
+  it("decides image support for Blimy per model from the catalog", () => {
+    expect(providerAcceptsImages("blimy")).toBe(false);
+    expect(providerAcceptsImages("blimy", { supportsImages: false })).toBe(false);
+    expect(providerAcceptsImages("blimy", { supportsImages: true })).toBe(true);
   });
 
-  it("sends images to an Athas model that reads them, outside the text size limit", () => {
+  it("sends images to an Blimy model that reads them, outside the text size limit", () => {
     const image = { mediaType: "image/png", data: "A".repeat(800_000) };
     const messages: AIMessage[] = [
       { role: "system", content: "system" },
@@ -258,15 +258,15 @@ describe("buildConversationHistory", () => {
     ];
     const fitted = fitMessagesToProviderLimits(
       messages,
-      "athas",
-      getProviderRequestLimits("athas"),
+      "blimy",
+      getProviderRequestLimits("blimy"),
       true,
     );
     expect(fitted).toEqual(messages);
     expect(currentImageCount(fitted)).toBe(1);
   });
 
-  it("strips images for a text-only Athas model and explains why", () => {
+  it("strips images for a text-only Blimy model and explains why", () => {
     const messages: AIMessage[] = [
       {
         role: "user",
@@ -274,7 +274,7 @@ describe("buildConversationHistory", () => {
         images: [{ mediaType: "image/png", data: "YWJj" }],
       },
     ];
-    const fitted = fitMessagesToProviderLimits(messages, "athas");
+    const fitted = fitMessagesToProviderLimits(messages, "blimy");
     expect(currentImageCount(fitted)).toBe(0);
     expect(fitted[0].content).toContain("1 image omitted");
     expect(imagesOmittedNotice({ omitted: 1, acceptsImages: false, modelName: "GLM 5.3" })).toBe(
@@ -282,7 +282,7 @@ describe("buildConversationHistory", () => {
     );
   });
 
-  it("keeps the newest images within Athas's image limits and notes the rest", () => {
+  it("keeps the newest images within Blimy's image limits and notes the rest", () => {
     // 1.2 MB decoded each: two do not fit the 2.25 MB total, and SVG is not accepted.
     const large = { mediaType: "image/png", data: "A".repeat(1_600_000) };
     const svg = { mediaType: "image/svg+xml", data: "YWJj" };
@@ -292,7 +292,7 @@ describe("buildConversationHistory", () => {
         { role: "assistant", content: "ok" },
         { role: "user", content: "new", images: [large, svg] },
       ],
-      "athas",
+      "blimy",
       null,
       true,
     );

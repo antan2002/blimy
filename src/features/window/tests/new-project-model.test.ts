@@ -8,30 +8,30 @@ import {
 
 describe("new project model", () => {
   it("validates portable project names", () => {
-    expect(getProjectNameError("athas-app")).toBeNull();
-    expect(getProjectNameError("../athas")).toBe(
+    expect(getProjectNameError("blimy-app")).toBeNull();
+    expect(getProjectNameError("../blimy")).toBe(
       "Project names cannot contain path separators or reserved characters.",
     );
     expect(getProjectNameError("CON")).toBe(
       "Choose a project name that is supported on every platform.",
     );
-    expect(getProjectNameError("athas.")).toBe("Project names cannot end with a period or space.");
+    expect(getProjectNameError("blimy.")).toBe("Project names cannot end with a period or space.");
   });
 
   it("infers project names from common repository URLs", () => {
-    expect(inferProjectNameFromRepositoryUrl("https://github.com/athasdev/athas.git")).toBe(
-      "athas",
+    expect(inferProjectNameFromRepositoryUrl("https://github.com/blimydev/blimy.git")).toBe(
+      "blimy",
     );
-    expect(inferProjectNameFromRepositoryUrl("git@github.com:athasdev/athas.git")).toBe("athas");
+    expect(inferProjectNameFromRepositoryUrl("git@github.com:blimydev/blimy.git")).toBe("blimy");
     expect(inferProjectNameFromRepositoryUrl("https://example.com/my%20project/")).toBe(
       "my project",
     );
   });
 
   it("builds the destination path with the location separator", () => {
-    expect(getNewProjectPath("/Users/mehmet/Code", "athas")).toBe("/Users/mehmet/Code/athas");
-    expect(getNewProjectPath("C:\\Users\\mehmet\\Code", "athas")).toBe(
-      "C:\\Users\\mehmet\\Code\\athas",
+    expect(getNewProjectPath("/Users/mehmet/Code", "blimy")).toBe("/Users/mehmet/Code/blimy");
+    expect(getNewProjectPath("C:\\Users\\mehmet\\Code", "blimy")).toBe(
+      "C:\\Users\\mehmet\\Code\\blimy",
     );
   });
 

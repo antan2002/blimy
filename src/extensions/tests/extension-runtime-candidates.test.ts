@@ -10,14 +10,14 @@ function manifest(id: string): ExtensionManifest {
     displayName: id,
     description: `${id} integration`,
     version: "1.0.0",
-    publisher: "Athas",
+    publisher: "Blimy",
     categories: ["Other"],
   };
 }
 
 describe("integration runtime candidates", () => {
   it("activates bundled registry integrations even when they are absent from the catalog", () => {
-    const pierreIcons = manifest("athas.icon-theme.pierre");
+    const pierreIcons = manifest("blimy.icon-theme.pierre");
     const registered: BundledExtension = {
       manifest: pierreIcons,
       path: "/bundled/icon-themes/pierre",
@@ -35,7 +35,7 @@ describe("integration runtime candidates", () => {
   });
 
   it("deduplicates catalog entries against their registered runtime integration", () => {
-    const pierreIcons = manifest("athas.icon-theme.pierre");
+    const pierreIcons = manifest("blimy.icon-theme.pierre");
     const available: AvailableExtension = {
       manifest: pierreIcons,
       isInstalled: true,

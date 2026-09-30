@@ -8,8 +8,8 @@ function createBlameLine(overrides: Partial<GitBlameLine> = {}): GitBlameLine {
     total_lines: 1,
     commit_hash: "abcdef1234567890",
     is_uncommitted: false,
-    author: "Athas Developer",
-    email: "developer@athas.dev",
+    author: "Blimy Developer",
+    email: "developer@blimy.dev",
     time: 1_700_000_000,
     commit: "Restore inline blame hover\n\nInclude commit details.",
     ...overrides,
@@ -28,9 +28,9 @@ describe("inline Git blame presentation", () => {
     vi.setSystemTime(new Date("2023-11-15T22:13:20Z"));
 
     expect(getInlineGitBlamePresentation(createBlameLine())).toEqual({
-      text: "  Athas Developer, yesterday",
-      author: "Athas Developer",
-      email: "developer@athas.dev",
+      text: "  Blimy Developer, yesterday",
+      author: "Blimy Developer",
+      email: "developer@blimy.dev",
       relativeTime: "yesterday",
       commitSummary: "Restore inline blame hover",
       commitHash: "abcdef1234567890",
@@ -44,14 +44,14 @@ describe("inline Git blame presentation", () => {
 
     const presentation = getInlineGitBlamePresentation(
       createBlameLine({
-        author: "[Athas]",
+        author: "[Blimy]",
         email: "",
         commit: "Fix *hover* [card]",
       }),
     );
 
     expect(presentation).toMatchObject({
-      author: "[Athas]",
+      author: "[Blimy]",
       email: null,
       relativeTime: "yesterday",
       commitSummary: "Fix *hover* [card]",

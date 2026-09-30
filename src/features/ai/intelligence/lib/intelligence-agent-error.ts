@@ -62,7 +62,7 @@ export function toIntelligenceAgentError(error: unknown): Error {
       typeof nested.code === "string" || typeof nested.code === "number"
         ? String(nested.code)
         : undefined;
-    // Athas's hosted stream puts the upstream status in `param`; the SDK keeps only the
+    // Blimy's hosted stream puts the upstream status in `param`; the SDK keeps only the
     // OpenAI-style fields (message, type, param, code) of an error chunk.
     const param =
       nested.param && typeof nested.param === "object"

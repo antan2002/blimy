@@ -1,6 +1,6 @@
 {
-  "$schema": "https://athas.dev/schemas/extension.json",
-  "id": "athas.icon-theme.pierre",
+  "$schema": "https://blimy.dev/schemas/extension.json",
+  "id": "blimy.icon-theme.pierre",
   "name": "pierre-icons",
   "displayName": "Pierre Icons",
   "version": "0.0.9",

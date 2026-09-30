@@ -23,7 +23,7 @@ export const AI_FEATURE_MODEL_OVERRIDES: ReadonlyArray<{ task: IntelligenceTask;
 
 /**
  * The model the default actually resolves to. The stored default may be the "auto" placeholder,
- * which means the device's own provider when it is local, Athas on Pro, and the device's own
+ * which means the device's own provider when it is local, Blimy on Pro, and the device's own
  * provider otherwise; Settings shows what will run instead of that placeholder.
  */
 export function getEffectiveDefaultConnection(params: {
@@ -41,13 +41,13 @@ export function getEffectiveDefaultConnection(params: {
   });
 }
 
-/** Whether a connection can run for this account: Athas models need a plan that includes them. */
+/** Whether a connection can run for this account: Blimy models need a plan that includes them. */
 export function isConnectionAvailable(
   connection: IntelligenceConnection,
   hasIntelligence: boolean,
 ): boolean {
   if (connection.providerId === "auto") return false;
-  return connection.providerId !== "athas" || hasIntelligence;
+  return connection.providerId !== "blimy" || hasIntelligence;
 }
 
 export function withDefaultConnection(

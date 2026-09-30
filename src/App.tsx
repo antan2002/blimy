@@ -33,9 +33,9 @@ function handleInitialWindowShellMouseDown(event: React.MouseEvent<HTMLDivElemen
 
 function InitialWindowShell() {
   return (
-    <div className="athas-layout-shell relative h-dvh w-dvw overflow-hidden bg-surface">
+    <div className="blimy-layout-shell relative h-dvh w-dvw overflow-hidden bg-surface">
       <div
-        className="athas-title-bar absolute inset-x-0 top-0 h-title-bar bg-transparent"
+        className="blimy-title-bar absolute inset-x-0 top-0 h-title-bar bg-transparent"
         data-tauri-drag-region
         onMouseDown={handleInitialWindowShellMouseDown}
       />

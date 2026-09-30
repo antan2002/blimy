@@ -6,10 +6,10 @@ import type {
 import type { SessionCheckState } from "@/features/window/stores/auth.store";
 
 const SESSION_CHECK_TITLES: Record<SessionCheckState["reason"], string> = {
-  local_server_down: "Local Athas server is not running",
-  unreachable: "Can't reach Athas",
-  timeout: "Athas is not responding",
-  server_error: "Athas is having trouble",
+  local_server_down: "Local Blimy server is not running",
+  unreachable: "Can't reach Blimy",
+  timeout: "Blimy is not responding",
+  server_error: "Blimy is having trouble",
 };
 
 function authNotice(input: ComposerNoticeInput): ComposerNotice | null {
@@ -21,7 +21,7 @@ function authNotice(input: ComposerNoticeInput): ComposerNotice | null {
       tone: "info",
       icon: "sign-in",
       title: "Finish signing in from your browser",
-      description: "Athas opened a sign-in page. This chat unlocks once you're done.",
+      description: "Blimy opened a sign-in page. This chat unlocks once you're done.",
       primary: { id: "reopen-sign-in", label: "Open page again" },
       secondary: { id: "cancel-sign-in", label: "Cancel" },
       dismissible: false,
@@ -35,7 +35,7 @@ function authNotice(input: ComposerNoticeInput): ComposerNotice | null {
       icon: "cloud-warning",
       title: SESSION_CHECK_TITLES[auth.sessionCheck.reason],
       description: `${auth.sessionCheck.message} Your session is kept; retrying automatically.`,
-      primary: { id: "retry-session", label: auth.isLoading ? "Checking…" : "Retry now" },
+      primary: { id: "retry-session", label: auth.isLoading ? "Checkingâ€¦" : "Retry now" },
       dismissible: false,
       busy: auth.isLoading,
     };
@@ -60,7 +60,7 @@ function authNotice(input: ComposerNoticeInput): ComposerNotice | null {
       category: "auth",
       tone: "info",
       icon: "sign-in",
-      title: "Sign in to use Athas models",
+      title: "Sign in to use Blimy models",
       description: "Or switch to a model from a provider you have connected.",
       primary: { id: "sign-in", label: "Sign in" },
       secondary: { id: "configure-models", label: "Models" },
@@ -73,9 +73,9 @@ function authNotice(input: ComposerNoticeInput): ComposerNotice | null {
       category: "auth",
       tone: "warning",
       icon: "warning",
-      title: "Could not load your Athas plan",
-      description: auth.error ?? "Athas did not return your plan.",
-      primary: { id: "retry-account", label: input.actionPending ? "Retrying…" : "Retry" },
+      title: "Could not load your Blimy plan",
+      description: auth.error ?? "Blimy did not return your plan.",
+      primary: { id: "retry-account", label: input.actionPending ? "Retryingâ€¦" : "Retry" },
       dismissible: false,
       busy: input.actionPending,
     };
@@ -96,9 +96,9 @@ function billingNotice(input: ComposerNoticeInput): ComposerNotice | null {
     category: "billing",
     tone: "error",
     icon: "credit",
-    title: "Out of Athas credit",
+    title: "Out of Blimy credit",
     description: hasBalance
-      ? `Add credit to keep using Athas models, or switch models.${resetSuffix(usage.periodEnd)}`
+      ? `Add credit to keep using Blimy models, or switch models.${resetSuffix(usage.periodEnd)}`
       : usage.periodEnd
         ? `Switch models until your included credit resets ${formatResetDate(usage.periodEnd)}.`
         : "Switch models until your included credit resets.",

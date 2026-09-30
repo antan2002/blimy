@@ -3,16 +3,16 @@ import { toast } from "sonner";
 import { navigateToLspLocation } from "../../lsp/location-navigation";
 import { filePathFromUri } from "../../lsp/workspace-edit";
 import { useBufferStore } from "../../stores/buffer.store";
-import { filePathFromAthasModelUri } from "./model-uri";
+import { filePathFromBlimyModelUri } from "./model-uri";
 
 export function filePathFromMonacoUri(uri: Monaco.Uri): string | null {
   if (uri.scheme === "file") return filePathFromUri(uri.toString());
-  if (uri.scheme === "athas") return filePathFromAthasModelUri(uri.path, uri.query);
+  if (uri.scheme === "blimy") return filePathFromBlimyModelUri(uri.path, uri.query);
   if (uri.scheme === "jdt") return uri.toString();
   return null;
 }
 
-export const athasEditorOpener: Monaco.editor.ICodeEditorOpener = {
+export const blimyEditorOpener: Monaco.editor.ICodeEditorOpener = {
   async openCodeEditor(source, resource, selectionOrPosition) {
     const filePath = filePathFromMonacoUri(resource);
     const model = source.getModel();

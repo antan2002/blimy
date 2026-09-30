@@ -57,7 +57,7 @@ function createIconComponent(
   displayName: string,
   FilledComponent?: ComponentType<any>,
 ): Icon {
-  const Wrapped = forwardRef<SVGSVGElement, IconProps>(function AthasIcon(props, ref) {
+  const Wrapped = forwardRef<SVGSVGElement, IconProps>(function BlimyIcon(props, ref) {
     const context = useContext(IconContext);
     const {
       filled,
@@ -78,7 +78,7 @@ function createIconComponent(
 
     return createElement(filled && FilledComponent ? FilledComponent : IconComponent, {
       ...iconProps,
-      "data-athas-icon": "",
+      "data-blimy-icon": "",
       ref,
       size,
       style: nextStyle,

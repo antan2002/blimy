@@ -110,13 +110,13 @@ function ShareSnapshotDialog({ draft, onClose }: { draft: ShareDraft; onClose: (
           </>
         ) : (
           <Button disabled={busy || !canCreate} onClick={() => void create()}>
-            {busy ? "Creating link…" : "Create link"}
+            {busy ? "Creating linkâ€¦" : "Create link"}
           </Button>
         )
       }
     >
       <div className="flex flex-col gap-4">
-        <FieldDescription>Share a read-only view on athas.dev.</FieldDescription>
+        <FieldDescription>Share a read-only view on blimy.dev.</FieldDescription>
         <Field>
           <FieldLabel>Content</FieldLabel>
           <p className="font-medium ui-text-sm">{draft.title}</p>
@@ -145,7 +145,7 @@ function ShareSnapshotDialog({ draft, onClose }: { draft: ShareDraft; onClose: (
                   />
                 </div>
                 <FieldDescription>
-                  New responses and edits appear here while Athas is running. You can pause this in
+                  New responses and edits appear here while Blimy is running. You can pause this in
                   Settings.
                 </FieldDescription>
               </Field>
@@ -163,18 +163,18 @@ function ShareSnapshotDialog({ draft, onClose }: { draft: ShareDraft; onClose: (
                   requestId.current = crypto.randomUUID();
                 }}
                 options={[
-                  { value: "public", label: "Public — anyone with the link" },
-                  { value: "email", label: "Specific emails · Pro" },
-                  { value: "organization", label: "Organization · Pro" },
+                  { value: "public", label: "Public â€” anyone with the link" },
+                  { value: "email", label: "Specific emails Â· Pro" },
+                  { value: "organization", label: "Organization Â· Pro" },
                 ]}
               />
             </Field>
             {restricted && !options?.pro ? (
               <Field>
                 <FieldDescription>
-                  Email and organization restrictions require Athas Pro.
+                  Email and organization restrictions require Blimy Pro.
                 </FieldDescription>
-                <Button onClick={() => void openUrl("https://athas.dev/pricing")}>
+                <Button onClick={() => void openUrl("https://blimy.dev/pricing")}>
                   View Pro plan
                 </Button>
               </Field>
@@ -237,7 +237,7 @@ function ShareSnapshotDialog({ draft, onClose }: { draft: ShareDraft; onClose: (
         {error && (
           <p role="alert" className="text-destructive ui-text-sm">
             {error === "Not authenticated"
-              ? "Sign in to your Athas account in Settings, then reopen Share."
+              ? "Sign in to your Blimy account in Settings, then reopen Share."
               : error}
           </p>
         )}

@@ -1,5 +1,5 @@
 import { isPermissionGranted, sendNotification } from "@tauri-apps/plugin-notification";
-import { isAnyAthasWindowFocused } from "@/features/ai/services/agent-native-notifications";
+import { isAnyBlimyWindowFocused } from "@/features/ai/services/agent-native-notifications";
 import { useNotificationsStore } from "@/features/notifications/stores/notifications.store";
 import { useSettingsStore } from "@/features/settings/stores/settings.store";
 import type {
@@ -32,7 +32,7 @@ export function describeWorkflowRunChange(change: WorkflowRunChange): WorkflowRu
   const state = getWorkflowRunState(run.status, run.conclusion);
   const workflow = run.workflowName || run.name || "Workflow";
   const title = getWorkflowRunTitle(run);
-  const context = [run.headBranch, getWorkflowRunLabel(run)].filter(Boolean).join(" · ");
+  const context = [run.headBranch, getWorkflowRunLabel(run)].filter(Boolean).join(" Â· ");
   const attempt = run.runAttempt && run.runAttempt > 1 ? ` (attempt ${run.runAttempt})` : "";
   const id = `github-action:${run.databaseId}:${run.runAttempt ?? 1}:${change.type}`;
 
@@ -40,7 +40,7 @@ export function describeWorkflowRunChange(change: WorkflowRunChange): WorkflowRu
     return {
       id,
       message: `${workflow} started${attempt}`,
-      description: [title, context].filter(Boolean).join(" · "),
+      description: [title, context].filter(Boolean).join(" Â· "),
       type: "info",
       run,
     };
@@ -59,7 +59,7 @@ export function describeWorkflowRunChange(change: WorkflowRunChange): WorkflowRu
   return {
     id,
     message: `${workflow} ${outcome}${attempt}`,
-    description: [title, context, duration ? `in ${duration}` : null].filter(Boolean).join(" · "),
+    description: [title, context, duration ? `in ${duration}` : null].filter(Boolean).join(" Â· "),
     type:
       state.phase === "success"
         ? "success"
@@ -138,7 +138,7 @@ export function createWorkflowRunNotifier(dependencies: WorkflowNotificationDepe
         title: headline.message,
         body:
           notifications.length > 1
-            ? `${headline.description} · ${notifications.length - 1} more`
+            ? `${headline.description} Â· ${notifications.length - 1} more`
             : headline.description,
       });
     } catch (error) {
@@ -151,7 +151,7 @@ export const notifyWorkflowRunChanges = createWorkflowRunNotifier({
   isEnabled: () => useSettingsStore.getState().settings.githubActionNotifications,
   showToast: (value) => showToast(value),
   record: (notification) => useNotificationsStore.getState().actions.record(notification),
-  isAppFocused: isAnyAthasWindowFocused,
+  isAppFocused: isAnyBlimyWindowFocused,
   isPermissionGranted,
-  sendNative: ({ title, body }) => sendNotification({ title, body, group: "athas-github" }),
+  sendNative: ({ title, body }) => sendNotification({ title, body, group: "blimy-github" }),
 });

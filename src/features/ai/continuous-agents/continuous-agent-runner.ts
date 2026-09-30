@@ -74,7 +74,7 @@ export type ContinuousAgentRunResult =
 function launchErrorMessage(error: unknown) {
   if (error instanceof Error && error.message.trim()) return error.message;
   if (typeof error === "string" && error.trim()) return error;
-  return "Athas could not start this continuous agent.";
+  return "Blimy could not start this continuous agent.";
 }
 
 export async function runNextDueContinuousAgent(
@@ -113,7 +113,7 @@ export async function runNextDueContinuousAgent(
 
 export function buildContinuousAgentPrompt(name: string, prompt: string) {
   return [
-    `You are running the continuous goal “${name}” in this workspace.`,
+    `You are running the continuous goal â€œ${name}â€ in this workspace.`,
     "Make meaningful progress autonomously, verify the result, and leave a concise handoff in this session.",
     "If the goal is already satisfied, inspect the current state and report evidence instead of inventing work.",
     "",

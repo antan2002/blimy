@@ -6,7 +6,7 @@ import { KeyIcon, TerminalWindowIcon } from "@/ui/icons";
 
 /**
  * The sign-in methods an agent offered, shown where its authentication error is. Agent methods
- * sign in through the agent; terminal methods open an Athas terminal running the command shown,
+ * sign in through the agent; terminal methods open an Blimy terminal running the command shown,
  * and the agent restarts once it exits successfully. The failed prompt is retried after either.
  */
 export function AcpAuthChoice({
@@ -48,9 +48,9 @@ export function AcpAuthChoice({
             >
               <Icon />
               {active && request.phase === "terminal"
-                ? "Finish signing in in the terminal…"
+                ? "Finish signing in in the terminalâ€¦"
                 : active
-                  ? "Signing in…"
+                  ? "Signing inâ€¦"
                   : method.name}
             </Button>
             {method.description ? (

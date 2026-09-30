@@ -62,8 +62,8 @@ const BottomPane = ({
       setIsInternalHoverTarget(getInternalTabDragHover().paneId === BOTTOM_PANE_ID);
     };
 
-    window.addEventListener("athas-internal-tab-drag-hover", syncHover);
-    return () => window.removeEventListener("athas-internal-tab-drag-hover", syncHover);
+    window.addEventListener("blimy-internal-tab-drag-hover", syncHover);
+    return () => window.removeEventListener("blimy-internal-tab-drag-hover", syncHover);
   }, []);
 
   useEffect(() => {
@@ -112,7 +112,7 @@ const BottomPane = ({
           if (frameEl) {
             frameEl.style.setProperty(
               "--bottom-pane-height",
-              `calc(${currentHeight}px + var(--athas-workbench-gap))`,
+              `calc(${currentHeight}px + var(--blimy-workbench-gap))`,
             );
           }
         });
@@ -126,7 +126,7 @@ const BottomPane = ({
         if (frameEl) {
           frameEl.style.setProperty(
             "--bottom-pane-height",
-            `calc(${currentHeight}px + var(--athas-workbench-gap))`,
+            `calc(${currentHeight}px + var(--blimy-workbench-gap))`,
           );
         }
         setHeight(currentHeight);
@@ -239,7 +239,7 @@ const BottomPane = ({
     <div
       data-bottom-pane-drop-target
       className={cn(
-        "athas-glass-island relative flex min-h-0 flex-col overflow-hidden bg-background",
+        "blimy-glass-island relative flex min-h-0 flex-col overflow-hidden bg-background",
         embedded ? "border-border border-r border-b" : "rounded-xl border border-border",
         embedded && roundLeftEdge && "rounded-bl-xl border-l",
         embedded && roundRightEdge && "rounded-br-xl",
@@ -303,7 +303,7 @@ const BottomPane = ({
         !isBottomPaneVisible && "hidden",
       )}
       style={{
-        ["--bottom-pane-height" as string]: `calc(${height}px + var(--athas-workbench-gap))`,
+        ["--bottom-pane-height" as string]: `calc(${height}px + var(--blimy-workbench-gap))`,
       }}
     >
       {resizeGutter}

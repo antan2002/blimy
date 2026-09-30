@@ -74,7 +74,7 @@ afterEach(async () => {
   container.remove();
 });
 
-async function render(providerId = "athas", providerBlocked = true) {
+async function render(providerId = "blimy", providerBlocked = true) {
   await act(async () =>
     root.render(
       <ComposerNotice builtInAgent providerId={providerId} providerBlocked={providerBlocked} />,
@@ -90,22 +90,22 @@ function button(label: string) {
 describe("composer notice slot", () => {
   it("starts desktop sign-in for a signed-out hosted chat", async () => {
     await render();
-    expect(container.textContent).toContain("Sign in to use Athas models");
+    expect(container.textContent).toContain("Sign in to use Blimy models");
     await act(async () => button("Sign in").click());
     expect(state.signIn).toHaveBeenCalledOnce();
-    expect(state.check).toHaveBeenCalledWith("athas");
+    expect(state.check).toHaveBeenCalledWith("blimy");
   });
 
   it("retries an unverified session instead of offering sign-in", async () => {
     state.auth.sessionCheck = {
       reason: "unreachable",
-      message: "Could not reach athas.dev.",
-      host: "athas.dev",
+      message: "Could not reach blimy.dev.",
+      host: "blimy.dev",
       attempt: 1,
       nextRetryAt: null,
     };
     await render();
-    expect(container.textContent).toContain("Can't reach Athas");
+    expect(container.textContent).toContain("Can't reach Blimy");
     expect(button("Sign in")).toBeUndefined();
     await act(async () => button("Retry now").click());
     expect(state.retrySessionCheck).toHaveBeenCalledOnce();
@@ -120,7 +120,7 @@ describe("composer notice slot", () => {
 
   it("renders nothing when the chat can send", async () => {
     state.auth = { ...state.auth, isAuthenticated: true, subscription: { status: "pro" } };
-    await render("athas", false);
+    await render("blimy", false);
     expect(container.textContent).toBe("");
   });
 });

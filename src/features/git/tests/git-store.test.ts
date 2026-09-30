@@ -9,8 +9,8 @@ vi.mock("../api/git-commits-api", () => ({
 const commit = (hash: string): GitCommit => ({
   hash,
   message: hash,
-  author: "Athas",
-  email: "dev@athas.dev",
+  author: "Blimy",
+  email: "dev@blimy.dev",
   date: "2026-07-25",
 });
 

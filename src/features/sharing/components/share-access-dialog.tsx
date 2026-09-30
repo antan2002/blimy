@@ -64,8 +64,8 @@ export function ShareAccessDialog({
             onChange={(value) => setVisibility(value as ShareInput["visibility"])}
             options={[
               { value: "public", label: "Anyone with the link" },
-              { value: "email", label: "Specific emails · Pro" },
-              { value: "organization", label: "Organization · Pro" },
+              { value: "email", label: "Specific emails Â· Pro" },
+              { value: "organization", label: "Organization Â· Pro" },
             ]}
           />
         </Field>
@@ -95,7 +95,7 @@ export function ShareAccessDialog({
           </Field>
         )}
         {visibility !== "public" && !options.pro && (
-          <FieldDescription>Email and organization access require Athas Pro.</FieldDescription>
+          <FieldDescription>Email and organization access require Blimy Pro.</FieldDescription>
         )}
         {error && (
           <p role="alert" className="ui-text-sm text-destructive">

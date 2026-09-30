@@ -173,7 +173,7 @@ const useRecentFoldersStoreBase = create<RecentFoldersStore>()(
         },
       }),
       {
-        name: "athas-code-recent-folders",
+        name: "blimy-code-recent-folders",
         version: 2,
         storage: createSafeJSONStorage<RecentFoldersState>(),
         partialize: ({ recentFolders }) => ({ recentFolders }),

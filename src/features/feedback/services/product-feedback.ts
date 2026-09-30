@@ -1,4 +1,4 @@
-export const OPEN_PRODUCT_FEEDBACK_EVENT = "athas:open-product-feedback";
+export const OPEN_PRODUCT_FEEDBACK_EVENT = "blimy:open-product-feedback";
 
 export function openProductFeedback() {
   if (typeof window === "undefined") return;

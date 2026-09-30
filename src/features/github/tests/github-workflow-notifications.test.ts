@@ -22,7 +22,7 @@ const run = (overrides: Partial<WorkflowRunListItem>): WorkflowRunListItem => ({
   workflowId: 5,
   actor: null,
   headCommitMessage: null,
-  url: "https://github.com/athasdev/athas/actions/runs/128",
+  url: "https://github.com/blimydev/blimy/actions/runs/128",
   headBranch: "main",
   headSha: "bb423c6",
   ...overrides,
@@ -48,7 +48,7 @@ describe("workflow run notifications", () => {
     });
     expect(started).toMatchObject({
       message: "CI started",
-      description: "Add live sharing · main · #128",
+      description: "Add live sharing Â· main Â· #128",
       type: "info",
     });
 
@@ -59,7 +59,7 @@ describe("workflow run notifications", () => {
     });
     expect(failed).toMatchObject({
       message: "CI failed (attempt 2)",
-      description: "Add live sharing · main · #128 · in 5m 00s",
+      description: "Add live sharing Â· main Â· #128 Â· in 5m 00s",
       type: "error",
     });
 

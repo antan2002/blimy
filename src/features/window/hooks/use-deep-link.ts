@@ -24,9 +24,9 @@ const drainPendingDeepLinks = createPendingQueueDrain({
  * the one that launched the app, so links are drained here instead of relying
  * on an event that can fire before this window subscribes.
  * Supports:
- *   athas://open?path=...&line=...&type=directory
- *   athas://extension/install/{extensionId}
- *   athas://settings?tab=advanced
+ *   blimy://open?path=...&line=...&type=directory
+ *   blimy://extension/install/{extensionId}
+ *   blimy://settings?tab=advanced
  */
 export function useDeepLink() {
   useEffect(() => {
@@ -67,7 +67,7 @@ function handleDeepLink(url: string) {
   }
 }
 
-const SUPPORTED_DEEP_LINK_PROTOCOLS = new Set(["athas:", "athas-dev:", "athas-preview:"]);
+const SUPPORTED_DEEP_LINK_PROTOCOLS = new Set(["blimy:", "blimy-dev:", "blimy-preview:"]);
 
 function isSupportedDeepLinkProtocol(protocol: string) {
   return SUPPORTED_DEEP_LINK_PROTOCOLS.has(protocol);

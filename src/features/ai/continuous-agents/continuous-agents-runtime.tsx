@@ -14,7 +14,7 @@ import {
 import { selectNextDueContinuousAgent, useContinuousAgentsStore } from "./continuous-agents.store";
 
 const CONTINUOUS_AGENT_CHECK_INTERVAL_MS = 30_000;
-const CONTINUOUS_AGENT_SCHEDULER_LOCK = "athas-continuous-agent-scheduler";
+const CONTINUOUS_AGENT_SCHEDULER_LOCK = "blimy-continuous-agent-scheduler";
 
 export function ContinuousAgentsRuntime() {
   const workspacePath = useProjectStore((state) => state.rootFolderPath ?? null);

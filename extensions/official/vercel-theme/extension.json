@@ -1,11 +1,11 @@
 {
-  "$schema": "https://athas.dev/schemas/extension.json",
-  "id": "athas.theme.vercel",
+  "$schema": "https://blimy.dev/schemas/extension.json",
+  "id": "blimy.theme.vercel",
   "name": "vercel",
   "displayName": "Vercel Theme",
   "description": "Light and dark themes inspired by Vercel's dashboard and documentation.",
   "version": "1.0.0",
-  "publisher": "Athas",
+  "publisher": "Blimy",
   "categories": ["Theme"],
   "activationEvents": ["onTheme:vercel-light", "onTheme:vercel-dark"],
   "themes": [
@@ -104,6 +104,6 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/athasdev/athas"
+    "url": "https://github.com/blimydev/blimy"
   }
 }

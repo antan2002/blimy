@@ -219,7 +219,7 @@ export const getChatCompletionStream = async (
 
     if (
       [
-        "athas",
+        "blimy",
         "anthropic",
         "openai",
         "openrouter",
@@ -245,8 +245,8 @@ export const getChatCompletionStream = async (
         budgetUsd: settings.aiAgentBudgetUsd,
         notices,
         // Other providers keep the agent's own default output budget.
-        ...(providerId === "athas"
-          ? { maxOutputTokens: resolveChatCompletionTokenLimit(model.maxOutputTokens, "athas") }
+        ...(providerId === "blimy"
+          ? { maxOutputTokens: resolveChatCompletionTokenLimit(model.maxOutputTokens, "blimy") }
           : {}),
         onChunk,
         onToolUse,

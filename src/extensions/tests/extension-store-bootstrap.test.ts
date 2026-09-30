@@ -29,19 +29,19 @@ describe("extension-store bootstrap", () => {
   it("drops retired installed extensions before activation state is built", () => {
     const availableExtensions = new Map<string, AvailableExtension>([
       [
-        "athas.theme.market",
+        "blimy.theme.market",
         createAvailableExtension({
-          id: "athas.theme.market",
-          name: "Athas Themes",
-          displayName: "Athas Theme Pack",
+          id: "blimy.theme.market",
+          name: "Blimy Themes",
+          displayName: "Blimy Theme Pack",
           description: "Retired theme pack",
           version: "1.0.0",
-          publisher: "Athas",
+          publisher: "Blimy",
           categories: ["Theme"],
           themes: [
             {
               id: "market-light",
-              name: "Athas Light",
+              name: "Blimy Light",
               appearance: "light",
               colors: {},
               syntax: {},
@@ -50,18 +50,18 @@ describe("extension-store bootstrap", () => {
         }),
       ],
       [
-        "athas.theme.vercel",
+        "blimy.theme.vercel",
         createAvailableExtension({
-          id: "athas.theme.vercel",
+          id: "blimy.theme.vercel",
           name: "vercel",
           displayName: "Vercel Theme",
           description: "Vercel theme",
           version: "1.0.0",
-          publisher: "Athas",
+          publisher: "Blimy",
           categories: ["Theme"],
           installation: {
             downloadUrl:
-              "https://athas.dev/extensions/packages/theme/vercel/athas.theme.vercel.tar.gz",
+              "https://blimy.dev/extensions/packages/theme/vercel/blimy.theme.vercel.tar.gz",
             size: 100,
             checksum: "checksum",
           },
@@ -81,24 +81,24 @@ describe("extension-store bootstrap", () => {
     const installedExtensions = buildInstalledExtensionsMap({
       backendInstalled: [
         {
-          id: "athas.theme.market",
-          name: "Athas Theme Pack",
+          id: "blimy.theme.market",
+          name: "Blimy Theme Pack",
           version: "1.0.0",
           installed_at: "2026-07-08T00:00:00.000Z",
           enabled: true,
         },
       ],
-      indexedDBInstalled: [{ languageId: "athas.theme.market", version: "1.0.0" }],
+      indexedDBInstalled: [{ languageId: "blimy.theme.market", version: "1.0.0" }],
       availableExtensions,
     });
 
-    expect(installedExtensions.has("athas.theme.market")).toBe(false);
-    expect(installedExtensions.has("athas.theme.vercel")).toBe(false);
+    expect(installedExtensions.has("blimy.theme.market")).toBe(false);
+    expect(installedExtensions.has("blimy.theme.vercel")).toBe(false);
   });
 
   it("migrates installed bundled contributions to downloaded extension packages", async () => {
     const values = new Map([
-      ["athas.installedBundledContributionExtensions", JSON.stringify(["athas.ai.v0"])],
+      ["blimy.installedBundledContributionExtensions", JSON.stringify(["blimy.ai.v0"])],
     ]);
     vi.stubGlobal("window", {
       localStorage: {
@@ -108,15 +108,15 @@ describe("extension-store bootstrap", () => {
     });
 
     const manifest: ExtensionManifest = {
-      id: "athas.ai.v0",
+      id: "blimy.ai.v0",
       name: "v0",
       displayName: "v0",
       description: "External v0 provider",
       version: "1.0.0",
-      publisher: "Athas",
+      publisher: "Blimy",
       categories: ["AI"],
       installation: {
-        downloadUrl: "https://athas.dev/extensions/packages/ai/v0/athas.ai.v0.tar.gz",
+        downloadUrl: "https://blimy.dev/extensions/packages/ai/v0/blimy.ai.v0.tar.gz",
         size: 100,
         checksum: "checksum",
       },
@@ -142,6 +142,6 @@ describe("extension-store bootstrap", () => {
       checksum: manifest.installation?.checksum,
       size: manifest.installation?.size,
     });
-    expect(values.get("athas.installedBundledContributionExtensions")).toBe("[]");
+    expect(values.get("blimy.installedBundledContributionExtensions")).toBe("[]");
   });
 });

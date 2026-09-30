@@ -12,7 +12,7 @@ import {
   type CloudSettingsSyncSnapshot,
 } from "@/features/window/services/auth-api";
 
-const SETTINGS_SYNC_META_KEY = "athas.settingsSync.meta";
+const SETTINGS_SYNC_META_KEY = "blimy.settingsSync.meta";
 const SETTINGS_SYNC_PUSH_DEBOUNCE_MS = 1500;
 
 type SyncableSettingsKey =
@@ -343,7 +343,7 @@ async function applyRemoteSnapshot(snapshot: CloudSettingsSyncSnapshot) {
     const importPayload =
       snapshot.schemaVersion > 0
         ? {
-            format: "athas.settings",
+            format: "blimy.settings",
             version: snapshot.schemaVersion,
             exportedAt: snapshot.updatedAt,
             settings: snapshot.settings,

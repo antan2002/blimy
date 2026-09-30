@@ -15,7 +15,7 @@ import { Toggle } from "@/ui/toggle";
 import { EmojiPicker } from "./emoji-picker";
 import Tooltip from "@/ui/tooltip";
 
-const CHANNEL_ICON_STORAGE_KEY = "athas.collaboration.channel-icons";
+const CHANNEL_ICON_STORAGE_KEY = "blimy.collaboration.channel-icons";
 
 const CHANNEL_SYMBOL_OPTIONS = [
   { id: "hash", label: "Channel", icon: HashIcon },

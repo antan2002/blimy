@@ -13,7 +13,7 @@ import {
 } from "@/features/layout/config/item-order";
 import type { Settings } from "@/features/settings/types/settings.types";
 
-export const DEFAULT_AI_PROVIDER_ID = "athas";
+export const DEFAULT_AI_PROVIDER_ID = "blimy";
 export const DEFAULT_AI_MODEL_ID = "auto";
 const DEFAULT_AI_CUSTOM_BASE_URL = "";
 const DEFAULT_AI_CUSTOM_MODEL_ID = "";
@@ -73,11 +73,11 @@ export const defaultSettings: Settings = {
   showTabIcons: true,
   tabCloseButtonVisibility: "active",
   // Theme
-  theme: "athas-dark",
+  theme: "blimy-dark",
   iconTheme: "pierre-icons-complete",
   syncSystemTheme: false,
-  autoThemeLight: "athas-light",
-  autoThemeDark: "athas-dark",
+  autoThemeLight: "blimy-light",
+  autoThemeDark: "blimy-dark",
   nativeMenuBar: false,
   compactMenuBar: true,
   windowTransparency: false,

@@ -18,10 +18,10 @@ describe("default settings", () => {
     expect(settings.githubActionNotifications).toBe(false);
   });
 
-  it("defaults chat to Athas Automatic", () => {
+  it("defaults chat to Blimy Automatic", () => {
     const settings = getDefaultSettingsSnapshot();
 
-    expect(settings.aiProviderId).toBe("athas");
+    expect(settings.aiProviderId).toBe("blimy");
     expect(settings.aiModelId).toBe("auto");
   });
 

@@ -4,7 +4,7 @@ import type {
   ExtensionViewTreeItem,
 } from "@/extensions/ui/types/extension-view";
 
-export const OPEN_TOOL_LOCATION_COMMAND = "athas.ai.openToolLocation";
+export const OPEN_TOOL_LOCATION_COMMAND = "blimy.ai.openToolLocation";
 
 interface MutableTreeItem extends ExtensionViewTreeItem {
   children: MutableTreeItem[];
@@ -27,7 +27,7 @@ function pathSegments(path: string): string[] {
   if (segments.length <= MAX_PATH_SEGMENTS) return segments;
   return [
     ...segments.slice(0, 4),
-    "…",
+    "â€¦",
     ...segments.slice(segments.length - (MAX_PATH_SEGMENTS - 5)),
   ];
 }

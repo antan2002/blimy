@@ -327,7 +327,7 @@ const AIChat = memo(function AIChat({
 
   const stopStreaming = async (options: { continueQueue?: boolean } = {}) => {
     void recordFrictionSignal({ area: "agent", signal: "cancel" });
-    // ACP and Athas's own agent close their prompts on cancel; Codex prompts are refused.
+    // ACP and Blimy's own agent close their prompts on cancel; Codex prompts are refused.
     const refusedCodexPermissions = effectiveChatId
       ? permissionActions.dropStoppedTurn(effectiveChatId)
       : Promise.resolve();
@@ -800,7 +800,7 @@ const AIChat = memo(function AIChat({
             <EmptyTitle>
               {chatMessageLoadState === "error"
                 ? "Session could not be loaded"
-                : "Loading session…"}
+                : "Loading sessionâ€¦"}
             </EmptyTitle>
             {chatMessageLoadState === "error" ? (
               <EmptyDescription>Its saved messages could not be read.</EmptyDescription>

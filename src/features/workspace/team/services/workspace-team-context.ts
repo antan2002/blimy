@@ -18,7 +18,7 @@ export async function loadWorkspaceTeamContext(projectRoot: string): Promise<Tea
   }
   if (matches.length > 1)
     throw new Error(
-      "This project is linked to multiple team workspaces. Add an athas.workspace.json in this project to choose its AI instructions explicitly.",
+      "This project is linked to multiple team workspaces. Add an blimy.workspace.json in this project to choose its AI instructions explicitly.",
     );
   return matches[0] ?? null;
 }

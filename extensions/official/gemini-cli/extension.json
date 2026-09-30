@@ -1,6 +1,6 @@
 {
-  "$schema": "https://athas.dev/schemas/extension.json",
-  "id": "athas.agent.gemini-cli",
+  "$schema": "https://blimy.dev/schemas/extension.json",
+  "id": "blimy.agent.gemini-cli",
   "name": "Gemini CLI",
   "displayName": "Gemini CLI",
   "description": "Google's Gemini CLI with ACP support for enterprise, Google Cloud, and paid API-key access.",

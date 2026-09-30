@@ -6,7 +6,7 @@ import {
   matchesAllowedPrefix,
 } from "../lib/intelligence-command-policy";
 
-const STORAGE_KEY = "athas.intelligence.command-allowlist.v1";
+const STORAGE_KEY = "blimy.intelligence.command-allowlist.v1";
 const MAX_PREFIXES_PER_WORKSPACE = 200;
 
 type Allowlist = Record<string, string[]>;

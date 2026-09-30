@@ -67,7 +67,7 @@ function QuestionStep({ question }: { question: ElicitationQuestion }) {
             ))}
           </QuestionnaireChoices>
           {question.otherField ? (
-            <QuestionnaireInput aria-label="Other answer" placeholder="Something else…" />
+            <QuestionnaireInput aria-label="Other answer" placeholder="Something elseâ€¦" />
           ) : null}
         </>
       ) : question.kind === "number" ? (
@@ -175,7 +175,7 @@ export function AcpQuestionPrompt({
 
       {unanswerable ? (
         <p className="text-pretty text-muted-foreground">
-          This asks for something Athas can't show yet. Decline to let the agent continue without
+          This asks for something Blimy can't show yet. Decline to let the agent continue without
           it.
         </p>
       ) : questions.length > 0 ? (

@@ -42,16 +42,16 @@ export async function getIntelligenceSdkModel(
       : await getProviderApiToken(providerId);
   if (provider.requiresApiKey && !key) throw new Error(`${provider.name} API key is required.`);
   const apiKey = key ?? undefined;
-  const athas = providerId === "athas";
+  const blimy = providerId === "blimy";
   // One id per model instance, which is one agent run: with the request index it gives each
   // step a stable Idempotency-Key, so a retried step is never billed twice.
   const runId = crypto.randomUUID();
   const retryingFetch = createIntelligenceModelFetch({
     fetch: tauriFetch as typeof fetch,
-    // The Athas token and team scope are read again for every request, not once per run.
-    headers: athas ? async () => provider.buildHeaders(undefined) : undefined,
-    refreshToken: athas ? () => invoke<string | null>("get_auth_token") : undefined,
-    idempotencyKey: athas ? (index) => `${runId}-${index}` : undefined,
+    // The Blimy token and team scope are read again for every request, not once per run.
+    headers: blimy ? async () => provider.buildHeaders(undefined) : undefined,
+    refreshToken: blimy ? () => invoke<string | null>("get_auth_token") : undefined,
+    idempotencyKey: blimy ? (index) => `${runId}-${index}` : undefined,
     onCost: options.onCost,
   });
   if (providerId === "anthropic") return createAnthropic({ apiKey, fetch: retryingFetch })(modelId);
@@ -60,23 +60,23 @@ export async function getIntelligenceSdkModel(
   let baseURL = provider.apiUrl.replace(/\/chat\/completions\/?$/, "");
   if (providerId === "ollama")
     baseURL = `${normalizeOllamaBaseUrl(useSettingsStore.getState().settings.ollamaBaseUrl)}/v1`;
-  if (athas) baseURL = `${getApiBase()}/api/ai`;
+  if (blimy) baseURL = `${getApiBase()}/api/ai`;
   if (providerId === "custom")
     baseURL = (legacyAutocomplete || resolveCustomProviderBaseUrl(settings))
       .replace(/\/chat\/completions\/?$/, "")
       .replace(/\/$/, "");
   if (!baseURL) throw new Error("Configure the provider endpoint in AI settings.");
-  // Athas headers are read per request by the retrying fetch; checking them here still fails
+  // Blimy headers are read per request by the retrying fetch; checking them here still fails
   // fast when the user is signed out.
   const headers = await provider.buildHeaders(apiKey);
   let chosenModel: string | null = null;
   const modelFetch: typeof fetch = (async (input, init) => {
-    if (athas && modelId === "auto" && chosenModel && typeof init?.body === "string") {
+    if (blimy && modelId === "auto" && chosenModel && typeof init?.body === "string") {
       const body = JSON.parse(init.body);
       init = { ...init, body: JSON.stringify({ ...body, model: chosenModel }) };
     }
     const response = await retryingFetch(input, init);
-    if (athas && response.ok) chosenModel = response.headers.get("x-athas-model") || chosenModel;
+    if (blimy && response.ok) chosenModel = response.headers.get("x-blimy-model") || chosenModel;
     return response;
   }) as typeof fetch;
   return createOpenAICompatible({
@@ -87,6 +87,6 @@ export async function getIntelligenceSdkModel(
     fetch: modelFetch,
     // Token usage (and OpenRouter's cost) arrive in a final chunk only when asked for; these
     // endpoints are known to accept `stream_options`.
-    includeUsage: ["athas", "openrouter", "ollama"].includes(providerId),
+    includeUsage: ["blimy", "openrouter", "ollama"].includes(providerId),
   }).chatModel(modelId);
 }

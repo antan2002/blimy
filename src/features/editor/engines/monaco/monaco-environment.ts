@@ -14,31 +14,31 @@ declare global {
     MonacoEnvironment?: {
       getWorker: (_workerId: string, label: string) => Worker;
     };
-    __athasMonacoContextMenuInitialized?: boolean;
-    __athasMonacoExternalLinkOpenerInitialized?: boolean;
-    __athasMonacoEditorOpenerInitialized?: boolean;
-    __athasMonacoTextModelServiceInitialized?: boolean;
+    __blimyMonacoContextMenuInitialized?: boolean;
+    __blimyMonacoExternalLinkOpenerInitialized?: boolean;
+    __blimyMonacoEditorOpenerInitialized?: boolean;
+    __blimyMonacoTextModelServiceInitialized?: boolean;
   }
 }
 
 if (typeof window !== "undefined") {
-  if (!window.__athasMonacoEditorOpenerInitialized) {
-    window.__athasMonacoEditorOpenerInitialized = true;
+  if (!window.__blimyMonacoEditorOpenerInitialized) {
+    window.__blimyMonacoEditorOpenerInitialized = true;
     monacoEditor.registerEditorOpener({
       openCodeEditor: async (...args) => {
-        const { athasEditorOpener } = await import("./editor-opener");
-        return athasEditorOpener.openCodeEditor(...args);
+        const { blimyEditorOpener } = await import("./editor-opener");
+        return blimyEditorOpener.openCodeEditor(...args);
       },
     });
   }
-  if (!window.__athasMonacoTextModelServiceInitialized) {
-    window.__athasMonacoTextModelServiceInitialized = true;
+  if (!window.__blimyMonacoTextModelServiceInitialized) {
+    window.__blimyMonacoTextModelServiceInitialized = true;
     void import("./text-model-resolver")
       .then(({ installFileBackedTextModelService }) => installFileBackedTextModelService())
       .catch((error: unknown) => console.error("Failed to install the file model service:", error));
   }
-  if (!window.__athasMonacoExternalLinkOpenerInitialized) {
-    window.__athasMonacoExternalLinkOpenerInitialized = true;
+  if (!window.__blimyMonacoExternalLinkOpenerInitialized) {
+    window.__blimyMonacoExternalLinkOpenerInitialized = true;
     monacoEditor.registerLinkOpener({
       open: (resource) => {
         const url = resolveExternalBrowserUrl(resource.toString(true));
@@ -50,8 +50,8 @@ if (typeof window !== "undefined") {
     });
   }
 
-  if (!window.__athasMonacoContextMenuInitialized) {
-    window.__athasMonacoContextMenuInitialized = true;
+  if (!window.__blimyMonacoContextMenuInitialized) {
+    window.__blimyMonacoContextMenuInitialized = true;
     for (const editor of monacoEditor.getEditors()) {
       editor.updateOptions({ contextmenu: false });
     }

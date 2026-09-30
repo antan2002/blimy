@@ -25,7 +25,7 @@ for (const folder of folders) {
   );
   if (reservedTheme) {
     throw new Error(
-      `Extension ${String(manifest.id)} contributes reserved built-in Athas theme "${String(reservedTheme.name || reservedTheme.id)}"`,
+      `Extension ${String(manifest.id)} contributes reserved built-in Blimy theme "${String(reservedTheme.name || reservedTheme.id)}"`,
     );
   }
   manifests[getExtensionCdnPath(folder, manifest)] = manifest;

@@ -6,14 +6,14 @@ describe("notifications store", () => {
     useNotificationsStore.getState().actions.clear();
   });
 
-  it("categorizes ordinary app notifications as Athas notifications", () => {
+  it("categorizes ordinary app notifications as Blimy notifications", () => {
     useNotificationsStore.getState().actions.record({
       id: "build-complete",
       message: "Build complete",
       type: "success",
     });
 
-    expect(useNotificationsStore.getState().notifications[0]?.category).toBe("athas");
+    expect(useNotificationsStore.getState().notifications[0]?.category).toBe("blimy");
   });
 
   it("preserves an explicit Agent category when a notification is updated", () => {

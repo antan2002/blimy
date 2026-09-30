@@ -22,7 +22,7 @@ interface FontActions {
   clearError: () => void;
 }
 
-const FONT_CACHE_KEY = "athas_font_cache_v3";
+const FONT_CACHE_KEY = "blimy_font_cache_v3";
 const FONT_CACHE_EXPIRY = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
 
 interface FontCache {

@@ -20,12 +20,12 @@ import Select from "@/ui/select";
 import { Spinner } from "@/ui/spinner";
 import Section, { SettingRow, SettingStatus } from "../settings-section";
 
-type TokenSourceSetting = "auto" | "athas" | "pat" | "gh";
+type TokenSourceSetting = "auto" | "blimy" | "pat" | "gh";
 
 const TOKEN_SOURCE_OPTIONS = [
   { value: "auto", label: "Automatic" },
   { value: "pat", label: "Personal access token" },
-  { value: "athas", label: "Athas account" },
+  { value: "blimy", label: "Blimy account" },
   { value: "gh", label: "GitHub CLI (gh)" },
 ];
 
@@ -170,7 +170,7 @@ export const GitHubCredentials = () => {
           grow
           value={patInput}
           onChange={(e) => setPatInput(e.target.value)}
-          placeholder={status?.hasPersonalAccessToken ? "••••••••  (saved)" : "ghp_…"}
+          placeholder={status?.hasPersonalAccessToken ? "â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢  (saved)" : "ghp_â€¦"}
           spellCheck={false}
           leftIcon={KeyIcon}
           autoComplete="off"
@@ -183,7 +183,7 @@ export const GitHubCredentials = () => {
           onClick={() => void handleSavePat()}
           disabled={!patInput.trim() || isSavingPat}
         >
-          {isSavingPat ? "Saving…" : "Save"}
+          {isSavingPat ? "Savingâ€¦" : "Save"}
         </Button>
         {status?.hasPersonalAccessToken && (
           <Button

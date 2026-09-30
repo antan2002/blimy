@@ -106,7 +106,7 @@ describe("Monaco LSP completion mapping", () => {
         },
       ],
       command: {
-        id: "athas.executeLspCompletionCommand",
+        id: "blimy.executeLspCompletionCommand",
         title: "Record completion selection",
         arguments: [
           {
@@ -137,7 +137,7 @@ describe("Monaco LSP workspace edits", () => {
   };
 
   test("edits the open buffer's model", () => {
-    models.list = [model("athas", "/p/a.ts")];
+    models.list = [model("blimy", "/p/a.ts")];
     const { edit, unopened } = toWorkspaceEdit(rename);
     expect(edit?.edits).toHaveLength(1);
     expect(unopened).toBeUndefined();

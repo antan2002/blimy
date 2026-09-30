@@ -18,7 +18,7 @@ import {
 import { ChevronDownIcon } from "@/ui/icons";
 import { useMenuSearch } from "@/ui/menu-search";
 import {
-  AthasModelSections,
+  BlimyModelSections,
   ModelResultsProvider,
   ModelSection,
   ProviderModels,
@@ -37,24 +37,24 @@ interface ModelConnectionPickerProps {
   inheritLabel?: string;
   disabled?: boolean;
   /**
-   * What the model is for. Tab completion offers Athas's one Tab model instead of the Athas chat
+   * What the model is for. Tab completion offers Blimy's one Tab model instead of the Blimy chat
    * catalog, since hosted completions always run on it.
    */
   purpose?: "chat" | "completion";
   "aria-label": string;
 }
 
-const ATHAS_TAB_MODEL_LABEL = "Athas Tab model";
+const BLIMY_TAB_MODEL_LABEL = "Blimy Tab model";
 
-function isAthasAutomatic(connection: IntelligenceConnection) {
+function isBlimyAutomatic(connection: IntelligenceConnection) {
   return (
-    connection.providerId === "athas" && (!connection.modelId || connection.modelId === "auto")
+    connection.providerId === "blimy" && (!connection.modelId || connection.modelId === "auto")
   );
 }
 
 /**
  * Picks a model the same way the composer does: one searchable list with a section per
- * connection (Recommended and Athas, then every provider the user connected).
+ * connection (Recommended and Blimy, then every provider the user connected).
  */
 export function ModelConnectionPicker({
   value,
@@ -77,13 +77,13 @@ export function ModelConnectionPicker({
     : value.providerId === "auto"
       ? // Saved by the earlier settings page: resolves like Automatic, not like the default.
         "Automatic"
-      : isAthasAutomatic(value)
+      : isBlimyAutomatic(value)
         ? purpose === "completion"
-          ? ATHAS_TAB_MODEL_LABEL
-          : "Athas Automatic"
+          ? BLIMY_TAB_MODEL_LABEL
+          : "Blimy Automatic"
         : modelName || modelId || provider?.name || providerId;
   const title =
-    value && provider && !isAthasAutomatic(value) ? `${label} via ${provider.name}` : label;
+    value && provider && !isBlimyAutomatic(value) ? `${label} via ${provider.name}` : label;
 
   return (
     <DropdownMenu
@@ -114,7 +114,7 @@ export function ModelConnectionPicker({
         <DropdownMenuSearch
           value={search.query}
           onChange={(event) => search.setQuery(event.target.value)}
-          placeholder="Select a model…"
+          placeholder="Select a modelâ€¦"
           autoFocus
         />
         <DropdownMenuViewport>
@@ -135,19 +135,19 @@ export function ModelConnectionPicker({
             <ModelResultsProvider value={reportResults}>
               {purpose === "completion" ? (
                 <ModelSection
-                  id="athas"
-                  label="Athas"
-                  models={[{ id: "auto", name: ATHAS_TAB_MODEL_LABEL, keywords: ["automatic"] }]}
-                  selected={value && providerId === "athas" ? modelId || "auto" : ""}
-                  onSelect={(id) => onChange({ providerId: "athas", modelId: id })}
-                  providerId="athas"
+                  id="blimy"
+                  label="Blimy"
+                  models={[{ id: "auto", name: BLIMY_TAB_MODEL_LABEL, keywords: ["automatic"] }]}
+                  selected={value && providerId === "blimy" ? modelId || "auto" : ""}
+                  onSelect={(id) => onChange({ providerId: "blimy", modelId: id })}
+                  providerId="blimy"
                   search={search}
                 />
               ) : (
-                <AthasModelSections
-                  selected={value && providerId === "athas" ? modelId || "auto" : ""}
+                <BlimyModelSections
+                  selected={value && providerId === "blimy" ? modelId || "auto" : ""}
                   search={search}
-                  onSelect={(id) => onChange({ providerId: "athas", modelId: id })}
+                  onSelect={(id) => onChange({ providerId: "blimy", modelId: id })}
                 />
               )}
               {providers.map((item) => (

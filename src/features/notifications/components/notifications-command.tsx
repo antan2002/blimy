@@ -98,12 +98,12 @@ export function NotificationsCommand({
 
   const localSections = useMemo<LocalNotificationSection[]>(() => {
     const sections: LocalNotificationSection[] = [
-      { id: "athas", label: "Athas", notifications: [] },
+      { id: "blimy", label: "Blimy", notifications: [] },
       { id: "agent", label: "Agent", notifications: [] },
     ];
 
     for (const notification of notifications) {
-      const notificationCategory = notification.category ?? "athas";
+      const notificationCategory = notification.category ?? "blimy";
       if (category !== "all" && category !== notificationCategory) continue;
       if (
         !matchesSearchQuery(deferredSearchQuery, [
@@ -138,8 +138,8 @@ export function NotificationsCommand({
 
   const hasVisibleNotifications = localSections.length > 0 || githubNotifications.length > 0;
   const selectedCategoryCount =
-    (category === "all" || category === "athas"
-      ? notifications.filter((notification) => (notification.category ?? "athas") === "athas")
+    (category === "all" || category === "blimy"
+      ? notifications.filter((notification) => (notification.category ?? "blimy") === "blimy")
           .length
       : 0) +
     (category === "all" || category === "agent"
@@ -190,11 +190,11 @@ export function NotificationsCommand({
               onSelect: () => setCategory("all"),
             },
             {
-              id: "athas",
-              label: "Athas",
+              id: "blimy",
+              label: "Blimy",
               icon: <BellIcon />,
-              isActive: category === "athas",
-              onSelect: () => setCategory("athas"),
+              isActive: category === "blimy",
+              onSelect: () => setCategory("blimy"),
             },
             {
               id: "agent",
@@ -226,7 +226,7 @@ export function NotificationsCommand({
         ) : github.isLoading &&
           (category === "all" || category === "github") &&
           selectedCategoryCount === 0 ? (
-          <CommandEmpty>Loading notifications…</CommandEmpty>
+          <CommandEmpty>Loading notificationsâ€¦</CommandEmpty>
         ) : !hasVisibleNotifications ? (
           <CommandEmpty>
             {deferredSearchQuery ? "No matching notifications." : "No notifications yet."}
@@ -282,7 +282,7 @@ export function NotificationsCommand({
                       key={notification.id}
                       icon={<GitHubNotificationIcon subjectType={notification.subjectType} />}
                       title={notification.title}
-                      description={`${notification.repositoryFullName} · ${notificationReasonLabel(notification.reason)} · ${getTimeAgo(notification.updatedAt, { includeAgo: false })}`}
+                      description={`${notification.repositoryFullName} Â· ${notificationReasonLabel(notification.reason)} Â· ${getTimeAgo(notification.updatedAt, { includeAgo: false })}`}
                       contentLayout="stacked"
                       onClick={() => {
                         onClose();
@@ -310,8 +310,8 @@ export function NotificationsCommand({
                   {activeNotification.message}
                 </div>
                 <div className="mt-0.5 flex items-center gap-1 text-subtle-foreground ui-text-sm">
-                  <span className="capitalize">{activeNotification.category ?? "athas"}</span>
-                  <span>·</span>
+                  <span className="capitalize">{activeNotification.category ?? "blimy"}</span>
+                  <span>Â·</span>
                   <span>{formatNotificationAge(activeNotification.updatedAt)}</span>
                 </div>
               </div>

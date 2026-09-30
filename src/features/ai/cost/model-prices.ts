@@ -13,9 +13,9 @@ export interface ModelPrice {
 }
 
 /**
- * Prices for models Athas can reach with a key the user supplies themselves.
+ * Prices for models Blimy can reach with a key the user supplies themselves.
  *
- * Athas's own hosted provider is left out on purpose: its server already reports
+ * Blimy's own hosted provider is left out on purpose: its server already reports
  * the cost of each response, so pricing it here would double-count.
  */
 export const MODEL_PRICES: Record<string, ModelPrice> = {
@@ -37,7 +37,7 @@ export const MODEL_PRICES: Record<string, ModelPrice> = {
   // Google
   "gemini-2.5-pro": { input: 1.25, output: 10 },
   "gemini-2.5-flash": { input: 0.3, output: 2.5 },
-  // Others Athas lists
+  // Others Blimy lists
   "grok-4": { input: 3, output: 15 },
   "mistral-large": { input: 2, output: 6 },
 };

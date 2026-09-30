@@ -25,7 +25,7 @@ function createTextModel() {
 }
 
 const uri = {
-  toString: () => "athas://editor/src/file.ts?buffer=buffer-a",
+  toString: () => "blimy://editor/src/file.ts?buffer=buffer-a",
 };
 
 describe("Monaco model lifecycle", () => {

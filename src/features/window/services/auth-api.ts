@@ -8,8 +8,8 @@ const DESKTOP_AUTH_TIMEOUT_MS = 5 * 60 * 1000;
 const DESKTOP_SESSION_SECRET_HEADER = "X-Desktop-Session-Secret";
 let authTokenCache: string | null | undefined;
 let collaborationDeviceIdCache: string | null = null;
-const COLLABORATION_DEVICE_ID_STORAGE_KEY = "athas_collaboration_device_id";
-const COLLABORATION_CLIENT_SEQ_STORAGE_KEY = "athas_collaboration_client_seq";
+const COLLABORATION_DEVICE_ID_STORAGE_KEY = "blimy_collaboration_device_id";
+const COLLABORATION_CLIENT_SEQ_STORAGE_KEY = "blimy_collaboration_client_seq";
 
 interface DesktopAuthApiOptions {
   apiBase?: string;

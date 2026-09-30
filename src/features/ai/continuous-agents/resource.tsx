@@ -77,7 +77,7 @@ type ResourceSelection = "overview" | "create" | `task:${string}`;
 function deriveGoalName(prompt: string) {
   const firstLine = prompt.trim().split("\n", 1)[0] ?? "Continuous goal";
   if (firstLine.length <= 48) return firstLine;
-  return `${firstLine.slice(0, 47).trimEnd()}…`;
+  return `${firstLine.slice(0, 47).trimEnd()}â€¦`;
 }
 
 function getTaskSelection(taskId: string): ResourceSelection {
@@ -184,8 +184,8 @@ function ContinuousAgentsSidebar({
             <ClockIcon className="mt-0.5 shrink-0" />
             <span>
               {activeCount > 0
-                ? `${activeCount} active while Athas is open`
-                : "Runs resume while Athas is open"}
+                ? `${activeCount} active while Blimy is open`
+                : "Runs resume while Blimy is open"}
             </span>
           </div>
         </SidebarFooter>
@@ -218,9 +218,9 @@ function OverviewContent({
         <CardHeader>
           <div className="mb-1 flex flex-wrap items-center gap-2">
             <Badge tone="accent">Continuous</Badge>
-            <span className="text-subtle-foreground ui-text-sm">Runs while Athas is open</span>
+            <span className="text-subtle-foreground ui-text-sm">Runs while Blimy is open</span>
           </div>
-          <CardTitle>Give Athas an outcome, not another reminder.</CardTitle>
+          <CardTitle>Give Blimy an outcome, not another reminder.</CardTitle>
           <CardDescription>
             Every cadence starts a fresh Agent session in {projectName}, keeps the workspace in
             context, and leaves a verifiable handoff in history.
@@ -308,8 +308,8 @@ function OverviewContent({
                       </Badge>
                     </ItemTitle>
                     <ItemDescription>
-                      {cadence.label} ·{" "}
-                      {task.runCount === 0 ? "First run ready" : `${task.runCount} runs`} ·{" "}
+                      {cadence.label} Â·{" "}
+                      {task.runCount === 0 ? "First run ready" : `${task.runCount} runs`} Â·{" "}
                       {isRunning
                         ? "Running now"
                         : task.lastError
@@ -409,7 +409,7 @@ function CreateContent({ onCreated }: { onCreated: (taskId: string) => void }) {
           </div>
           <CardTitle>Define the outcome once.</CardTitle>
           <CardDescription>
-            Athas starts one run now and continues in fresh Agent sessions on your cadence.
+            Blimy starts one run now and continues in fresh Agent sessions on your cadence.
           </CardDescription>
         </CardHeader>
       </Card>
@@ -431,7 +431,7 @@ function CreateContent({ onCreated }: { onCreated: (taskId: string) => void }) {
                 rows={6}
                 maxLength={CONTINUOUS_AGENT_PROMPT_MAX_LENGTH}
                 value={prompt}
-                placeholder="Keep this workspace healthy by…"
+                placeholder="Keep this workspace healthy byâ€¦"
                 onChange={(event) => setPrompt(event.target.value)}
               />
               <FieldDescription>
@@ -460,7 +460,7 @@ function CreateContent({ onCreated }: { onCreated: (taskId: string) => void }) {
                 options={agentOptions}
                 onChange={setAgentId}
                 disabled={isLoading || agentOptions.length === 0}
-                placeholder={isLoading ? "Checking agents…" : "No runnable agents"}
+                placeholder={isLoading ? "Checking agentsâ€¦" : "No runnable agents"}
                 aria-label="Continuous agent provider"
               />
             </Field>

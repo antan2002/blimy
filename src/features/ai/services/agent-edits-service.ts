@@ -98,7 +98,7 @@ async function syncWithDisk(chatId: string, path: string): Promise<AgentEditEntr
   const rebased = rebaseOnDisk(entry, disk);
   if (!rebased) {
     setEntry(chatId, path, null);
-    notifyDropped(path, "It was changed outside Athas where the agent had edited it.");
+    notifyDropped(path, "It was changed outside Blimy where the agent had edited it.");
     return null;
   }
   setEntry(chatId, path, rebased);

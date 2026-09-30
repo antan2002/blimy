@@ -1,11 +1,11 @@
 {
-  "$schema": "https://athas.dev/schemas/extension.json",
-  "id": "athas.rust",
+  "$schema": "https://blimy.dev/schemas/extension.json",
+  "id": "blimy.rust",
   "name": "Rust",
   "displayName": "Rust",
   "version": "1.0.0",
   "description": "Rust language support with LSP",
-  "publisher": "Athas",
+  "publisher": "Blimy",
   "categories": ["Language"],
   "languages": [
     {

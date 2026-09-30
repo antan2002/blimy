@@ -82,7 +82,7 @@ describe("Monaco code lens provider", () => {
     ]);
   });
 
-  test("routes language-server commands through the Athas LSP command bridge", () => {
+  test("routes language-server commands through the Blimy LSP command bridge", () => {
     const lens = toMonacoCodeLens("/workspace/src/main.rs", {
       line: 2,
       title: "Run test",
@@ -91,7 +91,7 @@ describe("Monaco code lens provider", () => {
     });
 
     expect(lens?.command).toMatchObject({
-      id: "athas.executeLspCodeLens",
+      id: "blimy.executeLspCodeLens",
       title: "Run test",
       arguments: [
         {

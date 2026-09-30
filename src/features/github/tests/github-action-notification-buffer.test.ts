@@ -5,11 +5,11 @@ describe("GitHub action notification buffers", () => {
   it("creates a native pending action buffer before a workflow run is resolved", () => {
     const content = createPaneContent("buffer-1", {
       type: "githubAction",
-      repoPath: "github://athasdev/athas",
+      repoPath: "github://blimydev/blimy",
       name: "CI workflow run",
       notification: {
         id: "notification-1",
-        repositoryFullName: "athasdev/athas",
+        repositoryFullName: "blimydev/blimy",
         checkSuiteId: 501857806,
         title: "CI workflow run",
         updatedAt: "2026-08-14T12:00:00Z",

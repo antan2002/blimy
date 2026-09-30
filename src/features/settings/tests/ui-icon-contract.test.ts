@@ -92,7 +92,7 @@ describe("ui icon contract", () => {
 
   it("keeps brand marks out of the icon stroke system", () => {
     expect(brandSource).not.toContain("@/ui/icons");
-    expect(brandSource).not.toContain("data-athas-icon");
+    expect(brandSource).not.toContain("data-blimy-icon");
   });
 
   it("gives every concept its own icon", () => {

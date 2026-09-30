@@ -7,7 +7,7 @@ import {
 import { themeRegistry } from "../themes/theme-registry";
 import type { ExtensionManifest } from "../types/extension-manifest";
 
-const extensionId = "athas.runtime-lifecycle-test";
+const extensionId = "blimy.runtime-lifecycle-test";
 const themeId = "runtime-lifecycle-test";
 const manifest: ExtensionManifest = {
   id: extensionId,
@@ -15,7 +15,7 @@ const manifest: ExtensionManifest = {
   displayName: "Runtime lifecycle test",
   description: "Exercises contribution activation ownership",
   version: "1.0.0",
-  publisher: "Athas",
+  publisher: "Blimy",
   categories: ["Theme"],
   themes: [
     {

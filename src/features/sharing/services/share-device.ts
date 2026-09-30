@@ -1,5 +1,5 @@
 export function getShareDeviceId() {
-  const key = "athas-sharing-device";
+  const key = "blimy-sharing-device";
   let id = localStorage.getItem(key);
   if (!id) {
     id = crypto.randomUUID();

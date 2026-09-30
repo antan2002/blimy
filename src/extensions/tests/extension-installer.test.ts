@@ -74,7 +74,7 @@ describe("integration installer", () => {
       "https://cdn.example.com/parser.wasm",
       "https://cdn.example.com/highlights.scm",
       {
-        extensionId: "athas.typescript",
+        extensionId: "blimy.typescript",
         version: "1.2.3",
         onProgress,
       },
@@ -86,7 +86,7 @@ describe("integration installer", () => {
     expect(mocks.cacheSet).toHaveBeenCalledWith(
       expect.objectContaining({
         languageId: "typescript",
-        extensionId: "athas.typescript",
+        extensionId: "blimy.typescript",
         version: "1.2.3",
         highlightQuery: "(identifier) @variable",
         size: wasmBytes.byteLength,

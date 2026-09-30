@@ -12,8 +12,8 @@ import type { Settings, Theme } from "@/features/settings/types/settings.types";
 import { getUiRootAttributes } from "@/features/settings/lib/ui-preferences";
 
 const ALL_THEME_CLASSES = [
-  "force-athas-light",
-  "force-athas-dark",
+  "force-blimy-light",
+  "force-blimy-dark",
   "force-vitesse-light",
   "force-vitesse-dark",
 ];

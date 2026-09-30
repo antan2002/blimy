@@ -26,9 +26,9 @@ describe("workspace initialization router", () => {
   it("routes local workspace paths to the local initializer", async () => {
     const handlers = createHandlers();
 
-    await expect(initializeWorkspacePath("/workspace/athas", handlers)).resolves.toBe(true);
+    await expect(initializeWorkspacePath("/workspace/blimy", handlers)).resolves.toBe(true);
 
-    expect(handlers.initializeLocal).toHaveBeenCalledWith("/workspace/athas");
+    expect(handlers.initializeLocal).toHaveBeenCalledWith("/workspace/blimy");
     expect(handlers.initializeRemote).not.toHaveBeenCalled();
     expect(handlers.initializeWsl).not.toHaveBeenCalled();
   });
@@ -69,7 +69,7 @@ describe("workspace resume router", () => {
   it("resumes the session before local workspace services", () => {
     const handlers = createResumeHandlers();
 
-    resumeWorkspacePath("/workspace/athas", handlers);
+    resumeWorkspacePath("/workspace/blimy", handlers);
 
     expect(handlers.resumeSession).toHaveBeenCalledOnce();
     expect(handlers.resumeLocalServices).toHaveBeenCalledOnce();

@@ -9,7 +9,7 @@ import { TerminalEmulator } from "./terminal";
 // Renders all live terminal frontends at app root. Each session owns a stable
 // wrapper <div> that's reparented (via raw appendChild) into whichever slot
 // is currently displaying it. React always portals TerminalEmulator into the
-// wrapper — only the wrapper's DOM parent changes. Pane moves never unmount
+// wrapper â€” only the wrapper's DOM parent changes. Pane moves never unmount
 // the frontend; PTY listeners + scrollback survive.
 export function TerminalHost() {
   const [, refreshWorkspaceSessions] = useReducer((version) => version + 1, 0);
@@ -38,7 +38,7 @@ export function TerminalHost() {
   }
 
   // Once a session has been registered in the terminal store (PTY connected),
-  // its disappearance from there means it was explicitly closed — drop it.
+  // its disappearance from there means it was explicitly closed â€” drop it.
   for (const id of Array.from(knownRef.current.all)) {
     if (knownRef.current.everInStore.has(id) && !sessionStoreIds.includes(id)) {
       knownRef.current.all.delete(id);
@@ -107,12 +107,12 @@ function TerminalPortal({ sessionId }: { sessionId: string }) {
     };
   }, [wrapper]);
 
-  // After slot swap, kick the frontend to refit + repaint — TUIs (CC etc.) need
+  // After slot swap, kick the frontend to refit + repaint â€” TUIs (CC etc.) need
   // a SIGWINCH-like nudge to redraw at the new column count.
   useEffect(() => {
     if (!slotEl) return;
     const id = requestAnimationFrame(() => {
-      window.dispatchEvent(new CustomEvent("athas-terminal-refit", { detail: { sessionId } }));
+      window.dispatchEvent(new CustomEvent("blimy-terminal-refit", { detail: { sessionId } }));
     });
     return () => cancelAnimationFrame(id);
   }, [slotEl, sessionId]);

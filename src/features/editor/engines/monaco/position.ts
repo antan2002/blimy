@@ -1,7 +1,7 @@
 import { Range as MonacoRange, Uri } from "monaco-editor";
 import type * as Monaco from "monaco-editor";
 import type { Position, Range } from "../../types/editor.types";
-import { createAthasModelUriParts } from "./model-uri";
+import { createBlimyModelUriParts } from "./model-uri";
 
 export function toEditorPosition(
   model: Monaco.editor.ITextModel,
@@ -70,7 +70,7 @@ export function createModelUri(
   filePath: string,
   displayPath?: string,
 ): Monaco.Uri {
-  return Uri.from(createAthasModelUriParts(bufferId, filePath, displayPath));
+  return Uri.from(createBlimyModelUriParts(bufferId, filePath, displayPath));
 }
 
 export function buildLineOffsets(content: string): number[] {

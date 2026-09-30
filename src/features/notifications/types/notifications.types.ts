@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 
 export type NotificationType = "info" | "success" | "warning" | "error";
-export type NotificationCategory = "athas" | "agent" | "github";
+export type NotificationCategory = "blimy" | "agent" | "github";
 export type NotificationCategoryFilter = "all" | NotificationCategory;
 
 export interface NotificationEntry {

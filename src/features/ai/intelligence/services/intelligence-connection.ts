@@ -56,7 +56,7 @@ export async function getIntelligenceConnection(task: IntelligenceTask) {
     throw new AutocompleteModelRequiredError(
       auth.isAuthenticated
         ? "Choose a model for Tab completion in Settings."
-        : "Sign in to use Athas for Tab completion, or choose a model for it in Settings.",
+        : "Sign in to use Blimy for Tab completion, or choose a model for it in Settings.",
     );
   }
   assertIntelligenceConnectionAllowed(connection.providerId, task);
@@ -68,7 +68,7 @@ export function assertIntelligenceConnectionAllowed(providerId: string, task: In
   if (policy?.managedMode) {
     if (
       !(task === "agent" ? policy.aiChatEnabled : policy.aiCompletionEnabled) ||
-      (providerId !== "athas" && !policy.allowByok)
+      (providerId !== "blimy" && !policy.allowByok)
     ) {
       throw new Error("This AI connection is disabled by your organization.");
     }

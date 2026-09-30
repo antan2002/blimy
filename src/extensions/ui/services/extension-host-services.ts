@@ -18,7 +18,7 @@ import type {
 import { isExtensionNetworkRequestAllowed } from "./extension-permissions";
 
 const MAX_RESPONSE_BYTES = 5 * 1024 * 1024;
-const STORAGE_PREFIX = "athas-extension:";
+const STORAGE_PREFIX = "blimy-extension:";
 const MAX_CLIPBOARD_CHARACTERS = 100_000;
 const MAX_NOTIFICATION_TITLE_CHARACTERS = 200;
 const MAX_NOTIFICATION_DESCRIPTION_CHARACTERS = 1_000;

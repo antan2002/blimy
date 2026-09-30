@@ -76,7 +76,7 @@ export function WorkspaceOverview({ root, config, onChange }: WorkspaceSectionPr
         <ItemContent>
           <ItemTitle>Shared with your repository</ItemTitle>
           <ItemDescription>
-            Save and commit athas.workspace.json to share tasks, AI instructions, repositories and
+            Save and commit blimy.workspace.json to share tasks, AI instructions, repositories and
             integration recommendations. Local folder mappings stay on this device.
           </ItemDescription>
         </ItemContent>

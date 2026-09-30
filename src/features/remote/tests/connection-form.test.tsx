@@ -57,7 +57,7 @@ describe("ConnectionForm", () => {
   });
 
   it("accepts an SSH config alias without a username", () => {
-    const formData = createFormData({ name: "Athas", host: "athas", username: "" });
+    const formData = createFormData({ name: "Blimy", host: "blimy", username: "" });
 
     expect(hasValidRemoteEndpoint(formData)).toBe(true);
     expect(isRemoteConnectionFormValid(formData)).toBe(true);

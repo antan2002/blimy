@@ -57,10 +57,10 @@ export function SharingSettings() {
       },
     );
     const status = (event: Event) => setSyncError((event as CustomEvent).detail.error || "");
-    window.addEventListener("athas:sharing-status", status);
+    window.addEventListener("blimy:sharing-status", status);
     return () => {
       cancelled = true;
-      window.removeEventListener("athas:sharing-status", status);
+      window.removeEventListener("blimy:sharing-status", status);
     };
   }, [loadAttempt]);
   const copyLink = async (id: string) => {
@@ -105,7 +105,7 @@ export function SharingSettings() {
           <EmptyState
             variant="section"
             tone={error ? "error" : "neutral"}
-            message={error || "Loading shared items…"}
+            message={error || "Loading shared itemsâ€¦"}
             role={error ? "alert" : "status"}
             action={
               error
@@ -123,7 +123,7 @@ export function SharingSettings() {
             <SettingRow
               key={item.id}
               label={item.title}
-              description={`${item.visibility} · ${item.live ? "Live" : "Snapshot"}`}
+              description={`${item.visibility} Â· ${item.live ? "Live" : "Snapshot"}`}
             >
               <div className="flex flex-wrap items-center gap-1">
                 {item.sourceId && item.kind !== "snippet" && (

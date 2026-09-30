@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { ProviderIcon } from "@/features/ai/components/icons/provider-icons";
 import {
-  AthasModelSections,
+  BlimyModelSections,
   ModelResultsProvider,
   ModelSection,
   ProviderModels,
@@ -86,7 +86,7 @@ interface ComposerAgentSelectorProps {
 
 /**
  * The composer's model button: one searchable list with a section per connection
- * (Recommended, Athas, each connected provider, then agents), plus a reasoning effort chip
+ * (Recommended, Blimy, each connected provider, then agents), plus a reasoning effort chip
  * beside it when the current model has an effort scale.
  */
 export function ComposerAgentSelector({
@@ -115,7 +115,7 @@ export function ComposerAgentSelector({
   const selectedModelName = useModelName(providerId, modelId);
   const label =
     currentAgentId === "custom"
-      ? providerId === "athas" && (!modelId || modelId === "auto")
+      ? providerId === "blimy" && (!modelId || modelId === "auto")
         ? "Automatic"
         : selectedModelName || modelId || "Choose model"
       : currentAgentId === CODEX_INTEGRATION_ID
@@ -175,16 +175,16 @@ export function ComposerAgentSelector({
           <DropdownMenuSearch
             value={search.query}
             onChange={(event) => search.setQuery(event.target.value)}
-            placeholder="Select a model…"
+            placeholder="Select a modelâ€¦"
             autoFocus
           />
           <DropdownMenuViewport>
             {isContentMounted ? (
               <ModelResultsProvider value={reportResults}>
-                <AthasModelSections
-                  selected={customSelection(providerId === "athas" ? modelId || "auto" : "")}
+                <BlimyModelSections
+                  selected={customSelection(providerId === "blimy" ? modelId || "auto" : "")}
                   search={search}
-                  onSelect={(id) => onModelChange(id, "athas")}
+                  onSelect={(id) => onModelChange(id, "blimy")}
                 />
                 {configuredProviders.map((provider) => (
                   <ProviderModels
@@ -213,7 +213,7 @@ export function ComposerAgentSelector({
                       id: option.id,
                       name: option.name,
                       tooltip: option.description
-                        ? `${option.name} · ${option.description}`
+                        ? `${option.name} Â· ${option.description}`
                         : undefined,
                       iconId: modelAgent.id,
                       iconUrl: modelAgent.icon,
@@ -252,7 +252,7 @@ export function ComposerAgentSelector({
             {followChatId ? <FollowAgentMenuItem chatId={followChatId} /> : null}
             <DropdownMenuItem onClick={() => useUIState.getState().openSettings("ai")}>
               <SlidersIcon />
-              Configure models…
+              Configure modelsâ€¦
             </DropdownMenuItem>
           </DropdownMenuFooter>
         </DropdownMenuContent>

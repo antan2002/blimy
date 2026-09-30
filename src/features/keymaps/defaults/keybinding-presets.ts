@@ -67,7 +67,7 @@ function createPresetDefinition({
 export const keybindingPresetDefinitions: Record<KeybindingPreset, KeybindingPresetDefinition> = {
   none: {
     label: "None",
-    description: "Use Athas built-in shortcuts.",
+    description: "Use Blimy built-in shortcuts.",
     overrides: [],
     disabledCommands: [],
   },

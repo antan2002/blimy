@@ -14,7 +14,7 @@ const pr: PullRequestDetails = {
   updatedAt: "2026-08-14T00:00:00.000Z",
   isDraft: false,
   reviewDecision: null,
-  url: "https://github.com/athasdev/athas/pull/734",
+  url: "https://github.com/blimydev/blimy/pull/734",
   headRef: "rust-test-standardization",
   baseRef: "main",
   additions: 1088,

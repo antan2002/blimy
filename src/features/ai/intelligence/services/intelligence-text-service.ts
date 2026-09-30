@@ -71,7 +71,7 @@ export interface InlineEditRequest {
 
 export class InlineEditError extends Error {
   status: number;
-  /** True when the error came from the Athas AI server rather than a local provider. */
+  /** True when the error came from the Blimy AI server rather than a local provider. */
   hosted: boolean;
 
   constructor(message: string, status: number, options?: { hosted?: boolean }) {
@@ -121,7 +121,7 @@ async function sendInlineEditRequest(
     ? { ...selected, providerId: request.provider, modelId: request.model }
     : selected;
   assertIntelligenceConnectionAllowed(connection.providerId, request.feature ?? "inline-edit");
-  const useHosted = options.useHosted ?? connection.providerId === "athas";
+  const useHosted = options.useHosted ?? connection.providerId === "blimy";
   const normalizedRequest = {
     ...request,
     provider: connection.providerId,
@@ -155,13 +155,13 @@ async function sendInlineEditRequest(
     throw new InlineEditError("The active account or team changed. Try again.", 409);
   }
   if (!token) {
-    throw new InlineEditError("Sign in to use Athas AI.", 401, { hosted: true });
+    throw new InlineEditError("Sign in to use Blimy AI.", 401, { hosted: true });
   }
 
   const autocomplete = request.feature === "autocomplete";
   if (normalizedRequest.selectedText.length > HOSTED_TEXT_FIELD_LIMIT) {
     throw new InlineEditError(
-      `The selection is too large for Athas AI. Select at most ${HOSTED_TEXT_FIELD_LIMIT.toLocaleString("en-US")} characters.`,
+      `The selection is too large for Blimy AI. Select at most ${HOSTED_TEXT_FIELD_LIMIT.toLocaleString("en-US")} characters.`,
       413,
     );
   }
@@ -179,7 +179,7 @@ async function sendInlineEditRequest(
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
-        "X-Athas-Intelligence-Scope": connection.scope,
+        "X-Blimy-Intelligence-Scope": connection.scope,
       },
       body: JSON.stringify(
         autocomplete

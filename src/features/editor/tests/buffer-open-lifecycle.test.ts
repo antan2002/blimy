@@ -83,7 +83,7 @@ describe("buffer open lifecycle", () => {
       title: "Initial title",
     });
 
-    actions.openExtensionBuffer("athas.typescript", "TypeScript");
+    actions.openExtensionBuffer("blimy.typescript", "TypeScript");
     const reopenedId = actions.openPRBuffer(42, {
       repoPath: "/workspace",
       title: "Updated title",
@@ -144,7 +144,7 @@ describe("buffer open lifecycle", () => {
         issueNumber: 7,
         repoPath: "/workspace",
         title: "New issue",
-        url: "https://github.com/athasdev/athas/issues/7",
+        url: "https://github.com/blimydev/blimy/issues/7",
       }),
     ).toBe(issueId);
     expect(
@@ -152,7 +152,7 @@ describe("buffer open lifecycle", () => {
         runId: 99,
         repoPath: "/workspace",
         title: "New run",
-        url: "https://github.com/athasdev/athas/actions/runs/99",
+        url: "https://github.com/blimydev/blimy/actions/runs/99",
       }),
     ).toBe(actionId);
 
@@ -162,16 +162,16 @@ describe("buffer open lifecycle", () => {
           id: issueId,
           type: "githubIssue",
           name: "New issue",
-          path: "https://github.com/athasdev/athas/issues/7",
-          url: "https://github.com/athasdev/athas/issues/7",
+          path: "https://github.com/blimydev/blimy/issues/7",
+          url: "https://github.com/blimydev/blimy/issues/7",
           isActive: false,
         }),
         expect.objectContaining({
           id: actionId,
           type: "githubAction",
           name: "New run",
-          path: "https://github.com/athasdev/athas/actions/runs/99",
-          url: "https://github.com/athasdev/athas/actions/runs/99",
+          path: "https://github.com/blimydev/blimy/actions/runs/99",
+          url: "https://github.com/blimydev/blimy/actions/runs/99",
           isActive: true,
         }),
       ]),

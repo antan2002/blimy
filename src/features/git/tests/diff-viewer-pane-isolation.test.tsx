@@ -162,7 +162,7 @@ describe("Diff pane isolation", () => {
     await focusTab(otherTab.id);
     await act(async () => {
       window.dispatchEvent(
-        new CustomEvent("athas:git-changed", { detail: { repoPath: "/repo", filePath: "app.ts" } }),
+        new CustomEvent("blimy:git-changed", { detail: { repoPath: "/repo", filePath: "app.ts" } }),
       );
       await vi.advanceTimersByTimeAsync(50);
     });

@@ -175,7 +175,7 @@ export function ViewSetup({ projectPath, view, onCancel, onSave }: ViewSetupProp
         <div className="flex flex-wrap items-center justify-between gap-3">
           <Badge>
             <SparkleIcon />
-            Athas AI
+            Blimy AI
           </Badge>
           {repository ? (
             <span className="flex min-w-0 items-center gap-1.5 font-sans ui-text-sm text-subtle-foreground">
@@ -191,7 +191,7 @@ export function ViewSetup({ projectPath, view, onCancel, onSave }: ViewSetupProp
         </h1>
         <p className="font-sans ui-text-sm text-subtle-foreground">
           {mode === "intelligence"
-            ? "Describe what you want to see and Athas will generate the view."
+            ? "Describe what you want to see and Blimy will generate the view."
             : "Connect the view to a data source when automatic setup is not enough."}
         </p>
       </div>
@@ -226,7 +226,7 @@ export function ViewSetup({ projectPath, view, onCancel, onSave }: ViewSetupProp
             </p>
           ) : null}
           <p className="font-sans ui-text-sm text-subtle-foreground">
-            Use Athas AI or your own provider for custom requests. Common GitHub views also work
+            Use Blimy AI or your own provider for custom requests. Common GitHub views also work
             without AI.
           </p>
           {error ? (
@@ -353,7 +353,7 @@ export function ViewSetup({ projectPath, view, onCancel, onSave }: ViewSetupProp
                 }}
               >
                 <SparkleIcon />
-                Use Athas AI
+                Use Blimy AI
               </Button>
             ) : (
               <span />

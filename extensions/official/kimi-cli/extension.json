@@ -1,6 +1,6 @@
 {
-  "$schema": "https://athas.dev/schemas/extension.json",
-  "id": "athas.agent.kimi-cli",
+  "$schema": "https://blimy.dev/schemas/extension.json",
+  "id": "blimy.agent.kimi-cli",
   "name": "Kimi CLI",
   "displayName": "Kimi CLI",
   "description": "Moonshot's Kimi command-line agent with native ACP support.",

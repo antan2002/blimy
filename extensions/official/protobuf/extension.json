@@ -1,11 +1,11 @@
 {
-  "$schema": "https://athas.dev/schemas/extension.json",
-  "id": "athas.protobuf",
+  "$schema": "https://blimy.dev/schemas/extension.json",
+  "id": "blimy.protobuf",
   "name": "Protobuf",
   "displayName": "Protocol Buffers",
   "version": "1.0.0",
   "description": "Protocol Buffers language support with syntax highlighting",
-  "publisher": "Athas",
+  "publisher": "Blimy",
   "categories": ["Language"],
   "languages": [
     {

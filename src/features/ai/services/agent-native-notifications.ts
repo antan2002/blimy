@@ -55,7 +55,7 @@ export interface AgentNativeNotificationDependencies {
   getSettings: () => AgentNotificationSettings;
   /** Whether the window running the chat has focus. */
   isWindowFocused: () => Promise<boolean>;
-  /** Whether any Athas window has focus. */
+  /** Whether any Blimy window has focus. */
   isAppFocused: () => Promise<boolean>;
   isChatVisible: (chatId: string) => boolean;
   isPermissionGranted: () => Promise<boolean>;
@@ -107,27 +107,27 @@ export function getAgentNativeNotificationContent(
     case "auth":
       return {
         title: "Agent needs you to sign in",
-        body: "Open Athas to sign in.",
+        body: "Open Blimy to sign in.",
       };
     case "question":
       return {
         title: "Agent has a question",
-        body: "Open Athas to answer it.",
+        body: "Open Blimy to answer it.",
       };
     case "permission":
       return {
         title: "Agent needs your approval",
-        body: "Open Athas to review the request.",
+        body: "Open Blimy to review the request.",
       };
     case "error":
       return {
         title: "Agent stopped",
-        body: "Open Athas to review the error.",
+        body: "Open Blimy to review the error.",
       };
     case "complete":
       return {
         title: "Agent finished",
-        body: "Open Athas to review the result.",
+        body: "Open Blimy to review the result.",
       };
   }
 }
@@ -193,10 +193,10 @@ export function createAgentNativeNotificationService(
 
       dependencies.send({
         ...getAgentNativeNotificationContent(request.kind),
-        group: "athas-agent",
+        group: "blimy-agent",
         ...(settings.sound ? { sound: getAgentNotificationSound(dependencies.platform) } : {}),
         extra: {
-          athasRoute: "agent",
+          blimyRoute: "agent",
           chatId: request.chatId,
         },
       });
@@ -210,7 +210,7 @@ export function createAgentNativeNotificationService(
   };
 }
 
-export async function isAnyAthasWindowFocused(): Promise<boolean> {
+export async function isAnyBlimyWindowFocused(): Promise<boolean> {
   try {
     const windows = await getAllWindows();
     const focusStates = await Promise.all(windows.map((window) => window.isFocused()));
@@ -240,7 +240,7 @@ const notifyAgent = createAgentNativeNotificationService({
     };
   },
   isWindowFocused: isThisWindowFocused,
-  isAppFocused: isAnyAthasWindowFocused,
+  isAppFocused: isAnyBlimyWindowFocused,
   isChatVisible: isAgentChatVisible,
   isPermissionGranted,
   send: sendNotification,

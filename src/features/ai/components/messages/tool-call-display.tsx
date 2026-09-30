@@ -187,7 +187,7 @@ function TerminalOutput({ terminal }: { terminal: AcpTerminalSnapshot }) {
   return (
     <div className="flex min-w-0 flex-col gap-1">
       {text ? (
-        <CodeOutput tone="muted">{terminal.truncated ? `…\n${text}` : text}</CodeOutput>
+        <CodeOutput tone="muted">{terminal.truncated ? `â€¦\n${text}` : text}</CodeOutput>
       ) : null}
       {status ? (
         <span className={cn("ui-text-sm", failed ? "text-destructive" : "text-subtle-foreground")}>
@@ -407,7 +407,7 @@ const ToolCallRow = memo(function ToolCallRow({
   // Only the change this call recorded; a diff against HEAD would mix in every other edit.
   const canOpenDiff = diffItems.length > 0;
   const canOpenFile = Boolean(summary.path) && summary.kind !== "execute";
-  // Only a terminal Athas runs for the agent, and only while it still runs, has a tab to open.
+  // Only a terminal Blimy runs for the agent, and only while it still runs, has a tab to open.
   const canOpenTerminal = liveTerminals.some(
     (terminal) => terminal && !terminal.displayOnly && !terminal.exit,
   );
@@ -572,7 +572,7 @@ function ThoughtRow({ toolCall }: { toolCall: ToolCall }) {
 }
 
 /**
- * Two or more steps as one line: "Worked for 12s · Read 4 files, edited 2 files", or the step
+ * Two or more steps as one line: "Worked for 12s Â· Read 4 files, edited 2 files", or the step
  * in progress while the agent works. A failed step or the latest edit opens the list.
  */
 function ToolActivityGroup({
@@ -641,7 +641,7 @@ function ToolActivityGroup({
                 {title ? (
                   <>
                     <span className="text-muted-foreground tabular-nums">{title}</span>
-                    <span aria-hidden="true"> · </span>
+                    <span aria-hidden="true"> Â· </span>
                   </>
                 ) : null}
                 <Shimmer active={isRunning}>{detail}</Shimmer>

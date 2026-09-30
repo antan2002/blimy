@@ -18,9 +18,9 @@ import type {
   DebugWatchResult,
 } from "@/features/debugger/types/debugger.types";
 
-const BREAKPOINTS_STORAGE_KEY = "athas-debugger-breakpoints";
-const USER_CONFIGS_STORAGE_KEY = "athas-debugger-user-configs";
-const WATCH_EXPRESSIONS_STORAGE_KEY = "athas-debugger-watch-expressions";
+const BREAKPOINTS_STORAGE_KEY = "blimy-debugger-breakpoints";
+const USER_CONFIGS_STORAGE_KEY = "blimy-debugger-user-configs";
+const WATCH_EXPRESSIONS_STORAGE_KEY = "blimy-debugger-watch-expressions";
 
 interface DebuggerState {
   breakpoints: DebugBreakpoint[];

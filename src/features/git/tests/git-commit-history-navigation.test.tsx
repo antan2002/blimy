@@ -16,7 +16,7 @@ vi.mock("@/features/window/stores/auth.store", () => ({
 const commit: GitCommit = {
   hash: "4fbe6911234567890",
   message: "Improve navigation",
-  author: "Athas",
+  author: "Blimy",
   date: "2026-08-11T12:00:00.000Z",
 };
 let container: HTMLDivElement;
@@ -78,7 +78,7 @@ describe("Git history navigation", () => {
     const event = new Event("dragstart", { bubbles: true });
     Object.defineProperty(event, "dataTransfer", { value: dataTransfer });
     await act(async () => row.dispatchEvent(event));
-    expect(JSON.parse(data.get("application/x-athas-sidebar-resource")!)).toMatchObject({
+    expect(JSON.parse(data.get("application/x-blimy-sidebar-resource")!)).toMatchObject({
       type: "git-commit",
       repoPath: "/repo",
       commitHash: commit.hash,

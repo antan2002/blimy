@@ -9,7 +9,7 @@ import type { DockerContainer, DockerInventory } from "../types/docker.types";
 const container = (id: string): DockerContainer => ({
   id,
   name: id,
-  image: "athas/test:latest",
+  image: "blimy/test:latest",
   command: "bun test",
   status: "Up",
   state: "running",

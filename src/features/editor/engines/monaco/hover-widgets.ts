@@ -70,7 +70,7 @@ function getMonacoHoverContentWidth(nodes: Array<HTMLElement | null>) {
 
 export function syncMonacoHoverBounds(container: HTMLElement) {
   const maxWidth = getMonacoHoverMaxWidth(container);
-  container.style.setProperty("--athas-monaco-hover-max-width", `${maxWidth}px`);
+  container.style.setProperty("--blimy-monaco-hover-max-width", `${maxWidth}px`);
 }
 
 export function clampMonacoHoverWidgets(container: HTMLElement) {

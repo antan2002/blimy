@@ -42,7 +42,7 @@ describe("keybinding import/export", () => {
     );
 
     expect(imported).toEqual({
-      format: "athas",
+      format: "blimy",
       keybindings: [
         {
           key: "cmd+p",
@@ -55,7 +55,7 @@ describe("keybinding import/export", () => {
     });
   });
 
-  it("preserves the order of legacy Athas array files", () => {
+  it("preserves the order of legacy Blimy array files", () => {
     const imported = parseKeybindingsImportJson(
       JSON.stringify([
         { key: "cmd+p", command: "file.quickOpen" },
@@ -78,7 +78,7 @@ describe("keybinding import/export", () => {
     const imported = parseKeybindingsImportJson(JSON.stringify(exported));
 
     expect(imported).toEqual({
-      format: "athas",
+      format: "blimy",
       keybindingPreset: "vscode",
       keybindings: [],
       issues: [],
@@ -204,7 +204,7 @@ describe("keybinding import/export", () => {
     ]);
   });
 
-  it("reports entries Athas cannot execute instead of importing broken shortcuts", () => {
+  it("reports entries Blimy cannot execute instead of importing broken shortcuts", () => {
     const imported = parseKeybindingsImportJson(
       JSON.stringify([
         { key: "cmd+k", command: "publisher.extensionCommand" },

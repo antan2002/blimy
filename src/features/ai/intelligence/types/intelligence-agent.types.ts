@@ -1,7 +1,7 @@
 import type { AgentCompletionResult } from "@/features/ai/types/agent-completion.types";
 
 /**
- * How a run of Athas's own agent ended. It is an `AgentCompletionResult`, so the chat handles it
+ * How a run of Blimy's own agent ended. It is an `AgentCompletionResult`, so the chat handles it
  * like an ACP turn: `stopReason` "max_turn_requests" (step budget reached) and "max_tokens"
  * (output limit hit) show the Continue affordance, and `usage` is the turn's token total.
  */

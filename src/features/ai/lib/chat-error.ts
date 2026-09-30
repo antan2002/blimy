@@ -23,7 +23,7 @@ export function parseLegacyErrorBlock(data: string): ChatMessageError {
     code: field("code"),
     message: field("message") ?? "",
     details: field("details"),
-    providerId: field("provider") ?? (/athas API/i.test(data) ? "athas" : undefined),
+    providerId: field("provider") ?? (/blimy API/i.test(data) ? "blimy" : undefined),
   };
 }
 

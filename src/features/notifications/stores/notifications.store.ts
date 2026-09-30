@@ -36,13 +36,13 @@ export const useNotificationsStore = createSelectors(
             ? {
                 ...existing,
                 ...notification,
-                category: notification.category ?? existing.category ?? "athas",
+                category: notification.category ?? existing.category ?? "blimy",
                 updatedAt: now,
                 read: false,
               }
             : {
                 ...notification,
-                category: notification.category ?? "athas",
+                category: notification.category ?? "blimy",
                 createdAt: now,
                 updatedAt: now,
                 read: false,

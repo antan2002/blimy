@@ -22,14 +22,14 @@ describe("database error formatting", () => {
 
   it("normalizes sidecar protocol and response envelope errors", () => {
     expect(normalizeDatabaseError("Unsupported database sidecar protocol version: 2")).toBe(
-      "The database provider version is not compatible with this Athas build. Please update or reinstall the database integration.",
+      "The database provider version is not compatible with this Blimy build. Please update or reinstall the database integration.",
     );
     expect(
       normalizeDatabaseError(
         "Unsupported database sidecar protocol version for provider postgres: 2",
       ),
     ).toBe(
-      "The database provider version is not compatible with this Athas build. Please update or reinstall the database integration.",
+      "The database provider version is not compatible with this Blimy build. Please update or reinstall the database integration.",
     );
     expect(normalizeDatabaseError("Invalid database sidecar envelope: missing field `ok`")).toBe(
       "The database provider returned an invalid response. Please update or reinstall the database integration.",

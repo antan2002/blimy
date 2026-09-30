@@ -11,7 +11,7 @@ vi.mock("@tauri-apps/api/webviewWindow", () => ({
   getAllWebviewWindows: async () => [],
 }));
 
-const SETTINGS_KEY = "athas-ai-chat-settings-v7";
+const SETTINGS_KEY = "blimy-ai-chat-settings-v7";
 
 function chatRow(id: string, agentId: string | null) {
   return {

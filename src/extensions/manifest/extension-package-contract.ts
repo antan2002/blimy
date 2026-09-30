@@ -1,6 +1,6 @@
 import type { ExtensionCategory, ExtensionManifest } from "../types/extension-manifest";
 
-export const EXTENSION_SCHEMA_URL = "https://athas.dev/schemas/extension.json";
+export const EXTENSION_SCHEMA_URL = "https://blimy.dev/schemas/extension.json";
 
 export const EXTENSION_CATEGORIES = [
   "Language",

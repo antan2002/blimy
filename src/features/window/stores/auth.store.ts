@@ -158,7 +158,7 @@ export function createAuthStore(
                   throw error;
                 }
                 subscriptionError =
-                  error instanceof Error ? error.message : "Could not load your Athas access.";
+                  error instanceof Error ? error.message : "Could not load your Blimy access.";
               }
               reconnectAttempt = 0;
               set((state) => {
@@ -203,7 +203,7 @@ export function createAuthStore(
             const attempt = reconnectAttempt++;
             const failure = dependencies.describeSessionCheckFailure?.(error) ?? {
               reason: "unreachable" as const,
-              message: "Could not reach Athas.",
+              message: "Could not reach Blimy.",
               host: "",
             };
             const now = dependencies.now?.() ?? Date.now();
@@ -259,7 +259,7 @@ export function createAuthStore(
                 throw error;
               }
               subscriptionError =
-                error instanceof Error ? error.message : "Could not load your Athas access.";
+                error instanceof Error ? error.message : "Could not load your Blimy access.";
             }
             reconnectAttempt = 0;
             set((state) => {
@@ -338,7 +338,7 @@ export function createAuthStore(
                 ? "Your session is no longer valid on this server. Sign in again."
                 : error instanceof Error
                   ? error.message
-                  : "Could not connect to Athas. Check your connection.";
+                  : "Could not connect to Blimy. Check your connection.";
             });
             return false;
           }

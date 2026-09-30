@@ -149,7 +149,7 @@ const GitBranchManager = ({
   onWorktreeChange,
   onRepositoryChange,
   paletteTarget = false,
-  openEventName = "athas:open-branch-manager",
+  openEventName = "blimy:open-branch-manager",
   triggerMode = "repository",
 }: GitBranchManagerProps) => {
   const [branches, setBranches] = useState<string[]>([]);
@@ -629,7 +629,7 @@ const GitBranchManager = ({
           <DropdownMenuFooter>
             <DropdownMenuItem onClick={() => void handlePromptCreateBranch()}>
               <PlusIcon />
-              New branch…
+              New branchâ€¦
             </DropdownMenuItem>
             <DropdownMenuItem
               closeOnClick={false}
@@ -975,7 +975,7 @@ function BranchDropdownActions({
       <DropdownMenuSubContent size="compact">
         <DropdownMenuItem disabled={isLoading} onClick={onCreateFrom}>
           <PlusIcon />
-          New branch from…
+          New branch fromâ€¦
         </DropdownMenuItem>
         <DropdownMenuItem onClick={onCopy}>
           <CopyIcon />
@@ -984,7 +984,7 @@ function BranchDropdownActions({
         {!isCurrent ? (
           <DropdownMenuItem variant="destructive" disabled={isLoading} onClick={onDelete}>
             <TrashIcon />
-            Delete branch…
+            Delete branchâ€¦
           </DropdownMenuItem>
         ) : null}
       </DropdownMenuSubContent>

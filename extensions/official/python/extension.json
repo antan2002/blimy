@@ -1,11 +1,11 @@
 {
-  "$schema": "https://athas.dev/schemas/extension.json",
-  "id": "athas.python",
+  "$schema": "https://blimy.dev/schemas/extension.json",
+  "id": "blimy.python",
   "name": "Python",
   "displayName": "Python",
   "version": "1.0.0",
   "description": "Python language support with LSP and tooling",
-  "publisher": "Athas",
+  "publisher": "Blimy",
   "categories": ["Language"],
   "languages": [
     {

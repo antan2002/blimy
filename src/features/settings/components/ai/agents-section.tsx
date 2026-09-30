@@ -12,7 +12,7 @@ function AgentStatus({ agent }: { agent: AgentOption }) {
 }
 
 /**
- * Coding agents made by other companies that Athas can run, such as Codex or Claude Code. They
+ * Coding agents made by other companies that Blimy can run, such as Codex or Claude Code. They
  * sign in with their own accounts and pick their own models.
  */
 export function AgentsSection() {

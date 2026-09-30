@@ -1100,7 +1100,7 @@ export function DockerSidebar() {
             description={
               isDockerConnectionError(composeError)
                 ? undefined
-                : "Athas couldn't load Compose services for this project."
+                : "Blimy couldn't load Compose services for this project."
             }
             isRetrying={isComposeLoading}
             onRetry={() => void loadComposeProject()}
@@ -1237,9 +1237,9 @@ export function DockerSidebar() {
                                 description={
                                   <>
                                     {devContainer.kind}
-                                    {devContainer.service ? ` · ${devContainer.service}` : ""}
-                                    {devContainer.image ? ` · ${devContainer.image}` : ""}
-                                    {` · ${devContainer.relativePath}`}
+                                    {devContainer.service ? ` Â· ${devContainer.service}` : ""}
+                                    {devContainer.image ? ` Â· ${devContainer.image}` : ""}
+                                    {` Â· ${devContainer.relativePath}`}
                                   </>
                                 }
                                 actions={
@@ -1280,7 +1280,7 @@ export function DockerSidebar() {
                                 description={
                                   <>
                                     {preset.command}
-                                    {preset.workdir ? ` · ${preset.workdir}` : ""}
+                                    {preset.workdir ? ` Â· ${preset.workdir}` : ""}
                                   </>
                                 }
                                 actions={
@@ -1310,7 +1310,7 @@ export function DockerSidebar() {
                                 description={
                                   <>
                                     {preset.command}
-                                    {preset.workdir ? ` · ${preset.workdir}` : ""}
+                                    {preset.workdir ? ` Â· ${preset.workdir}` : ""}
                                   </>
                                 }
                                 actions={
@@ -1419,7 +1419,7 @@ export function DockerSidebar() {
                                 description={
                                   <>
                                     {preset.image}
-                                    {preset.envFiles.length > 0 ? " · env file" : ""}
+                                    {preset.envFiles.length > 0 ? " Â· env file" : ""}
                                   </>
                                 }
                                 actions={
@@ -1455,7 +1455,7 @@ export function DockerSidebar() {
                                 description={
                                   <>
                                     {preset.action}
-                                    {preset.service ? ` · ${preset.service}` : ""}
+                                    {preset.service ? ` Â· ${preset.service}` : ""}
                                   </>
                                 }
                                 actions={

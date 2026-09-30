@@ -61,7 +61,7 @@ function getLinuxLibcToken(): "gnu" | "musl" | "unknown" {
   if (NODE_PLATFORM !== "linux") return "unknown";
 
   if (typeof process !== "undefined") {
-    const override = process.env?.ATHAS_LINUX_LIBC?.toLowerCase();
+    const override = process.env?.BLIMY_LINUX_LIBC?.toLowerCase();
     if (override === "musl" || override === "gnu" || override === "glibc") {
       return override === "musl" ? "musl" : "gnu";
     }

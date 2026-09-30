@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://athas.dev/schemas/extension.json",
-  "title": "Athas Extension Manifest",
+  "$id": "https://blimy.dev/schemas/extension.json",
+  "title": "Blimy Extension Manifest",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -16,7 +16,7 @@
   ],
   "properties": {
     "$schema": {
-      "const": "https://athas.dev/schemas/extension.json"
+      "const": "https://blimy.dev/schemas/extension.json"
     },
     "id": {
       "type": "string",

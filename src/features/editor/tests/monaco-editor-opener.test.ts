@@ -12,7 +12,7 @@ vi.mock("../stores/buffer.store", () => ({
 }));
 vi.mock("sonner", () => ({ toast: { error: mocks.error } }));
 
-import { athasEditorOpener } from "../engines/monaco/editor-opener";
+import { blimyEditorOpener } from "../engines/monaco/editor-opener";
 
 function uri(value: string) {
   const url = new URL(value);
@@ -26,7 +26,7 @@ function uri(value: string) {
 
 const source = {
   getModel: () => ({
-    uri: uri("athas://editor/project/source.ts?buffer=source"),
+    uri: uri("blimy://editor/project/source.ts?buffer=source"),
     getOffsetAt: () => 25,
   }),
   getPosition: () => ({ lineNumber: 3, column: 4 }),
@@ -42,7 +42,7 @@ describe("Monaco file navigation", () => {
 
   it("opens an unopened file at the requested range and records the source editor location", async () => {
     expect(
-      await athasEditorOpener.openCodeEditor(source, uri("file:///project/other%20file.ts"), {
+      await blimyEditorOpener.openCodeEditor(source, uri("file:///project/other%20file.ts"), {
         startLineNumber: 8,
         startColumn: 3,
         endLineNumber: 8,
@@ -66,10 +66,10 @@ describe("Monaco file navigation", () => {
     );
   });
 
-  it("resolves existing Athas model URIs including display-path overrides", async () => {
-    await athasEditorOpener.openCodeEditor(
+  it("resolves existing Blimy model URIs including display-path overrides", async () => {
+    await blimyEditorOpener.openCodeEditor(
       source,
-      uri("athas://editor/folder/target.ts?buffer=target&file=%2Fproject%2Ftarget.ts"),
+      uri("blimy://editor/folder/target.ts?buffer=target&file=%2Fproject%2Ftarget.ts"),
       { lineNumber: 2, column: 5 },
     );
     expect(mocks.navigate.mock.calls[0][0]).toEqual({
@@ -80,14 +80,14 @@ describe("Monaco file navigation", () => {
 
   it("preserves virtual Java resources instead of treating their URI as a local filename", async () => {
     const resource = "jdt://contents/java.base/java.lang/String.class?handle";
-    await athasEditorOpener.openCodeEditor(source, uri(resource));
+    await blimyEditorOpener.openCodeEditor(source, uri(resource));
     expect(mocks.navigate.mock.calls[0][0].uri).toBe(resource);
   });
 
   it("leaves external URLs and unknown editor sources to their own handlers", async () => {
-    expect(await athasEditorOpener.openCodeEditor(source, uri("https://example.com"))).toBe(false);
+    expect(await blimyEditorOpener.openCodeEditor(source, uri("https://example.com"))).toBe(false);
     expect(
-      await athasEditorOpener.openCodeEditor(
+      await blimyEditorOpener.openCodeEditor(
         {
           ...source,
           getModel: () => null,
@@ -100,7 +100,7 @@ describe("Monaco file navigation", () => {
 
   it("surfaces read failures without falling back to an unusable Monaco editor", async () => {
     mocks.navigate.mockRejectedValue(new Error("Permission denied"));
-    expect(await athasEditorOpener.openCodeEditor(source, uri("file:///project/private.ts"))).toBe(
+    expect(await blimyEditorOpener.openCodeEditor(source, uri("file:///project/private.ts"))).toBe(
       true,
     );
     expect(mocks.error).toHaveBeenCalledWith("Could not open definition", {

@@ -18,7 +18,7 @@ export interface Model {
   maxOutputTokens?: number;
   maxTokens?: number;
   proOnly?: boolean;
-  /** Whether the model reads images; reported per model by the Athas catalog. */
+  /** Whether the model reads images; reported per model by the Blimy catalog. */
   supportsImages?: boolean;
 }
 
@@ -30,8 +30,8 @@ export interface Model {
 
 const AI_PROVIDERS: ModelProvider[] = [
   {
-    id: "athas",
-    name: "Athas",
+    id: "blimy",
+    name: "Blimy",
     apiUrl: `${getApiBase()}/api/ai/chat`,
     requiresApiKey: false,
     requiresAuth: true,

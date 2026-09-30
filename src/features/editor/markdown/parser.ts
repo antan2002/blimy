@@ -74,7 +74,7 @@ function extractLinkDefinitions(lines: string[]): { lines: string[]; links: Mark
 function processInline(text: string, footnotes: Footnote[], links: MarkdownLinks): string {
   const protectedSegments: string[] = [];
   const protect = (html: string): string => {
-    const token = `\u0000ATHAS${protectedSegments.length}\u0000`;
+    const token = `\u0000BLIMY${protectedSegments.length}\u0000`;
     protectedSegments.push(html);
     return token;
   };
@@ -122,7 +122,7 @@ function processInline(text: string, footnotes: Footnote[], links: MarkdownLinks
   processed = applyInlineFormatting(processed);
 
   for (let index = protectedSegments.length - 1; index >= 0; index--) {
-    processed = processed.split(`\u0000ATHAS${index}\u0000`).join(protectedSegments[index]);
+    processed = processed.split(`\u0000BLIMY${index}\u0000`).join(protectedSegments[index]);
   }
 
   return processed;
@@ -423,7 +423,7 @@ export function parseMarkdown(content: string, options: ParseMarkdownOptions = {
     processedLines.push("<ol>");
     for (const footnote of footnotes) {
       processedLines.push(
-        `<li id="fn-${footnote.id}"><span>${processInline(footnote.text, footnotes, links)}</span> <a href="#fnref-${footnote.id}" class="footnote-backref">↩</a></li>`,
+        `<li id="fn-${footnote.id}"><span>${processInline(footnote.text, footnotes, links)}</span> <a href="#fnref-${footnote.id}" class="footnote-backref">â†©</a></li>`,
       );
     }
     processedLines.push("</ol>");

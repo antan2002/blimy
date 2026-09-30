@@ -8,12 +8,12 @@ import {
 
 const validManifest = {
   $schema: EXTENSION_SCHEMA_URL,
-  id: "athas.example",
+  id: "blimy.example",
   name: "Example",
   displayName: "Example",
   description: "Example integration",
   version: "1.0.0",
-  publisher: "Athas",
+  publisher: "Blimy",
   categories: ["Language"],
   languages: [{ id: "example", extensions: [".example"] }],
 };
@@ -74,17 +74,17 @@ describe("integration package contract", () => {
     expect(
       parseExtensionPackageManifest({
         ...validManifest,
-        id: "athas.skill.review",
+        id: "blimy.skill.review",
         categories: ["Skill"],
         languages: undefined,
         contributes: {
-          skills: [{ id: "athas.review", name: "Review", path: "SKILL.md" }],
+          skills: [{ id: "blimy.review", name: "Review", path: "SKILL.md" }],
         },
       }),
     ).toMatchObject({
       categories: ["Skill"],
       contributes: {
-        skills: [{ id: "athas.review", name: "Review", path: "SKILL.md" }],
+        skills: [{ id: "blimy.review", name: "Review", path: "SKILL.md" }],
       },
     });
   });

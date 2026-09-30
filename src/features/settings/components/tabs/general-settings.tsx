@@ -30,19 +30,19 @@ const REPORT_BUG_CHANNELS = [
     id: "github",
     label: "GitHub",
     detail: "Open a bug report issue",
-    url: "https://github.com/athasdev/athas/issues/new?template=01-bug.yml",
+    url: "https://github.com/blimydev/blimy/issues/new?template=01-bug.yml",
   },
   {
     id: "twitter",
     label: "X",
-    detail: "Message Athas on X",
-    url: "https://x.com/athasindustries",
+    detail: "Message Blimy on X",
+    url: "https://x.com/blimyindustries",
   },
   {
     id: "email",
     label: "Email",
-    detail: "Send a report to hey@athas.dev",
-    url: "mailto:hey@athas.dev",
+    detail: "Send a report to hey@blimy.dev",
+    url: "mailto:hey@blimy.dev",
   },
 ] as const;
 
@@ -139,7 +139,7 @@ export const GeneralSettings = () => {
     const plat = os.platform();
     const ver = os.version();
 
-    return `Environment\n\n- App: Athas ${version}\n- OS: ${plat} ${ver}\n\nProblem\n\nDescribe the issue here. Steps to reproduce, expected vs actual.\n`;
+    return `Environment\n\n- App: Blimy ${version}\n- OS: ${plat} ${ver}\n\nProblem\n\nDescribe the issue here. Steps to reproduce, expected vs actual.\n`;
   };
 
   const handleReportBug = async (channel: ReportBugChannel) => {
@@ -149,7 +149,7 @@ export const GeneralSettings = () => {
 
       if (channel.id === "email") {
         await openUrl(
-          `${channel.url}?subject=${encodeURIComponent("Athas bug report")}&body=${encodeURIComponent(report)}`,
+          `${channel.url}?subject=${encodeURIComponent("Blimy bug report")}&body=${encodeURIComponent(report)}`,
         );
       } else {
         await writeClipboardText(report);
@@ -164,21 +164,21 @@ export const GeneralSettings = () => {
     }
   };
 
-  const versionLabel = `Athas ${appVersion || "..."}`;
+  const versionLabel = `Blimy ${appVersion || "..."}`;
   const updateStatus = downloading
-    ? `${versionLabel} · Downloading ${downloadProgress?.percentage ?? 0}%`
+    ? `${versionLabel} Â· Downloading ${downloadProgress?.percentage ?? 0}%`
     : installing
-      ? `${versionLabel} · Installing`
+      ? `${versionLabel} Â· Installing`
       : available
-        ? `${versionLabel} · ${updateInfo?.version} available`
+        ? `${versionLabel} Â· ${updateInfo?.version} available`
         : error
-          ? `${versionLabel} · Update check failed`
-          : `${versionLabel} · Up to date`;
+          ? `${versionLabel} Â· Update check failed`
+          : `${versionLabel} Â· Up to date`;
   const cliStatus = cliChecking
     ? "Checking..."
     : cliInstalled
-      ? "Installed at ~/.local/bin/athas"
-      : "Open folders from your shell with athas";
+      ? "Installed at ~/.local/bin/blimy"
+      : "Open folders from your shell with blimy";
 
   return (
     <SettingsView>
@@ -213,7 +213,7 @@ export const GeneralSettings = () => {
           <SettingBlock>
             <Progress
               value={downloadProgress.percentage}
-              aria-label="Athas update download progress"
+              aria-label="Blimy update download progress"
             />
           </SettingBlock>
         ) : null}

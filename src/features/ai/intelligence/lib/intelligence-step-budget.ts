@@ -1,21 +1,21 @@
 import { asSchema, type ModelMessage, type ToolResultPart, type ToolSet } from "ai";
 import {
-  HOSTED_ATHAS_REQUEST_LIMITS,
+  HOSTED_BLIMY_REQUEST_LIMITS,
   type ProviderRequestLimits,
 } from "@/features/ai/lib/conversation-history";
 
 export type StepRequestLimits = Pick<ProviderRequestLimits, "maxMessages" | "maxBytes">;
 
 /**
- * What one model request of the agent loop may carry. Athas's hosted endpoint rejects anything
+ * What one model request of the agent loop may carry. Blimy's hosted endpoint rejects anything
  * larger; other providers get a generous cap that still keeps a long turn from growing without
  * bound, since every step resends every earlier tool result.
  */
 export function getStepRequestLimits(providerId: string): StepRequestLimits {
-  if (providerId === "athas") {
+  if (providerId === "blimy") {
     return {
-      maxMessages: HOSTED_ATHAS_REQUEST_LIMITS.maxMessages,
-      maxBytes: HOSTED_ATHAS_REQUEST_LIMITS.maxBytes,
+      maxMessages: HOSTED_BLIMY_REQUEST_LIMITS.maxMessages,
+      maxBytes: HOSTED_BLIMY_REQUEST_LIMITS.maxBytes,
     };
   }
   return { maxMessages: 1_000, maxBytes: 600_000 };

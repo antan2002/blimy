@@ -57,7 +57,7 @@ export default function StandaloneContentWindow() {
 
   return (
     <DetachedWindowShell
-      title={buffer?.name ?? "Athas"}
+      title={buffer?.name ?? "Blimy"}
       error={error ?? (!request ? "This window has no content to show." : null)}
       runtime={ready ? <TerminalHost /> : null}
     >

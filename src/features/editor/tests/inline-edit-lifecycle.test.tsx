@@ -359,12 +359,12 @@ describe("Inline edit request ownership", () => {
 describe("Inline edit model", () => {
   it("shows the connection it runs on and saves a new choice for inline edit only", async () => {
     expect(picker.props?.value).toEqual({ providerId: "openai", modelId: "test-model" });
-    await act(async () => picker.props?.onChange({ providerId: "athas", modelId: "auto" }));
+    await act(async () => picker.props?.onChange({ providerId: "blimy", modelId: "auto" }));
     expect(useIntelligenceSettingsStore.getState().preferences.tasks["inline-edit"]).toEqual({
-      providerId: "athas",
+      providerId: "blimy",
       modelId: "auto",
     });
-    expect(picker.props?.value).toEqual({ providerId: "athas", modelId: "auto" });
+    expect(picker.props?.value).toEqual({ providerId: "blimy", modelId: "auto" });
     await act(async () => picker.props?.onChange(null));
     expect(
       useIntelligenceSettingsStore.getState().preferences.tasks["inline-edit"],

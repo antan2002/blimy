@@ -44,7 +44,7 @@ export function useModelSearchResults() {
 export const ModelResultsProvider = ModelResultsContext;
 
 /**
- * The providers a model menu offers besides Athas: every one the user connected, plus the one
+ * The providers a model menu offers besides Blimy: every one the user connected, plus the one
  * currently selected so an existing choice never disappears from its own menu.
  */
 export function useConnectedModelProviders(selectedProviderIds: string[] = []) {
@@ -52,7 +52,7 @@ export function useConnectedModelProviders(selectedProviderIds: string[] = []) {
   const providerKeys = useAIChatStore((state) => state.providerApiKeys);
   return providers.filter(
     (provider) =>
-      provider.id !== "athas" &&
+      provider.id !== "blimy" &&
       (selectedProviderIds.includes(provider.id) || providerKeys.get(provider.id)),
   );
 }
@@ -99,7 +99,7 @@ interface ModelSectionProps {
 }
 
 function joinTooltip(parts: (string | null | undefined)[]) {
-  return parts.filter(Boolean).join(" · ");
+  return parts.filter(Boolean).join(" Â· ");
 }
 
 /**
@@ -143,7 +143,7 @@ export function ModelSection({
       {showStatus && loading ? (
         <DropdownMenuItem disabled>
           <Spinner label={`Loading ${label} models`} compact />
-          Loading…
+          Loadingâ€¦
         </DropdownMenuItem>
       ) : null}
       {showStatus && !loading && error ? (
@@ -180,7 +180,7 @@ export function ModelSection({
   );
 }
 
-function toAthasOption(model: {
+function toBlimyOption(model: {
   id: string;
   name: string;
   contextWindow?: number;
@@ -191,7 +191,7 @@ function toAthasOption(model: {
     return {
       id: model.id,
       name: model.name,
-      tooltip: joinTooltip([model.name, "Athas picks the model for each request"]),
+      tooltip: joinTooltip([model.name, "Blimy picks the model for each request"]),
     };
   const vendor = getModelVendorName(model.id);
   const price = getHostedModelPriceHint(model);
@@ -209,11 +209,11 @@ function toAthasOption(model: {
 }
 
 /**
- * The Athas catalog as two sections: a short "Recommended" pick (hidden while searching, since
- * every pick also sits in the full list) and "Athas" with every hosted model. Recommended only
- * shows while the catalog is reachable, which is what having Athas access looks like here.
+ * The Blimy catalog as two sections: a short "Recommended" pick (hidden while searching, since
+ * every pick also sits in the full list) and "Blimy" with every hosted model. Recommended only
+ * shows while the catalog is reachable, which is what having Blimy access looks like here.
  */
-export function AthasModelSections({
+export function BlimyModelSections({
   selected,
   search,
   onSelect,
@@ -223,11 +223,11 @@ export function AthasModelSections({
   onSelect: (model: string) => void;
 }) {
   const { availableModels, isLoadingModels, modelFetchError, retry } = useAIModelOptions(
-    "athas",
+    "blimy",
     selected || "auto",
   );
-  const catalog = useAIChatStore((state) => state.dynamicModels.athas);
-  const models = (catalog ?? availableModels).map(toAthasOption);
+  const catalog = useAIChatStore((state) => state.dynamicModels.blimy);
+  const models = (catalog ?? availableModels).map(toBlimyOption);
   const recommended = modelFetchError ? [] : pickRecommendedModels(models);
 
   return (
@@ -239,17 +239,17 @@ export function AthasModelSections({
           models={recommended}
           selected={selected}
           onSelect={onSelect}
-          providerId="athas"
+          providerId="blimy"
           search={search}
         />
       ) : null}
       <ModelSection
-        id="athas"
-        label="Athas"
+        id="blimy"
+        label="Blimy"
         models={models}
         selected={selected}
         onSelect={onSelect}
-        providerId="athas"
+        providerId="blimy"
         search={search}
         loading={isLoadingModels}
         error={modelFetchError}

@@ -8,7 +8,7 @@ import Tooltip from "@/ui/tooltip";
 import { cn } from "@/utils/cn";
 import { defaultEmojiPickerOptions, emojiLabels } from "@/utils/emoji-catalog";
 
-const RECENT_EMOJI_STORAGE_KEY = "athas.ui.emoji-picker.recent";
+const RECENT_EMOJI_STORAGE_KEY = "blimy.ui.emoji-picker.recent";
 const MAX_RECENT_EMOJIS = 8;
 
 interface EmojiPickerProps {

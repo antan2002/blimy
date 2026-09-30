@@ -47,7 +47,7 @@ describe("Local AI connections", () => {
     expect(isLocalAiProvider("ollama", { ...settings, ollamaBaseUrl: "https://ollama.com" })).toBe(
       false,
     );
-    expect(isLocalAiProvider("athas", settings)).toBe(false);
+    expect(isLocalAiProvider("blimy", settings)).toBe(false);
     expect(isLocalAiProvider("openai", settings)).toBe(false);
   });
 
@@ -68,14 +68,14 @@ describe("Local AI connections", () => {
       ),
     ).toEqual({ providerId: "ollama", modelId: "qwen3-coder" });
     expect(
-      getLocalChatConnection({ agentId: "custom", providerId: "athas", modelId: "auto" }, settings),
+      getLocalChatConnection({ agentId: "custom", providerId: "blimy", modelId: "auto" }, settings),
     ).toBeNull();
     expect(
       getLocalChatConnection({ agentId: "claude-code", providerId: "ollama" }, settings),
     ).toBeNull();
   });
 
-  it("routes automatic tasks to a local default instead of hosted Athas", () => {
+  it("routes automatic tasks to a local default instead of hosted Blimy", () => {
     const personalConnection = { providerId: "ollama", modelId: "qwen3-coder" };
     for (const task of ["agent", "chat-title", "commit-message"] as const) {
       expect(
@@ -104,7 +104,7 @@ describe("Tab completion connection", () => {
   const ollama = { providerId: "ollama", modelId: "qwen3-coder" };
   const isLocalProvider = (providerId: string) => providerId === "ollama";
 
-  it("uses the Athas Tab model on Automatic instead of following the default model", () => {
+  it("uses the Blimy Tab model on Automatic instead of following the default model", () => {
     const preferences = defaultIntelligencePreferences();
     preferences.defaultConnection = openai;
     expect(
@@ -114,10 +114,10 @@ describe("Tab completion connection", () => {
         personalConnection: openai,
         isLocalProvider,
       }),
-    ).toEqual({ providerId: "athas", modelId: "auto" });
+    ).toEqual({ providerId: "blimy", modelId: "auto" });
   });
 
-  it("stays off Athas when the default model is local", () => {
+  it("stays off Blimy when the default model is local", () => {
     const preferences = defaultIntelligencePreferences();
     preferences.defaultConnection = ollama;
     expect(
@@ -154,7 +154,7 @@ describe("Tab completion connection", () => {
     ).toEqual(ollama);
   });
 
-  it("falls back to the user's own-key default without Athas access", () => {
+  it("falls back to the user's own-key default without Blimy access", () => {
     expect(
       resolveAutocompleteConnection({
         preferences: defaultIntelligencePreferences(),
@@ -170,7 +170,7 @@ describe("Tab completion connection", () => {
       resolveAutocompleteConnection({
         preferences: defaultIntelligencePreferences(),
         hasIntelligence: false,
-        personalConnection: { providerId: "athas", modelId: "auto" },
+        personalConnection: { providerId: "blimy", modelId: "auto" },
         isLocalProvider,
       }),
     ).toBeNull();
@@ -189,7 +189,7 @@ describe("Tab completion connection", () => {
       }),
     ).toEqual(openai);
 
-    preferences.tasks.autocomplete = { providerId: "athas", modelId: "" };
+    preferences.tasks.autocomplete = { providerId: "blimy", modelId: "" };
     expect(
       resolveAutocompleteConnection({
         preferences,
@@ -197,6 +197,6 @@ describe("Tab completion connection", () => {
         personalConnection: ollama,
         isLocalProvider,
       }),
-    ).toEqual({ providerId: "athas", modelId: "auto" });
+    ).toEqual({ providerId: "blimy", modelId: "auto" });
   });
 });

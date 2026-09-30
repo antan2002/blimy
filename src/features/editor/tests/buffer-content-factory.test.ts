@@ -44,15 +44,15 @@ describe("createPaneContent integration surfaces", () => {
   it("creates a tab-addressable page for one integration", () => {
     const content = createPaneContent("extension", {
       type: "extension",
-      extensionId: "athas.typescript",
+      extensionId: "blimy.typescript",
       name: "TypeScript",
     });
 
     expect(content).toMatchObject({
       type: "extension",
-      extensionId: "athas.typescript",
+      extensionId: "blimy.typescript",
       name: "TypeScript",
-      path: "extension://athas.typescript",
+      path: "extension://blimy.typescript",
       isPreview: false,
     });
   });
@@ -75,14 +75,14 @@ describe("createPaneContent custom view surfaces", () => {
   it("creates a project-scoped setup tab", () => {
     const content = createPaneContent("new-view", {
       type: "customView",
-      projectPath: "/projects/athas",
+      projectPath: "/projects/blimy",
     });
 
     expect(content).toMatchObject({
       type: "customView",
       name: "New Custom View",
-      path: "view://create/%2Fprojects%2Fathas",
-      projectPath: "/projects/athas",
+      path: "view://create/%2Fprojects%2Fblimy",
+      projectPath: "/projects/blimy",
       viewId: undefined,
       isPreview: false,
     });
@@ -91,7 +91,7 @@ describe("createPaneContent custom view surfaces", () => {
   it("creates a stable tab for a saved view", () => {
     const content = createPaneContent("release-view", {
       type: "customView",
-      projectPath: "/projects/athas",
+      projectPath: "/projects/blimy",
       viewId: "release-downloads",
       name: "Release downloads",
     });
@@ -99,8 +99,8 @@ describe("createPaneContent custom view surfaces", () => {
     expect(content).toMatchObject({
       type: "customView",
       name: "Release downloads",
-      path: "view://%2Fprojects%2Fathas/release-downloads",
-      projectPath: "/projects/athas",
+      path: "view://%2Fprojects%2Fblimy/release-downloads",
+      projectPath: "/projects/blimy",
       viewId: "release-downloads",
       isPreview: false,
     });

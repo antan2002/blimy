@@ -20,7 +20,7 @@ const run = (overrides: Partial<WorkflowRunListItem>): WorkflowRunListItem => ({
   workflowId: 5,
   actor: null,
   headCommitMessage: null,
-  url: "https://github.com/athasdev/athas/actions/runs/1",
+  url: "https://github.com/blimydev/blimy/actions/runs/1",
   headBranch: "main",
   headSha: "bb423c6",
   ...overrides,

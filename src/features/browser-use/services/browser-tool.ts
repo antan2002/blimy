@@ -1,6 +1,6 @@
 import { authenticatedFetch } from "@/features/window/services/auth-api";
 
-export const ATHAS_BROWSER_TOOL = "athas_browser";
+export const BLIMY_BROWSER_TOOL = "blimy_browser";
 
 export async function runHostedBrowserTool(args: unknown, callId: string) {
   try {
@@ -26,7 +26,7 @@ export async function runHostedBrowserTool(args: unknown, callId: string) {
     });
     const result = await response.json();
     if (!response.ok)
-      throw new Error(result.error || "Athas Browser could not complete this task.");
+      throw new Error(result.error || "Blimy Browser could not complete this task.");
     return {
       success: true,
       contentItems: [{ type: "inputText" as const, text: JSON.stringify(result) }],
@@ -37,7 +37,7 @@ export async function runHostedBrowserTool(args: unknown, callId: string) {
       contentItems: [
         {
           type: "inputText" as const,
-          text: error instanceof Error ? error.message : "Athas Browser is unavailable.",
+          text: error instanceof Error ? error.message : "Blimy Browser is unavailable.",
         },
       ],
     };
