@@ -1,6 +1,6 @@
 {
-  "productName": "Athas Smoke",
-  "identifier": "com.code.athas.smoke",
+  "productName": "Blimy Smoke",
+  "identifier": "dev.blimy.editor.smoke",
   "bundle": {
     "createUpdaterArtifacts": false,
     "resources": null,
@@ -11,11 +11,13 @@
   "plugins": {
     "deep-link": {
       "desktop": {
-        "schemes": ["athas-smoke"]
+        "schemes": ["blimy-smoke"]
       }
     },
     "updater": {
-      "active": false
+      "active": false,
+      "endpoints": [],
+      "dialog": false
     }
   }
 }

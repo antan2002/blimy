@@ -52,9 +52,6 @@
       "identifier": "http:default",
       "allow": [
         {
-          "url": "https://athas.dev/**"
-        },
-        {
           "url": "https://api.openai.com/**"
         },
         {

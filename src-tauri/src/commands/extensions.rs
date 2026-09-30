@@ -42,7 +42,11 @@ fn validate_extension_entrypoint(entrypoint: &str) -> Result<(), String> {
 }
 
 fn is_allowed_extension_host(host: &str) -> bool {
-   host == "athas.dev" || host.ends_with(".athas.dev")
+   // No extension CDN host is configured yet. Blimy ships without a domain, so
+   // release builds reject every remote host. Add the CDN host here when one
+   // exists, and keep localhost working for development.
+   let _ = host;
+   false
 }
 
 fn validate_extension_download_url(input: &str) -> Result<(), String> {
@@ -335,11 +339,13 @@ mod tests {
    }
 
    #[test]
-   fn test_validate_extension_download_url_accepts_expected_hosts() {
-      assert!(validate_extension_download_url("https://athas.dev/extensions/test.tar.gz").is_ok());
-      assert!(
-         validate_extension_download_url("https://cdn.athas.dev/extensions/test.tar.gz").is_ok()
-      );
+   fn test_validate_extension_download_url_rejects_release_hosts_without_a_cdn() {
+      // Blimy has no CDN host configured, so release builds reject every
+      // remote host. Development still allows localhost over http.
+      if !cfg!(debug_assertions) {
+         assert!(validate_extension_download_url("https://example.com/extensions/test.tar.gz").is_err());
+         assert!(validate_extension_download_url("https://example.invalid/test.tar.gz").is_err());
+      }
 
       if cfg!(debug_assertions) {
          assert!(validate_extension_download_url("http://localhost:3000/test.tar.gz").is_ok());
@@ -347,14 +353,8 @@ mod tests {
    }
 
    #[test]
-   fn test_is_allowed_extension_host_rejects_suffix_spoofing() {
-      assert!(is_allowed_extension_host("athas.dev"));
-      assert!(is_allowed_extension_host("cdn.athas.dev"));
-      assert!(is_allowed_extension_host("a.b.athas.dev"));
-      // Suffix-match spoofing attempts must be rejected.
-      assert!(!is_allowed_extension_host("evilathas.dev"));
-      assert!(!is_allowed_extension_host("athas.dev.attacker.example"));
-      assert!(!is_allowed_extension_host("not-athas.dev"));
+   fn test_is_allowed_extension_host_accepts_nothing_until_a_cdn_exists() {
+      assert!(!is_allowed_extension_host("example.com"));
       assert!(!is_allowed_extension_host(""));
    }
 }
