@@ -1,5 +1,5 @@
 [package]
-name = "athas-lsp"
+name = "blimy-lsp"
 version = "0.1.0"
 edition = "2024"
 
@@ -10,7 +10,7 @@ linux = ["tauri/cef"]
 
 [dependencies]
 anyhow = "1.0"
-athas-runtime = { path = "../runtime" }
+blimy-runtime = { path = "../runtime" }
 crossbeam-channel = "0.5"
 log = "0.4"
 lsp-types = { version = "0.95", features = ["proposed"] }

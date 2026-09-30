@@ -3,7 +3,7 @@ use super::{
    auth::ACP_AUTHENTICATE_TIMEOUT,
    types::{AcpAuthMethod, AcpEvent, AcpTurnUsage, StopReason},
 };
-use crate::runtime::AthasAppHandle as AppHandle;
+use crate::runtime::BlimyAppHandle as AppHandle;
 use agent_client_protocol::schema::v1 as acp;
 use anyhow::{Context, Result, bail};
 use std::{sync::Arc, time::Duration};

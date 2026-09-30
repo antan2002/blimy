@@ -265,7 +265,7 @@ mod tests {
    #[test]
    fn rejects_missing_workspace_path() {
       let missing =
-         std::env::temp_dir().join(format!("athas-missing-workspace-{}", uuid::Uuid::new_v4()));
+         std::env::temp_dir().join(format!("blimy-missing-workspace-{}", uuid::Uuid::new_v4()));
 
       let err = resolve_workspace_path(Some(path_to_string(&missing))).unwrap_err();
       assert!(err.to_string().contains("Workspace path does not exist"));

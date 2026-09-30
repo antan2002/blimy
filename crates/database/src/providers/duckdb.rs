@@ -423,7 +423,7 @@ mod tests {
    #[tokio::test]
    async fn reads_duckdb_tables_views_and_indexes() {
       let path = std::env::temp_dir().join(format!(
-         "athas-duckdb-objects-{}.duckdb",
+         "blimy-duckdb-objects-{}.duckdb",
          std::time::SystemTime::now()
             .duration_since(std::time::UNIX_EPOCH)
             .unwrap()

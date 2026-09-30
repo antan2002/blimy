@@ -1171,7 +1171,7 @@ mod tests {
       index.write().expect("write index");
       let tree_id = index.write_tree().expect("write tree");
       let tree = repo.find_tree(tree_id).expect("find tree");
-      let signature = git2::Signature::now("Athas", "athas@example.com").expect("signature");
+      let signature = git2::Signature::now("Athas", "blimy@example.com").expect("signature");
       let commit_id = repo
          .commit(Some("HEAD"), &signature, &signature, "first", &tree, &[])
          .expect("commit");

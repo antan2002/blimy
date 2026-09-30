@@ -1,7 +1,7 @@
 use super::types::{AgentConfig, AgentSource};
 use crate::{
    executable_path::{find_executable, probe_command},
-   runtime::AthasAppHandle as AppHandle,
+   runtime::BlimyAppHandle as AppHandle,
 };
 use semver::Version;
 use std::{

@@ -1,6 +1,6 @@
-# Contributing to Athas
+# Contributing to Blimy
 
-Thank you for contributing to Athas! Please check existing issues and pull requests before creating new ones.
+Thank you for contributing to Blimy! Please check existing issues and pull requests before creating new ones.
 
 ## Setup
 

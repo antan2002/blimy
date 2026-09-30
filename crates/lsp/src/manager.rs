@@ -3,7 +3,7 @@ use super::{
    config::{LspRegistry, LspSettings},
    manager_state::{LspInstance, WorkspaceClients},
    manager_support,
-   runtime::AthasAppHandle as AppHandle,
+   runtime::BlimyAppHandle as AppHandle,
    utils,
 };
 use anyhow::{Context, Result, bail};
@@ -712,7 +712,7 @@ impl LspManager {
             Ok(Ok(None)) => {}
             Ok(Err(error)) => {
                // One server not supporting workspace/symbol (or any other per-server
-               // error) must not fail the whole call — just skip that server's results.
+               // error) must not fail the whole call: just skip that server's results.
                log::warn!("workspace/symbol request failed for one server: {error}");
             }
             Err(join_error) => {

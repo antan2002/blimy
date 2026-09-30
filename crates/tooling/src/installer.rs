@@ -1,5 +1,5 @@
-use crate::{ToolConfig, ToolError, ToolRuntime, platform, runtime::AthasAppHandle as AppHandle};
-use athas_runtime::{
+use crate::{ToolConfig, ToolError, ToolRuntime, platform, runtime::BlimyAppHandle as AppHandle};
+use blimy_runtime::{
    NodeRuntime, RuntimeManager, RuntimeType, process::configure_background_command,
 };
 use flate2::read::GzDecoder;

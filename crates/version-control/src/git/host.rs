@@ -29,10 +29,10 @@ pub enum RepositoryHost {
 
 impl RepositoryHost {
    pub fn detect(path: &str) -> Self {
-      if let Some(location) = athas_wsl::parse_wsl_location(path) {
-         let native_path = if athas_wsl::is_wsl_path(path) {
+      if let Some(location) = blimy_wsl::parse_wsl_location(path) {
+         let native_path = if blimy_wsl::is_wsl_path(path) {
             PathBuf::from(
-               athas_wsl::wsl_uri_to_windows_unc(path).unwrap_or_else(|_| path.to_string()),
+               blimy_wsl::wsl_uri_to_windows_unc(path).unwrap_or_else(|_| path.to_string()),
             )
          } else {
             PathBuf::from(path)
@@ -72,7 +72,7 @@ impl RepositoryHost {
    pub fn uses_distro_git(&self) -> bool {
       match self {
          Self::Local { .. } => false,
-         Self::Wsl { distro, .. } => athas_wsl::git_available(distro),
+         Self::Wsl { distro, .. } => blimy_wsl::git_available(distro),
       }
    }
 
@@ -169,7 +169,7 @@ impl GitCommand {
    pub fn argument_path(&self, path: &str) -> String {
       match &self.runner {
          GitRunner::Host { .. } => path.to_string(),
-         GitRunner::Distro { distro, .. } => athas_wsl::linux_argument_path(distro, path),
+         GitRunner::Distro { distro, .. } => blimy_wsl::linux_argument_path(distro, path),
       }
    }
 
@@ -222,10 +222,10 @@ impl GitCommand {
             command
          }
          GitRunner::Distro { distro, linux_path } => {
-            let mut command = athas_wsl::exec_command(distro);
+            let mut command = blimy_wsl::exec_command(distro);
             command.arg("git").arg("-C").arg(linux_path);
             for (key, value) in &self.envs {
-               athas_wsl::forward_env(&mut command, key, value);
+               blimy_wsl::forward_env(&mut command, key, value);
             }
             command.args(&self.args);
             command

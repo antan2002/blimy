@@ -1,40 +1,40 @@
 [package]
-name = "athas-database"
+name = "blimy-database"
 version = "0.1.0"
 edition = "2024"
 
 [lib]
-name = "athas_database"
+name = "blimy_database"
 path = "src/lib.rs"
 
 [[bin]]
-name = "athas-db-sqlite"
-path = "src/bin/athas-db-sqlite.rs"
+name = "blimy-db-sqlite"
+path = "src/bin/blimy-db-sqlite.rs"
 required-features = ["sqlite"]
 
 [[bin]]
-name = "athas-db-duckdb"
-path = "src/bin/athas-db-duckdb.rs"
+name = "blimy-db-duckdb"
+path = "src/bin/blimy-db-duckdb.rs"
 required-features = ["duckdb"]
 
 [[bin]]
-name = "athas-db-postgres"
-path = "src/bin/athas-db-postgres.rs"
+name = "blimy-db-postgres"
+path = "src/bin/blimy-db-postgres.rs"
 required-features = ["postgres"]
 
 [[bin]]
-name = "athas-db-mysql"
-path = "src/bin/athas-db-mysql.rs"
+name = "blimy-db-mysql"
+path = "src/bin/blimy-db-mysql.rs"
 required-features = ["mysql"]
 
 [[bin]]
-name = "athas-db-mongodb"
-path = "src/bin/athas-db-mongodb.rs"
+name = "blimy-db-mongodb"
+path = "src/bin/blimy-db-mongodb.rs"
 required-features = ["mongodb"]
 
 [[bin]]
-name = "athas-db-redis"
-path = "src/bin/athas-db-redis.rs"
+name = "blimy-db-redis"
+path = "src/bin/blimy-db-redis.rs"
 required-features = ["redis"]
 
 [features]

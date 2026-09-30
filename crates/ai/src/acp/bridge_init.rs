@@ -17,13 +17,13 @@ use super::{
    },
    workspace_path::{self, path_to_string},
 };
-use crate::{executable_path::find_executable, runtime::AthasAppHandle as AppHandle};
+use crate::{executable_path::find_executable, runtime::BlimyAppHandle as AppHandle};
 use agent_client_protocol::{
    self as acp_sdk,
    schema::{ProtocolVersion, v1 as acp},
 };
 use anyhow::{Result, bail};
-use athas_terminal::TerminalManager;
+use blimy_terminal::TerminalManager;
 use serde_json::json;
 use std::{
    collections::VecDeque,
@@ -491,11 +491,11 @@ fn relevant_agent_stderr(lines: &VecDeque<String>) -> Option<String> {
 fn client_capabilities() -> acp::ClientCapabilities {
    let mut client_meta = acp::Meta::new();
    client_meta.insert(
-      "athas.dev".to_string(),
+      "blimy.dev".to_string(),
       json!({
          "extensionMethods": [
-            { "name": "_athas/open_terminal", "description": "Open a terminal tab in Athas", "params": { "command": "string|null" } },
-            { "name": "_athas/set_chat_title", "description": "Rename the active Athas chat title", "params": { "title": "string" } }
+            { "name": "_blimy/open_terminal", "description": "Open a terminal tab in Athas", "params": { "command": "string|null" } },
+            { "name": "_blimy/set_chat_title", "description": "Rename the active Athas chat title", "params": { "title": "string" } }
          ]
       }),
    );
@@ -532,7 +532,7 @@ fn client_capabilities() -> acp::ClientCapabilities {
 async fn initialize_connection(connection: Arc<AcpConnection>) -> Result<acp::InitializeResponse> {
    let init_request = acp::InitializeRequest::new(SUPPORTED_PROTOCOL_VERSION)
       .client_capabilities(client_capabilities())
-      .client_info(acp::Implementation::new("athas", env!("CARGO_PKG_VERSION")).title("Athas"));
+      .client_info(acp::Implementation::new("blimy", env!("CARGO_PKG_VERSION")).title("Athas"));
 
    // A first run through `npx` downloads the agent before it can answer, so initialize gets
    // longer than the other startup steps. Stop ends startup at any point.

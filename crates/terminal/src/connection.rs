@@ -192,7 +192,7 @@ impl TerminalConnection {
          || config
             .working_directory
             .as_deref()
-            .is_some_and(|path| !athas_wsl::is_wsl_path(path));
+            .is_some_and(|path| !blimy_wsl::is_wsl_path(path));
 
       if let Some(working_dir) = &config.working_directory
          && should_set_host_cwd
@@ -213,7 +213,7 @@ impl TerminalConnection {
       // Then override with terminal-specific environment variables
       cmd.env("TERM", "xterm-256color");
       cmd.env("COLORTERM", "truecolor");
-      cmd.env("TERM_PROGRAM", "athas");
+      cmd.env("TERM_PROGRAM", "blimy");
       cmd.env(
          "TERM_PROGRAM_VERSION",
          config
@@ -364,19 +364,19 @@ impl TerminalConnection {
       let mut args = Vec::new();
       let mut distribution = config.wsl_distribution.clone().or_else(|| {
          shell_id
-            .and_then(athas_wsl::parse_wsl_shell_id)
+            .and_then(blimy_wsl::parse_wsl_shell_id)
             .map(str::to_string)
       });
       let mut working_directory = config.wsl_working_directory.clone();
 
       if let Some(working_dir) = config.working_directory.as_deref() {
-         if athas_wsl::is_wsl_path(working_dir) {
-            if let Ok(parsed) = athas_wsl::parse_wsl_uri(working_dir) {
+         if blimy_wsl::is_wsl_path(working_dir) {
+            if let Ok(parsed) = blimy_wsl::parse_wsl_uri(working_dir) {
                distribution = Some(parsed.distro);
                working_directory = Some(parsed.linux_path);
             }
          } else if working_directory.is_none() {
-            working_directory = athas_wsl::windows_path_to_wsl_path(working_dir);
+            working_directory = blimy_wsl::windows_path_to_wsl_path(working_dir);
          }
       }
 
@@ -395,7 +395,7 @@ impl TerminalConnection {
 
    fn is_wsl_shell(shell_id: Option<&str>, shell_path: Option<&str>) -> bool {
       if shell_id.is_some_and(|id| {
-         id.eq_ignore_ascii_case("wsl") || athas_wsl::parse_wsl_shell_id(id).is_some()
+         id.eq_ignore_ascii_case("wsl") || blimy_wsl::parse_wsl_shell_id(id).is_some()
       }) {
          true
       } else {
@@ -437,7 +437,7 @@ impl TerminalConnection {
       } else if shell_id.eq_ignore_ascii_case("nu") {
          Some("nu.exe")
       } else if shell_id.eq_ignore_ascii_case("wsl")
-         || athas_wsl::parse_wsl_shell_id(shell_id).is_some()
+         || blimy_wsl::parse_wsl_shell_id(shell_id).is_some()
       {
          Some("wsl.exe")
       } else if shell_id.eq_ignore_ascii_case("bash") {
@@ -779,7 +779,7 @@ mod tests {
       let mut config = config_with_env(HashMap::new());
       config.command = None;
       config.shell = Some("bash".to_string());
-      let working_directory = std::env::temp_dir().join("athas-git-bash-terminal-test");
+      let working_directory = std::env::temp_dir().join("blimy-git-bash-terminal-test");
       std::fs::create_dir_all(&working_directory).unwrap();
       config.working_directory = Some(working_directory.to_string_lossy().into_owned());
 

@@ -23,20 +23,20 @@ const SCRIPTS: &[(&str, &str)] = &[
       include_str!("../shell-integration/zsh/zlogin"),
    ),
    (
-      "zsh/athas-shell-integration.zsh",
-      include_str!("../shell-integration/zsh/athas-shell-integration.zsh"),
+      "zsh/blimy-shell-integration.zsh",
+      include_str!("../shell-integration/zsh/blimy-shell-integration.zsh"),
    ),
    (
-      "bash/athas-shell-integration.bash",
-      include_str!("../shell-integration/bash/athas-shell-integration.bash"),
+      "bash/blimy-shell-integration.bash",
+      include_str!("../shell-integration/bash/blimy-shell-integration.bash"),
    ),
    (
-      "fish/fish/vendor_conf.d/athas-shell-integration.fish",
-      include_str!("../shell-integration/fish/fish/vendor_conf.d/athas-shell-integration.fish"),
+      "fish/fish/vendor_conf.d/blimy-shell-integration.fish",
+      include_str!("../shell-integration/fish/fish/vendor_conf.d/blimy-shell-integration.fish"),
    ),
    (
-      "powershell/athas-shell-integration.ps1",
-      include_str!("../shell-integration/powershell/athas-shell-integration.ps1"),
+      "powershell/blimy-shell-integration.ps1",
+      include_str!("../shell-integration/powershell/blimy-shell-integration.ps1"),
    ),
 ];
 
@@ -86,7 +86,7 @@ pub(crate) fn apply_shell_integration(
       "pwsh" | "powershell" => {
          let script = integration_dir
             .join("powershell")
-            .join("athas-shell-integration.ps1");
+            .join("blimy-shell-integration.ps1");
          if !script.is_file() {
             return false;
          }
@@ -112,7 +112,7 @@ pub(crate) fn apply_shell_integration(
       "bash" => {
          let script = integration_dir
             .join("bash")
-            .join("athas-shell-integration.bash");
+            .join("blimy-shell-integration.bash");
          if !script.is_file() {
             return false;
          }
@@ -142,7 +142,7 @@ pub(crate) fn apply_shell_integration(
    };
 
    if applied {
-      cmd.env("ATHAS_SHELL_INTEGRATION", "1");
+      cmd.env("BLIMY_SHELL_INTEGRATION", "1");
    }
 
    applied
@@ -162,7 +162,7 @@ mod tests {
 
    fn install_dir() -> PathBuf {
       let base = std::env::temp_dir().join(format!(
-         "athas-shell-integration-test-{}",
+         "blimy-shell-integration-test-{}",
          std::process::id()
       ));
       ensure_shell_integration_dir(&base).unwrap()
@@ -182,14 +182,14 @@ mod tests {
       assert!(zshrc.is_file());
       assert!(
          dir.join("bash")
-            .join("athas-shell-integration.bash")
+            .join("blimy-shell-integration.bash")
             .is_file()
       );
       assert!(
          dir.join("fish")
             .join("fish")
             .join("vendor_conf.d")
-            .join("athas-shell-integration.fish")
+            .join("blimy-shell-integration.fish")
             .is_file()
       );
 
@@ -199,7 +199,7 @@ mod tests {
       assert!(
          fs::read_to_string(&zshrc)
             .unwrap()
-            .contains("athas-shell-integration.zsh")
+            .contains("blimy-shell-integration.zsh")
       );
    }
 
@@ -223,7 +223,7 @@ mod tests {
          Some(OsStr::new("/home/me/.config/zsh"))
       );
       assert_eq!(
-         cmd.get_env("ATHAS_SHELL_INTEGRATION"),
+         cmd.get_env("BLIMY_SHELL_INTEGRATION"),
          Some(OsStr::new("1"))
       );
    }
@@ -246,7 +246,7 @@ mod tests {
             "/bin/bash".to_string(),
             "--init-file".to_string(),
             dir.join("bash")
-               .join("athas-shell-integration.bash")
+               .join("blimy-shell-integration.bash")
                .to_string_lossy()
                .into_owned(),
          ]
@@ -292,7 +292,7 @@ mod tests {
             "bash.exe".to_string(),
             "--init-file".to_string(),
             dir.join("bash")
-               .join("athas-shell-integration.bash")
+               .join("blimy-shell-integration.bash")
                .to_string_lossy()
                .into_owned(),
          ]
@@ -323,13 +323,13 @@ mod tests {
             format!(
                ". '{}'",
                dir.join("powershell")
-                  .join("athas-shell-integration.ps1")
+                  .join("blimy-shell-integration.ps1")
                   .display()
             ),
          ]
       );
       assert_eq!(
-         cmd.get_env("ATHAS_SHELL_INTEGRATION"),
+         cmd.get_env("BLIMY_SHELL_INTEGRATION"),
          Some(OsStr::new("1"))
       );
    }
@@ -345,7 +345,7 @@ mod tests {
          Some("/usr/bin/nu"),
          &HashMap::new()
       ));
-      assert!(cmd.get_env("ATHAS_SHELL_INTEGRATION").is_none());
+      assert!(cmd.get_env("BLIMY_SHELL_INTEGRATION").is_none());
 
       let mut cmd = CommandBuilder::new("/bin/zsh");
       let missing = dir.join("missing");

@@ -214,10 +214,10 @@ impl Shell {
          ];
 
          if wsl_executable.is_some()
-            && let Ok(distributions) = athas_wsl::list_distributions()
+            && let Ok(distributions) = blimy_wsl::list_distributions()
          {
             shells.extend(distributions.into_iter().map(|distribution| Shell {
-               id: athas_wsl::wsl_shell_id(&distribution.name),
+               id: blimy_wsl::wsl_shell_id(&distribution.name),
                name: format!("WSL: {}", distribution.name),
                exec_win: wsl_executable.clone(),
                exec_unix: None,
@@ -299,7 +299,7 @@ mod tests {
    #[test]
    fn shell_exe_in_path_for_test_finds_executable_in_path_entries() {
       let test_dir = std::env::temp_dir().join(format!(
-         "athas-shell-test-{}",
+         "blimy-shell-test-{}",
          SystemTime::now()
             .duration_since(UNIX_EPOCH)
             .unwrap()

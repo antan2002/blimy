@@ -4,7 +4,7 @@
 //! event. An exit sends the output still waiting first, so the chat never sees them reversed.
 
 use super::{terminal_state::TerminalChange, types::AcpEvent};
-use crate::runtime::AthasAppHandle as AppHandle;
+use crate::runtime::BlimyAppHandle as AppHandle;
 use std::{
    collections::HashMap,
    sync::{Arc, Mutex},
