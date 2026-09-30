@@ -39,7 +39,7 @@ fn main() -> io::Result<()> {
 
 fn draw_probe(output: &mut impl Write) -> io::Result<()> {
    let (rows, cols, pixel_width, pixel_height) = terminal_size();
-   writeln!(output, "Athas terminal compatibility probe")?;
+   writeln!(output, "blimy terminal compatibility probe")?;
    writeln!(
       output,
       "grid: {cols}x{rows}, pixels: {pixel_width}x{pixel_height}"

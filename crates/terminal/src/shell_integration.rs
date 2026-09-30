@@ -104,7 +104,7 @@ pub(crate) fn apply_shell_integration(
             return false;
          }
          if let Some(user_zdotdir) = lookup("ZDOTDIR").or_else(|| lookup("HOME")) {
-            cmd.env("ATHAS_USER_ZDOTDIR", user_zdotdir);
+            cmd.env("blimy_USER_ZDOTDIR", user_zdotdir);
          }
          cmd.env("ZDOTDIR", &zsh_dir);
          true
@@ -121,7 +121,7 @@ pub(crate) fn apply_shell_integration(
          // Git Bash on Windows normally starts as a login shell, which would
          // ignore --init-file; the script sources the login profile instead.
          if cfg!(target_os = "windows") {
-            cmd.env("ATHAS_SHELL_LOGIN", "1");
+            cmd.env("blimy_SHELL_LOGIN", "1");
          }
          true
       }
@@ -219,7 +219,7 @@ mod tests {
       ));
       assert_eq!(cmd.get_env("ZDOTDIR"), Some(dir.join("zsh").as_os_str()));
       assert_eq!(
-         cmd.get_env("ATHAS_USER_ZDOTDIR"),
+         cmd.get_env("blimy_USER_ZDOTDIR"),
          Some(OsStr::new("/home/me/.config/zsh"))
       );
       assert_eq!(
@@ -298,7 +298,7 @@ mod tests {
          ]
       );
       assert_eq!(
-         cmd.get_env("ATHAS_SHELL_LOGIN").is_some(),
+         cmd.get_env("blimy_SHELL_LOGIN").is_some(),
          cfg!(target_os = "windows")
       );
    }
