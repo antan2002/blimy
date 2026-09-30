@@ -21,7 +21,7 @@ export function ReleaseEditor({
   onCancel?: () => void;
 }) {
   const fieldId = useId();
-  const draftKey = `athas:release-draft:${JSON.stringify([repoPath, release?.id ?? "new"])}`;
+  const draftKey = `blimy:release-draft:${JSON.stringify([repoPath, release?.id ?? "new"])}`;
   const [input, setInput] = useState<ReleaseInput>(() => {
     const initial = {
       tag_name: release?.tag_name ?? "",

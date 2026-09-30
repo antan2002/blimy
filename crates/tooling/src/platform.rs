@@ -24,7 +24,7 @@ pub fn detect_linux_libc() -> LinuxLibc {
       return LinuxLibc::Unknown;
    }
 
-   if let Ok(override_value) = std::env::var("ATHAS_LINUX_LIBC") {
+   if let Ok(override_value) = std::env::var("BLIMY_LINUX_LIBC") {
       match override_value.to_ascii_lowercase().as_str() {
          "musl" => return LinuxLibc::Musl,
          "gnu" | "glibc" => return LinuxLibc::Gnu,

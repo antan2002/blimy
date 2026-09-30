@@ -1,11 +1,11 @@
 {
-  "name": "Athas",
-  "author": "Athas Team",
-  "description": "Athas theme family with calm neutral surfaces and sky accents",
+  "name": "Blimy",
+  "author": "Blimy Team",
+  "description": "Blimy theme family with calm neutral surfaces and sky accents",
   "themes": [
     {
-      "id": "athas-light",
-      "name": "Athas Light",
+      "id": "blimy-light",
+      "name": "Blimy Light",
       "description": "White editor on soft neutral chrome, with a deep sky accent",
       "appearance": "light",
       "colors": {
@@ -71,8 +71,8 @@
       }
     },
     {
-      "id": "athas-dark",
-      "name": "Athas Dark",
+      "id": "blimy-dark",
+      "name": "Blimy Dark",
       "description": "Charcoal editor on darker chrome, with a bright sky accent",
       "appearance": "dark",
       "colors": {

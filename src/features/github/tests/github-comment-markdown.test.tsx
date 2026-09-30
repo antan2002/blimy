@@ -31,7 +31,7 @@ async function render(content: string) {
     root.render(
       <GitHubMarkdown
         content={content}
-        repositoryUrl="https://github.com/athasdev/athas"
+        repositoryUrl="https://github.com/antan2002/blimy"
         className="github-markdown-pr"
       />,
     ),

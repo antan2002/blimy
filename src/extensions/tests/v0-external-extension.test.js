@@ -49,12 +49,12 @@ describe("external v0 extension", () => {
       description: "Product UI",
     });
     expect(storage.get("designSystems")).toHaveLength(1);
-    expect(commands.has("athas.ai.v0.openDesignSystems")).toBe(true);
+    expect(commands.has("Blimy.ai.v0.openDesignSystems")).toBe(true);
 
     const payload = providers[0].buildPayload({
       modelId: "v0-pro",
       messages: [
-        { role: "system", content: "You are Athas Agent." },
+        { role: "system", content: "You are Blimy Agent." },
         { role: "user", content: "Create a dashboard." },
         { role: "assistant", content: "I can do that." },
         { role: "user", content: "Make it compact." },
@@ -69,7 +69,7 @@ describe("external v0 extension", () => {
     });
     expect(providers[0].getSystemPromptContext()).toContain("Product UI");
 
-    await commands.get("athas.ai.v0.selectProfile")?.("");
+    await commands.get("Blimy.ai.v0.selectProfile")?.("");
     expect(api.settings.set).toHaveBeenCalledWith("activeV0DesignSystemId", "");
   });
 });

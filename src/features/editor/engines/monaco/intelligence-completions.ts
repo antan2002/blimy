@@ -19,7 +19,7 @@ import {
   getModelFilePath,
   getNearbyDiagnostics,
   getRecentEdits,
-  isAthasEditorModel,
+  isBlimyEditorModel,
   recordRecentEdit,
   SENSITIVE_FILE_PATTERN,
 } from "./intelligence-completion-context";
@@ -29,8 +29,8 @@ const notifiedPauseReasons = new Set<IntelligenceCompletionPauseReason>();
 
 const PAUSE_NOTICES: Record<IntelligenceCompletionPauseReason, string> = {
   credits:
-    "Tab autocomplete is paused: there is no Athas AI credit left. Pro includes $10 of Athas AI every month, then pay as you go at list price +10%.",
-  "sign-in": "Tab autocomplete is paused. Sign in to use Athas AI.",
+    "Tab autocomplete is paused: there is no Blimy AI credit left. Pro includes $10 of Blimy AI every month, then pay as you go at list price +10%.",
+  "sign-in": "Tab autocomplete is paused. Sign in to use Blimy AI.",
   "api-key": "Tab autocomplete is paused because the selected provider needs an API key.",
   policy: "Tab autocomplete is disabled by your organization.",
   model: "Tab autocomplete is paused until you choose a model for it in Settings.",
@@ -39,7 +39,7 @@ const PAUSE_NOTICES: Record<IntelligenceCompletionPauseReason, string> = {
 function getPauseReason(error: InlineEditError): IntelligenceCompletionPauseReason | null {
   if (error.status === 401) return error.hosted ? "sign-in" : "api-key";
   if (error.status === 402) return error.hosted ? "credits" : "api-key";
-  // Only Athas enforces organization policy; a provider's own 403 is an ordinary failure.
+  // Only Blimy enforces organization policy; a provider's own 403 is an ordinary failure.
   if (error.status === 403 && error.hosted) return "policy";
   return null;
 }
@@ -86,7 +86,7 @@ export function trimSuffixOverlap(completion: string, suffix: string) {
 
 export function createIntelligenceCompletionsProvider(): Monaco.languages.InlineCompletionsProvider {
   return {
-    displayName: "Athas AI",
+    displayName: "Blimy AI",
     debounceDelayMs: 350,
     async provideInlineCompletions(model, position, context, token) {
       if (
@@ -94,7 +94,7 @@ export function createIntelligenceCompletionsProvider(): Monaco.languages.Inline
         context.selectedSuggestionInfo ||
         !useSettingsStore.getState().settings.aiCompletion ||
         useIntelligenceCompletionStore.getState().status.kind === "paused" ||
-        !isAthasEditorModel(model) ||
+        !isBlimyEditorModel(model) ||
         !editor
           .getEditors()
           .some(
@@ -195,7 +195,7 @@ export function createIntelligenceCompletionsProvider(): Monaco.languages.Inline
 }
 
 function trackRecentEdits(model: Monaco.editor.ITextModel) {
-  if (!isAthasEditorModel(model)) return;
+  if (!isBlimyEditorModel(model)) return;
   const subscription = model.onDidChangeContent((event) => {
     if (!event.isFlush) recordRecentEdit(model, event.changes);
   });
@@ -206,7 +206,7 @@ export function registerIntelligenceCompletions() {
   if (registered) return;
   registered = true;
   languages.registerInlineCompletionsProvider(
-    { scheme: "athas", pattern: "**/*" },
+    { scheme: "Blimy", pattern: "**/*" },
     createIntelligenceCompletionsProvider(),
   );
   for (const model of editor.getModels()) trackRecentEdits(model);

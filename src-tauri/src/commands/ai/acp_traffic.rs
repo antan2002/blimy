@@ -1,7 +1,7 @@
 //! Commands behind the ACP inspector: each agent process's recorded JSON-RPC and stderr lines.
 
 use super::acp::AcpBridgeState;
-use athas_ai::acp::{
+use BLIMY_ai::acp::{
    TrafficInspector,
    traffic::{TrafficBacklog, TrafficProcess},
 };

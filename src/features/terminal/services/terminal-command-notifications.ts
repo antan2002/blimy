@@ -1,5 +1,5 @@
 import { isPermissionGranted, sendNotification } from "@tauri-apps/plugin-notification";
-import { isAnyAthasWindowFocused } from "@/features/ai/services/agent-native-notifications";
+import { isAnyBlimyWindowFocused } from "@/features/ai/services/agent-native-notifications";
 import { useNotificationsStore } from "@/features/notifications/stores/notifications.store";
 import type {
   NotificationType,
@@ -55,7 +55,7 @@ interface TerminalCommandNotifierDependencies {
     message: string;
     description?: string;
     type: NotificationType;
-    category: "athas";
+    category: "Blimy";
   }) => void;
   isAppFocused: () => Promise<boolean>;
   isPermissionGranted: () => Promise<boolean>;
@@ -84,7 +84,7 @@ export function createTerminalCommandNotifier(dependencies: TerminalCommandNotif
     const notification = describeTerminalCommandCompletion(event.terminalName, event.command);
     const id = `terminal-command:${event.terminalId}:${event.command.finishedAt}`;
 
-    dependencies.record({ id, category: "athas", ...notification });
+    dependencies.record({ id, category: "Blimy", ...notification });
     dependencies.showToast({
       key: id,
       ...notification,
@@ -107,7 +107,7 @@ export const notifyTerminalCommandFinished = createTerminalCommandNotifier({
   isEnabled: () => true,
   showToast: (value) => showToast(value),
   record: (notification) => useNotificationsStore.getState().actions.record(notification),
-  isAppFocused: isAnyAthasWindowFocused,
+  isAppFocused: isAnyBlimyWindowFocused,
   isPermissionGranted,
-  sendNative: ({ title, body }) => sendNotification({ title, body, group: "athas-terminal" }),
+  sendNative: ({ title, body }) => sendNotification({ title, body, group: "Blimy-terminal" }),
 });

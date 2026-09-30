@@ -24,9 +24,9 @@ describe("Docker registry controller", () => {
     const current = state({
       draft: {
         registry: "registry.example.com",
-        username: "athas",
+        username: "Blimy",
         password: "secret",
-        image: "athas/app:latest",
+        image: "Blimy/app:latest",
         target: "",
       },
     });
@@ -35,16 +35,16 @@ describe("Docker registry controller", () => {
       dockerRegistryReducer(current, {
         type: "set-draft-field",
         field: "target",
-        value: "athas/app:stable",
+        value: "Blimy/app:stable",
       }).draft,
     ).toEqual({
       ...current.draft,
-      target: "athas/app:stable",
+      target: "Blimy/app:stable",
     });
   });
 
   it("preserves previous results while a new search is running", () => {
-    const results = [result("athas/app")];
+    const results = [result("Blimy/app")];
     const started = dockerRegistryReducer(
       state({ results, error: "previous search failed", output: "Pulled image." }),
       { type: "search-started" },
@@ -59,7 +59,7 @@ describe("Docker registry controller", () => {
   });
 
   it("replaces successful search results and clears stale results on failure", () => {
-    const results = [result("athas/app")];
+    const results = [result("Blimy/app")];
     const succeeded = dockerRegistryReducer(state({ isBusy: true }), {
       type: "search-succeeded",
       results,

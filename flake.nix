@@ -1,5 +1,5 @@
 {
-  description = "Athas development environment";
+  description = "Blimy development environment";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/1c3fe55ad329cbcb28471bb30f05c9827f724c76";
@@ -31,21 +31,21 @@
           };
         in
         let
-          athas = pkgs.callPackage ./nix/package.nix { };
+          Blimy = pkgs.callPackage ./nix/package.nix { };
         in
         {
           devShells.default = pkgs.callPackage ./nix/dev-shell.nix { };
 
           packages = {
-            default = athas;
-            athas = athas;
+            default = Blimy;
+            Blimy = Blimy;
           };
 
           apps.default = {
             type = "app";
-            program = "${athas}/bin/athas";
+            program = "${Blimy}/bin/Blimy";
             meta = {
-              description = "Run the Athas editor (prebuilt Linux release)";
+              description = "Run the Blimy editor (prebuilt Linux release)";
             };
           };
         }

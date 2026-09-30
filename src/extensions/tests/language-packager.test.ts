@@ -11,12 +11,12 @@ describe("language-packager asset URL resolution", () => {
     const manifests = getPackagedLanguageExtensions();
 
     expect(manifests.length).toBeGreaterThan(40);
-    expect(manifests.some((manifest) => manifest.id === "athas.rust")).toBe(true);
-    expect(manifests.some((manifest) => manifest.id === "athas.html")).toBe(true);
+    expect(manifests.some((manifest) => manifest.id === "Blimy.rust")).toBe(true);
+    expect(manifests.some((manifest) => manifest.id === "Blimy.html")).toBe(true);
   });
 
   it("preserves Java language server initialization settings", () => {
-    const java = getPackagedLanguageExtensions().find((manifest) => manifest.id === "athas.java");
+    const java = getPackagedLanguageExtensions().find((manifest) => manifest.id === "Blimy.java");
 
     expect(java?.lsp?.initializationOptions).toMatchObject({
       settings: {

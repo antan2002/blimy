@@ -47,8 +47,8 @@ export function CustomThemeCreatorDialog({
 }: CustomThemeCreatorDialogProps) {
   const fallbackTheme = themes[0];
   const initialBaseTheme = themeRegistry.getTheme(baseThemeId) ?? fallbackTheme;
-  const [name, setName] = useState("My Athas Theme");
-  const [id, setId] = useState("my-athas-theme");
+  const [name, setName] = useState("My Blimy Theme");
+  const [id, setId] = useState("my-Blimy-theme");
   const [idEdited, setIdEdited] = useState(false);
   const [selectedBaseThemeId, setSelectedBaseThemeId] = useState(
     initialBaseTheme?.id ?? baseThemeId,
@@ -111,9 +111,9 @@ export function CustomThemeCreatorDialog({
     setIsSaving(true);
     try {
       const targetPath = await save({
-        defaultPath: `${themeFile.themes[0]?.id || "athas-theme"}.json`,
+        defaultPath: `${themeFile.themes[0]?.id || "Blimy-theme"}.json`,
         filters: [
-          { name: "Athas theme", extensions: ["json"] },
+          { name: "Blimy theme", extensions: ["json"] },
           { name: "All files", extensions: ["*"] },
         ],
       });

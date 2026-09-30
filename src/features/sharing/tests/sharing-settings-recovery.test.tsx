@@ -17,7 +17,7 @@ vi.mock("@/features/layout/contexts/toast-context", () => ({
 }));
 vi.mock("@tauri-apps/plugin-opener", () => ({ openUrl: vi.fn() }));
 vi.mock("@/config/services", () => ({
-  getServiceUrls: () => ({ websiteBaseUrl: "https://athas.dev" }),
+  getServiceUrls: () => ({ websiteBaseUrl: "https://Blimy.dev" }),
 }));
 vi.mock("@/features/keymaps/hooks/use-command-shortcut", () => ({
   useCommandShortcut: () => undefined,
@@ -78,7 +78,7 @@ describe("Sharing settings recovery", () => {
   it("copies locally with success feedback and no sharing refresh", async () => {
     await act(async () => root.render(<SharingSettings />));
     await act(async () => button("Copy link").click());
-    expect(api.copy).toHaveBeenCalledWith("https://athas.dev/s/link-1");
+    expect(api.copy).toHaveBeenCalledWith("https://Blimy.dev/s/link-1");
     expect(api.toast).toHaveBeenCalledWith({ message: "Link copied", type: "success" });
     expect(api.options).toHaveBeenCalledTimes(1);
   });

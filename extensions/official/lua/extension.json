@@ -1,11 +1,11 @@
 {
-  "$schema": "https://athas.dev/schemas/extension.json",
-  "id": "athas.lua",
+  "$schema": "https://Blimy.dev/schemas/extension.json",
+  "id": "Blimy.lua",
   "name": "Lua",
   "displayName": "Lua",
   "version": "1.0.0",
   "description": "Lua language support with LSP",
-  "publisher": "Athas",
+  "publisher": "Blimy",
   "categories": ["Language"],
   "languages": [
     {
@@ -18,7 +18,7 @@
     "lsp": {
       "name": "lua-language-server",
       "runtime": "binary",
-      "downloadUrl": "https://athas.dev/extensions/packages/lua/lua-${os}-${arch}.tar.gz"
+      "downloadUrl": "https://Blimy.dev/extensions/packages/lua/lua-${os}-${arch}.tar.gz"
     },
     "formatter": {
       "name": "stylua",

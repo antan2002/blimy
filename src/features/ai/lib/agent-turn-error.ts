@@ -44,8 +44,8 @@ function describeHostedBillingFailure(
         title: "Included credit used up",
         message:
           walletBalanceCents && walletBalanceCents > 0
-            ? `Your included Athas credit is used up and your pay-as-you-go balance (${formatUsdCents(walletBalanceCents)}) doesn't cover this request. Add credit to continue, or choose another model.`
-            : "Your included Athas credit for this month is used up. Add pay-as-you-go credit to keep going, or choose another model.",
+            ? `Your included Blimy credit is used up and your pay-as-you-go balance (${formatUsdCents(walletBalanceCents)}) doesn't cover this request. Add credit to continue, or choose another model.`
+            : "Your included Blimy credit for this month is used up. Add pay-as-you-go credit to keep going, or choose another model.",
       };
     case "insufficient_balance":
       return {
@@ -57,13 +57,13 @@ function describeHostedBillingFailure(
       return {
         title: "Spending limit reached",
         message:
-          "You've reached the monthly spending limit set for Athas AI. Raise it in billing to continue, or choose another model.",
+          "You've reached the monthly spending limit set for Blimy AI. Raise it in billing to continue, or choose another model.",
       };
     case "entitlement_required":
       return {
         title: "Pro or credit required",
         message:
-          "Athas models need Pro or pay-as-you-go credit. Upgrade or add credit in billing to use them.",
+          "Blimy models need Pro or pay-as-you-go credit. Upgrade or add credit in billing to use them.",
       };
     default:
       return null;
@@ -94,8 +94,8 @@ export function describeAgentTurnFailure(input: {
   } else if (status === 401) {
     title = "Authentication Error";
     message =
-      providerId === "athas"
-        ? "Your Athas session has expired. Sign in to continue."
+      providerId === "Blimy"
+        ? "Your Blimy session has expired. Sign in to continue."
         : "The provider rejected your API key. Check its configuration to continue.";
   } else if (isRequestTooLarge({ code: serverCode, status })) {
     title = "Conversation too large";
@@ -103,7 +103,7 @@ export function describeAgentTurnFailure(input: {
       "This conversation is too large for one request. Start a new chat, or remove attached files and long pasted text.";
   } else if (status === 402) {
     const billing =
-      providerId === "athas"
+      providerId === "Blimy"
         ? describeHostedBillingFailure(serverCode, parsed.walletBalanceCents)
         : null;
     explainedBilling = billing !== null;

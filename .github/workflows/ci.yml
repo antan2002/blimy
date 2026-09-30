@@ -13,7 +13,7 @@ concurrency:
 
 jobs:
   bun:
-    if: github.repository == 'athasdev/athas'
+    if: github.repository == 'antan2002/blimy'
     name: Bun — typecheck, frontend check
     runs-on: ubuntu-latest
     steps:
@@ -38,7 +38,7 @@ jobs:
         run: bash scripts/check/frontend.sh
 
   rust:
-    if: github.repository == 'athasdev/athas'
+    if: github.repository == 'antan2002/blimy'
     name: Rust — fmt, check, clippy, test
     runs-on: ubuntu-latest
     env:
@@ -64,7 +64,7 @@ jobs:
         run: bash scripts/check/rust.sh
 
   audit:
-    if: github.repository == 'athasdev/athas'
+    if: github.repository == 'antan2002/blimy'
     name: Audit — cargo audit, bun audit
     runs-on: ubuntu-latest
     steps:

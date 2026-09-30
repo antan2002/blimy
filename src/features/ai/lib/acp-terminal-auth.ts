@@ -11,7 +11,7 @@ export interface AcpTerminalAuthExit {
 }
 
 /**
- * Runs an agent's terminal sign-in in a new Athas terminal tab, where the user completes it.
+ * Runs an agent's terminal sign-in in a new Blimy terminal tab, where the user completes it.
  * The command runs directly, not through the shell, so its exit status is the sign-in result.
  * Resolves when it exits or its tab is closed first, or with null when `signal` aborts the wait.
  */

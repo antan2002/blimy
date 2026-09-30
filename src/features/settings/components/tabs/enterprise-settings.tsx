@@ -155,7 +155,7 @@ export const EnterpriseSettings = () => {
               onChange={(event) => setAllowlistInput(event.target.value)}
               rows={8}
               font="mono"
-              placeholder="athas.typescript&#10;athas.python&#10;athas.go"
+              placeholder="Blimy.typescript&#10;Blimy.python&#10;Blimy.go"
               disabled={!isAdmin || isSaving || !policy.managedMode}
             />
             <FieldDescription>One per line, or comma-separated.</FieldDescription>

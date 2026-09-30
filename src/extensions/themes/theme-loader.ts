@@ -1,6 +1,6 @@
 // Import all theme JSON files
 import ayuThemes from "./builtin/ayu.json";
-import athasThemes from "./builtin/athas.json";
+import BlimyThemes from "./builtin/Blimy.json";
 import catppuccinThemes from "./builtin/catppuccin.json";
 import christmasThemes from "./builtin/christmas.json";
 import contrastThemes from "./builtin/contrast-themes.json";
@@ -31,7 +31,7 @@ class ThemeLoader {
       // Combine all theme files
       const allThemeFiles: ThemeFile[] = [
         ayuThemes as ThemeFile,
-        athasThemes as ThemeFile,
+        BlimyThemes as ThemeFile,
         catppuccinThemes as ThemeFile,
         christmasThemes as ThemeFile,
         contrastThemes as ThemeFile,

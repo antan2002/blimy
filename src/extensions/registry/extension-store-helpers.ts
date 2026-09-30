@@ -8,7 +8,7 @@ import {
   matchesLanguageContribution,
 } from "../types/extension-contributions";
 
-const HIDDEN_MARKETPLACE_EXTENSION_IDS = new Set(["athas.tsx"]);
+const HIDDEN_MARKETPLACE_EXTENSION_IDS = new Set(["Blimy.tsx"]);
 
 const normalizeExtensionId = (value: string) => value.trim().toLowerCase();
 
@@ -32,8 +32,8 @@ export function mergeMarketplaceLanguageExtensions(
     (manifest) => !HIDDEN_MARKETPLACE_EXTENSION_IDS.has(manifest.id),
   );
 
-  const typescript = visibleExtensions.find((manifest) => manifest.id === "athas.typescript");
-  const tsx = extensions.find((manifest) => manifest.id === "athas.tsx");
+  const typescript = visibleExtensions.find((manifest) => manifest.id === "Blimy.typescript");
+  const tsx = extensions.find((manifest) => manifest.id === "Blimy.tsx");
 
   const tsxLanguages = tsx ? getManifestLanguageContributions(tsx) : [];
   if (!typescript || !tsx || tsxLanguages.length === 0) {

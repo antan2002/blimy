@@ -2,7 +2,7 @@ import { DEFAULT_MONO_FONT_FAMILY } from "@/features/settings/config/typography-
 import { EDITOR_CONSTANTS } from "../config/constants";
 import type { Position } from "../types/editor.types";
 
-const EDITOR_FONT_METRICS_READY_EVENT = "athas:editor-font-metrics-ready";
+const EDITOR_FONT_METRICS_READY_EVENT = "blimy:editor-font-metrics-ready";
 
 export const calculateCursorPositionFromContent = (offset: number, content: string): Position => {
   const clampedOffset = Math.max(0, Math.min(offset, content.length));

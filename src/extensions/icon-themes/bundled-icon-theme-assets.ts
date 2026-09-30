@@ -5,7 +5,7 @@ const BUNDLED_ICON_THEME_ASSETS = import.meta.glob("../bundled/icon-themes/pierr
 }) as Record<string, string>;
 
 const BUNDLED_ICON_THEME_DIRECTORIES: Record<string, string> = {
-  "athas.icon-theme.pierre": "pierre",
+  "Blimy.icon-theme.pierre": "pierre",
 };
 
 export function resolveBundledIconThemeAsset(

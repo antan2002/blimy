@@ -1,17 +1,17 @@
 {
-  "$schema": "https://athas.dev/schemas/extension.json",
-  "id": "athas.database.redis",
+  "$schema": "https://Blimy.dev/schemas/extension.json",
+  "id": "Blimy.database.redis",
   "name": "Redis",
   "displayName": "Redis Provider",
   "version": "1.0.0",
   "description": "Redis connection, key scanning, and value editing provider.",
-  "publisher": "Athas",
+  "publisher": "Blimy",
   "categories": ["Database"],
   "activationEvents": ["onDatabase:redis"],
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/athasdev/athas/tree/master/extensions/official/redis"
+    "url": "https://github.com/antan2002/blimy/tree/master/extensions/official/redis"
   },
   "icon": "icon.svg",
   "databases": [
@@ -22,11 +22,11 @@
       "protocolVersion": 1,
       "defaultPort": 6379,
       "sidecar": {
-        "darwin-arm64": "bin/athas-db-redis",
-        "darwin-x64": "bin/athas-db-redis",
-        "linux-arm64": "bin/athas-db-redis",
-        "linux-x64": "bin/athas-db-redis",
-        "win32-x64": "bin/athas-db-redis.exe"
+        "darwin-arm64": "bin/Blimy-db-redis",
+        "darwin-x64": "bin/Blimy-db-redis",
+        "linux-arm64": "bin/Blimy-db-redis",
+        "linux-x64": "bin/Blimy-db-redis",
+        "win32-x64": "bin/Blimy-db-redis.exe"
       }
     }
   ]

@@ -253,10 +253,10 @@ describe("buffer preview pane integration", () => {
     const { useBufferStore } = await import("../stores/buffer.store");
     const bufferActions = useBufferStore.getState().actions;
 
-    const typescriptId = bufferActions.openExtensionBuffer("athas.typescript", "TypeScript");
-    const rustId = bufferActions.openExtensionBuffer("athas.rust", "Rust");
+    const typescriptId = bufferActions.openExtensionBuffer("Blimy.typescript", "TypeScript");
+    const rustId = bufferActions.openExtensionBuffer("Blimy.rust", "Rust");
     const reopenedTypescriptId = bufferActions.openExtensionBuffer(
-      "athas.typescript",
+      "Blimy.typescript",
       "TypeScript Language Support",
     );
 
@@ -268,16 +268,16 @@ describe("buffer preview pane integration", () => {
         expect.objectContaining({
           id: typescriptId,
           type: "extension",
-          extensionId: "athas.typescript",
+          extensionId: "Blimy.typescript",
           name: "TypeScript Language Support",
-          path: "extension://athas.typescript",
+          path: "extension://Blimy.typescript",
         }),
         expect.objectContaining({
           id: rustId,
           type: "extension",
-          extensionId: "athas.rust",
+          extensionId: "Blimy.rust",
           name: "Rust",
-          path: "extension://athas.rust",
+          path: "extension://Blimy.rust",
         }),
       ]),
     );

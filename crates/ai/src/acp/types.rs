@@ -279,7 +279,7 @@ pub struct AgentConfig {
    pub install_download_url: Option<String>,
    pub install_command: Option<String>,
    pub can_install: bool,
-   /// Where the agent's entry comes from: an Athas extension manifest, or only the ACP Registry.
+   /// Where the agent's entry comes from: an Blimy extension manifest, or only the ACP Registry.
    #[serde(default)]
    pub source: AgentSource,
    /// The agent's ACP Registry entry, when the registry lists it.
@@ -290,10 +290,10 @@ pub struct AgentConfig {
 #[derive(Debug, Clone, Copy, Default, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "lowercase")]
 pub enum AgentSource {
-   /// Athas ships a manifest for the agent; a copy on PATH is detected by its binary name.
+   /// Blimy ships a manifest for the agent; a copy on PATH is detected by its binary name.
    #[default]
    Extension,
-   /// Only the ACP Registry lists the agent; it runs only from Athas's own install.
+   /// Only the ACP Registry lists the agent; it runs only from Blimy's own install.
    Registry,
 }
 
@@ -308,7 +308,7 @@ pub struct RegistryAgentInfo {
    pub authors: Vec<String>,
    pub license: Option<String>,
    pub license_url: Option<String>,
-   /// `binary`, `npx` or `uvx`: what Athas installs on this machine.
+   /// `binary`, `npx` or `uvx`: what Blimy installs on this machine.
    pub distribution: Option<String>,
    /// Installs and updates come from the registry rather than the extension manifest.
    pub installs_from_registry: bool,
@@ -413,13 +413,13 @@ pub struct AcpOpenedSession {
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "snake_case")]
 pub enum AcpAuthMethodKind {
-   /// The agent signs in itself when Athas calls `authenticate` with the method id.
+   /// The agent signs in itself when Blimy calls `authenticate` with the method id.
    Agent,
    /// The user signs in by running a command in a terminal; `authenticate` is never called.
    Terminal,
 }
 
-/// The command a terminal sign-in method runs, ready to start in an Athas terminal.
+/// The command a terminal sign-in method runs, ready to start in an Blimy terminal.
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "camelCase")]
 pub struct AcpTerminalAuthLaunch {
@@ -478,7 +478,7 @@ pub enum UiAction {
    /// Open a terminal with an optional command
    #[serde(rename_all = "camelCase")]
    OpenTerminal { command: Option<String> },
-   /// Set the active Athas chat title
+   /// Set the active Blimy chat title
    #[serde(rename_all = "camelCase")]
    SetChatTitle { title: String },
 }
@@ -616,7 +616,7 @@ pub enum AcpEvent {
       output: Option<serde_json::Value>,
       error: Option<String>,
    },
-   /// A terminal whose output a tool call shows: one Athas runs for the agent
+   /// A terminal whose output a tool call shows: one Blimy runs for the agent
    /// (`terminal/create`), or, with `display_only`, one the agent runs itself and streams
    /// through tool call `_meta`.
    #[serde(rename_all = "camelCase")]
@@ -692,7 +692,7 @@ pub enum AcpEvent {
       status: AcpAgentStatus,
       error: Option<String>,
    },
-   /// The agent needs the user to sign in and Athas will not pick a method on its own. The
+   /// The agent needs the user to sign in and Blimy will not pick a method on its own. The
    /// session id is set when a prompt hit this; startup failures carry none.
    #[serde(rename_all = "camelCase")]
    AuthRequired {

@@ -387,7 +387,7 @@ export function SkillsCommand({
                 <div className="flex flex-col items-center gap-2 px-4 py-5">
                   <div>No published skills yet</div>
                   <div className="max-w-70 text-subtle-foreground">
-                    Published skills will appear here once the Athas skills registry is available.
+                    Published skills will appear here once the Blimy skills registry is available.
                   </div>
                 </div>
               </CommandEmpty>
@@ -464,7 +464,7 @@ export function SkillsCommand({
                   accessory={
                     <>
                       {skill.source === "marketplace" ? (
-                        <CommandItemBadge>Athas catalog</CommandItemBadge>
+                        <CommandItemBadge>Blimy catalog</CommandItemBadge>
                       ) : null}
                       {hasLocalOverride ? (
                         <CommandItemBadge>Local override</CommandItemBadge>

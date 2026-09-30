@@ -1,6 +1,6 @@
 import { parseDroppedPaths } from "./file-system-dropped-paths";
 
-export const TERMINAL_FILE_DROP_EVENT = "athas-terminal-file-drop";
+export const TERMINAL_FILE_DROP_EVENT = "Blimy-terminal-file-drop";
 
 export interface TerminalFileDropDetail {
   paths: string[];

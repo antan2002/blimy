@@ -74,7 +74,7 @@ export type ContinuousAgentRunResult =
 function launchErrorMessage(error: unknown) {
   if (error instanceof Error && error.message.trim()) return error.message;
   if (typeof error === "string" && error.trim()) return error;
-  return "Athas could not start this continuous agent.";
+  return "Blimy could not start this continuous agent.";
 }
 
 export async function runNextDueContinuousAgent(

@@ -1,57 +1,57 @@
 import { describe, expect, it } from "vite-plus/test";
-import athasThemes from "@/extensions/themes/builtin/athas.json";
+import BlimyThemes from "@/extensions/themes/builtin/Blimy.json";
 import {
-  getAthasDefaultColor,
-  getAthasDefaultCssVariables,
-  getAthasDefaultSyntaxColor,
-  getAthasDefaultSyntaxTokens,
-  getAthasDefaultTheme,
-  getRequiredAthasDefaultColor,
-  getRequiredAthasDefaultSyntaxColor,
+  getBlimyDefaultColor,
+  getBlimyDefaultCssVariables,
+  getBlimyDefaultSyntaxColor,
+  getBlimyDefaultSyntaxTokens,
+  getBlimyDefaultTheme,
+  getRequiredBlimyDefaultColor,
+  getRequiredBlimyDefaultSyntaxColor,
 } from "@/extensions/themes/default-theme";
 import type { ThemeFile } from "@/extensions/themes/theme-schema";
 
-const themeFile = athasThemes as ThemeFile;
+const themeFile = BlimyThemes as ThemeFile;
 
-describe("Athas default themes", () => {
-  it("uses bundled athas.json as the canonical default theme source", () => {
-    const bundledDark = themeFile.themes.find((theme) => theme.id === "athas-dark");
-    const bundledLight = themeFile.themes.find((theme) => theme.id === "athas-light");
+describe("Blimy default themes", () => {
+  it("uses bundled Blimy.json as the canonical default theme source", () => {
+    const bundledDark = themeFile.themes.find((theme) => theme.id === "blimy-dark");
+    const bundledLight = themeFile.themes.find((theme) => theme.id === "blimy-light");
 
-    expect(getAthasDefaultTheme("dark").colors).toEqual(bundledDark?.colors);
-    expect(getAthasDefaultTheme("light").syntax).toEqual(bundledLight?.syntax);
+    expect(getBlimyDefaultTheme("dark").colors).toEqual(bundledDark?.colors);
+    expect(getBlimyDefaultTheme("light").syntax).toEqual(bundledLight?.syntax);
   });
 
   it("builds prefixed CSS and syntax variables from the same defaults", () => {
-    expect(getAthasDefaultCssVariables("dark")["--background"]).toBe(
-      getAthasDefaultColor("dark", "background"),
+    expect(getBlimyDefaultCssVariables("dark")["--background"]).toBe(
+      getBlimyDefaultColor("dark", "background"),
     );
-    expect(getAthasDefaultSyntaxTokens("dark")["--syntax-keyword"]).toBe(
-      getAthasDefaultSyntaxColor("dark", "keyword"),
+    expect(getBlimyDefaultSyntaxTokens("dark")["--syntax-keyword"]).toBe(
+      getBlimyDefaultSyntaxColor("dark", "keyword"),
     );
   });
 
   it("requires bundled default color names to exist", () => {
-    expect(getRequiredAthasDefaultColor("dark", "terminal-bright-blue")).toBe(
-      getAthasDefaultColor("dark", "terminal-bright-blue"),
+    expect(getRequiredBlimyDefaultColor("dark", "terminal-bright-blue")).toBe(
+      getBlimyDefaultColor("dark", "terminal-bright-blue"),
     );
-    expect(getRequiredAthasDefaultSyntaxColor("light", "keyword")).toBe(
-      getAthasDefaultSyntaxColor("light", "keyword"),
+    expect(getRequiredBlimyDefaultSyntaxColor("light", "keyword")).toBe(
+      getBlimyDefaultSyntaxColor("light", "keyword"),
     );
-    expect(() => getRequiredAthasDefaultColor("dark", "missing-color")).toThrow(
-      "Missing Athas dark default color: missing-color",
+    expect(() => getRequiredBlimyDefaultColor("dark", "missing-color")).toThrow(
+      "Missing Blimy dark default color: missing-color",
     );
   });
 
   it("exposes canonical raw theme variables without runtime aliases", () => {
-    const definition = getAthasDefaultTheme("light").definition;
+    const definition = getBlimyDefaultTheme("light").definition;
 
     expect(definition.cssVariables["--background"]).toBe(
-      getAthasDefaultColor("light", "background"),
+      getBlimyDefaultColor("light", "background"),
     );
     expect(definition.cssVariables["--color-background"]).toBeUndefined();
     expect(definition.syntaxTokens?.["--syntax-keyword"]).toBe(
-      getAthasDefaultSyntaxColor("light", "keyword"),
+      getBlimyDefaultSyntaxColor("light", "keyword"),
     );
     expect(definition.syntaxTokens?.["--color-syntax-keyword"]).toBeUndefined();
   });

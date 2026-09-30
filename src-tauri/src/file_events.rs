@@ -1,4 +1,4 @@
-use athas_project::{FileChangeEmitter, FileChangeEvent};
+use BLIMY_project::{FileChangeEmitter, FileChangeEvent};
 use tauri::{AppHandle, Emitter, Runtime};
 
 pub struct TauriFileChangeEmitter<R: Runtime> {

@@ -59,7 +59,7 @@ struct SessionEntry {
 }
 
 /// Which connection holds each open ACP session, and whether a prompt turn runs in it. Session
-/// ids come from the agents; every agent Athas knows uses unique ids, so a session lives on one
+/// ids come from the agents; every agent Blimy knows uses unique ids, so a session lives on one
 /// connection at a time.
 #[derive(Debug, Default)]
 pub(super) struct SessionRegistry {

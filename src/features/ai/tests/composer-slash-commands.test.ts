@@ -27,7 +27,7 @@ const skill = {
 };
 
 describe("Composer slash commands", () => {
-  it("offers Athas commands and skills to the built-in agent", () => {
+  it("offers Blimy commands and skills to the built-in agent", () => {
     const names = mergeComposerSlashCommands({
       agentCommands: [],
       skills: [skill],

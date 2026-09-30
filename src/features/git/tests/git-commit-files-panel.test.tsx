@@ -7,7 +7,7 @@ const commit: GitCommit = {
   hash: "4fbe6911234567890",
   message: "Improve commit navigation",
   description: "Keep commit details in the sidebar and leave the editor focused on the diff.",
-  author: "Athas",
+  author: "Blimy",
   date: "2026-08-11T12:00:00.000Z",
 };
 
@@ -41,7 +41,7 @@ describe("GitCommitFilesPanel", () => {
     expect(markup).toContain("4fbe691");
     expect(markup).toContain("Improve commit navigation");
     expect(markup).toContain("Keep commit details in the sidebar");
-    expect(markup).toContain('aria-label="Athas"');
+    expect(markup).toContain('aria-label="Blimy"');
     expect(markup).toContain("1 changed file");
     expect(markup).toContain("git-view.tsx");
     expect(markup).toContain("+8");

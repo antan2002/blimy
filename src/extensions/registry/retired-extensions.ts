@@ -1,4 +1,4 @@
-const RETIRED_EXTENSION_IDS = new Set(["athas.theme.market"]);
+const RETIRED_EXTENSION_IDS = new Set(["Blimy.theme.market"]);
 
 export function isRetiredExtensionId(extensionId: string): boolean {
   return RETIRED_EXTENSION_IDS.has(extensionId);

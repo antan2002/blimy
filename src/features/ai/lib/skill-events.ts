@@ -1,6 +1,6 @@
 import type { AIChatSkill } from "@/features/ai/types/skills.types";
 
-export const AI_CHAT_INSERT_SKILL_EVENT = "athas-ai-insert-skill";
+export const AI_CHAT_INSERT_SKILL_EVENT = "Blimy-ai-insert-skill";
 
 export interface AIChatSkillInsertDetail {
   skill: AIChatSkill;

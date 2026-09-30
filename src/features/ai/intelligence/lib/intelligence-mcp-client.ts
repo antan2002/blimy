@@ -43,7 +43,7 @@ export class McpClient {
       {
         protocolVersion: MCP_PROTOCOL_VERSION,
         capabilities: {},
-        clientInfo: { name: "athas", version: "1" },
+        clientInfo: { name: "Blimy", version: "1" },
       },
       signal,
       timeoutMs,
@@ -151,7 +151,7 @@ export class McpClient {
             : {
                 jsonrpc: "2.0",
                 id: message.id,
-                error: { code: -32601, message: `Athas does not support ${message.method}` },
+                error: { code: -32601, message: `Blimy does not support ${message.method}` },
               },
         )
         .catch(() => {});

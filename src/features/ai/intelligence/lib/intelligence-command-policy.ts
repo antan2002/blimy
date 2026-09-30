@@ -1,5 +1,5 @@
 /**
- * Which shell commands Athas's own agent may run without asking. Only simple commands qualify:
+ * Which shell commands Blimy's own agent may run without asking. Only simple commands qualify:
  * one program with plain arguments, no pipes, redirects, substitutions, chaining, or variables,
  * so an approved prefix can never smuggle a second command along with it.
  */

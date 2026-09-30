@@ -1,11 +1,11 @@
 {
-  "$schema": "https://athas.dev/schemas/extension.json",
-  "id": "athas.objc",
+  "$schema": "https://Blimy.dev/schemas/extension.json",
+  "id": "Blimy.objc",
   "name": "ObjectiveC",
   "displayName": "Objective-C",
   "version": "1.0.0",
   "description": "Objective-C language support with LSP",
-  "publisher": "Athas",
+  "publisher": "Blimy",
   "categories": ["Language"],
   "languages": [
     {

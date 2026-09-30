@@ -5,7 +5,7 @@ vi.mock("@/utils/tauri-fetch", () => ({ tauriFetch: mocks.fetch }));
 vi.mock("@/features/window/services/auth-api", () => ({ getAuthToken: async () => "token" }));
 vi.mock("../intelligence/services/intelligence-connection", () => ({
   getIntelligenceConnection: async () => ({
-    providerId: "athas",
+    providerId: "Blimy",
     modelId: "",
     userId: null,
     scope: "personal",
@@ -101,7 +101,7 @@ describe("Hosted Intelligence text requests", () => {
 
   it("surfaces server errors with their status", async () => {
     mocks.fetch.mockResolvedValue(
-      jsonResponse({ error: "Athas AI needs Pro or pay-as-you-go balance." }, 402),
+      jsonResponse({ error: "Blimy AI needs Pro or pay-as-you-go balance." }, 402),
     );
     const error = await requestInlineEdit({
       model: "",

@@ -123,10 +123,10 @@ describe("agent native notifications", () => {
     ).resolves.toBe("sent");
     expect(dependencies.send).toHaveBeenCalledWith({
       title: "Agent needs your approval",
-      body: "Open Athas to review the request.",
-      group: "athas-agent",
+      body: "Open Blimy to review the request.",
+      group: "Blimy-agent",
       extra: {
-        athasRoute: "agent",
+        BlimyRoute: "agent",
         chatId: "chat-1",
       },
     });
@@ -145,7 +145,7 @@ describe("agent native notifications", () => {
     ).toEqual({
       id: "agent:permission:request-1",
       message: "Agent needs your approval",
-      description: "Open Athas to review the request.",
+      description: "Open Blimy to review the request.",
       type: "warning",
       category: "agent",
     });

@@ -30,7 +30,7 @@ export function createGeneratedExtensionManifest(
     displayName: extension.name,
     description: extension.description,
     version: "0.0.0",
-    publisher: "athas.generated",
+    publisher: "Blimy.generated",
     categories: ["UI"],
     main: "generated.js",
     permissions,

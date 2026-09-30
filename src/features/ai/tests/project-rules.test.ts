@@ -79,7 +79,7 @@ describe("project rules", () => {
       "/w/.cursor/rules/db.mdc":
         "---\ndescription: Database migrations\n---\nNever edit old migrations.",
       "/w/.cursor/rules/manual.mdc": "---\nalwaysApply: false\n---\nOnly when asked.",
-      "/w/.athas/rules/style.md": "Short commit titles.",
+      "/w/.Blimy/rules/style.md": "Short commit titles.",
     });
 
     const loaded = await loadProjectRules({
@@ -93,7 +93,7 @@ describe("project rules", () => {
       "user",
       "AGENTS.md",
       "src/features/AGENTS.md",
-      ".athas/rules/style.md",
+      ".Blimy/rules/style.md",
       ".cursor/rules/react.mdc",
     ]);
     expect(loaded.available.map((rule) => rule.path)).toEqual([".cursor/rules/db.mdc"]);
@@ -110,8 +110,8 @@ describe("project rules", () => {
   it("caps the total size of rules and names the files that were left out", async () => {
     const reader = memoryReader({
       "/w/AGENTS.md": "a".repeat(20_000),
-      "/w/.athas/rules/one.md": "b".repeat(20_000),
-      "/w/.athas/rules/two.md": "c".repeat(20_000),
+      "/w/.Blimy/rules/one.md": "b".repeat(20_000),
+      "/w/.Blimy/rules/two.md": "c".repeat(20_000),
     });
 
     const loaded = await loadProjectRules({ projectRoot: "/w", reader, maxTokens: 3_000 });
@@ -119,7 +119,7 @@ describe("project rules", () => {
     expect(loaded.truncated).toBe(true);
     expect(loaded.tokens).toBeLessThanOrEqual(3_100);
     expect(loaded.text).toContain("[truncated: showing about");
-    expect(loaded.text).toContain(".athas/rules/two.md");
+    expect(loaded.text).toContain(".Blimy/rules/two.md");
   });
 
   it("returns no text for a project without rules", async () => {

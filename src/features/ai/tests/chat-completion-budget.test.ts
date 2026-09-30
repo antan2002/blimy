@@ -21,16 +21,16 @@ describe("resolveChatCompletionTokenLimit", () => {
   });
 });
 
-describe("hosted Athas output budget", () => {
+describe("hosted Blimy output budget", () => {
   it("uses the catalog's output limit instead of the direct-provider cap", () => {
-    expect(resolveChatCompletionTokenLimit(64_000, "athas")).toBe(64_000);
-    expect(resolveChatCompletionTokenLimit(8_192.5, "athas")).toBe(8_192);
+    expect(resolveChatCompletionTokenLimit(64_000, "Blimy")).toBe(64_000);
+    expect(resolveChatCompletionTokenLimit(8_192.5, "Blimy")).toBe(8_192);
   });
 
   it("falls back to a generous budget the server lowers when the catalog is missing", () => {
-    expect(resolveChatCompletionTokenLimit(undefined, "athas")).toBe(
+    expect(resolveChatCompletionTokenLimit(undefined, "Blimy")).toBe(
       HOSTED_FALLBACK_COMPLETION_TOKENS,
     );
-    expect(resolveChatCompletionTokenLimit(0, "athas")).toBe(HOSTED_FALLBACK_COMPLETION_TOKENS);
+    expect(resolveChatCompletionTokenLimit(0, "Blimy")).toBe(HOSTED_FALLBACK_COMPLETION_TOKENS);
   });
 });

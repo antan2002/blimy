@@ -353,7 +353,7 @@ function Show-Summary {
 }
 
 function main {
-    Write-Status "Starting Athas Windows development environment setup..."
+    Write-Status "Starting Blimy Windows development environment setup..."
 
     if ($env:OS -ne "Windows_NT") {
         Write-Failure "This script is designed for Windows only."

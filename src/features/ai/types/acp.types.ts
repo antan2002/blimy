@@ -19,7 +19,7 @@ export interface AgentConfig {
   updateAvailable: boolean;
   managed: boolean;
   canInstall: boolean;
-  /** `extension` when Athas ships a manifest for the agent, `registry` when only the ACP Registry lists it. */
+  /** `extension` when Blimy ships a manifest for the agent, `registry` when only the ACP Registry lists it. */
   source?: "extension" | "registry";
   registry?: RegistryAgentInfo | null;
 }
@@ -33,7 +33,7 @@ export interface RegistryAgentInfo {
   authors: string[];
   license: string | null;
   licenseUrl: string | null;
-  /** What Athas installs here: a checksummed binary, an npm package, or a uvx package. */
+  /** What Blimy installs here: a checksummed binary, an npm package, or a uvx package. */
   distribution: "binary" | "npx" | "uvx" | null;
   installsFromRegistry: boolean;
   unavailableReason: string | null;
@@ -83,7 +83,7 @@ export interface AcpSessionState {
   usage: AcpUsageUpdate | null;
 }
 
-/** The command a terminal sign-in method runs in an Athas terminal. */
+/** The command a terminal sign-in method runs in an Blimy terminal. */
 export interface AcpTerminalAuthLaunch {
   label: string;
   command: string;

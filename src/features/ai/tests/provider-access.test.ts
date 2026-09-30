@@ -20,10 +20,10 @@ const subscription: SubscriptionInfo = {
 };
 
 describe("provider access", () => {
-  it("allows signed-in free users to access the prepaid Athas provider", () => {
+  it("allows signed-in free users to access the prepaid Blimy provider", () => {
     expect(
       canUseProviderWithoutApiKey({
-        providerId: "athas",
+        providerId: "Blimy",
         subscription: {
           ...subscription,
           status: "free",
@@ -35,7 +35,7 @@ describe("provider access", () => {
     ).toBe(true);
     expect(
       canUseProviderWithoutApiKey({
-        providerId: "athas",
+        providerId: "Blimy",
         subscription: null,
         hasStoredKey: false,
         requiresApiKey: false,
@@ -44,12 +44,12 @@ describe("provider access", () => {
   });
 
   it("keeps managed Intelligence separate from personal provider keys", () => {
-    expect(canUseIntelligenceProvider("athas", subscription)).toBe(true);
+    expect(canUseIntelligenceProvider("Blimy", subscription)).toBe(true);
     expect(canUseIntelligenceProvider("openrouter", subscription)).toBe(false);
     expect(canUseIntelligenceProvider("anthropic", subscription)).toBe(false);
   });
 
-  it("does not treat Pro as a provider credential for Athas Agent", () => {
+  it("does not treat Pro as a provider credential for Blimy Agent", () => {
     expect(
       canUseProviderWithoutApiKey({
         providerId: "openrouter",

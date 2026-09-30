@@ -5,8 +5,8 @@ import type {
   ViewTable,
 } from "@/features/views/types/view.types";
 
-const STORAGE_PREFIX = "athas-views:";
-const LEGACY_STORAGE_PREFIX = "athas-admin-data-sources:";
+const STORAGE_PREFIX = "Blimy-views:";
+const LEGACY_STORAGE_PREFIX = "Blimy-admin-data-sources:";
 
 type JsonRecord = Record<string, unknown>;
 type PathSegment = { type: "property"; value: string } | { type: "array"; index?: number };

@@ -281,9 +281,9 @@ const KILL_EXIT_WAIT: std::time::Duration = std::time::Duration::from_secs(2);
 /// How long an agent question waits for the user before it is cancelled.
 const ELICITATION_TIMEOUT: std::time::Duration = std::time::Duration::from_secs(600);
 
-/// Athas ACP Client implementation
+/// Blimy ACP Client implementation
 /// Handles requests from the agent (file access, terminals, permissions)
-pub struct AthasAcpClient {
+pub struct BlimyAcpClient {
    app_handle: AppHandle,
    workspace_path: Option<PathBuf>,
    /// Where the workspace really is on disk; agent file access outside these asks the user.
@@ -304,7 +304,7 @@ pub struct AthasAcpClient {
    replay: ReplayRouter,
 }
 
-impl AthasAcpClient {
+impl BlimyAcpClient {
    pub fn new(
       app_handle: AppHandle,
       workspace_path: Option<PathBuf>,
@@ -728,7 +728,7 @@ impl AthasAcpClient {
    }
 }
 
-impl AthasAcpClient {
+impl BlimyAcpClient {
    pub async fn handle_agent_request(
       &self,
       request: acp::AgentRequest,
@@ -902,7 +902,7 @@ impl AthasAcpClient {
 
    /// Handles `elicitation/create`: the agent asks the user a structured question (form mode) or
    /// asks them to open a URL (url mode). The full request, including `_meta`, goes to the
-   /// frontend, and its answer comes back as a `CreateElicitationResponse`. Modes Athas does not
+   /// frontend, and its answer comes back as a `CreateElicitationResponse`. Modes Blimy does not
    /// know are rejected with invalid params, as the spec requires.
    async fn create_elicitation(
       &self,
@@ -1650,7 +1650,7 @@ fn automatic_permission_option(
 #[cfg(test)]
 mod tests {
    use super::{
-      AthasAcpClient, ChunkRole, ClientResponders, PendingBufferRead, PendingEntry,
+      BlimyAcpClient, ChunkRole, ClientResponders, PendingBufferRead, PendingEntry,
       PermissionResponse, SessionConfigOptionKind, acp, agent_location_event,
       automatic_permission_option, elicitation_response, ext_request_session_id, notice_event,
    };
@@ -1682,7 +1682,7 @@ mod tests {
    #[test]
    fn message_chunks_carry_the_agent_message_id() {
       let chunk = acp::ContentChunk::new(acp::ContentBlock::from("hi")).message_id("msg-1");
-      let event = AthasAcpClient::chunk_event(ChunkRole::Agent, "s1".into(), chunk).unwrap();
+      let event = BlimyAcpClient::chunk_event(ChunkRole::Agent, "s1".into(), chunk).unwrap();
       assert_eq!(
          serde_json::to_value(&event).unwrap(),
          json!({
@@ -1695,13 +1695,13 @@ mod tests {
       );
 
       let chunk = acp::ContentChunk::new(acp::ContentBlock::from("hm"));
-      let event = AthasAcpClient::chunk_event(ChunkRole::Thought, "s1".into(), chunk).unwrap();
+      let event = BlimyAcpClient::chunk_event(ChunkRole::Thought, "s1".into(), chunk).unwrap();
       let json = serde_json::to_value(&event).unwrap();
       assert_eq!(json["type"], "thought_chunk");
       assert!(json.get("messageId").is_none());
 
       let chunk = acp::ContentChunk::new(acp::ContentBlock::from("q")).message_id("u-1");
-      let event = AthasAcpClient::chunk_event(ChunkRole::User, "s1".into(), chunk).unwrap();
+      let event = BlimyAcpClient::chunk_event(ChunkRole::User, "s1".into(), chunk).unwrap();
       assert_eq!(serde_json::to_value(&event).unwrap()["messageId"], "u-1");
    }
 
@@ -1711,7 +1711,7 @@ mod tests {
       meta.insert("terminal_info".into(), json!({ "terminal_id": "toolu_1" }));
       let tool_call = acp::ToolCall::new("toolu_1", "Run ls").meta(meta);
       let events =
-         serde_json::to_value(AthasAcpClient::tool_call_events("s1".into(), tool_call)).unwrap();
+         serde_json::to_value(BlimyAcpClient::tool_call_events("s1".into(), tool_call)).unwrap();
       assert_eq!(events[0]["type"], "terminal_started");
       assert_eq!(events[0]["displayOnly"], true);
       assert_eq!(events[1]["type"], "tool_start");
@@ -1730,7 +1730,7 @@ mod tests {
          acp::ToolCallUpdateFields::new().status(acp::ToolCallStatus::Completed),
       )
       .meta(meta);
-      let events = AthasAcpClient::tool_call_update_events("s1".into(), update);
+      let events = BlimyAcpClient::tool_call_update_events("s1".into(), update);
       let types: Vec<_> = serde_json::to_value(&events)
          .unwrap()
          .as_array()
@@ -1768,7 +1768,7 @@ mod tests {
 
    #[test]
    fn usage_update_keeps_the_session_cost() {
-      let usage = AthasAcpClient::map_usage(
+      let usage = BlimyAcpClient::map_usage(
          acp::UsageUpdate::new(53_000, 200_000).cost(acp::Cost::new(0.045, "USD")),
       );
       let json = serde_json::to_value(&usage).unwrap();
@@ -1777,7 +1777,7 @@ mod tests {
          json!({ "used": 53_000, "size": 200_000, "cost": { "amount": 0.045, "currency": "USD" } })
       );
 
-      let usage = AthasAcpClient::map_usage(acp::UsageUpdate::new(10, 100));
+      let usage = BlimyAcpClient::map_usage(acp::UsageUpdate::new(10, 100));
       assert_eq!(
          serde_json::to_value(&usage).unwrap()["cost"],
          serde_json::Value::Null
@@ -1790,7 +1790,7 @@ mod tests {
          .content(vec![diff_content()])
          .raw_output(json!({ "ok": true }));
 
-      let events = AthasAcpClient::tool_call_events("s".to_string(), tool_call);
+      let events = BlimyAcpClient::tool_call_events("s".to_string(), tool_call);
       let [
          AcpEvent::ToolStart {
             input,
@@ -1817,7 +1817,7 @@ mod tests {
          .content(vec![diff_content()])
          .raw_output(json!("done"));
 
-      let events = AthasAcpClient::tool_call_events("s".to_string(), tool_call);
+      let events = BlimyAcpClient::tool_call_events("s".to_string(), tool_call);
       let Some(AcpEvent::ToolComplete {
          output, success, ..
       }) = events.last()
@@ -1839,7 +1839,7 @@ mod tests {
             .raw_output(json!({ "stdout": "x" })),
       );
 
-      let events = AthasAcpClient::tool_call_update_events("s".to_string(), update);
+      let events = BlimyAcpClient::tool_call_update_events("s".to_string(), update);
       let [
          AcpEvent::ToolUpdate {
             output: update_output,
@@ -1879,7 +1879,7 @@ mod tests {
          resource: "call-p".to_string(),
          description: "Edit a.txt (call-p)".to_string(),
          options: Vec::new(),
-         tool_call: AthasAcpClient::permission_tool_call(&update),
+         tool_call: BlimyAcpClient::permission_tool_call(&update),
       };
       let event = serde_json::to_value(event).unwrap();
       let tool_call = &event["toolCall"];
@@ -1895,7 +1895,7 @@ mod tests {
       assert_eq!(tool_call["rawInput"], json!({ "path": "/repo/a.txt" }));
 
       // The same request also reaches the transcript as a tool update.
-      let events = AthasAcpClient::tool_call_update_events("s".to_string(), update);
+      let events = BlimyAcpClient::tool_call_update_events("s".to_string(), update);
       let [AcpEvent::ToolUpdate { output, .. }] = events.as_slice() else {
          panic!("expected a single tool update, got {events:?}");
       };
@@ -1904,7 +1904,7 @@ mod tests {
 
    #[test]
    fn tool_call_update_distinguishes_missing_and_cleared_content() {
-      let missing = AthasAcpClient::tool_call_update_events(
+      let missing = BlimyAcpClient::tool_call_update_events(
          "s".to_string(),
          acp::ToolCallUpdate::new(
             "call-4",
@@ -1916,7 +1916,7 @@ mod tests {
       };
       assert_eq!(output, &None);
 
-      let cleared = AthasAcpClient::tool_call_update_events(
+      let cleared = BlimyAcpClient::tool_call_update_events(
          "s".to_string(),
          acp::ToolCallUpdate::new(
             "call-4",
@@ -2188,7 +2188,7 @@ mod tests {
          .description("Stream partial responses")
          .category(acp::SessionConfigOptionCategory::ModelConfig);
 
-      let mapped = AthasAcpClient::map_session_config_option(option).expect("mapped option");
+      let mapped = BlimyAcpClient::map_session_config_option(option).expect("mapped option");
 
       assert_eq!(mapped.id, "streaming");
       assert_eq!(mapped.category.as_deref(), Some("model_config"));

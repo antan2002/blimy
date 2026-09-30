@@ -170,9 +170,9 @@ export async function runIntelligenceAgent(params: {
   let steps = 0;
   let costUsd: number | undefined;
   const notices: string[] = [];
-  // Athas's own server reports each response's cost; a key the user supplies does
+  // Blimy's own server reports each response's cost; a key the user supplies does
   // not, so the budget is metered locally from the model's own price.
-  const budget = new TurnBudget(params.providerId === "athas" ? null : params.budgetUsd);
+  const budget = new TurnBudget(params.providerId === "Blimy" ? null : params.budgetUsd);
   let budgetStop: string | undefined;
   const summary = () => ({
     steps,
@@ -301,7 +301,7 @@ export async function runIntelligenceAgent(params: {
       sessionId: params.sessionId,
       path: call.serverName,
       kind: "mcp",
-      description: `MCP server: ${call.serverName}\nTool: ${call.tool}\n\nInput:\n${input.slice(0, MCP_INPUT_PREVIEW_CHARS)}\n\nMCP tools run outside Athas and can change data or reach the network.`,
+      description: `MCP server: ${call.serverName}\nTool: ${call.tool}\n\nInput:\n${input.slice(0, MCP_INPUT_PREVIEW_CHARS)}\n\nMCP tools run outside Blimy and can change data or reach the network.`,
       allowAlwaysLabel: `Always allow ${call.tool}`,
       signal,
       notify: params.onPermissionRequest,
@@ -397,7 +397,7 @@ export async function runIntelligenceAgent(params: {
           }),
           show_view: tool({
             description:
-              "Show structured UI in the user's agent side panel instead of long prose: a comparison table, a checklist, a file tree, key metrics, a callout or a code block. Pass an Athas view node such as { type: 'table', columns: [{ key, label }], rows: [{ key: value }] }, { type: 'list', items: [{ title, description }] }, { type: 'metric', label, value }, { type: 'callout', tone: 'info' | 'warning', title, body }, { type: 'text', value } or { type: 'stack', children: [...] }. Keep it small and specific to what the user asked.",
+              "Show structured UI in the user's agent side panel instead of long prose: a comparison table, a checklist, a file tree, key metrics, a callout or a code block. Pass an Blimy view node such as { type: 'table', columns: [{ key, label }], rows: [{ key: value }] }, { type: 'list', items: [{ title, description }] }, { type: 'metric', label, value }, { type: 'callout', tone: 'info' | 'warning', title, body }, { type: 'text', value } or { type: 'stack', children: [...] }. Keep it small and specific to what the user asked.",
             inputSchema: z.object({
               view: z.record(z.string(), z.unknown()),
             }),
@@ -409,7 +409,7 @@ export async function runIntelligenceAgent(params: {
                 input,
                 toolCallId,
                 async () => ({ shown: true }),
-                { display: () => ({ type: "athas_ui", view }) },
+                { display: () => ({ type: "BLIMY_ui", view }) },
               );
             },
           }),
@@ -657,7 +657,7 @@ export async function runIntelligenceAgent(params: {
           role: "user",
           content: [
             { type: "text", text: message.content },
-            // OpenAI-compatible providers, Athas included, send these as `image_url` data URLs.
+            // OpenAI-compatible providers, Blimy included, send these as `image_url` data URLs.
             ...message.images.map((image) => ({
               type: "file" as const,
               data: image.data,

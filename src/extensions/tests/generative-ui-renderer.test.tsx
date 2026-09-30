@@ -75,7 +75,7 @@ describe("GenerativeUIRenderer", () => {
                 { label: "Focused", value: "focused" },
                 { label: "Full", value: "full" },
               ],
-              onChange: { command: "athas.review.depth" },
+              onChange: { command: "Blimy.review.depth" },
             },
           ],
         }}

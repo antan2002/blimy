@@ -1,18 +1,18 @@
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { describe, expect, it } from "vite-plus/test";
-import { ATHAS_ROOT } from "../../../extensions/tooling/extension-workspace";
+import { BLIMY_ROOT } from "../../../extensions/tooling/extension-workspace";
 import type { ExtensionManifest } from "@/extensions/types/extension-manifest";
 import { migrateLegacyAgentId } from "@/features/ai/lib/agent-clis";
 
 async function readOfficialManifest(folder: string): Promise<ExtensionManifest> {
   return JSON.parse(
-    await readFile(join(ATHAS_ROOT, "extensions", "official", folder, "extension.json"), "utf8"),
+    await readFile(join(BLIMY_ROOT, "extensions", "official", folder, "extension.json"), "utf8"),
   ) as ExtensionManifest;
 }
 
 async function readOfficialIcon(folder: string): Promise<string> {
-  return readFile(join(ATHAS_ROOT, "extensions", "official", folder, "icon.svg"), "utf8");
+  return readFile(join(BLIMY_ROOT, "extensions", "official", folder, "icon.svg"), "utf8");
 }
 
 describe("agent extension manifests", () => {
@@ -20,7 +20,7 @@ describe("agent extension manifests", () => {
     const manifest = await readOfficialManifest("claude-code");
 
     expect(manifest).toMatchObject({
-      id: "athas.agent.claude-acp",
+      id: "Blimy.agent.claude-acp",
       name: "Claude Agent",
       displayName: "Claude Agent",
     });
@@ -45,7 +45,7 @@ describe("agent extension manifests", () => {
     const install = manifest.agents?.[0]?.install;
 
     expect(manifest).toMatchObject({
-      id: "athas.agent.kimi-cli",
+      id: "Blimy.agent.kimi-cli",
       name: "Kimi CLI",
     });
     expect(manifest.agents?.[0]).toMatchObject({
@@ -70,7 +70,7 @@ describe("agent extension manifests", () => {
     const manifest = await readOfficialManifest("github-copilot");
 
     expect(manifest).toMatchObject({
-      id: "athas.agent.github-copilot",
+      id: "Blimy.agent.github-copilot",
       name: "GitHub Copilot",
       publisher: "GitHub",
     });
@@ -93,7 +93,7 @@ describe("agent extension manifests", () => {
     const manifest = await readOfficialManifest("gemini-cli");
 
     expect(manifest).toMatchObject({
-      id: "athas.agent.gemini-cli",
+      id: "Blimy.agent.gemini-cli",
       name: "Gemini CLI",
       publisher: "Google",
     });
@@ -116,7 +116,7 @@ describe("agent extension manifests", () => {
     const manifest = await readOfficialManifest("antigravity");
 
     expect(manifest).toMatchObject({
-      id: "athas.agent.antigravity",
+      id: "Blimy.agent.antigravity",
       name: "Google Antigravity",
       publisher: "Google",
     });

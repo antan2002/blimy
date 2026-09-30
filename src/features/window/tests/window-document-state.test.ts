@@ -27,7 +27,7 @@ describe("getWindowDocumentState", () => {
         rootFolderPath: "/Users/me/project",
       }),
     ).toEqual({
-      title: "main.ts — project — Athas",
+      title: "main.ts — project — Blimy",
       representedPath: "/Users/me/project/src/main.ts",
       isEdited: true,
     });
@@ -41,7 +41,7 @@ describe("getWindowDocumentState", () => {
         rootFolderPath: "remote://server/project",
       }),
     ).toEqual({
-      title: "main.ts — Remote Project — Athas",
+      title: "main.ts — Remote Project — Blimy",
       representedPath: undefined,
       isEdited: false,
     });
@@ -64,6 +64,6 @@ describe("getWindowDocumentState", () => {
         projectName: "project",
         rootFolderPath: "/Users/me/project",
       }),
-    ).toEqual({ title: "project — Athas", representedPath: undefined, isEdited: false });
+    ).toEqual({ title: "project — Blimy", representedPath: undefined, isEdited: false });
   });
 });

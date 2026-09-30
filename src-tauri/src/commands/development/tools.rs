@@ -1,5 +1,5 @@
 use crate::app_runtime::AppHandle;
-use athas_tooling::{
+use BLIMY_tooling::{
    LanguageToolConfigSet, LanguageToolStatus, ToolInstaller, ToolRegistry, ToolStatus, ToolType,
 };
 use serde_json::Value;
@@ -32,7 +32,7 @@ pub fn frontend_trace(level: String, scope: String, message: String, payload: Op
 
 #[cfg(debug_assertions)]
 fn append_file_open_benchmark(level: &str, message: &str, payload: Option<&Value>) {
-   let path = std::env::temp_dir().join("athas-file-open-benchmark.jsonl");
+   let path = std::env::temp_dir().join("Blimy-file-open-benchmark.jsonl");
    let Ok(mut file) = OpenOptions::new().create(true).append(true).open(path) else {
       return;
    };

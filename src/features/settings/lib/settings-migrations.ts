@@ -1,4 +1,4 @@
-export const SETTINGS_SCHEMA_VERSION = 5;
+export const SETTINGS_SCHEMA_VERSION = 6;
 export const SETTINGS_SCHEMA_VERSION_KEY = "settingsSchemaVersion";
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -51,5 +51,15 @@ export function migrateSettingsRecord(
     }
   }
 
-  return migratedSettings;
+   if (schemaVersion < 6) {
+      // Blimy renamed the built-in themes. Map a saved Blimy theme id onto the
+      // Blimy one so an existing profile keeps the theme it already had.
+      if (migratedSettings.theme === "blimy-light") {
+         migratedSettings.theme = "blimy-light";
+      } else if (migratedSettings.theme === "blimy-dark") {
+         migratedSettings.theme = "blimy-dark";
+      }
+   }
+
+   return migratedSettings;
 }

@@ -30,26 +30,26 @@
   --font-heading: "Inter Display", var(--app-font-family);
   --font-mono: var(--editor-font-family);
   --leading-row: 1.35;
-  --leading-chrome: var(--athas-chrome-line-height);
+  --leading-chrome: var(--Blimy-chrome-line-height);
 
-  --spacing-title-bar: var(--athas-title-bar-height);
-  --spacing-title-bar-leading: var(--athas-title-bar-leading-inset);
-  --spacing-pane-header: var(--athas-pane-header-height);
-  --spacing-tab-bar: var(--athas-tab-bar-height);
-  --spacing-tab: var(--athas-tab-height);
-  --spacing-tab-max: var(--athas-tab-max-width);
-  --spacing-disclosure-indent: calc(1em + var(--athas-chrome-gap));
+  --spacing-title-bar: var(--Blimy-title-bar-height);
+  --spacing-title-bar-leading: var(--Blimy-title-bar-leading-inset);
+  --spacing-pane-header: var(--Blimy-pane-header-height);
+  --spacing-tab-bar: var(--Blimy-tab-bar-height);
+  --spacing-tab: var(--Blimy-tab-height);
+  --spacing-tab-max: var(--Blimy-tab-max-width);
+  --spacing-disclosure-indent: calc(1em + var(--Blimy-chrome-gap));
   --spacing-palette-offset: 10vh;
   --shadow-seam-top: 0 -1px 0 0 var(--background);
-  --spacing-sidebar-header: var(--athas-sidebar-header-height);
-  --spacing-workbench: var(--athas-workbench-gap);
-  --spacing-chrome-control: var(--athas-chrome-control-height);
-  --spacing-rail-control: var(--athas-rail-control-size);
-  --spacing-chrome-hit-target: var(--athas-chrome-hit-target);
-  --spacing-chrome-tight: var(--athas-chrome-gap-tight);
-  --spacing-chrome: var(--athas-chrome-gap);
-  --spacing-chrome-loose: var(--athas-chrome-gap-loose);
-  --spacing-chrome-inline: var(--athas-chrome-padding-inline);
+  --spacing-sidebar-header: var(--Blimy-sidebar-header-height);
+  --spacing-workbench: var(--Blimy-workbench-gap);
+  --spacing-chrome-control: var(--Blimy-chrome-control-height);
+  --spacing-rail-control: var(--Blimy-rail-control-size);
+  --spacing-chrome-hit-target: var(--Blimy-chrome-hit-target);
+  --spacing-chrome-tight: var(--Blimy-chrome-gap-tight);
+  --spacing-chrome: var(--Blimy-chrome-gap);
+  --spacing-chrome-loose: var(--Blimy-chrome-gap-loose);
+  --spacing-chrome-inline: var(--Blimy-chrome-padding-inline);
 
   --radius-xs: calc(var(--radius) * 0.5);
   --radius-sm: calc(var(--radius) * 0.75);
@@ -59,12 +59,12 @@
   --radius-2xl: calc(var(--radius) * 3);
   --radius-3xl: calc(var(--radius) * 4);
   --radius-4xl: calc(var(--radius) * 5);
-  --radius-chrome: var(--athas-chrome-radius);
+  --radius-chrome: var(--Blimy-chrome-radius);
 
   --ease-smooth: var(--app-ease-smooth);
 
   --color-background: var(--background);
-  --color-island: var(--athas-glass-island-bg, var(--background));
+  --color-island: var(--Blimy-glass-island-bg, var(--background));
   --color-surface: var(--surface);
   --color-overlay: var(--overlay);
   --color-scrim: var(--scrim);
@@ -170,23 +170,23 @@
     --ui-text-sm: max(10px, calc(var(--app-ui-font-size) - 1px));
     --ui-text-caption: max(10px, calc(var(--app-ui-font-size) - 3px));
     --ui-text-chrome: var(--ui-text-sm);
-    --athas-title-bar-height: 2.5rem;
-    --athas-title-bar-leading-inset: var(--athas-chrome-padding-inline);
-    --athas-tab-bar-height: 1.875rem;
-    --athas-pane-header-height: var(--athas-tab-bar-height);
-    --athas-tab-height: 1.5rem;
-    --athas-tab-max-width: 12.5rem;
-    --athas-sidebar-header-height: 2rem;
-    --athas-workbench-gap: 8px;
-    --athas-chrome-control-height: 1.5rem;
-    --athas-rail-control-size: 2rem;
-    --athas-chrome-hit-target: 1.75rem;
-    --athas-chrome-line-height: 1rem;
-    --athas-chrome-gap-tight: 2px;
-    --athas-chrome-gap: 4px;
-    --athas-chrome-gap-loose: 6px;
-    --athas-chrome-padding-inline: 8px;
-    --athas-chrome-radius: var(--radius);
+    --Blimy-title-bar-height: 2.5rem;
+    --Blimy-title-bar-leading-inset: var(--Blimy-chrome-padding-inline);
+    --Blimy-tab-bar-height: 1.875rem;
+    --Blimy-pane-header-height: var(--Blimy-tab-bar-height);
+    --Blimy-tab-height: 1.5rem;
+    --Blimy-tab-max-width: 12.5rem;
+    --Blimy-sidebar-header-height: 2rem;
+    --Blimy-workbench-gap: 8px;
+    --Blimy-chrome-control-height: 1.5rem;
+    --Blimy-rail-control-size: 2rem;
+    --Blimy-chrome-hit-target: 1.75rem;
+    --Blimy-chrome-line-height: 1rem;
+    --Blimy-chrome-gap-tight: 2px;
+    --Blimy-chrome-gap: 4px;
+    --Blimy-chrome-gap-loose: 6px;
+    --Blimy-chrome-padding-inline: 8px;
+    --Blimy-chrome-radius: var(--radius);
     --radius: 0.25rem;
     --app-duration-fast: 150ms;
     --app-duration-normal: 200ms;
@@ -195,7 +195,7 @@
     --app-muted-foreground: var(--muted-foreground);
     --app-subtle-foreground: var(--subtle-foreground);
     --app-primary: var(--primary);
-    --athas-navigation-material: var(--surface);
+    --Blimy-navigation-material: var(--surface);
 
     /* Optional theme colors, derived from the palette every theme must have. */
     --destructive: var(--terminal-red, var(--primary));
@@ -250,9 +250,9 @@
 
   html.platform-macos {
     /* Matches the native title bar, so the traffic lights keep AppKit's own position. */
-    --athas-title-bar-height: 2rem;
-    --athas-tab-bar-height: 2rem;
-    --athas-title-bar-leading-inset: 4.75rem;
+    --Blimy-title-bar-height: 2rem;
+    --Blimy-tab-bar-height: 2rem;
+    --Blimy-title-bar-leading-inset: 4.75rem;
   }
 
   :root[data-increase-contrast="true"] {

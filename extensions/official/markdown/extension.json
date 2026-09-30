@@ -1,11 +1,11 @@
 {
-  "$schema": "https://athas.dev/schemas/extension.json",
-  "id": "athas.markdown",
+  "$schema": "https://Blimy.dev/schemas/extension.json",
+  "id": "Blimy.markdown",
   "name": "Markdown",
   "displayName": "Markdown",
   "version": "1.0.0",
   "description": "Markdown language support with LSP and formatting",
-  "publisher": "Athas",
+  "publisher": "Blimy",
   "categories": ["Language"],
   "languages": [
     {
@@ -23,7 +23,7 @@
     "lsp": {
       "name": "marksman",
       "runtime": "binary",
-      "downloadUrl": "https://athas.dev/extensions/markdown/markdown-${os}-${arch}.tar.gz",
+      "downloadUrl": "https://Blimy.dev/extensions/markdown/markdown-${os}-${arch}.tar.gz",
       "args": ["server"]
     },
     "formatter": {

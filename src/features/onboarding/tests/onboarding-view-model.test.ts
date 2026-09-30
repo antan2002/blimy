@@ -9,7 +9,7 @@ describe("buildOnboardingViewModel", () => {
         currentVersion: "1.2.0",
       }),
     ).toMatchObject({
-      title: "Welcome to Athas",
+      title: "Welcome to Blimy",
       showSettings: true,
       primaryAction: "open-folder",
     });
@@ -22,7 +22,7 @@ describe("buildOnboardingViewModel", () => {
         currentVersion: "1.2.0",
       }),
     ).toMatchObject({
-      title: "What's new in Athas 1.2.0",
+      title: "What's new in Blimy 1.2.0",
       showSettings: false,
       primaryAction: "finish",
       primaryLabel: "Done",

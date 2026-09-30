@@ -4,7 +4,7 @@
 #[global_allocator]
 static GLOBAL: mimalloc::MiMalloc = mimalloc::MiMalloc;
 
-use app_runtime::AthasRuntime;
+use app_runtime::BlimyRuntime;
 use app_setup::{configure_app, shutdown_background_services};
 use commands::*;
 use tauri::Manager;
@@ -45,7 +45,7 @@ fn main() {
    );
    if validate_cli {
       if !cli_args.is_empty() && cli_requests.is_empty() {
-         eprintln!("athas: invalid arguments or inaccessible path. Run athas --help for usage.");
+         eprintln!("blimy: invalid arguments or inaccessible path. Run Blimy --help for usage.");
          std::process::exit(1);
       }
       return;
@@ -66,7 +66,7 @@ fn main() {
          window.create = false;
       }
    }
-   let builder = tauri::Builder::<AthasRuntime>::new();
+   let builder = tauri::Builder::<BlimyRuntime>::new();
 
    #[cfg(all(target_os = "linux", feature = "linux"))]
    let builder = builder.command_line_args(bootstrap::linux::cef_command_line_args());
@@ -103,7 +103,7 @@ fn main() {
       .setup(configure_app)
       .invoke_handler(tauri::generate_handler![
          // File system commands
-         read_athas_log,
+         read_blimy_log,
          read_local_file,
          get_local_directory_size,
          open_file_external,

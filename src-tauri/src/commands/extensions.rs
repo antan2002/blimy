@@ -246,10 +246,10 @@ mod tests {
    #[test]
    fn extension_secret_keys_are_scoped_and_validated() {
       assert_eq!(
-         extension_secret_key("athas.gitlab", "token").unwrap(),
-         "extension:athas.gitlab:token"
+         extension_secret_key("Blimy.gitlab", "token").unwrap(),
+         "extension:Blimy.gitlab:token"
       );
-      assert!(extension_secret_key("athas.gitlab", "../token").is_err());
+      assert!(extension_secret_key("Blimy.gitlab", "../token").is_err());
    }
 
    #[test]

@@ -10,7 +10,7 @@ import {
 import { normalizeSettings } from "@/features/settings/lib/settings-normalization";
 import type { Settings } from "@/features/settings/types/settings.types";
 
-const SETTINGS_EXPORT_FORMAT = "athas.settings";
+const SETTINGS_EXPORT_FORMAT = "Blimy.settings";
 
 export interface SettingsExportPayload {
   format: typeof SETTINGS_EXPORT_FORMAT;

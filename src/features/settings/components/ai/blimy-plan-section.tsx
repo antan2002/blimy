@@ -15,7 +15,7 @@ import { Button } from "@/ui/button";
 import { Progress } from "@/ui/progress";
 import { ProviderIcon } from "@/features/ai/components/icons/provider-icons";
 import Section, { SettingRow } from "../settings-section";
-import { describeIncludedCredit } from "../../lib/athas-credit";
+import { describeIncludedCredit } from "../../lib/Blimy-credit";
 
 function openBilling() {
   void openUrl(getServiceUrls().dashboardBillingUrl).catch((error: unknown) =>
@@ -23,8 +23,8 @@ function openBilling() {
   );
 }
 
-/** Plan, included credit, and pay-as-you-go balance for Athas-hosted models. */
-export function AthasPlanSection() {
+/** Plan, included credit, and pay-as-you-go balance for Blimy-hosted models. */
+export function BlimyPlanSection() {
   useSubscriptionRefresh();
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const subscription = useAuthStore((state) => state.subscription);
@@ -39,9 +39,9 @@ export function AthasPlanSection() {
     usage?.walletBalanceCents != null ? formatUsdCents(usage.walletBalanceCents) : null;
 
   return (
-    <Section title="Athas" icon={<ProviderIcon providerId="athas" />}>
+    <Section title="Blimy" icon={<ProviderIcon providerId="Blimy" />}>
       {!isAuthenticated ? (
-        <SettingRow label="Plan" description="Sign in to use Athas models">
+        <SettingRow label="Plan" description="Sign in to use Blimy models">
           <Button
             variant="accent"
             onClick={() => void signIn().catch(() => undefined)}
@@ -59,7 +59,7 @@ export function AthasPlanSection() {
               ? usage
                 ? describeIncludedCredit(usage)
                 : undefined
-              : "Pro includes $10 of Athas AI every month"
+              : "Pro includes $10 of Blimy AI every month"
           }
           activateOnClick={false}
         >

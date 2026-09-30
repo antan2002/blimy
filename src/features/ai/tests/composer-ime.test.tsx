@@ -171,7 +171,7 @@ describe("Composer terminal commands", () => {
       .spyOn(terminalCommands, "runChatTerminalCommand")
       .mockReturnValue("terminal-test");
     await act(async () => {
-      useProjectStore.getState().actions.setRootFolderPath("/workspace/athas");
+      useProjectStore.getState().actions.setRootFolderPath("/workspace/Blimy");
       useSettingsStore.setState({
         settings: {
           ...originalSettings,
@@ -215,7 +215,7 @@ describe("Composer terminal commands", () => {
       command: "git status",
       chatId: undefined,
       agentId: "codex",
-      workingDirectory: "/workspace/athas",
+      workingDirectory: "/workspace/Blimy",
     });
     expect(onSendMessage).not.toHaveBeenCalled();
     expect(input.textContent).toBe("");
@@ -281,7 +281,7 @@ describe("Composer terminal commands", () => {
       command: 'printf "%s" "hello world"',
       chatId: undefined,
       agentId: "codex",
-      workingDirectory: "/workspace/athas",
+      workingDirectory: "/workspace/Blimy",
     });
     expect(onSendMessage).not.toHaveBeenCalled();
     expect(onStopStreaming).not.toHaveBeenCalled();

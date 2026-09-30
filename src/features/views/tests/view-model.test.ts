@@ -20,13 +20,13 @@ describe("custom view model", () => {
   it("turns a root JSON array into a flat table", () => {
     expect(
       jsonToViewTable([
-        { tag_name: "v1.0.0", author: { login: "athas" }, draft: false },
+        { tag_name: "v1.0.0", author: { login: "Blimy" }, draft: false },
         { tag_name: "v1.1.0", author: { login: "codex" }, draft: true },
       ]),
     ).toEqual({
       columns: ["tag_name", "author.login", "draft"],
       rows: [
-        ["v1.0.0", "athas", false],
+        ["v1.0.0", "Blimy", false],
         ["v1.1.0", "codex", true],
       ],
     });
@@ -59,9 +59,9 @@ describe("custom view model", () => {
     expect(
       viewTableToCsv({
         columns: ["name", "notes"],
-        rows: [["Athas, Preview", 'Says "hello"']],
+        rows: [["Blimy, Preview", 'Says "hello"']],
       }),
-    ).toBe('name,notes\n"Athas, Preview","Says ""hello"""');
+    ).toBe('name,notes\n"Blimy, Preview","Says ""hello"""');
   });
 
   it("stores views separately for each project", () => {
@@ -74,11 +74,11 @@ describe("custom view model", () => {
       endpointPath: "/releases?per_page=100",
     };
 
-    saveViews("/projects/athas", [view], storage);
+    saveViews("/projects/Blimy", [view], storage);
 
-    expect(loadViews("/projects/athas", storage)).toEqual([view]);
+    expect(loadViews("/projects/Blimy", storage)).toEqual([view]);
     expect(loadViews("/projects/other", storage)).toEqual([]);
-    expect(getViewsStorageKey("/projects/athas")).not.toBe(getViewsStorageKey("/projects/other"));
+    expect(getViewsStorageKey("/projects/Blimy")).not.toBe(getViewsStorageKey("/projects/other"));
   });
 
   it("persists view layout and grouping", () => {
@@ -92,16 +92,16 @@ describe("custom view model", () => {
       presentation: { layout: "board", groupBy: "state", titleColumn: "title" },
     };
 
-    saveViews("/projects/athas", [configuredView], storage);
+    saveViews("/projects/Blimy", [configuredView], storage);
 
-    expect(loadViews("/projects/athas", storage)).toEqual([configuredView]);
+    expect(loadViews("/projects/Blimy", storage)).toEqual([configuredView]);
   });
 
   it("ignores malformed persisted views", () => {
     const storage = createStorage();
-    storage.setItem(getViewsStorageKey("/projects/athas"), "not-json");
+    storage.setItem(getViewsStorageKey("/projects/Blimy"), "not-json");
 
-    expect(loadViews("/projects/athas", storage)).toEqual([]);
+    expect(loadViews("/projects/Blimy", storage)).toEqual([]);
   });
 
   it("loads views stored before the feature rename", () => {
@@ -113,15 +113,15 @@ describe("custom view model", () => {
       kind: "github",
       endpointPath: "/releases?per_page=100",
     };
-    storage.setItem("athas-admin-data-sources:%2Fprojects%2Fathas", JSON.stringify([view]));
+    storage.setItem("Blimy-admin-data-sources:%2Fprojects%2FBlimy", JSON.stringify([view]));
 
-    expect(loadViews("/projects/athas", storage)).toEqual([view]);
+    expect(loadViews("/projects/Blimy", storage)).toEqual([view]);
   });
 
   it("migrates URL sources saved before connector types were added", () => {
     const storage = createStorage();
     storage.setItem(
-      getViewsStorageKey("/projects/athas"),
+      getViewsStorageKey("/projects/Blimy"),
       JSON.stringify([
         {
           id: "legacy",
@@ -133,7 +133,7 @@ describe("custom view model", () => {
       ]),
     );
 
-    expect(loadViews("/projects/athas", storage)).toEqual([
+    expect(loadViews("/projects/Blimy", storage)).toEqual([
       {
         id: "legacy",
         name: "Legacy source",

@@ -18,7 +18,7 @@ concurrency:
 
 jobs:
   build:
-    if: github.repository == 'athasdev/athas'
+    if: github.repository == 'antan2002/blimy'
     name: Build Linux tarball
     runs-on: ${{ inputs.runner || 'ubuntu-22.04' }}
     timeout-minutes: 120
@@ -89,14 +89,14 @@ jobs:
       - name: Check Linux feature graph
         run: |
           set -euo pipefail
-          cargo tree -p athas --no-default-features --features linux -i tauri-runtime-cef
-          cargo tree -p athas --no-default-features --features linux -i tauri-runtime-wry >/tmp/tauri-runtime-wry.txt 2>&1 || true
+          cargo tree -p Blimy --no-default-features --features linux -i tauri-runtime-cef
+          cargo tree -p Blimy --no-default-features --features linux -i tauri-runtime-wry >/tmp/tauri-runtime-wry.txt 2>&1 || true
           if grep -q '^tauri-runtime-wry ' /tmp/tauri-runtime-wry.txt; then
             echo "tauri-runtime-wry must not be present in the Linux build"
             cat /tmp/tauri-runtime-wry.txt
             exit 1
           fi
-          cargo tree -p athas --no-default-features --features linux -i webkit2gtk >/tmp/webkit2gtk.txt 2>&1 || true
+          cargo tree -p Blimy --no-default-features --features linux -i webkit2gtk >/tmp/webkit2gtk.txt 2>&1 || true
           if grep -q '^webkit2gtk ' /tmp/webkit2gtk.txt; then
             echo "webkit2gtk must not be present in the Linux build"
             cat /tmp/webkit2gtk.txt

@@ -7,7 +7,7 @@ import { saveChatToDb } from "@/features/ai/services/ai-chat-history-service";
  * to the new SQLite-based storage (v5)
  */
 
-const OLD_STORAGE_KEY = "athas-ai-chat-v4";
+const OLD_STORAGE_KEY = "Blimy-ai-chat-v4";
 
 interface LegacyStorageState {
   state: {
@@ -131,7 +131,7 @@ function clearLegacyData(): void {
 /**
  * Get migration status from new localStorage key
  */
-const MIGRATION_STATUS_KEY = "athas-chat-migration-status";
+const MIGRATION_STATUS_KEY = "Blimy-chat-migration-status";
 
 interface MigrationStatus {
   completed: boolean;

@@ -1,4 +1,4 @@
-const EXTENSION_ID = "athas.gitlab";
+const EXTENSION_ID = "Blimy.gitlab";
 const VIEW_ID = `${EXTENSION_ID}.overview`;
 const command = (name) => `${EXTENSION_ID}.${name}`;
 

@@ -1,6 +1,6 @@
-export const ATHAS_OPEN_PULL_REQUEST_TOOL = "athas_open_pull_request";
-export const ATHAS_OPEN_ISSUE_TOOL = "athas_open_issue";
-export const ATHAS_SET_CHAT_TITLE_TOOL = "athas_set_chat_title";
+export const BLIMY_OPEN_PULL_REQUEST_TOOL = "BLIMY_open_pull_request";
+export const BLIMY_OPEN_ISSUE_TOOL = "BLIMY_open_issue";
+export const BLIMY_SET_CHAT_TITLE_TOOL = "BLIMY_set_chat_title";
 
 interface PullRequestMetadata {
   title?: string;
@@ -36,7 +36,7 @@ export function runCodexDynamicTool(
   args: unknown,
   options: CodexDynamicToolOptions,
 ): CodexDynamicToolResult | null {
-  if (tool === ATHAS_SET_CHAT_TITLE_TOOL) {
+  if (tool === BLIMY_SET_CHAT_TITLE_TOOL) {
     if (!args || typeof args !== "object" || Array.isArray(args)) {
       return toolResult("A chat title is required.", false);
     }
@@ -46,13 +46,13 @@ export function runCodexDynamicTool(
     if (!title) return toolResult("A chat title is required.", false);
 
     if (!options.setChatTitle(title.slice(0, 80))) {
-      return toolResult("The Athas chat is no longer available.", false);
+      return toolResult("The Blimy chat is no longer available.", false);
     }
-    return toolResult(`Athas chat renamed to "${title.slice(0, 80)}".`, true);
+    return toolResult(`Blimy chat renamed to "${title.slice(0, 80)}".`, true);
   }
 
-  const isPullRequest = tool === ATHAS_OPEN_PULL_REQUEST_TOOL;
-  const isIssue = tool === ATHAS_OPEN_ISSUE_TOOL;
+  const isPullRequest = tool === BLIMY_OPEN_PULL_REQUEST_TOOL;
+  const isIssue = tool === BLIMY_OPEN_ISSUE_TOOL;
   if (!isPullRequest && !isIssue) return null;
 
   const resourceName = isPullRequest ? "pull request" : "issue";
@@ -84,5 +84,5 @@ export function runCodexDynamicTool(
   }
 
   const label = isPullRequest ? "Pull request" : "Issue";
-  return toolResult(`${label} #${resourceNumber} opened in Athas.`, true);
+  return toolResult(`${label} #${resourceNumber} opened in Blimy.`, true);
 }

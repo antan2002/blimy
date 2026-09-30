@@ -8,9 +8,9 @@ pub fn init<R: Runtime>(level: LevelFilter) -> TauriPlugin<R> {
    Builder::new()
       .clear_targets()
       .target(Target::new(TargetKind::LogDir { file_name: None }))
-      .level(LevelFilter::Warn) // external crates unrelated to "athas"
-      .level_for("athas", level) // current app package target
-      .level_for("athas_code", level) // backward-compatible target filter
+      .level(LevelFilter::Warn) // external crates unrelated to "Blimy"
+      .level_for("Blimy", level) // current app package target
+      .level_for("BLIMY_code", level) // backward-compatible target filter
       .format(|cb, _, record| {
          use env_logger::fmt::style;
          let style = match record.level() {

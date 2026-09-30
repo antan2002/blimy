@@ -1,4 +1,4 @@
-const EXTENSION_ID = "athas.sentry";
+const EXTENSION_ID = "Blimy.sentry";
 const VIEW_ID = `${EXTENSION_ID}.issues`;
 const command = (name) => `${EXTENSION_ID}.${name}`;
 

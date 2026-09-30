@@ -214,12 +214,12 @@ function normalizeStringList(value: unknown): string[] {
 
 function normalizeIconTheme(value: string): string {
   if (
-    value === "athas-icons" ||
-    value === "athas-icons-dimmed" ||
-    value === "athas-icons-light" ||
-    value === "athas-file-icons" ||
-    value === "athas-file-icons-dark" ||
-    value === "athas-file-icons-light" ||
+    value === "Blimy-icons" ||
+    value === "Blimy-icons-dimmed" ||
+    value === "Blimy-icons-light" ||
+    value === "Blimy-file-icons" ||
+    value === "Blimy-file-icons-dark" ||
+    value === "Blimy-file-icons-light" ||
     value === "colorful-material" ||
     value === "material" ||
     value === "seti" ||
@@ -468,7 +468,7 @@ export function normalizeSettings(settings: Settings): Settings {
       outline?: unknown;
     }
   ).outline;
-  delete (normalizedSettings.coreFeatures as { athasEditorEngine?: unknown }).athasEditorEngine;
+  delete (normalizedSettings.coreFeatures as { BlimyEditorEngine?: unknown }).BlimyEditorEngine;
   delete (normalizedSettings.coreFeatures as { energyEdge?: unknown }).energyEdge;
   delete (normalizedSettings.coreFeatures as { webViewer?: unknown }).webViewer;
   delete (normalizedSettings.coreFeatures as { ghosttyTerminal?: unknown }).ghosttyTerminal;

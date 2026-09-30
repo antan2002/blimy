@@ -159,7 +159,7 @@ class ConnectionStore {
 
   async migrateFromLocalStorage() {
     try {
-      const stored = localStorage.getItem("athas-remote-connections");
+      const stored = localStorage.getItem("Blimy-remote-connections");
       if (stored) {
         const connections = JSON.parse(stored) as RemoteConnectionInput[];
 
@@ -172,7 +172,7 @@ class ConnectionStore {
           ),
         );
 
-        localStorage.removeItem("athas-remote-connections");
+        localStorage.removeItem("Blimy-remote-connections");
         console.log("Successfully migrated connections from localStorage to Tauri Store");
       }
 

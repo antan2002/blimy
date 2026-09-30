@@ -103,7 +103,7 @@ mod directory_size_tests {
       let directory = tempdir().expect("temp directory");
       let nested = directory.path().join("nested");
       fs::create_dir(&nested).expect("nested directory");
-      fs::write(directory.path().join("first.txt"), b"athas").expect("first file");
+      fs::write(directory.path().join("first.txt"), b"Blimy").expect("first file");
       fs::write(nested.join("second.txt"), b"editor").expect("second file");
 
       assert_eq!(calculate_directory_size(directory.path()), Ok(11));
@@ -113,7 +113,7 @@ mod directory_size_tests {
    fn rejects_files() {
       let directory = tempdir().expect("temp directory");
       let file = directory.path().join("file.txt");
-      fs::write(&file, b"athas").expect("file");
+      fs::write(&file, b"Blimy").expect("file");
 
       assert_eq!(
          calculate_directory_size(&file),
@@ -181,7 +181,7 @@ pub async fn toggle_quick_look(app: AppHandle, path: String) -> Result<(), Strin
 
 #[command]
 pub async fn show_share_picker(
-   window: tauri::WebviewWindow<crate::app_runtime::AthasRuntime>,
+   window: tauri::WebviewWindow<crate::app_runtime::BlimyRuntime>,
    path: String,
 ) -> Result<(), String> {
    let resolved = require_absolute_canonical_path(&path)?;
@@ -419,7 +419,7 @@ mod copy_dir_tests {
 
    fn temp_dir(name: &str) -> PathBuf {
       let dir =
-         std::env::temp_dir().join(format!("athas-copy-dir-{}-{}", name, std::process::id()));
+         std::env::temp_dir().join(format!("Blimy-copy-dir-{}-{}", name, std::process::id()));
       let _ = fs::remove_dir_all(&dir);
       fs::create_dir_all(&dir).unwrap();
       dir

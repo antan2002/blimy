@@ -1,11 +1,11 @@
 {
-  "$schema": "https://athas.dev/schemas/extension.json",
-  "id": "athas.ocaml",
+  "$schema": "https://Blimy.dev/schemas/extension.json",
+  "id": "Blimy.ocaml",
   "name": "OCaml",
   "displayName": "OCaml",
   "version": "1.0.0",
   "description": "OCaml language support with LSP",
-  "publisher": "Athas",
+  "publisher": "Blimy",
   "categories": ["Language"],
   "languages": [
     {

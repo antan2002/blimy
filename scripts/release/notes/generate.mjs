@@ -122,7 +122,7 @@ function formatBody(githubNotes, tag, previousTag) {
   if (lines.length > 0) {
     lines.push("");
   }
-  lines.push(`**Full Changelog**: https://github.com/athasdev/athas/compare/${compareRange}`);
+  lines.push(`**Full Changelog**: https://github.com/antan2002/blimy/compare/${compareRange}`);
 
   return lines.join("\n");
 }
@@ -165,14 +165,14 @@ if (!tag) {
 }
 
 const outputPath = getArg("--github-output");
-const repo = getArg("--repo") || process.env.GITHUB_REPOSITORY || "athasdev/athas";
+const repo = getArg("--repo") || process.env.GITHUB_REPOSITORY || "antan2002/blimy";
 const previousTag = await getPreviousTag(tag);
 const githubNotes = await generateGithubNotes(tag, previousTag, repo);
 const releaseEntries = await formatReleaseEntries(tag, previousTag, repo, githubNotes);
 const releaseBody = formatBody(releaseEntries, tag, previousTag);
 const version = tag.replace(/^v/, "");
 const isPrerelease = /-preview\.\d+$/.test(version) ? "true" : "false";
-const releaseName = `Athas ${tag}`;
+const releaseName = `Blimy ${tag}`;
 
 if (outputPath) {
   writeGithubOutput(outputPath, {

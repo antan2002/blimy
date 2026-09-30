@@ -5,13 +5,13 @@ use super::{
    mcp::resolve_mcp_servers,
 };
 use crate::{app_runtime::AppHandle, service_urls};
-use athas_ai::{
+use BLIMY_ai::{
    AcpAgentBridge, AcpAgentStatus, AcpOpenedSession, AcpSessionList, AgentConfig, AgentRuntime,
    AgentSource, McpServerSetting, SessionConfigValue,
    acp::registry::{catalog::merge_registry_agents, current_registry_platform},
 };
-use athas_runtime::{RuntimeManager, RuntimeType};
-use athas_tooling::{ToolConfig, ToolInstaller, ToolRuntime};
+use BLIMY_runtime::{RuntimeManager, RuntimeType};
+use BLIMY_tooling::{ToolConfig, ToolInstaller, ToolRuntime};
 use serde::Deserialize;
 use std::{
    collections::HashMap,
@@ -279,7 +279,7 @@ struct MarketplaceExtensionManifest {
 }
 
 fn extensions_manifest_url() -> String {
-   let base_url = std::env::var("ATHAS_EXTENSIONS_CDN_URL")
+   let base_url = std::env::var("BLIMY_EXTENSIONS_CDN_URL")
       .unwrap_or_else(|_| service_urls::extensions_cdn_base_url().to_string());
    format!("{}/manifests.json", base_url.trim_end_matches('/'))
 }
@@ -925,7 +925,7 @@ mod tests {
    use super::{
       bundled_agent_catalog, is_acp_agent_id, merge_agent_catalog, node_package_identity,
    };
-   use athas_ai::AgentConfig;
+   use BLIMY_ai::AgentConfig;
 
    #[test]
    fn keeps_terminal_integrations_out_of_the_acp_catalog() {

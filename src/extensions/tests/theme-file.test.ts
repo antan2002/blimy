@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vite-plus/test";
-import athasThemes from "@/extensions/themes/builtin/athas.json";
+import BlimyThemes from "@/extensions/themes/builtin/Blimy.json";
 import catppuccinThemes from "@/extensions/themes/builtin/catppuccin.json";
 import {
   createThemeFileFromBase,
@@ -13,10 +13,10 @@ import type { ThemeFile } from "@/extensions/themes/theme-schema";
 
 describe("theme files", () => {
   it("accepts multiple light and dark variants", () => {
-    const parsed = parseThemeFile(athasThemes);
+    const parsed = parseThemeFile(BlimyThemes);
 
-    expect(parsed.name).toBe("Athas");
-    expect(parsed.themes.map((theme) => theme.id)).toEqual(["athas-light", "athas-dark"]);
+    expect(parsed.name).toBe("Blimy");
+    expect(parsed.themes.map((theme) => theme.id)).toEqual(["blimy-light", "blimy-dark"]);
   });
 
   it("reports actionable paths for invalid files", () => {
@@ -43,7 +43,7 @@ describe("theme files", () => {
   });
 
   it("generates a valid editable file from an installed theme", () => {
-    const source = (athasThemes as ThemeFile).themes[1];
+    const source = (BlimyThemes as ThemeFile).themes[1];
     const baseTheme = toThemeDefinition(source);
     const generated = createThemeFileFromBase({
       id: "forest-night",
@@ -63,7 +63,7 @@ describe("theme files", () => {
 
   it("normalizes legacy roles without emitting duplicate Tailwind variables", () => {
     const legacyTheme = {
-      ...(athasThemes as ThemeFile).themes[0],
+      ...(BlimyThemes as ThemeFile).themes[0],
       colors: {
         "primary-bg": "#101010",
         "secondary-bg": "#181818",
@@ -110,8 +110,8 @@ describe("theme files", () => {
   });
 
   it("preserves explicit Git colors", () => {
-    const theme = (athasThemes as ThemeFile).themes.find(
-      (candidate) => candidate.id === "athas-dark",
+    const theme = (BlimyThemes as ThemeFile).themes.find(
+      (candidate) => candidate.id === "blimy-dark",
     );
     expect(theme).toBeDefined();
 

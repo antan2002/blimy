@@ -10,7 +10,7 @@ use tauri::{Manager, command};
 const MAX_LOG_BYTES: u64 = 1_000_000;
 
 #[derive(Serialize)]
-pub struct AthasLogFile {
+pub struct BlimyLogFile {
    path: String,
    content: String,
    target_line: usize,
@@ -18,20 +18,20 @@ pub struct AthasLogFile {
 }
 
 #[command]
-pub fn read_athas_log(app: AppHandle) -> Result<AthasLogFile, String> {
+pub fn read_blimy_log(app: AppHandle) -> Result<BlimyLogFile, String> {
    let log_dir = app
       .path()
       .app_log_dir()
       .map_err(|error| format!("Failed to resolve app log directory: {error}"))?;
    let log_path = latest_log_file(&log_dir)
-      .ok_or_else(|| format!("No Athas log file found in {}", log_dir.display()))?;
+      .ok_or_else(|| format!("No Blimy log file found in {}", log_dir.display()))?;
    let (content, truncated) = read_log_tail(&log_path)?;
    let target_line = find_last_error_line(&content).unwrap_or_else(|| {
       let line_count = content.lines().count();
       line_count.saturating_sub(1)
    });
 
-   Ok(AthasLogFile {
+   Ok(BlimyLogFile {
       path: log_path.to_string_lossy().into_owned(),
       content,
       target_line,
@@ -61,22 +61,22 @@ fn latest_log_file(log_dir: &Path) -> Option<PathBuf> {
 
 fn read_log_tail(path: &Path) -> Result<(String, bool), String> {
    let mut file = File::open(path)
-      .map_err(|error| format!("Failed to open Athas log {}: {error}", path.display()))?;
+      .map_err(|error| format!("Failed to open Blimy log {}: {error}", path.display()))?;
    let length = file
       .metadata()
-      .map_err(|error| format!("Failed to read Athas log metadata: {error}"))?
+      .map_err(|error| format!("Failed to read Blimy log metadata: {error}"))?
       .len();
    let start = length.saturating_sub(MAX_LOG_BYTES);
    let truncated = start > 0;
 
    file
       .seek(SeekFrom::Start(start))
-      .map_err(|error| format!("Failed to seek Athas log: {error}"))?;
+      .map_err(|error| format!("Failed to seek Blimy log: {error}"))?;
 
    let mut bytes = Vec::new();
    file
       .read_to_end(&mut bytes)
-      .map_err(|error| format!("Failed to read Athas log: {error}"))?;
+      .map_err(|error| format!("Failed to read Blimy log: {error}"))?;
 
    if truncated && let Some(newline_index) = bytes.iter().position(|byte| *byte == b'\n') {
       bytes.drain(..=newline_index);

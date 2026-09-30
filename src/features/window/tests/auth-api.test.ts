@@ -12,13 +12,13 @@ describe("auth-api desktop auth parsers", () => {
     const parsed = __test__.parseDesktopAuthInitResponse({
       sessionId: "desktop-123",
       pollSecret: "secret-456",
-      loginUrl: "https://athas.dev/auth/desktop?desktop_session=desktop-123",
+      loginUrl: "https://Blimy.dev/auth/desktop?desktop_session=desktop-123",
     });
 
     expect(parsed).toEqual({
       sessionId: "desktop-123",
       pollSecret: "secret-456",
-      loginUrl: "https://athas.dev/auth/desktop?desktop_session=desktop-123",
+      loginUrl: "https://Blimy.dev/auth/desktop?desktop_session=desktop-123",
     });
   });
 
@@ -52,14 +52,14 @@ describe("auth-api desktop auth parsers", () => {
   it("detects local api base URLs", () => {
     expect(apiBaseTest.isLocalApiBase("http://localhost:3000")).toBe(true);
     expect(apiBaseTest.isLocalApiBase("http://127.0.0.1:3000")).toBe(true);
-    expect(apiBaseTest.isLocalApiBase("https://athas.dev")).toBe(false);
+    expect(apiBaseTest.isLocalApiBase("https://Blimy.dev")).toBe(false);
   });
 
   it("keeps authentication on the configured server", () => {
     expect(__test__.getPreferredAuthApiBase("http://localhost:3000/")).toBe(
       "http://localhost:3000",
     );
-    expect(__test__.getPreferredAuthApiBase("https://athas.dev/")).toBe("https://athas.dev");
+    expect(__test__.getPreferredAuthApiBase("https://Blimy.dev/")).toBe("https://Blimy.dev");
   });
 
   it("only treats authorization failures as invalid auth", () => {
@@ -212,14 +212,14 @@ describe("session check failures", () => {
 
   it("tells an unreachable host, a timeout and a server error apart", () => {
     const timeout = new DOMException("timed out", "TimeoutError");
-    expect(describeSessionCheckFailure(new TypeError("x"), "https://athas.dev").reason).toBe(
+    expect(describeSessionCheckFailure(new TypeError("x"), "https://Blimy.dev").reason).toBe(
       "unreachable",
     );
-    expect(describeSessionCheckFailure(timeout, "https://athas.dev").message).toBe(
-      "athas.dev did not answer in time.",
+    expect(describeSessionCheckFailure(timeout, "https://Blimy.dev").message).toBe(
+      "Blimy.dev did not answer in time.",
     );
     expect(
-      describeSessionCheckFailure(new AuthApiError("down", 503), "https://athas.dev").message,
-    ).toBe("athas.dev had a server error (503).");
+      describeSessionCheckFailure(new AuthApiError("down", 503), "https://Blimy.dev").message,
+    ).toBe("Blimy.dev had a server error (503).");
   });
 });

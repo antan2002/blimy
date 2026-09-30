@@ -82,7 +82,7 @@ describe("terminal command notifications", () => {
     );
 
     expect(dependencies.record).toHaveBeenCalledWith(
-      expect.objectContaining({ category: "athas", type: "success" }),
+      expect.objectContaining({ category: "Blimy", type: "success" }),
     );
     const toast = dependencies.showToast.mock.calls[0][0];
     expect(toast.message).toBe("Command finished in zsh");

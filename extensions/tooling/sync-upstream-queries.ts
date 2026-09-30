@@ -82,7 +82,7 @@ function buildGeneratedQuery(
   }
 
   const normalizedOverride = ensureTrailingNewline(normalizeNewlines(overrideContent)).trimEnd();
-  return `${header}${upstream}\n\n; --- Athas overrides ---\n${normalizedOverride}\n`;
+  return `${header}${upstream}\n\n; --- Blimy overrides ---\n${normalizedOverride}\n`;
 }
 
 async function fetchText(url: string): Promise<string> {

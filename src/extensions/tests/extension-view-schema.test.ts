@@ -14,7 +14,7 @@ describe("integration view schema", () => {
         {
           label: "Refresh",
           icon: "arrow-clockwise",
-          action: { command: "athas.deployments.refresh", args: ["production"] },
+          action: { command: "Blimy.deployments.refresh", args: ["production"] },
         },
       ],
       children: [
@@ -64,27 +64,27 @@ describe("integration view schema", () => {
                   description: "Linux ARM64",
                   meta: "running",
                   state: "running",
-                  onSelect: { command: "athas.deployments.openBuild" },
+                  onSelect: { command: "Blimy.deployments.openBuild" },
                 },
               ],
             },
             {
               type: "input",
               label: "Release note",
-              onSubmit: { command: "athas.deployments.note" },
+              onSubmit: { command: "Blimy.deployments.note" },
             },
             {
               type: "button",
               label: "Deploy",
               pendingLabel: "Deploying",
-              action: { command: "athas.deployments.start" },
+              action: { command: "Blimy.deployments.start" },
               tone: "accent",
             },
             {
               type: "textarea",
               label: "Deployment summary",
               rows: 5,
-              onSubmit: { command: "athas.deployments.summary" },
+              onSubmit: { command: "Blimy.deployments.summary" },
             },
             {
               type: "numberInput",
@@ -93,7 +93,7 @@ describe("integration view schema", () => {
               min: 1,
               max: 10,
               step: 1,
-              onChange: { command: "athas.deployments.replicas" },
+              onChange: { command: "Blimy.deployments.replicas" },
             },
             {
               type: "select",
@@ -103,19 +103,19 @@ describe("integration view schema", () => {
                 { label: "Production", value: "production" },
                 { label: "Staging", value: "staging" },
               ],
-              onChange: { command: "athas.deployments.environment" },
+              onChange: { command: "Blimy.deployments.environment" },
             },
             {
               type: "toggle",
               label: "Auto deploy",
               checked: true,
-              onChange: { command: "athas.deployments.autoDeploy" },
+              onChange: { command: "Blimy.deployments.autoDeploy" },
             },
             {
               type: "checkbox",
               label: "Include migration notes",
               checked: false,
-              onChange: { command: "athas.deployments.includeMigrations" },
+              onChange: { command: "Blimy.deployments.includeMigrations" },
             },
             {
               type: "choice",
@@ -126,7 +126,7 @@ describe("integration view schema", () => {
                 { label: "Europe", value: "eu" },
                 { label: "US", value: "us" },
               ],
-              onChange: { command: "athas.deployments.regions" },
+              onChange: { command: "Blimy.deployments.regions" },
             },
             {
               type: "tabs",
@@ -172,7 +172,7 @@ describe("integration view schema", () => {
                       title: "main.ts",
                       icon: "file-text",
                       badges: [{ label: "Changed", tone: "warning" }],
-                      onSelect: { command: "athas.workspace.open", args: ["src/main.ts"] },
+                      onSelect: { command: "Blimy.workspace.open", args: ["src/main.ts"] },
                     },
                   ],
                 },
@@ -182,7 +182,7 @@ describe("integration view schema", () => {
               type: "form",
               submitLabel: "Create release",
               pendingLabel: "Creating",
-              onSubmit: { command: "athas.deployments.create" },
+              onSubmit: { command: "Blimy.deployments.create" },
               children: [
                 {
                   type: "input",
@@ -249,7 +249,7 @@ describe("integration view schema", () => {
       parseExtensionViewNode({
         type: "table",
         columns: ["Name"],
-        rows: [["Athas", "extra"]],
+        rows: [["Blimy", "extra"]],
       }),
     ).toThrow("contains more cells than the table has columns");
 
@@ -300,7 +300,7 @@ describe("integration view schema", () => {
       parseExtensionViewNode({
         type: "textarea",
         rows: 20,
-        onSubmit: { command: "athas.release.note" },
+        onSubmit: { command: "Blimy.release.note" },
       }),
     ).toThrow("must be an integer between 2 and 12");
 
@@ -309,7 +309,7 @@ describe("integration view schema", () => {
         type: "numberInput",
         value: 2,
         step: 0,
-        onChange: { command: "athas.replicas.change" },
+        onChange: { command: "Blimy.replicas.change" },
       }),
     ).toThrow("must be greater than zero");
 
@@ -320,7 +320,7 @@ describe("integration view schema", () => {
           { label: "Production", value: "production" },
           { label: "Live", value: "production" },
         ],
-        onChange: { command: "athas.environment.change" },
+        onChange: { command: "Blimy.environment.change" },
       }),
     ).toThrow("must contain unique values");
 
@@ -329,7 +329,7 @@ describe("integration view schema", () => {
         type: "toggle",
         label: "Auto deploy",
         checked: "yes",
-        onChange: { command: "athas.autoDeploy.change" },
+        onChange: { command: "Blimy.autoDeploy.change" },
       }),
     ).toThrow("Invalid integration view at $.checked: expected a boolean");
 
@@ -347,7 +347,7 @@ describe("integration view schema", () => {
         multiple: true,
         value: "eu",
         options: [{ label: "Europe", value: "eu" }],
-        onChange: { command: "athas.regions.change" },
+        onChange: { command: "Blimy.regions.change" },
       }),
     ).toThrow("Invalid integration view at $.value: expected an array");
 
@@ -379,7 +379,7 @@ describe("integration view schema", () => {
       parseExtensionViewNode({
         type: "form",
         submitLabel: "Connect",
-        onSubmit: { command: "athas.connect" },
+        onSubmit: { command: "Blimy.connect" },
         children: [
           { type: "input", name: "host", required: true, value: "https://example.com" },
           { type: "checkbox", name: "confirmed", required: true, label: "Confirm", checked: false },
@@ -398,7 +398,7 @@ describe("integration view schema", () => {
       parseExtensionViewNode({
         type: "input",
         name: "host",
-        onChange: { command: "athas.host.change" },
+        onChange: { command: "Blimy.host.change" },
       }),
     ).toThrow("form field metadata is only valid inside a form");
 
@@ -406,7 +406,7 @@ describe("integration view schema", () => {
       parseExtensionViewNode({
         type: "form",
         submitLabel: "Connect",
-        onSubmit: { command: "athas.connect" },
+        onSubmit: { command: "Blimy.connect" },
         children: [
           { type: "input", name: "host" },
           { type: "input", name: "host" },
@@ -418,7 +418,7 @@ describe("integration view schema", () => {
       parseExtensionViewNode({
         type: "form",
         submitLabel: "Connect",
-        onSubmit: { command: "athas.connect" },
+        onSubmit: { command: "Blimy.connect" },
         children: [{ type: "input", name: "host", required: true, disabled: true }],
       }),
     ).toThrow("must not be used on a disabled field");
@@ -430,7 +430,7 @@ describe("integration view schema", () => {
         type: "button",
         label: "Run",
         action: {
-          command: "athas.run",
+          command: "Blimy.run",
           args: ["x".repeat(EXTENSION_VIEW_LIMITS.maxPayloadCharacters + 1)],
         },
       }),

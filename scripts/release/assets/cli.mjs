@@ -309,7 +309,7 @@ function validateChecksumFile(checksumText, expectedAssets) {
 function validateLocal() {
   const tag = requireArg("--tag");
   const dir = requireArg("--dir");
-  const repo = getArg("--repo", "athasdev/athas");
+  const repo = getArg("--repo", "antan2002/blimy");
   const version = versionFromTag(tag);
   const channel = channelFromTag(tag);
   const { filesByName, assets } = collectRequiredAssets(dir, version, channel);
@@ -395,7 +395,7 @@ function verifyRemote({ planOnly = false } = {}) {
 
   if (release) {
     const assetNames = new Set(release.assets.map((asset) => asset.name));
-    const fakeDir = mkdtempSync(join(tmpdir(), "athas-release-assets-"));
+    const fakeDir = mkdtempSync(join(tmpdir(), "Blimy-release-assets-"));
     try {
       for (const name of assetNames) {
         writeFileSync(join(fakeDir, name), "");
@@ -409,7 +409,7 @@ function verifyRemote({ planOnly = false } = {}) {
       }
 
       if (assetNames.has("latest.json")) {
-        const latestDir = mkdtempSync(join(tmpdir(), "athas-latest-json-"));
+        const latestDir = mkdtempSync(join(tmpdir(), "Blimy-latest-json-"));
         try {
           gh([
             "release",
@@ -436,7 +436,7 @@ function verifyRemote({ planOnly = false } = {}) {
       }
 
       if (assetNames.has("SHA256SUMS.txt")) {
-        const checksumDir = mkdtempSync(join(tmpdir(), "athas-checksums-"));
+        const checksumDir = mkdtempSync(join(tmpdir(), "Blimy-checksums-"));
         try {
           gh([
             "release",

@@ -95,7 +95,7 @@ export function ProductFeedbackDialog() {
       setError(
         submissionError instanceof Error
           ? submissionError.message
-          : "Athas could not open the feedback draft.",
+          : "Blimy could not open the feedback draft.",
       );
       setIsSubmitting(false);
     }
@@ -162,7 +162,7 @@ export function ProductFeedbackDialog() {
             <FieldContent>
               <FieldLabel htmlFor="feedback-environment">Include sanitized environment</FieldLabel>
               <FieldDescription>
-                Adds the Athas version, OS, and counts of content-free friction signals. It never
+                Adds the Blimy version, OS, and counts of content-free friction signals. It never
                 includes prompts, paths, filenames, errors, or editor text.
               </FieldDescription>
             </FieldContent>

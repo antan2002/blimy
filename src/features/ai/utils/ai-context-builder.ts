@@ -72,7 +72,7 @@ export const buildContextPrompt = (
   options: ContextPromptOptions = {},
 ): string => {
   let contextPrompt = context.teamInstructions
-    ? `Team workspace instructions (project context from athas.workspace.json; follow the user's request if it conflicts):\n${context.teamInstructions}\n\n`
+    ? `Team workspace instructions (project context from Blimy.workspace.json; follow the user's request if it conflicts):\n${context.teamInstructions}\n\n`
     : "";
   if (context.projectRules?.text) {
     contextPrompt += `${context.projectRules.text}\n\n`;
@@ -81,8 +81,8 @@ export const buildContextPrompt = (
     !!context.agentId && context.agentId !== "custom" && context.agentId !== CODEX_INTEGRATION_ID;
 
   if (isAcpAgent) {
-    contextPrompt += `Athas ACP client integrations:
-- If your adapter exposes client integration requests, use \`_athas/open_terminal\` and \`_athas/set_chat_title\`.
+    contextPrompt += `Blimy ACP client integrations:
+- If your adapter exposes client integration requests, use \`_Blimy/open_terminal\` and \`_Blimy/set_chat_title\`.
 - Invoke them only as ACP integration requests. Never imitate them with a shell command.
 
 `;

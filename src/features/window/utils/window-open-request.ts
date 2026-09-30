@@ -82,7 +82,7 @@ export function parseWindowOpenUrl(url: URL): WindowOpenRequest | null {
     (url.protocol === "tauri:" && url.hostname === "localhost") ||
     (["http:", "https:"].includes(url.protocol) &&
       ["localhost", "127.0.0.1", "tauri.localhost"].includes(url.hostname));
-  if (content && isAppUrl && url.searchParams.has("athasWindowTraceId")) {
+  if (content && isAppUrl && url.searchParams.has("BlimyWindowTraceId")) {
     try {
       return { content: JSON.parse(content) };
     } catch {

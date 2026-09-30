@@ -4,7 +4,7 @@ use super::{
       ACP_AUTHENTICATE_TIMEOUT, AuthenticationRequired, LEGACY_TERMINAL_AUTH_META_KEY,
       describe_auth_methods, startup_auth_method,
    },
-   client::{AthasAcpClient, ClientResponders},
+   client::{BlimyAcpClient, ClientResponders},
    mcp_servers::{AcpSkippedMcpServer, McpServerConfig, select_mcp_servers},
    process::{stop_child_tree, stop_child_tree_mut},
    replay::{ReplayMode, ReplayRouter},
@@ -65,7 +65,7 @@ pub(super) struct ConnectionHandle {
    pub agent_id: String,
    pub agent_name: String,
    pub connection: Arc<AcpConnection>,
-   pub client: Arc<AthasAcpClient>,
+   pub client: Arc<BlimyAcpClient>,
    pub app_handle: AppHandle,
    /// The resolved workspace the process runs in; `None` without a project.
    pub workspace_path: Option<PathBuf>,
@@ -131,7 +131,7 @@ pub(super) async fn start_connection(
       .ok_or_else(|| anyhow::anyhow!("Failed to get stdout"))?;
    let recent_stderr = spawn_stderr_logger(&mut child, config.name.clone(), tap.clone());
 
-   let client = Arc::new(AthasAcpClient::new(
+   let client = Arc::new(BlimyAcpClient::new(
       app_handle.clone(),
       workspace_path.clone(),
       terminal_manager,
@@ -259,7 +259,7 @@ pub(super) struct OpenedSession {
 
 /// Opens the session `target` asks for on a running agent (see [`bootstrap_session`]). The
 /// session's initial modes and config options are emitted as events. When the agent wants a sign-in
-/// Athas may not do on its own, an `auth_required` event is emitted and the open fails with
+/// Blimy may not do on its own, an `auth_required` event is emitted and the open fails with
 /// [`AuthenticationRequired`].
 pub(super) async fn open_session(
    handle: ConnectionHandle,
@@ -487,15 +487,15 @@ fn relevant_agent_stderr(lines: &VecDeque<String>) -> Option<String> {
    (!normalized.is_empty()).then_some(normalized)
 }
 
-/// What Athas can do for agents, sent in `initialize`.
+/// What Blimy can do for agents, sent in `initialize`.
 fn client_capabilities() -> acp::ClientCapabilities {
    let mut client_meta = acp::Meta::new();
    client_meta.insert(
       "blimy.dev".to_string(),
       json!({
          "extensionMethods": [
-            { "name": "_blimy/open_terminal", "description": "Open a terminal tab in Athas", "params": { "command": "string|null" } },
-            { "name": "_blimy/set_chat_title", "description": "Rename the active Athas chat title", "params": { "title": "string" } }
+            { "name": "_blimy/open_terminal", "description": "Open a terminal tab in Blimy", "params": { "command": "string|null" } },
+            { "name": "_blimy/set_chat_title", "description": "Rename the active Blimy chat title", "params": { "title": "string" } }
          ]
       }),
    );
@@ -532,7 +532,7 @@ fn client_capabilities() -> acp::ClientCapabilities {
 async fn initialize_connection(connection: Arc<AcpConnection>) -> Result<acp::InitializeResponse> {
    let init_request = acp::InitializeRequest::new(SUPPORTED_PROTOCOL_VERSION)
       .client_capabilities(client_capabilities())
-      .client_info(acp::Implementation::new("blimy", env!("CARGO_PKG_VERSION")).title("Athas"));
+      .client_info(acp::Implementation::new("blimy", env!("CARGO_PKG_VERSION")).title("Blimy"));
 
    // A first run through `npx` downloads the agent before it can answer, so initialize gets
    // longer than the other startup steps. Stop ends startup at any point.
@@ -561,7 +561,7 @@ async fn initialize_connection(connection: Arc<AcpConnection>) -> Result<acp::In
    }
 }
 
-/// The ACP version Athas speaks. An agent answers `initialize` with the version it will use;
+/// The ACP version Blimy speaks. An agent answers `initialize` with the version it will use;
 /// any other version means the two cannot talk, and the spec asks the client to disconnect.
 const SUPPORTED_PROTOCOL_VERSION: ProtocolVersion = ProtocolVersion::V1;
 
@@ -570,8 +570,8 @@ fn check_protocol_version(version: ProtocolVersion) -> Result<()> {
       return Ok(());
    }
    bail!(
-      "The agent uses ACP protocol version {}, but Athas supports version {}. Update the agent or \
-       Athas to a matching version.",
+      "The agent uses ACP protocol version {}, but Blimy supports version {}. Update the agent or \
+       Blimy to a matching version.",
       version.as_u16(),
       SUPPORTED_PROTOCOL_VERSION.as_u16()
    )
@@ -756,7 +756,7 @@ async fn bootstrap_session(
 pub(super) enum SessionTarget {
    /// A fresh session.
    New,
-   /// The chat's earlier session. Athas keeps the chat's history, so the agent's replay of it is
+   /// The chat's earlier session. Blimy keeps the chat's history, so the agent's replay of it is
    /// dropped.
    Reattach(String),
    /// An agent session imported into a new chat. Its history is replayed and returned.
@@ -802,7 +802,7 @@ impl ReopenMethod {
 }
 
 /// How to reopen `target`'s session, in order, from what the agent advertises. A chat prefers
-/// `session/resume`, which restores the agent's context without replaying history Athas already
+/// `session/resume`, which restores the agent's context without replaying history Blimy already
 /// shows, and falls back to `session/load`. An import needs the replay, so only `session/load`
 /// will do.
 fn reopen_methods(target: &SessionTarget, can_load: bool, can_resume: bool) -> Vec<ReopenMethod> {

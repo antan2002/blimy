@@ -1,11 +1,11 @@
 {
-  "$schema": "https://athas.dev/schemas/extension.json",
-  "id": "athas.ql",
+  "$schema": "https://Blimy.dev/schemas/extension.json",
+  "id": "Blimy.ql",
   "name": "QL",
   "displayName": "QL",
   "version": "1.0.0",
   "description": "QL language support",
-  "publisher": "Athas",
+  "publisher": "Blimy",
   "categories": ["Language"],
   "languages": [
     {

@@ -12,8 +12,8 @@ const metricView = {
 };
 
 describe("structured tool views", () => {
-  it("extracts and removes a standalone Athas UI envelope", () => {
-    const output = { type: "athas_ui", view: metricView };
+  it("extracts and removes a standalone Blimy UI envelope", () => {
+    const output = { type: "BLIMY_ui", view: metricView };
 
     expect(isStructuredToolViewEnvelope(output)).toBe(true);
     expect(getStructuredToolViews(output)).toEqual([metricView]);
@@ -38,16 +38,16 @@ describe("structured tool views", () => {
     };
     const output = [
       textOutput,
-      { type: "athas_ui", view: metricView },
+      { type: "BLIMY_ui", view: metricView },
       diffOutput,
-      { type: "athas_ui", view: calloutView },
+      { type: "BLIMY_ui", view: calloutView },
     ];
 
     expect(getStructuredToolViews(output)).toEqual([metricView, calloutView]);
     expect(stripStructuredToolViews(output)).toEqual([textOutput, diffOutput]);
   });
 
-  it("leaves outputs without Athas UI envelopes unchanged", () => {
+  it("leaves outputs without Blimy UI envelopes unchanged", () => {
     const output = { type: "content", content: { type: "text", text: "Done" } };
 
     expect(isStructuredToolViewEnvelope(output)).toBe(false);
@@ -56,7 +56,7 @@ describe("structured tool views", () => {
   });
 
   it("does not accept envelopes without a view", () => {
-    const output = { type: "athas_ui" };
+    const output = { type: "BLIMY_ui" };
 
     expect(isStructuredToolViewEnvelope(output)).toBe(false);
     expect(getStructuredToolViews(output)).toEqual([]);

@@ -61,7 +61,7 @@ export function ComposerNotice({
   lastTurnFailedOffline = false,
   onRetryLastTurn,
 }: ComposerNoticeProps) {
-  const hosted = builtInAgent && providerId === "athas";
+  const hosted = builtInAgent && providerId === "Blimy";
   useSubscriptionRefresh();
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const isLoading = useAuthStore((state) => state.isLoading);

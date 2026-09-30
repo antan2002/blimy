@@ -48,7 +48,7 @@ impl ParsedDiffFile {
             end -= 1;
          }
          raw_patch.push_str(&text[..end]);
-         raw_patch.push_str("\n# Athas truncated this diff to keep the editor responsive.\n");
+         raw_patch.push_str("\n# Blimy truncated this diff to keep the editor responsive.\n");
          self.is_truncated = true;
          return;
       }
@@ -105,7 +105,7 @@ pub fn parse_diff_to_lines(diff: &mut Diff) -> Result<ParsedDiffLines, String> {
                lines.push(GitDiffLine {
                   line_type: DiffLineType::Header,
                   content: format!(
-                     "Athas truncated this diff after {LARGE_DIFF_LINE_THRESHOLD} lines to keep \
+                     "Blimy truncated this diff after {LARGE_DIFF_LINE_THRESHOLD} lines to keep \
                       the editor responsive."
                   ),
                   old_line_number: None,
@@ -667,7 +667,7 @@ fn parse_content_patch(patch: &Patch<'_>) -> Result<ParsedDiffLines, String> {
             lines.push(GitDiffLine {
                line_type: DiffLineType::Header,
                content: format!(
-                  "Athas truncated this diff after {LARGE_DIFF_LINE_THRESHOLD} lines to keep the \
+                  "Blimy truncated this diff after {LARGE_DIFF_LINE_THRESHOLD} lines to keep the \
                    editor responsive."
                ),
                old_line_number: None,
@@ -1171,7 +1171,7 @@ mod tests {
       index.write().expect("write index");
       let tree_id = index.write_tree().expect("write tree");
       let tree = repo.find_tree(tree_id).expect("find tree");
-      let signature = git2::Signature::now("Athas", "blimy@example.com").expect("signature");
+      let signature = git2::Signature::now("Blimy", "blimy@example.com").expect("signature");
       let commit_id = repo
          .commit(Some("HEAD"), &signature, &signature, "first", &tree, &[])
          .expect("commit");

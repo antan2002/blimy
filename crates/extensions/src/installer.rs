@@ -88,7 +88,7 @@ impl ExtensionInstaller {
          let hint = if status == reqwest::StatusCode::NOT_FOUND {
             format!(
                ". The package URL is missing from the integrations CDN: {}. Deploy the package or \
-                point Athas at a local extensions CDN.",
+                point Blimy at a local extensions CDN.",
                download_info.url
             )
          } else {

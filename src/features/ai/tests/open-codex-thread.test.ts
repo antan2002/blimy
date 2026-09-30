@@ -83,7 +83,7 @@ describe("open Codex thread", () => {
     ]);
   });
 
-  it("creates an Athas chat bound to the selected Codex thread", () => {
+  it("creates an Blimy chat bound to the selected Codex thread", () => {
     expect(openCodexThread(thread)).toBe("agent://chat-1");
     expect(mocks.createNewChat).toHaveBeenCalledWith("codex", { activate: false });
     expect(mocks.setChatAcpSessionId).toHaveBeenCalledWith("chat-1", "thread-1");
@@ -93,7 +93,7 @@ describe("open Codex thread", () => {
     expect(mocks.openAgentBuffer).toHaveBeenCalledWith("chat-1");
   });
 
-  it("reopens an existing Athas chat for the Codex thread", () => {
+  it("reopens an existing Blimy chat for the Codex thread", () => {
     mocks.chats = [
       {
         id: "chat-existing",

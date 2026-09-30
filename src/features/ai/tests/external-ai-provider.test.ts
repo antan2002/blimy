@@ -10,14 +10,14 @@ import {
 } from "@/features/ai/services/providers/ai-provider-registry";
 import type { ExtensionManifest } from "@/extensions/types/extension-manifest";
 
-const extensionId = "athas.ai.external-test";
+const extensionId = "Blimy.ai.external-test";
 const manifest = {
   id: extensionId,
   name: "external-test",
   displayName: "External Test",
   description: "External provider test",
   version: "1.0.0",
-  publisher: "Athas",
+  publisher: "Blimy",
   categories: ["AI"],
   aiProviders: [
     {

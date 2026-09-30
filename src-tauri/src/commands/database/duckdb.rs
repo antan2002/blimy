@@ -1,4 +1,4 @@
-use athas_database::{
+use BLIMY_database::{
    providers::{
       delete_duckdb_row as db_delete_duckdb_row, execute_duckdb as db_execute_duckdb,
       get_duckdb_foreign_keys as db_get_duckdb_foreign_keys,

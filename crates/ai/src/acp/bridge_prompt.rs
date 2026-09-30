@@ -113,7 +113,7 @@ async fn send_prompt_with_auth_retry(
       }
       Ok(Err(err)) => Err(err).context("Failed to send prompt"),
       Err(TurnTimedOut) => bail!(
-         "The agent did not finish the turn within {} minutes, so Athas cancelled it",
+         "The agent did not finish the turn within {} minutes, so Blimy cancelled it",
          ACP_PROMPT_TURN_TIMEOUT.as_secs() / 60
       ),
    }

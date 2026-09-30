@@ -65,7 +65,7 @@ fn database_extension_id(provider_id: &str) -> Result<String, String> {
       return Err("Invalid database provider id".to_string());
    }
 
-   Ok(format!("athas.database.{}", provider_id))
+   Ok(format!("Blimy.database.{}", provider_id))
 }
 
 fn platform_arch() -> &'static str {
@@ -280,7 +280,7 @@ pub async fn run_database_sidecar(
    if is_builtin_database_provider(&provider_id) {
       return run_with_database_sidecar_timeout(
          DATABASE_SIDECAR_TIMEOUT,
-         athas_database::sidecar::run_provider_command(provider_id, command, payload),
+         BLIMY_database::sidecar::run_provider_command(provider_id, command, payload),
       )
       .await;
    }
@@ -295,7 +295,7 @@ pub async fn run_database_sidecar(
 
    let mut child = Command::new(&sidecar_path)
       .current_dir(sidecar_dir)
-      .env("ATHAS_DB_SIDECAR_DIR", sidecar_dir)
+      .env("BLIMY_DB_SIDECAR_DIR", sidecar_dir)
       .stdin(Stdio::piped())
       .stdout(Stdio::piped())
       .stderr(Stdio::piped())

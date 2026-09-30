@@ -250,8 +250,8 @@ fn build_app_submenu<R: tauri::Runtime>(
       ..Default::default()
    };
 
-   SubmenuBuilder::new(app, "Athas")
-      .about_with_text("About Athas", Some(about_metadata))
+   SubmenuBuilder::new(app, "Blimy")
+      .about_with_text("About Blimy", Some(about_metadata))
       .separator()
       .item(&MenuItem::with_id(
          app,
@@ -270,14 +270,14 @@ fn build_app_submenu<R: tauri::Runtime>(
       .separator()
       .services()
       .separator()
-      .hide_with_text("Hide Athas")
+      .hide_with_text("Hide Blimy")
       .hide_others()
       .show_all()
       .separator()
       .item(&MenuItem::with_id(
          app,
          "quit_app",
-         "Quit Athas",
+         "Quit Blimy",
          true,
          Some("Cmd+Q"),
       )?)
@@ -326,7 +326,7 @@ fn build_open_recent_submenu<R: tauri::Runtime>(
 
 #[cfg(target_os = "macos")]
 pub fn refresh_open_recent_submenu(
-   app: &tauri::AppHandle<crate::app_runtime::AthasRuntime>,
+   app: &tauri::AppHandle<crate::app_runtime::BlimyRuntime>,
 ) -> Result<(), String> {
    let Some(menu) = app.menu() else {
       return Ok(());

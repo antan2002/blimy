@@ -8,7 +8,7 @@ import {
 } from "../utils/github-workflow-log-model";
 
 export const WORKFLOW_LOG_LANGUAGE_ID = "github-actions-log";
-const FILE_LINK_SCHEME = "athas-workflow-log-file";
+const FILE_LINK_SCHEME = "Blimy-workflow-log-file";
 const VIEWPORT_MARGIN_LINES = 60;
 
 interface WorkflowLogModelEntry {
@@ -21,7 +21,7 @@ const modelRegistry = new Map<string, WorkflowLogModelEntry>();
 
 declare global {
   interface Window {
-    __athasWorkflowLogLanguageInitialized?: boolean;
+    __BlimyWorkflowLogLanguageInitialized?: boolean;
   }
 }
 
@@ -32,8 +32,8 @@ function resolveFilePath(root: string | null, path: string): string {
 }
 
 export function ensureWorkflowLogLanguage(): void {
-  if (typeof window === "undefined" || window.__athasWorkflowLogLanguageInitialized) return;
-  window.__athasWorkflowLogLanguageInitialized = true;
+  if (typeof window === "undefined" || window.__BlimyWorkflowLogLanguageInitialized) return;
+  window.__BlimyWorkflowLogLanguageInitialized = true;
 
   if (!languages.getLanguages().some((language) => language.id === WORKFLOW_LOG_LANGUAGE_ID)) {
     languages.register({ id: WORKFLOW_LOG_LANGUAGE_ID, aliases: ["GitHub Actions log"] });

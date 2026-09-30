@@ -54,7 +54,7 @@ import { getFrontendTerminalSessionArgs } from "../utils/frontend-terminal-sessi
 import { TerminalSearch, type TerminalSearchOptions } from "./terminal-search";
 import "@xterm/xterm/css/xterm.css";
 import "../styles/terminal.css";
-import { getRequiredAthasDefaultColor } from "@/extensions/themes/default-theme";
+import { getRequiredBlimyDefaultColor } from "@/extensions/themes/default-theme";
 
 const MULTILINE_PASTE_LINE_THRESHOLD = 5;
 const LARGE_PASTE_CHAR_THRESHOLD = 1000;
@@ -727,8 +727,8 @@ export const TerminalEmulator = ({
       if (!detail || detail.sessionId !== sessionId) return;
       fitTerminal();
     };
-    window.addEventListener("athas-terminal-refit", handler);
-    return () => window.removeEventListener("athas-terminal-refit", handler);
+    window.addEventListener("Blimy-terminal-refit", handler);
+    return () => window.removeEventListener("Blimy-terminal-refit", handler);
   }, [fitTerminal, isInitialized, sessionId]);
 
   useEffect(() => {
@@ -835,7 +835,7 @@ export const TerminalEmulator = ({
     const themeType = root.getAttribute("data-theme-type") === "light" ? "light" : "dark";
     const themeColor = (name: string) =>
       rootStyles.getPropertyValue(`--${name}`).trim() ||
-      getRequiredAthasDefaultColor(themeType, name);
+      getRequiredBlimyDefaultColor(themeType, name);
     const selected = themeColor("selected");
     const accent = themeColor("primary");
     const border = themeColor("border");

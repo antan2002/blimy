@@ -1,4 +1,4 @@
-use athas_ai::workspace_tools::{
+use BLIMY_ai::workspace_tools::{
    ListFilesOptions, SearchOptions, WorkspaceFileWrite, WorkspaceReplacement,
 };
 use serde::Serialize;
@@ -7,7 +7,7 @@ use tauri::{AppHandle, Emitter};
 #[tauri::command]
 pub async fn intelligence_read_file(root: String, path: String) -> Result<String, String> {
    tauri::async_runtime::spawn_blocking(move || {
-      athas_ai::workspace_tools::read_workspace_file(&root, &path)
+      BLIMY_ai::workspace_tools::read_workspace_file(&root, &path)
    })
    .await
    .map_err(|e| e.to_string())?
@@ -22,7 +22,7 @@ pub async fn intelligence_paths_stay_in_workspace(
       return Ok(false);
    }
    tauri::async_runtime::spawn_blocking(move || {
-      athas_ai::workspace_tools::paths_stay_in_workspace(&root, &paths)
+      BLIMY_ai::workspace_tools::paths_stay_in_workspace(&root, &paths)
    })
    .await
    .map_err(|e| e.to_string())
@@ -32,9 +32,9 @@ pub async fn intelligence_paths_stay_in_workspace(
 pub async fn intelligence_list_files(
    root: String,
    options: Option<ListFilesOptions>,
-) -> Result<athas_ai::workspace_tools::WorkspaceFileList, String> {
+) -> Result<BLIMY_ai::workspace_tools::WorkspaceFileList, String> {
    tauri::async_runtime::spawn_blocking(move || {
-      athas_ai::workspace_tools::list_workspace_files(&root, &options.unwrap_or_default())
+      BLIMY_ai::workspace_tools::list_workspace_files(&root, &options.unwrap_or_default())
    })
    .await
    .map_err(|e| e.to_string())?
@@ -46,9 +46,9 @@ pub async fn intelligence_list_files(
 #[serde(rename_all = "camelCase")]
 pub struct IntelligenceCommandRun {
    #[serde(flatten)]
-   output: athas_ai::workspace_command::WorkspaceCommandOutput,
+   output: BLIMY_ai::workspace_command::WorkspaceCommandOutput,
    /// `None` when the workspace could not be compared, so changes went untracked.
-   file_changes: Option<athas_ai::workspace_changes::WorkspaceChanges>,
+   file_changes: Option<BLIMY_ai::workspace_changes::WorkspaceChanges>,
 }
 
 #[tauri::command]
@@ -59,15 +59,15 @@ pub async fn intelligence_run_command(
 ) -> Result<IntelligenceCommandRun, String> {
    let snapshot_root = root.clone();
    let snapshot = tauri::async_runtime::spawn_blocking(move || {
-      athas_ai::workspace_changes::snapshot_workspace(&snapshot_root).ok()
+      BLIMY_ai::workspace_changes::snapshot_workspace(&snapshot_root).ok()
    })
    .await
    .ok()
    .flatten();
-   let output = athas_ai::workspace_command::run_workspace_command(&root, &command, &id).await?;
+   let output = BLIMY_ai::workspace_command::run_workspace_command(&root, &command, &id).await?;
    let file_changes = match snapshot {
       Some(snapshot) => tauri::async_runtime::spawn_blocking(move || {
-         athas_ai::workspace_changes::diff_workspace(&snapshot).ok()
+         BLIMY_ai::workspace_changes::diff_workspace(&snapshot).ok()
       })
       .await
       .ok()
@@ -85,13 +85,13 @@ pub async fn chat_run_terminal_command(
    root: String,
    command: String,
    id: String,
-   on_output: tauri::ipc::Channel<athas_ai::workspace_command::WorkspaceCommandChunk>,
-) -> Result<athas_ai::workspace_command::WorkspaceCommandOutput, String> {
-   let listener: athas_ai::workspace_command::CommandOutputListener =
+   on_output: tauri::ipc::Channel<BLIMY_ai::workspace_command::WorkspaceCommandChunk>,
+) -> Result<BLIMY_ai::workspace_command::WorkspaceCommandOutput, String> {
+   let listener: BLIMY_ai::workspace_command::CommandOutputListener =
       std::sync::Arc::new(move |chunk| {
          let _ = on_output.send(chunk);
       });
-   athas_ai::workspace_command::run_workspace_command_with_output(
+   BLIMY_ai::workspace_command::run_workspace_command_with_output(
       &root,
       &command,
       &id,
@@ -102,22 +102,22 @@ pub async fn chat_run_terminal_command(
 
 #[tauri::command]
 pub fn intelligence_cancel_command(id: String) {
-   athas_ai::workspace_command::cancel_workspace_command(&id);
+   BLIMY_ai::workspace_command::cancel_workspace_command(&id);
 }
 
 #[tauri::command]
 pub async fn intelligence_search_files(
    root: String,
    options: SearchOptions,
-) -> Result<athas_ai::workspace_tools::WorkspaceSearchResult, String> {
+) -> Result<BLIMY_ai::workspace_tools::WorkspaceSearchResult, String> {
    tauri::async_runtime::spawn_blocking(move || {
-      athas_ai::workspace_tools::search_workspace_files(&root, &options)
+      BLIMY_ai::workspace_tools::search_workspace_files(&root, &options)
    })
    .await
    .map_err(|e| e.to_string())?
 }
 
-/// A write by Athas's own agent, in the shape of the ACP `agent_file_write` event, so the chat
+/// A write by Blimy's own agent, in the shape of the ACP `agent_file_write` event, so the chat
 /// records it for keep-or-reject review exactly like an ACP agent's write.
 #[derive(Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -135,7 +135,7 @@ fn announce_write(
    app: &AppHandle,
    write: WorkspaceFileWrite,
 ) -> Result<IntelligenceFileWrite, String> {
-   let write_id = athas_ai::acp::next_agent_write_id();
+   let write_id = BLIMY_ai::acp::next_agent_write_id();
    let _ = app.emit(
       "file-changed",
       serde_json::json!({
@@ -161,7 +161,7 @@ pub async fn intelligence_edit_file(
    edits: Vec<WorkspaceReplacement>,
 ) -> Result<IntelligenceFileWrite, String> {
    let write = tauri::async_runtime::spawn_blocking(move || {
-      athas_ai::workspace_tools::edit_workspace_file(&root, &path, &expected_content, &edits)
+      BLIMY_ai::workspace_tools::edit_workspace_file(&root, &path, &expected_content, &edits)
    })
    .await
    .map_err(|e| e.to_string())??;
@@ -177,7 +177,7 @@ pub async fn intelligence_write_file(
    content: String,
 ) -> Result<IntelligenceFileWrite, String> {
    let write = tauri::async_runtime::spawn_blocking(move || {
-      athas_ai::workspace_tools::write_workspace_file(
+      BLIMY_ai::workspace_tools::write_workspace_file(
          &root,
          &path,
          expected_content.as_deref(),
@@ -197,7 +197,7 @@ pub async fn intelligence_delete_file(
    expected_content: String,
 ) -> Result<String, String> {
    let path = tauri::async_runtime::spawn_blocking(move || {
-      athas_ai::workspace_tools::delete_workspace_file(&root, &path, &expected_content)
+      BLIMY_ai::workspace_tools::delete_workspace_file(&root, &path, &expected_content)
    })
    .await
    .map_err(|e| e.to_string())??;

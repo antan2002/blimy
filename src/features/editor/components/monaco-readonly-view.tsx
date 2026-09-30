@@ -71,7 +71,7 @@ export function MonacoReadonlyView({
     const container = containerRef.current;
     if (!container) return;
 
-    const uri = Uri.parse(`athas-readonly://view/${instanceId.replace(/[^a-zA-Z0-9]/g, "")}`);
+    const uri = Uri.parse(`blimy-readonly://view/${instanceId.replace(/[^a-zA-Z0-9]/g, "")}`);
     const model = monacoEditor.createModel(content, languageId, uri);
     const editor = monacoEditor.create(container, {
       model,
@@ -116,7 +116,7 @@ export function MonacoReadonlyView({
     const focusDisposable = editor.onDidFocusEditorWidget(() => {
       editorAPI.setActiveFindAdapter({
         ownerId,
-        openFind: () => editor.trigger("athas-keybinding", "actions.find", null),
+        openFind: () => editor.trigger("Blimy-keybinding", "actions.find", null),
       });
     });
     const blurDisposable = editor.onDidBlurEditorWidget(() => {

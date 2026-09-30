@@ -5,7 +5,7 @@ import { runIntelligenceAgent } from "../intelligence/services/intelligence-agen
 import { cancelIntelligenceAgent } from "../intelligence/services/intelligence-agent-session";
 import { respondToIntelligencePermission } from "../intelligence/services/intelligence-agent-permissions";
 import { formatApiError } from "../lib/api-error";
-import { HOSTED_ATHAS_REQUEST_LIMITS } from "../lib/conversation-history";
+import { HOSTED_BLIMY_REQUEST_LIMITS } from "../lib/conversation-history";
 import type { McpToolContext } from "../intelligence/services/intelligence-mcp";
 import type { McpJsonRpcMessage } from "../intelligence/types/intelligence-mcp.types";
 import type { McpServerSetting } from "../types/mcp-server.types";
@@ -189,7 +189,7 @@ beforeEach(() => {
 });
 
 describe("Intelligence local agent loop", () => {
-  it.each(["athas", "openai"])(
+  it.each(["Blimy", "openai"])(
     "preserves system instructions across tool steps for %s",
     async (providerId) => {
       const options = params();
@@ -510,7 +510,7 @@ describe("Intelligence local agent loop", () => {
     });
     expect(mocks.mcpClosed).toBe(1);
   });
-  it("trims older file reads so every Athas request stays within the hosted limit", async () => {
+  it("trims older file reads so every Blimy request stays within the hosted limit", async () => {
     mocks.invoke.mockImplementation(async (command: string) =>
       command === "intelligence_read_file" ? "y".repeat(30_000) : undefined,
     );
@@ -520,13 +520,13 @@ describe("Intelligence local agent loop", () => {
         step(),
       ],
     });
-    await runIntelligenceAgent({ ...params(), providerId: "athas", modelId: "athas/model" });
+    await runIntelligenceAgent({ ...params(), providerId: "Blimy", modelId: "Blimy/model" });
 
     const sizes = mocks.model.doStreamCalls.map(
       (call) => new TextEncoder().encode(JSON.stringify(call.prompt)).length,
     );
     expect(sizes).toHaveLength(25);
-    expect(Math.max(...sizes)).toBeLessThanOrEqual(HOSTED_ATHAS_REQUEST_LIMITS.maxBytes);
+    expect(Math.max(...sizes)).toBeLessThanOrEqual(HOSTED_BLIMY_REQUEST_LIMITS.maxBytes);
     expect(JSON.stringify(mocks.model.doStreamCalls[24].prompt)).toContain(
       "[trimmed: re-read if needed]",
     );
@@ -567,7 +567,7 @@ describe("Intelligence local agent loop", () => {
       code: "allowance_exhausted",
       statusCode: 402,
     });
-    expect(formatApiError("athas", failure)).toContain("athas API error: 402|||");
+    expect(formatApiError("Blimy", failure)).toContain("Blimy API error: 402|||");
   });
   it("sends the todo list to the chat as a plan", async () => {
     mocks.model = new MockLanguageModelV4({
@@ -592,12 +592,12 @@ describe("Intelligence local agent loop", () => {
       ],
     });
   });
-  it("sends images to Athas models as image parts and shows the caller's notices", async () => {
+  it("sends images to Blimy models as image parts and shows the caller's notices", async () => {
     mocks.model = new MockLanguageModelV4({ doStream: [step()] });
     const options = params();
     const result = await runIntelligenceAgent({
       ...options,
-      providerId: "athas",
+      providerId: "Blimy",
       notices: ["An image was not sent: it is over the size limit."],
       messages: [
         {

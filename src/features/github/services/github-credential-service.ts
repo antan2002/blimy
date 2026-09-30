@@ -1,18 +1,18 @@
 import { invoke } from "@tauri-apps/api/core";
 
 /**
- * Which credential Athas is currently authenticating GitHub with.
+ * Which credential Blimy is currently authenticating GitHub with.
  *
- * Athas mints only the `athas` token; the other two belong to the user. A `gh`
+ * Blimy mints only the `Blimy` token; the other two belong to the user. A `gh`
  * token in particular is read from the CLI on demand and never leaves the
- * machine — it is not persisted into Athas' own keychain entry.
+ * machine — it is not persisted into Blimy' own keychain entry.
  */
-export type GitHubTokenSource = "athas" | "personalAccessToken" | "ghCli";
+export type GitHubTokenSource = "Blimy" | "personalAccessToken" | "ghCli";
 
 export interface GitHubTokenStatus {
   source: GitHubTokenSource | null;
   hasPersonalAccessToken: boolean;
-  hasAthasAccountToken: boolean;
+  hasBlimyAccountToken: boolean;
   ghCliInstalled: boolean;
   login: string | null;
   /** Space-separated OAuth scopes, or null for fine-grained tokens. */
@@ -45,7 +45,7 @@ export const refreshGitHubGhCliToken = async (): Promise<void> => {
 };
 
 export const GITHUB_TOKEN_SOURCE_LABELS: Record<GitHubTokenSource, string> = {
-  athas: "Athas account",
+  blimy: "Blimy account",
   personalAccessToken: "Personal access token",
   ghCli: "GitHub CLI (gh)",
 };

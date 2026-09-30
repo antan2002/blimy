@@ -1,5 +1,5 @@
 use crate::app_runtime::AppHandle;
-use athas_terminal::{
+use BLIMY_terminal::{
    TerminalConfig, TerminalEventHandler, TerminalInput, TerminalManager, TerminalSize, shell::Shell,
 };
 use std::{
@@ -148,7 +148,7 @@ pub fn close_window_terminals(app: &AppHandle, label: &str) {
          }
       }
       for id in stale.remote_connection_ids {
-         if let Err(error) = athas_remote::close_remote_terminal(id).await {
+         if let Err(error) = BLIMY_remote::close_remote_terminal(id).await {
             log::warn!("Failed to close remote window terminal: {error}");
          }
       }
@@ -171,7 +171,7 @@ pub async fn begin_frontend_terminal_session(
    }
 
    for connection_id in stale.remote_connection_ids {
-      athas_remote::close_remote_terminal(connection_id).await?;
+      BLIMY_remote::close_remote_terminal(connection_id).await?;
    }
 
    Ok(())
@@ -190,7 +190,7 @@ fn shell_integration_dir(app_handle: &AppHandle) -> Option<String> {
       .app_cache_dir()
       .ok()?
       .join("shell-integration");
-   match athas_terminal::ensure_shell_integration_dir(&base_dir) {
+   match BLIMY_terminal::ensure_shell_integration_dir(&base_dir) {
       Ok(dir) => Some(dir.to_string_lossy().into_owned()),
       Err(error) => {
          log::warn!("Failed to install terminal shell integration: {error}");
@@ -274,10 +274,10 @@ pub async fn close_terminal(
 
 #[tauri::command]
 pub fn list_shells() -> Vec<Shell> {
-   athas_terminal::get_shells()
+   BLIMY_terminal::get_shells()
 }
 
-pub use athas_terminal::TerminalManager as ManagedTerminalManager;
+pub use BLIMY_terminal::TerminalManager as ManagedTerminalManager;
 
 #[cfg(test)]
 mod tests {

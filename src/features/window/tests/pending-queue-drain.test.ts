@@ -3,7 +3,7 @@ import { createPendingQueueDrain } from "../utils/pending-queue-drain";
 
 describe("pending queue drain", () => {
   it("handles what it took even when the caller has gone, and never overlaps", async () => {
-    const queue = ["athas://open?path=/a"];
+    const queue = ["blimy://open?path=/a"];
     const takes: Array<ReturnType<typeof Promise.withResolvers<string[]>>> = [];
     const handle = vi.fn();
     const drain = createPendingQueueDrain({
@@ -23,13 +23,13 @@ describe("pending queue drain", () => {
     expect(takes).toHaveLength(1);
     takes[0].resolve(queue.splice(0));
     await vi.waitFor(() => expect(takes).toHaveLength(2));
-    queue.push("athas://settings");
+    queue.push("blimy://settings");
     takes[1].resolve(queue.splice(0));
     await first;
 
     expect(handle.mock.calls.map(([url]) => url)).toEqual([
-      "athas://open?path=/a",
-      "athas://settings",
+      "blimy://open?path=/a",
+      "blimy://settings",
     ]);
   });
 

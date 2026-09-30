@@ -45,7 +45,7 @@ export class OpenRouterProvider extends AIProvider {
       "Content-Type": "application/json",
       Accept: "text/event-stream, application/json",
       "HTTP-Referer": "https://localhost",
-      "X-Title": "Athas",
+      "X-Title": "Blimy",
     };
 
     if (apiKey) {

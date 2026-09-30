@@ -12,7 +12,7 @@ shift
 script_dir="${0:A:h}"
 repo_root="${script_dir:h:h}"
 signing_identity="${APPLE_SIGNING_IDENTITY:-}"
-identifier="${ATHAS_DEV_CODE_SIGN_IDENTIFIER:-}"
+identifier="${BLIMY_DEV_CODE_SIGN_IDENTIFIER:-}"
 
 if [[ -z "$signing_identity" ]]; then
   signing_identity="$(

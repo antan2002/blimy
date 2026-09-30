@@ -49,7 +49,7 @@ describe("views buffer store", () => {
     const openContent = useBufferStore.getState().actions.openContent;
     const spec = {
       type: "customView" as const,
-      projectPath: "/projects/athas",
+      projectPath: "/projects/Blimy",
       viewId: "release-downloads",
       name: "Release downloads",
     };
@@ -69,11 +69,11 @@ describe("views buffer store", () => {
 
     const setupBufferId = openContent({
       type: "customView",
-      projectPath: "/projects/athas",
+      projectPath: "/projects/Blimy",
     });
     const viewBufferId = openContent({
       type: "customView",
-      projectPath: "/projects/athas",
+      projectPath: "/projects/Blimy",
       viewId: "release-downloads",
       name: "Release downloads",
     });

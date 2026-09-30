@@ -4,7 +4,7 @@ import type {
   ExtensionViewTreeItem,
 } from "@/extensions/ui/types/extension-view";
 
-export const OPEN_TOOL_LOCATION_COMMAND = "athas.ai.openToolLocation";
+export const OPEN_TOOL_LOCATION_COMMAND = "Blimy.ai.openToolLocation";
 
 interface MutableTreeItem extends ExtensionViewTreeItem {
   children: MutableTreeItem[];

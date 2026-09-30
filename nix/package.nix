@@ -44,7 +44,7 @@
 }:
 
 let
-  pname = "athas";
+  pname = "Blimy";
   version = "0.15.1";
 
   # Keep the formatting of these lines stable
@@ -63,7 +63,7 @@ let
   mkSource =
     system:
     fetchurl {
-      url = "https://github.com/athasdev/athas/releases/download/v${version}/Athas_${version}_linux-${arches.${system}}.tar.gz";
+      url = "https://github.com/antan2002/blimy/releases/download/v${version}/BLIMY_${version}_linux-${arches.${system}}.tar.gz";
       hash = hashes.${system};
     };
 
@@ -71,7 +71,7 @@ let
     if hashes ? ${stdenv.hostPlatform.system} then
       mkSource stdenv.hostPlatform.system
     else
-      throw "athas: unsupported system ${stdenv.hostPlatform.system}";
+      throw "blimy: unsupported system ${stdenv.hostPlatform.system}";
 
   runtimeLibs = [
     glib
@@ -115,7 +115,7 @@ in
 stdenv.mkDerivation {
   inherit pname version src;
 
-  sourceRoot = "athas.app";
+  sourceRoot = "Blimy.app";
 
   nativeBuildInputs = [
     autoPatchelfHook
@@ -138,7 +138,7 @@ stdenv.mkDerivation {
     cp -r lib/. $out/lib/
     cp -r share/. $out/share/
 
-    makeWrapper $out/libexec/athas $out/bin/athas \
+    makeWrapper $out/libexec/Blimy $out/bin/Blimy \
       --add-flags "--ozone-platform=x11 --disable-vulkan --disable-features=Vulkan" \
       --prefix LD_LIBRARY_PATH : "$out/libexec:${lib.makeLibraryPath runtimeLibs}" \
       "''${gappsWrapperArgs[@]}"
@@ -147,15 +147,15 @@ stdenv.mkDerivation {
   '';
 
   meta = {
-    description = "Athas — a fast, extensible code editor (prebuilt Linux release)";
-    homepage = "https://github.com/athasdev/athas";
-    changelog = "https://github.com/athasdev/athas/releases/tag/v${version}";
+    description = "Blimy — a fast, extensible code editor (prebuilt Linux release)";
+    homepage = "https://github.com/antan2002/blimy";
+    changelog = "https://github.com/antan2002/blimy/releases/tag/v${version}";
     license = lib.licenses.agpl3Only;
     sourceProvenance = with lib.sourceTypes; [ binaryNativeCode ];
     platforms = [
       "x86_64-linux"
       "aarch64-linux"
     ];
-    mainProgram = "athas";
+    mainProgram = "Blimy";
   };
 }

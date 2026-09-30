@@ -26,7 +26,7 @@ export interface ViewTreeItem {
   children?: ViewTreeItem[];
 }
 
-export interface AthasExtensionAPI {
+export interface BlimyExtensionAPI {
   sidebar: {
     registerView(config: {
       id: string;
@@ -301,5 +301,5 @@ export interface AthasExtensionAPI {
   };
 }
 
-export function activate(api: AthasExtensionAPI): void | Promise<void>;
+export function activate(api: BlimyExtensionAPI): void | Promise<void>;
 export function deactivate(): void | Promise<void>;

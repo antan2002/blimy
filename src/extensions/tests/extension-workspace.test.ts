@@ -6,23 +6,23 @@ import {
 } from "../../../extensions/tooling/extension-workspace";
 
 describe("extension workspace theme ownership", () => {
-  it("reserves Athas default theme identities for built-in themes", () => {
+  it("reserves Blimy default theme identities for built-in themes", () => {
     expect(
       getReservedBuiltInThemeContribution({
         id: "market-light",
-        name: "Athas Light",
+        name: "Blimy Light",
       }),
-    ).toEqual({ id: "market-light", name: "athas light" });
+    ).toEqual({ id: "market-light", name: "Blimy light" });
 
     expect(
       getReservedBuiltInThemeContribution({
-        id: "athas-dark",
+        id: "blimy-dark",
         name: "Custom Dark",
       }),
-    ).toEqual({ id: "athas-dark", name: "custom dark" });
+    ).toEqual({ id: "blimy-dark", name: "custom dark" });
   });
 
-  it("allows non-Athas marketplace theme identities", () => {
+  it("allows non-Blimy marketplace theme identities", () => {
     expect(
       getReservedBuiltInThemeContribution({
         id: "vercel-light",
@@ -34,9 +34,9 @@ describe("extension workspace theme ownership", () => {
 
 describe("extension artifact metadata", () => {
   it("adds installation metadata without mutating the source manifest", () => {
-    const source = { id: "athas.example", name: "Example" };
+    const source = { id: "Blimy.example", name: "Example" };
     const installation = {
-      downloadUrl: "https://athas.dev/extensions/example.tar.gz",
+      downloadUrl: "https://Blimy.dev/extensions/example.tar.gz",
       size: 42,
       checksum: "checksum",
     };
@@ -44,10 +44,10 @@ describe("extension artifact metadata", () => {
     expect(
       createDeployableExtensionManifest(source, {
         version: 1,
-        installations: { "athas.example": installation },
+        installations: { "Blimy.example": installation },
       }),
     ).toEqual({ ...source, installation });
-    expect(source).toEqual({ id: "athas.example", name: "Example" });
+    expect(source).toEqual({ id: "Blimy.example", name: "Example" });
   });
 });
 

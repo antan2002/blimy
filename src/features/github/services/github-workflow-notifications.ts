@@ -1,5 +1,5 @@
 import { isPermissionGranted, sendNotification } from "@tauri-apps/plugin-notification";
-import { isAnyAthasWindowFocused } from "@/features/ai/services/agent-native-notifications";
+import { isAnyBlimyWindowFocused } from "@/features/ai/services/agent-native-notifications";
 import { useNotificationsStore } from "@/features/notifications/stores/notifications.store";
 import { useSettingsStore } from "@/features/settings/stores/settings.store";
 import type {
@@ -151,7 +151,7 @@ export const notifyWorkflowRunChanges = createWorkflowRunNotifier({
   isEnabled: () => useSettingsStore.getState().settings.githubActionNotifications,
   showToast: (value) => showToast(value),
   record: (notification) => useNotificationsStore.getState().actions.record(notification),
-  isAppFocused: isAnyAthasWindowFocused,
+  isAppFocused: isAnyBlimyWindowFocused,
   isPermissionGranted,
-  sendNative: ({ title, body }) => sendNotification({ title, body, group: "athas-github" }),
+  sendNative: ({ title, body }) => sendNotification({ title, body, group: "Blimy-github" }),
 });

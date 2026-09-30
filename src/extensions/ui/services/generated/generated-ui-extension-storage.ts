@@ -16,7 +16,7 @@ export interface GeneratedUIExtension {
   permissions?: ExtensionPermissions;
 }
 
-const GENERATED_EXTENSIONS_STORAGE_KEY = "athas.generated-ui-extensions";
+const GENERATED_EXTENSIONS_STORAGE_KEY = "Blimy.generated-ui-extensions";
 
 export function normalizeGeneratedExtensionId(id: string): string {
   const normalized = id

@@ -45,7 +45,7 @@ export function DetachedWindowShell({
   useSystemAccessibility();
 
   useEffect(() => {
-    void getCurrentWindow().setTitle(`${title} — Athas`).catch(console.error);
+    void getCurrentWindow().setTitle(`${title} — Blimy`).catch(console.error);
   }, [title]);
 
   return (
@@ -55,7 +55,7 @@ export function DetachedWindowShell({
         <WindowResizeBorder />
         <div
           data-window-surface="content"
-          className="athas-layout-shell flex h-dvh flex-col overflow-hidden bg-background"
+          className="Blimy-layout-shell flex h-dvh flex-col overflow-hidden bg-background"
         >
           <TitleBar showMinimal title={title} titleIcon={icon} titleActions={actions} />
           {error ? (

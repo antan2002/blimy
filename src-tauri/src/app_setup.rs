@@ -1,15 +1,15 @@
 #[cfg(not(target_os = "linux"))]
 use crate::menu;
 use crate::{
-   app_runtime::AthasRuntime,
+   app_runtime::BlimyRuntime,
    commands::{self, FffSearchState, FileClipboard, ThemeCache},
    file_events::TauriFileChangeEmitter,
    terminal::{FrontendTerminalSessions, ManagedTerminalManager as TerminalManager},
 };
-use athas_ai::{AcpAgentBridge, CodexAppServer};
-use athas_debugger::DebugManager;
-use athas_lsp::LspManager;
-use athas_project::FileWatcher;
+use BLIMY_ai::{AcpAgentBridge, CodexAppServer};
+use BLIMY_debugger::DebugManager;
+use BLIMY_lsp::LspManager;
+use BLIMY_project::FileWatcher;
 use log::{debug, info};
 use serde::Serialize;
 use std::{path::PathBuf, sync::Arc, time::Instant};
@@ -19,10 +19,10 @@ use tauri_plugin_os::platform;
 use tauri_plugin_store::StoreExt;
 use tokio::sync::Mutex;
 
-pub fn configure_app(app: &mut tauri::App<AthasRuntime>) -> Result<(), Box<dyn std::error::Error>> {
+pub fn configure_app(app: &mut tauri::App<BlimyRuntime>) -> Result<(), Box<dyn std::error::Error>> {
    app.state::<commands::ui::StartupTiming>()
       .record("native:setup:start");
-   athas_version_control::configure_libgit2();
+   BLIMY_version_control::configure_libgit2();
    #[cfg(all(target_os = "linux", feature = "linux"))]
    if commands::development::cli_windows::requests_need_workbench(
       &commands::development::cli_args::parse_cli_argv(
@@ -72,7 +72,7 @@ pub fn configure_app(app: &mut tauri::App<AthasRuntime>) -> Result<(), Box<dyn s
 
 #[cfg(all(target_os = "linux", feature = "linux"))]
 fn create_initial_linux_window(
-   app: &tauri::App<AthasRuntime>,
+   app: &tauri::App<BlimyRuntime>,
 ) -> Result<(), Box<dyn std::error::Error>> {
    let config = app
       .config()
@@ -90,7 +90,7 @@ fn create_initial_linux_window(
 }
 
 #[cfg(any(target_os = "windows", target_os = "linux"))]
-fn configure_menu(app: &mut tauri::App<AthasRuntime>) -> Result<(), Box<dyn std::error::Error>> {
+fn configure_menu(app: &mut tauri::App<BlimyRuntime>) -> Result<(), Box<dyn std::error::Error>> {
    let store = app.store("settings.json")?;
    store.set("nativeMenuBar", false);
    let _ = store.save();
@@ -98,7 +98,7 @@ fn configure_menu(app: &mut tauri::App<AthasRuntime>) -> Result<(), Box<dyn std:
 }
 
 #[cfg(target_os = "macos")]
-fn configure_menu(app: &mut tauri::App<AthasRuntime>) -> Result<(), Box<dyn std::error::Error>> {
+fn configure_menu(app: &mut tauri::App<BlimyRuntime>) -> Result<(), Box<dyn std::error::Error>> {
    let store = app.store("settings.json")?;
    let native_menu_bar = store
       .get("nativeMenuBar")
@@ -117,7 +117,7 @@ fn configure_menu(app: &mut tauri::App<AthasRuntime>) -> Result<(), Box<dyn std:
    Ok(())
 }
 
-fn register_managed_state(app: &mut tauri::App<AthasRuntime>) {
+fn register_managed_state(app: &mut tauri::App<BlimyRuntime>) {
    log::info!("Starting app!");
 
    app.manage(Arc::new(FileWatcher::new(Arc::new(
@@ -145,7 +145,7 @@ fn register_managed_state(app: &mut tauri::App<AthasRuntime>) {
    app.manage(commands::development::deep_links::PendingDeepLinks::default());
 }
 
-fn listen_for_deep_links(app: &tauri::App<AthasRuntime>) {
+fn listen_for_deep_links(app: &tauri::App<BlimyRuntime>) {
    use tauri_plugin_deep_link::DeepLinkExt;
 
    let deep_link = app.deep_link();
@@ -165,7 +165,7 @@ fn listen_for_deep_links(app: &tauri::App<AthasRuntime>) {
    });
 }
 
-fn queue_deep_links(app: &tauri::AppHandle<AthasRuntime>, urls: &[tauri::Url]) {
+fn queue_deep_links(app: &tauri::AppHandle<BlimyRuntime>, urls: &[tauri::Url]) {
    let urls = commands::development::deep_links::app_deep_links(urls);
    if urls.is_empty() {
       return;
@@ -181,7 +181,7 @@ fn queue_deep_links(app: &tauri::AppHandle<AthasRuntime>, urls: &[tauri::Url]) {
    }
 }
 
-fn emit_cli_open_requests(app: &tauri::App<AthasRuntime>) {
+fn emit_cli_open_requests(app: &tauri::App<BlimyRuntime>) {
    let cwd = std::env::current_dir().unwrap_or_default();
    let args: Vec<String> = std::env::args().collect();
    let open_requests = commands::development::cli_args::parse_cli_argv(&args, &cwd);
@@ -190,7 +190,7 @@ fn emit_cli_open_requests(app: &tauri::App<AthasRuntime>) {
 }
 
 pub fn handle_single_instance_open(
-   app_handle: &tauri::AppHandle<AthasRuntime>,
+   app_handle: &tauri::AppHandle<BlimyRuntime>,
    args: Vec<String>,
    cwd: String,
 ) {
@@ -214,9 +214,9 @@ pub fn handle_single_instance_open(
 }
 
 fn get_workbench_window(
-   app: &tauri::AppHandle<AthasRuntime>,
-) -> Option<tauri::WebviewWindow<AthasRuntime>> {
-   let is_workbench = |window: &tauri::WebviewWindow<AthasRuntime>| {
+   app: &tauri::AppHandle<BlimyRuntime>,
+) -> Option<tauri::WebviewWindow<BlimyRuntime>> {
+   let is_workbench = |window: &tauri::WebviewWindow<BlimyRuntime>| {
       window.url().is_ok_and(|url| {
          !url
             .query_pairs()
@@ -229,8 +229,8 @@ fn get_workbench_window(
 }
 
 fn focus_workbench_window(
-   app: &tauri::AppHandle<AthasRuntime>,
-) -> Option<tauri::WebviewWindow<AthasRuntime>> {
+   app: &tauri::AppHandle<BlimyRuntime>,
+) -> Option<tauri::WebviewWindow<BlimyRuntime>> {
    let window = get_workbench_window(app).or_else(|| {
       commands::ui::window::create_app_window_internal(app, None)
          .ok()
@@ -243,7 +243,7 @@ fn focus_workbench_window(
 }
 
 fn queue_cli_requests(
-   app: &tauri::AppHandle<AthasRuntime>,
+   app: &tauri::AppHandle<BlimyRuntime>,
    requests: Vec<commands::development::cli_args::CliRequest>,
 ) {
    use commands::development::{cli_args::CliRequest, cli_windows::window_request};
@@ -275,22 +275,22 @@ fn queue_cli_requests(
    }
 }
 
-fn configure_initial_window(app: &tauri::App<AthasRuntime>) {
+fn configure_initial_window(app: &tauri::App<BlimyRuntime>) {
    if let Some(window) = app.get_webview_window("main") {
       commands::ui::window::configure_app_window(&window);
    }
 }
 
 fn get_active_webview_window(
-   app: &tauri::AppHandle<AthasRuntime>,
-) -> Option<tauri::WebviewWindow<AthasRuntime>> {
+   app: &tauri::AppHandle<BlimyRuntime>,
+) -> Option<tauri::WebviewWindow<BlimyRuntime>> {
    app.get_focused_window()
       .and_then(|window| app.get_webview_window(window.label()))
       .or_else(|| app.get_webview_window("main"))
       .or_else(|| app.webview_windows().into_values().next())
 }
 
-fn focus_active_window(app: &tauri::AppHandle<AthasRuntime>) {
+fn focus_active_window(app: &tauri::AppHandle<BlimyRuntime>) {
    if let Some(window) = get_active_webview_window(app) {
       let _ = window.unminimize();
       let _ = window.show();
@@ -299,7 +299,7 @@ fn focus_active_window(app: &tauri::AppHandle<AthasRuntime>) {
 }
 
 #[cfg(target_os = "macos")]
-pub fn handle_reopen(app: &tauri::AppHandle<AthasRuntime>, has_visible_windows: bool) {
+pub fn handle_reopen(app: &tauri::AppHandle<BlimyRuntime>, has_visible_windows: bool) {
    if get_active_webview_window(app).is_some() {
       log::info!("[macos:reopen] focusing existing window visible={has_visible_windows}");
       focus_active_window(app);
@@ -313,7 +313,7 @@ pub fn handle_reopen(app: &tauri::AppHandle<AthasRuntime>, has_visible_windows: 
 }
 
 #[cfg(target_os = "macos")]
-pub fn handle_opened_urls(app: &tauri::AppHandle<AthasRuntime>, urls: &[tauri::Url]) {
+pub fn handle_opened_urls(app: &tauri::AppHandle<BlimyRuntime>, urls: &[tauri::Url]) {
    let open_requests = commands::development::cli_args::parse_opened_urls(urls);
    if open_requests.is_empty() {
       return;
@@ -344,7 +344,7 @@ pub fn handle_opened_urls(app: &tauri::AppHandle<AthasRuntime>, urls: &[tauri::U
 }
 
 #[cfg(target_os = "macos")]
-fn open_recent_document(app: &tauri::AppHandle<AthasRuntime>, index: usize) {
+fn open_recent_document(app: &tauri::AppHandle<BlimyRuntime>, index: usize) {
    let Ok(paths) = crate::bootstrap::macos::recent_documents() else {
       return;
    };
@@ -419,14 +419,14 @@ fn command_id_for_menu_event(event_id: &str) -> Option<&'static str> {
    }
 }
 
-fn emit_menu_event<P>(window: &tauri::WebviewWindow<AthasRuntime>, event: &str, payload: P)
+fn emit_menu_event<P>(window: &tauri::WebviewWindow<BlimyRuntime>, event: &str, payload: P)
 where
    P: Serialize + Clone,
 {
    let _ = window.emit_to(window.label(), event, payload);
 }
 
-fn perform_macos_window_tab_action(window: &tauri::WebviewWindow<AthasRuntime>, action: &str) {
+fn perform_macos_window_tab_action(window: &tauri::WebviewWindow<BlimyRuntime>, action: &str) {
    #[cfg(target_os = "macos")]
    match window.ns_window() {
       Ok(ns_window) => {
@@ -441,7 +441,7 @@ fn perform_macos_window_tab_action(window: &tauri::WebviewWindow<AthasRuntime>, 
    let _ = (window, action);
 }
 
-fn handle_menu_event(app_handle: &tauri::AppHandle<AthasRuntime>, event: tauri::menu::MenuEvent) {
+fn handle_menu_event(app_handle: &tauri::AppHandle<BlimyRuntime>, event: tauri::menu::MenuEvent) {
    let event_id = event.id().0.as_str();
 
    #[cfg(target_os = "macos")]
@@ -678,7 +678,7 @@ fn handle_menu_event(app_handle: &tauri::AppHandle<AthasRuntime>, event: tauri::
    }
 }
 
-pub(crate) fn shutdown_background_services(app_handle: &tauri::AppHandle<AthasRuntime>) {
+pub(crate) fn shutdown_background_services(app_handle: &tauri::AppHandle<BlimyRuntime>) {
    if let Some(codex) = app_handle.try_state::<CodexAppServer>() {
       let codex = codex.inner().clone();
       tauri::async_runtime::block_on(async move {

@@ -57,10 +57,10 @@ export function SharingSettings() {
       },
     );
     const status = (event: Event) => setSyncError((event as CustomEvent).detail.error || "");
-    window.addEventListener("athas:sharing-status", status);
+    window.addEventListener("blimy:sharing-status", status);
     return () => {
       cancelled = true;
-      window.removeEventListener("athas:sharing-status", status);
+      window.removeEventListener("blimy:sharing-status", status);
     };
   }, [loadAttempt]);
   const copyLink = async (id: string) => {

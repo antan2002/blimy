@@ -22,30 +22,30 @@ export interface InternalTabDragHoverTarget {
 
 declare global {
   interface Window {
-    __athasInternalTabDragData?: InternalTabDragData;
-    __athasInternalTabDragHover?: InternalTabDragHoverTarget;
+    __BlimyInternalTabDragData?: InternalTabDragData;
+    __BlimyInternalTabDragHover?: InternalTabDragHoverTarget;
   }
 }
 
 export function setInternalTabDragData(data: InternalTabDragData) {
-  window.__athasInternalTabDragData = data;
+  window.__BlimyInternalTabDragData = data;
 }
 
 export function getInternalTabDragData(): InternalTabDragData | null {
-  return window.__athasInternalTabDragData ?? null;
+  return window.__BlimyInternalTabDragData ?? null;
 }
 
 export function clearInternalTabDragData() {
-  delete window.__athasInternalTabDragData;
-  delete window.__athasInternalTabDragHover;
-  window.dispatchEvent(new CustomEvent("athas-internal-tab-drag-hover"));
+  delete window.__BlimyInternalTabDragData;
+  delete window.__BlimyInternalTabDragHover;
+  window.dispatchEvent(new CustomEvent("Blimy-internal-tab-drag-hover"));
 }
 
 export function setInternalTabDragHoverTarget(next: InternalTabDragHoverTarget) {
-  const prev = window.__athasInternalTabDragHover;
+  const prev = window.__BlimyInternalTabDragHover;
   if (prev?.paneId === next.paneId && prev?.zone === next.zone) return;
-  window.__athasInternalTabDragHover = next;
-  window.dispatchEvent(new CustomEvent("athas-internal-tab-drag-hover"));
+  window.__BlimyInternalTabDragHover = next;
+  window.dispatchEvent(new CustomEvent("Blimy-internal-tab-drag-hover"));
 }
 
 export function setInternalTabDragHover(point: { x: number; y: number }) {
@@ -53,7 +53,7 @@ export function setInternalTabDragHover(point: { x: number; y: number }) {
 }
 
 export function getInternalTabDragHover() {
-  return window.__athasInternalTabDragHover ?? { paneId: null, zone: null as InternalDropZone };
+  return window.__BlimyInternalTabDragHover ?? { paneId: null, zone: null as InternalDropZone };
 }
 
 export function resolveDropTarget(point: { x: number; y: number }) {

@@ -1,11 +1,11 @@
 {
-  "$schema": "https://athas.dev/schemas/extension.json",
-  "id": "athas.ai.v0",
+  "$schema": "https://Blimy.dev/schemas/extension.json",
+  "id": "Blimy.ai.v0",
   "name": "v0",
   "displayName": "v0",
   "description": "Generate apps with v0 and optional shadcn registry design-system context.",
   "version": "1.0.0",
-  "publisher": "Athas",
+  "publisher": "Blimy",
   "categories": ["AI"],
   "activationEvents": ["onAIProvider:v0"],
   "aiProviders": [
@@ -36,6 +36,6 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/athasdev/athas"
+    "url": "https://github.com/antan2002/blimy"
   }
 }

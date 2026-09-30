@@ -20,7 +20,7 @@ export function WorkbenchFullscreenSurface({ className, style, ...props }: Compo
       )}
       // Starts below the title bar, which stays on top of the workbench.
       style={{
-        top: "var(--athas-title-bar-height)",
+        top: "var(--Blimy-title-bar-height)",
         ...style,
       }}
       {...props}

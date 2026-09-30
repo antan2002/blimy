@@ -31,7 +31,7 @@ export function AppUpdateControl({ compact = false }: { compact?: boolean }) {
     () => [
       {
         id: "install-update",
-        label: `Install Athas ${updateInfo?.version ?? "Update"}`,
+        label: `Install Blimy ${updateInfo?.version ?? "Update"}`,
         icon: <DownloadIcon />,
         onClick: downloadAndInstall,
         disabled: updateBusy,
@@ -63,8 +63,8 @@ export function AppUpdateControl({ compact = false }: { compact?: boolean }) {
         variant="ghost"
         size={compact ? "lg" : "sm"}
         onClick={() => void openWhatsNew()}
-        tooltip="What's new in Athas"
-        aria-label="What's new in Athas"
+        tooltip="What's new in Blimy"
+        aria-label="What's new in Blimy"
         iconOnly
       >
         <FileTextIcon />
@@ -75,7 +75,7 @@ export function AppUpdateControl({ compact = false }: { compact?: boolean }) {
   const updateTooltip = updateError
     ? updateError
     : downloading
-      ? `Updating Athas ${downloadProgress?.percentage ?? 0}%`
+      ? `Updating Blimy ${downloadProgress?.percentage ?? 0}%`
       : installing
         ? "Installing update..."
         : `Update available: ${updateInfo.version}`;

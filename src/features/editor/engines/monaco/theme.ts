@@ -1,8 +1,8 @@
 import { editor as monacoEditor } from "monaco-editor";
 import type * as Monaco from "monaco-editor";
 import {
-  getRequiredAthasDefaultColor,
-  type AthasDefaultThemeType,
+  getRequiredBlimyDefaultColor,
+  type BlimyDefaultThemeType,
 } from "@/extensions/themes/default-theme";
 import { themeRegistry } from "@/extensions/themes/theme-registry";
 import type { ThemeDefinition } from "@/extensions/themes/theme.types";
@@ -13,12 +13,12 @@ function getThemeId(theme: string): string {
   return theme.includes("light") ? "vs" : "vs-dark";
 }
 
-function themeDefaultType(theme: ThemeDefinition): AthasDefaultThemeType {
+function themeDefaultType(theme: ThemeDefinition): BlimyDefaultThemeType {
   return theme.isDark ? "dark" : "light";
 }
 
 function fallbackColor(theme: ThemeDefinition, name: string): string {
-  return getRequiredAthasDefaultColor(themeDefaultType(theme), name);
+  return getRequiredBlimyDefaultColor(themeDefaultType(theme), name);
 }
 
 function colorValue(theme: ThemeDefinition, name: string): string {
@@ -33,7 +33,7 @@ function colorValue(theme: ThemeDefinition, name: string): string {
 
 function toMonacoThemeName(themeId: string, italicComments: boolean): string {
   const suffix = italicComments ? "-italic-comments" : "";
-  return `athas-${themeId.replace(/[^a-zA-Z0-9_-]/g, "-")}${suffix}`;
+  return `Blimy-${themeId.replace(/[^a-zA-Z0-9_-]/g, "-")}${suffix}`;
 }
 
 function createMonacoThemeData(

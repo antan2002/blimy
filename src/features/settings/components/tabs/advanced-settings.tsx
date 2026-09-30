@@ -59,7 +59,7 @@ export const AdvancedSettings = () => {
   const handleExportSettings = async () => {
     try {
       const targetPath = await save({
-        defaultPath: "athas-settings.json",
+        defaultPath: "Blimy-settings.json",
         filters: [
           { name: "JSON", extensions: ["json"] },
           { name: "All Files", extensions: ["*"] },

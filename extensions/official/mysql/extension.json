@@ -1,17 +1,17 @@
 {
-  "$schema": "https://athas.dev/schemas/extension.json",
-  "id": "athas.database.mysql",
+  "$schema": "https://Blimy.dev/schemas/extension.json",
+  "id": "Blimy.database.mysql",
   "name": "MySQL",
   "displayName": "MySQL Provider",
   "version": "1.0.0",
   "description": "MySQL connection, schema, and query provider.",
-  "publisher": "Athas",
+  "publisher": "Blimy",
   "categories": ["Database"],
   "activationEvents": ["onDatabase:mysql"],
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/athasdev/athas/tree/master/extensions/official/mysql"
+    "url": "https://github.com/antan2002/blimy/tree/master/extensions/official/mysql"
   },
   "icon": "icon.svg",
   "databases": [
@@ -22,11 +22,11 @@
       "protocolVersion": 1,
       "defaultPort": 3306,
       "sidecar": {
-        "darwin-arm64": "bin/athas-db-mysql",
-        "darwin-x64": "bin/athas-db-mysql",
-        "linux-arm64": "bin/athas-db-mysql",
-        "linux-x64": "bin/athas-db-mysql",
-        "win32-x64": "bin/athas-db-mysql.exe"
+        "darwin-arm64": "bin/Blimy-db-mysql",
+        "darwin-x64": "bin/Blimy-db-mysql",
+        "linux-arm64": "bin/Blimy-db-mysql",
+        "linux-x64": "bin/Blimy-db-mysql",
+        "win32-x64": "bin/Blimy-db-mysql.exe"
       }
     }
   ]

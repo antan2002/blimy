@@ -30,9 +30,9 @@ export interface UnifiedExtension {
   extensions?: string[];
   license?: string;
   sourceUrl?: string;
-  /** Who publishes the extension, when it differs from Athas. */
+  /** Who publishes the extension, when it differs from Blimy. */
   publisher?: string;
-  /** Where the extension is installed from, when not the Athas catalog. */
+  /** Where the extension is installed from, when not the Blimy catalog. */
   distribution?: string;
   /** Why the extension cannot be installed here. */
   installNote?: string;

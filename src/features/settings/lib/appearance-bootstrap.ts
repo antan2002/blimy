@@ -1,8 +1,8 @@
 import type { ThemeDefinition } from "@/extensions/themes/theme.types";
 import {
-  getAthasDefaultCssVariables,
-  getAthasDefaultSyntaxTokens,
-  getAthasDefaultTheme,
+  getBlimyDefaultCssVariables,
+  getBlimyDefaultSyntaxTokens,
+  getBlimyDefaultTheme,
 } from "@/extensions/themes/default-theme";
 import { normalizeThemeCssVariables } from "@/extensions/themes/theme-file";
 import {
@@ -14,7 +14,7 @@ import { applyPlatformClass, IS_WINDOWS } from "@/utils/platform";
 import { buildFontFamilyStack, normalizeConfiguredFontFamily } from "./font-family-resolution";
 import { getUiFontScale, normalizeUiFontSize, UI_FONT_SIZE_DEFAULT } from "./ui-font-size";
 
-export const APPEARANCE_BOOTSTRAP_CACHE_KEY = "athas.bootstrap.appearance.v1";
+export const APPEARANCE_BOOTSTRAP_CACHE_KEY = "Blimy.bootstrap.appearance.v1";
 
 export interface AppearanceBootstrapCache {
   version: 1;
@@ -28,27 +28,27 @@ export interface AppearanceBootstrapCache {
   windowTransparency: boolean;
 }
 
-export const ATHAS_BOOTSTRAP_DEFAULTS = {
+export const BLIMY_BOOTSTRAP_DEFAULTS = {
   dark: {
-    id: getAthasDefaultTheme("dark").id,
-    type: getAthasDefaultTheme("dark").type,
-    colors: getAthasDefaultTheme("dark").colors,
-    syntax: getAthasDefaultTheme("dark").syntax,
+    id: getBlimyDefaultTheme("dark").id,
+    type: getBlimyDefaultTheme("dark").type,
+    colors: getBlimyDefaultTheme("dark").colors,
+    syntax: getBlimyDefaultTheme("dark").syntax,
   },
   light: {
-    id: getAthasDefaultTheme("light").id,
-    type: getAthasDefaultTheme("light").type,
-    colors: getAthasDefaultTheme("light").colors,
-    syntax: getAthasDefaultTheme("light").syntax,
+    id: getBlimyDefaultTheme("light").id,
+    type: getBlimyDefaultTheme("light").type,
+    colors: getBlimyDefaultTheme("light").colors,
+    syntax: getBlimyDefaultTheme("light").syntax,
   },
 };
 
 export const DEFAULT_APPEARANCE_BOOTSTRAP_CACHE: AppearanceBootstrapCache = {
   version: 1,
-  themeId: ATHAS_BOOTSTRAP_DEFAULTS.dark.id,
-  themeType: ATHAS_BOOTSTRAP_DEFAULTS.dark.type,
-  cssVariables: getAthasDefaultCssVariables("dark"),
-  syntaxTokens: getAthasDefaultSyntaxTokens("dark"),
+  themeId: BLIMY_BOOTSTRAP_DEFAULTS.dark.id,
+  themeType: BLIMY_BOOTSTRAP_DEFAULTS.dark.type,
+  cssVariables: getBlimyDefaultCssVariables("dark"),
+  syntaxTokens: getBlimyDefaultSyntaxTokens("dark"),
   editorFontFamily: DEFAULT_MONO_FONT_FAMILY,
   uiFontFamily: DEFAULT_UI_FONT_FAMILY,
   uiFontSize: UI_FONT_SIZE_DEFAULT,

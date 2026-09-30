@@ -108,7 +108,7 @@ const REGISTRY_DISTRIBUTION_LABELS = {
   uvx: "ACP Registry, Python package via uv",
 } as const;
 
-/** Who publishes a registry agent, where its source lives and how Athas installs it. */
+/** Who publishes a registry agent, where its source lives and how Blimy installs it. */
 export function agentRegistryDetails(agent: AgentConfig | undefined): Partial<UnifiedExtension> {
   const registry = agent?.registry;
   if (!registry) return {};
@@ -163,7 +163,7 @@ export function buildExtensionCatalog({
         isBundled: false,
         runtimeIssues: ext.runtimeIssues,
         agentId: contribution.id,
-        // The bundled brand art athas.dev also shows; registry icons are monochrome fallbacks.
+        // The bundled brand art Blimy.dev also shows; registry icons are monochrome fallbacks.
         icon: agentBrandImages[contribution.id] ?? agent?.icon ?? ext.manifest.icon,
         canInstall: agent?.canInstall ?? Boolean(contribution.install),
         hasUpdate: agent?.updateAvailable ?? false,

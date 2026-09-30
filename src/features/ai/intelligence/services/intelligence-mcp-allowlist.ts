@@ -1,4 +1,4 @@
-const STORAGE_KEY = "athas.intelligence.mcp-tool-allowlist.v1";
+const STORAGE_KEY = "Blimy.intelligence.mcp-tool-allowlist.v1";
 const MAX_TOOLS_PER_SERVER = 200;
 
 /** Tool names the user always allows, keyed by MCP server id. */

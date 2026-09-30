@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { ProviderIcon } from "@/features/ai/components/icons/provider-icons";
 import {
-  AthasModelSections,
+  BlimyModelSections,
   ModelResultsProvider,
   ModelSection,
   ProviderModels,
@@ -86,7 +86,7 @@ interface ComposerAgentSelectorProps {
 
 /**
  * The composer's model button: one searchable list with a section per connection
- * (Recommended, Athas, each connected provider, then agents), plus a reasoning effort chip
+ * (Recommended, Blimy, each connected provider, then agents), plus a reasoning effort chip
  * beside it when the current model has an effort scale.
  */
 export function ComposerAgentSelector({
@@ -115,7 +115,7 @@ export function ComposerAgentSelector({
   const selectedModelName = useModelName(providerId, modelId);
   const label =
     currentAgentId === "custom"
-      ? providerId === "athas" && (!modelId || modelId === "auto")
+      ? providerId === "Blimy" && (!modelId || modelId === "auto")
         ? "Automatic"
         : selectedModelName || modelId || "Choose model"
       : currentAgentId === CODEX_INTEGRATION_ID
@@ -181,10 +181,10 @@ export function ComposerAgentSelector({
           <DropdownMenuViewport>
             {isContentMounted ? (
               <ModelResultsProvider value={reportResults}>
-                <AthasModelSections
-                  selected={customSelection(providerId === "athas" ? modelId || "auto" : "")}
+                <BlimyModelSections
+                  selected={customSelection(providerId === "Blimy" ? modelId || "auto" : "")}
                   search={search}
-                  onSelect={(id) => onModelChange(id, "athas")}
+                  onSelect={(id) => onModelChange(id, "Blimy")}
                 />
                 {configuredProviders.map((provider) => (
                   <ProviderModels

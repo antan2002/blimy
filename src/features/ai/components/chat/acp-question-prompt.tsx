@@ -175,7 +175,7 @@ export function AcpQuestionPrompt({
 
       {unanswerable ? (
         <p className="text-pretty text-muted-foreground">
-          This asks for something Athas can't show yet. Decline to let the agent continue without
+          This asks for something Blimy can't show yet. Decline to let the agent continue without
           it.
         </p>
       ) : questions.length > 0 ? (

@@ -3,7 +3,7 @@ import type { MultiFileDiff } from "../types/git-diff.types";
 import type { GitDiff, GitDiffLine } from "../types/git.types";
 import { DIFF_SERIALIZED_LINE_LIMIT } from "./diff-viewer-scale";
 
-const DIFF_ACCORDION_PREFIX = "\uE000ATHAS_DIFF_FILE ";
+const DIFF_ACCORDION_PREFIX = "\uE000BLIMY_DIFF_FILE ";
 
 export interface DiffAccordionLineMeta {
   name: string;
@@ -81,7 +81,7 @@ export function serializeGitDiffForEditor(diff: GitDiff): string {
 
     return [
       ...rawPatchLines.slice(0, DIFF_SERIALIZED_LINE_LIMIT),
-      `# Athas truncated this diff after ${DIFF_SERIALIZED_LINE_LIMIT.toLocaleString()} lines to keep the editor responsive.`,
+      `# Blimy truncated this diff after ${DIFF_SERIALIZED_LINE_LIMIT.toLocaleString()} lines to keep the editor responsive.`,
     ].join("\n");
   }
 
@@ -101,7 +101,7 @@ export function serializeGitDiffForEditor(diff: GitDiff): string {
     ...serializedLines,
     ...(isTruncated
       ? [
-          `# Athas truncated this diff after ${DIFF_SERIALIZED_LINE_LIMIT.toLocaleString()} lines to keep the editor responsive.`,
+          `# Blimy truncated this diff after ${DIFF_SERIALIZED_LINE_LIMIT.toLocaleString()} lines to keep the editor responsive.`,
         ]
       : []),
   ].join("\n");

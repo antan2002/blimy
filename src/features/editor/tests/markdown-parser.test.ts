@@ -13,7 +13,7 @@ describe("parseMarkdown", () => {
       `---
 title: Research Analysis Report
 description: Reproducible analysis workflow
-author: Athas Highlighting Check
+author: Blimy Highlighting Check
 date: 2026-06-11
 output: html_document
 params:

@@ -49,7 +49,7 @@ function setup(models: Monaco.editor.ITextModel[] = []) {
 
 describe("file-backed Monaco text model resolver", () => {
   it("resolves a file location to the open buffer's model", async () => {
-    const open = textModel("athas://editor/project/a.ts");
+    const open = textModel("blimy://editor/project/a.ts");
     const { resolve, readFile } = setup([open]);
 
     const reference = await resolve(uri("file:///project/a.ts"));

@@ -12,7 +12,7 @@ describe("theme resolution", () => {
           theme: "one-dark",
           syncSystemTheme: false,
           autoThemeLight: "one-light",
-          autoThemeDark: "athas-dark",
+          autoThemeDark: "blimy-dark",
         },
         "light",
       ),
@@ -35,8 +35,8 @@ describe("theme resolution", () => {
     expect(
       getSystemSyncThemePreferencePatch({
         theme: "one-light",
-        autoThemeLight: "athas-light",
-        autoThemeDark: "athas-dark",
+        autoThemeLight: "blimy-light",
+        autoThemeDark: "blimy-dark",
       }),
     ).toEqual({ autoThemeLight: "one-light" });
   });
@@ -45,8 +45,8 @@ describe("theme resolution", () => {
     expect(
       getSystemSyncThemePreferencePatch({
         theme: "one-dark",
-        autoThemeLight: "athas-light",
-        autoThemeDark: "athas-dark",
+        autoThemeLight: "blimy-light",
+        autoThemeDark: "blimy-dark",
       }),
     ).toEqual({ autoThemeDark: "one-dark" });
   });

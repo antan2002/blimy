@@ -12,7 +12,7 @@ import {
   type KeybindingImportPlatform,
 } from "./vscode-keybinding-import";
 
-const KEYBINDINGS_EXPORT_FORMAT = "athas.keybindings";
+const KEYBINDINGS_EXPORT_FORMAT = "Blimy.keybindings";
 const KEYBINDINGS_EXPORT_VERSION = 1;
 
 export interface KeybindingsExportPayload {
@@ -24,7 +24,7 @@ export interface KeybindingsExportPayload {
 }
 
 export interface KeybindingsImport {
-  format: "athas" | "vscode";
+  format: "Blimy" | "vscode";
   keybindingPreset?: KeybindingPreset;
   keybindings: Keybinding[];
   issues: KeybindingImportIssue[];
@@ -183,7 +183,7 @@ export function parseKeybindingsImportJson(
     });
 
     return {
-      format: "athas",
+      format: "Blimy",
       keybindingPreset: candidate.keybindingPreset,
       keybindings,
       issues,

@@ -1,11 +1,11 @@
 {
-  "$schema": "https://athas.dev/schemas/extension.json",
-  "id": "athas.html",
+  "$schema": "https://Blimy.dev/schemas/extension.json",
+  "id": "Blimy.html",
   "name": "HTML",
   "displayName": "HTML",
   "version": "1.0.0",
   "description": "HTML language support with LSP and formatting",
-  "publisher": "Athas",
+  "publisher": "Blimy",
   "categories": ["Language"],
   "languages": [
     {

@@ -1,17 +1,17 @@
 {
-  "$schema": "https://athas.dev/schemas/extension.json",
-  "id": "athas.database.postgres",
+  "$schema": "https://Blimy.dev/schemas/extension.json",
+  "id": "Blimy.database.postgres",
   "name": "PostgreSQL",
   "displayName": "PostgreSQL Provider",
   "version": "1.0.0",
   "description": "PostgreSQL connection, schema, and query provider.",
-  "publisher": "Athas",
+  "publisher": "Blimy",
   "categories": ["Database"],
   "activationEvents": ["onDatabase:postgres"],
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/athasdev/athas/tree/master/extensions/official/postgres"
+    "url": "https://github.com/antan2002/blimy/tree/master/extensions/official/postgres"
   },
   "icon": "icon.svg",
   "databases": [
@@ -22,11 +22,11 @@
       "protocolVersion": 1,
       "defaultPort": 5432,
       "sidecar": {
-        "darwin-arm64": "bin/athas-db-postgres",
-        "darwin-x64": "bin/athas-db-postgres",
-        "linux-arm64": "bin/athas-db-postgres",
-        "linux-x64": "bin/athas-db-postgres",
-        "win32-x64": "bin/athas-db-postgres.exe"
+        "darwin-arm64": "bin/Blimy-db-postgres",
+        "darwin-x64": "bin/Blimy-db-postgres",
+        "linux-arm64": "bin/Blimy-db-postgres",
+        "linux-x64": "bin/Blimy-db-postgres",
+        "win32-x64": "bin/Blimy-db-postgres.exe"
       }
     }
   ]

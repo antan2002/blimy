@@ -149,7 +149,7 @@ const GitBranchManager = ({
   onWorktreeChange,
   onRepositoryChange,
   paletteTarget = false,
-  openEventName = "athas:open-branch-manager",
+  openEventName = "blimy:open-branch-manager",
   triggerMode = "repository",
 }: GitBranchManagerProps) => {
   const [branches, setBranches] = useState<string[]>([]);

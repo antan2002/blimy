@@ -13,7 +13,7 @@ describe("matchesSearchQuery", () => {
   });
 
   it("ignores missing candidate values", () => {
-    expect(matchesSearchQuery("athas", [undefined, "Athas", null])).toBe(true);
+    expect(matchesSearchQuery("Blimy", [undefined, "Blimy", null])).toBe(true);
     expect(matchesSearchQuery("github", [undefined, null])).toBe(false);
   });
 

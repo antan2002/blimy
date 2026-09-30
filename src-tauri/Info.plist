@@ -3,27 +3,27 @@
 <plist version="1.0">
 <dict>
   <key>NSMicrophoneUsageDescription</key>
-  <string>Athas uses the microphone for optional voice input in Agent.</string>
+  <string>Blimy uses the microphone for optional voice input in Agent.</string>
   <key>NSSpeechRecognitionUsageDescription</key>
-  <string>Athas uses speech recognition to transcribe optional voice input in Agent.</string>
+  <string>Blimy uses speech recognition to transcribe optional voice input in Agent.</string>
   <key>NSDocumentsFolderUsageDescription</key>
-  <string>Athas needs access to project files in Documents so terminals, Git, and editor tools can run inside your workspace.</string>
+  <string>Blimy needs access to project files in Documents so terminals, Git, and editor tools can run inside your workspace.</string>
   <key>NSDesktopFolderUsageDescription</key>
-  <string>Athas needs access to project files on Desktop so terminals, Git, and editor tools can run inside your workspace.</string>
+  <string>Blimy needs access to project files on Desktop so terminals, Git, and editor tools can run inside your workspace.</string>
   <key>NSDownloadsFolderUsageDescription</key>
-  <string>Athas needs access to project files in Downloads so terminals, Git, and editor tools can run inside your workspace.</string>
+  <string>Blimy needs access to project files in Downloads so terminals, Git, and editor tools can run inside your workspace.</string>
   <key>NSServices</key>
   <array>
     <dict>
       <key>NSMenuItem</key>
       <dict>
         <key>default</key>
-        <string>Open in Athas</string>
+        <string>Open in Blimy</string>
       </dict>
       <key>NSMessage</key>
-      <string>openInAthas</string>
+      <string>openInBlimy</string>
       <key>NSPortName</key>
-      <string>Athas</string>
+      <string>Blimy</string>
       <key>NSSendTypes</key>
       <array>
         <string>NSFilenamesPboardType</string>

@@ -98,12 +98,12 @@ export function NotificationsCommand({
 
   const localSections = useMemo<LocalNotificationSection[]>(() => {
     const sections: LocalNotificationSection[] = [
-      { id: "athas", label: "Athas", notifications: [] },
+      { id: "Blimy", label: "Blimy", notifications: [] },
       { id: "agent", label: "Agent", notifications: [] },
     ];
 
     for (const notification of notifications) {
-      const notificationCategory = notification.category ?? "athas";
+      const notificationCategory = notification.category ?? "Blimy";
       if (category !== "all" && category !== notificationCategory) continue;
       if (
         !matchesSearchQuery(deferredSearchQuery, [
@@ -138,8 +138,8 @@ export function NotificationsCommand({
 
   const hasVisibleNotifications = localSections.length > 0 || githubNotifications.length > 0;
   const selectedCategoryCount =
-    (category === "all" || category === "athas"
-      ? notifications.filter((notification) => (notification.category ?? "athas") === "athas")
+    (category === "all" || category === "Blimy"
+      ? notifications.filter((notification) => (notification.category ?? "Blimy") === "Blimy")
           .length
       : 0) +
     (category === "all" || category === "agent"
@@ -190,11 +190,11 @@ export function NotificationsCommand({
               onSelect: () => setCategory("all"),
             },
             {
-              id: "athas",
-              label: "Athas",
+              id: "Blimy",
+              label: "Blimy",
               icon: <BellIcon />,
-              isActive: category === "athas",
-              onSelect: () => setCategory("athas"),
+              isActive: category === "Blimy",
+              onSelect: () => setCategory("Blimy"),
             },
             {
               id: "agent",
@@ -310,7 +310,7 @@ export function NotificationsCommand({
                   {activeNotification.message}
                 </div>
                 <div className="mt-0.5 flex items-center gap-1 text-subtle-foreground ui-text-sm">
-                  <span className="capitalize">{activeNotification.category ?? "athas"}</span>
+                  <span className="capitalize">{activeNotification.category ?? "Blimy"}</span>
                   <span>·</span>
                   <span>{formatNotificationAge(activeNotification.updatedAt)}</span>
                 </div>

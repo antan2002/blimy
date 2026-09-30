@@ -1,16 +1,16 @@
 {
-  "$schema": "https://athas.dev/schemas/extension.json",
-  "id": "athas.skill.code-review",
+  "$schema": "https://Blimy.dev/schemas/extension.json",
+  "id": "Blimy.skill.code-review",
   "name": "code-review",
   "displayName": "Code Review",
   "description": "Review code changes for correctness, regressions, and missing validation.",
   "version": "1.0.0",
-  "publisher": "Athas",
+  "publisher": "Blimy",
   "categories": ["Skill"],
   "contributes": {
     "skills": [
       {
-        "id": "athas.code-review",
+        "id": "Blimy.code-review",
         "name": "Code Review",
         "description": "Review code changes for correctness, regressions, and missing validation.",
         "path": "SKILL.md",
@@ -22,6 +22,6 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/athasdev/athas"
+    "url": "https://github.com/antan2002/blimy"
   }
 }

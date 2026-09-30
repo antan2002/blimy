@@ -11,16 +11,16 @@ describe("parseWindowOpenUrl", () => {
   it("hands content to an editor window without accepting content from deep links", () => {
     const content = { type: "diff", path: "/repo/file.ts", name: "Changes", content: "diff" };
     for (const origin of ["http://127.0.0.1:1420", "tauri://localhost", "http://tauri.localhost"]) {
-      const url = new URL(`${origin}/?target=open&athasWindowTraceId=main-2`);
+      const url = new URL(`${origin}/?target=open&BlimyWindowTraceId=main-2`);
       url.searchParams.set("content", JSON.stringify(content));
       expect(parseWindowOpenUrl(url)).toEqual({ content });
     }
-    const url = new URL("athas://open?target=open&athasWindowTraceId=main-2");
+    const url = new URL("blimy://open?target=open&BlimyWindowTraceId=main-2");
     url.searchParams.set("content", JSON.stringify({ type: "terminal", command: "untrusted" }));
     expect(parseWindowOpenUrl(url)).toBeNull();
   });
   it("parses file with line number", () => {
-    const url = new URL("athas://open?path=/Users/test/foo.txt&line=42");
+    const url = new URL("blimy://open?path=/Users/test/foo.txt&line=42");
     const result = parseWindowOpenUrl(url);
     expect(result).toEqual({
       type: "path",
@@ -31,7 +31,7 @@ describe("parseWindowOpenUrl", () => {
   });
 
   it("parses file with line and column params", () => {
-    const url = new URL("athas://open?path=/Users/test/foo.txt&line=42&column=7");
+    const url = new URL("blimy://open?path=/Users/test/foo.txt&line=42&column=7");
     const result = parseWindowOpenUrl(url);
     expect(result).toEqual({
       type: "path",
@@ -43,7 +43,7 @@ describe("parseWindowOpenUrl", () => {
   });
 
   it("parses line column pairs from the line param", () => {
-    const url = new URL("athas://open?path=/Users/test/foo.txt&line=42:7");
+    const url = new URL("blimy://open?path=/Users/test/foo.txt&line=42:7");
     const result = parseWindowOpenUrl(url);
     expect(result).toEqual({
       type: "path",
@@ -55,7 +55,7 @@ describe("parseWindowOpenUrl", () => {
   });
 
   it("parses directory", () => {
-    const url = new URL("athas://open?path=/Users/test/project&type=directory");
+    const url = new URL("blimy://open?path=/Users/test/project&type=directory");
     const result = parseWindowOpenUrl(url);
     expect(result).toEqual({
       type: "path",
@@ -66,7 +66,7 @@ describe("parseWindowOpenUrl", () => {
   });
 
   it("parses file without line", () => {
-    const url = new URL("athas://open?path=/Users/test/foo.txt");
+    const url = new URL("blimy://open?path=/Users/test/foo.txt");
     const result = parseWindowOpenUrl(url);
     expect(result).toEqual({
       type: "path",
@@ -100,17 +100,17 @@ describe("parseWindowOpenUrl", () => {
   });
 
   it("parses external URL requests", () => {
-    const url = new URL("athas://open?type=web&url=https%3A%2F%2Fathas.dev%2Fdocs");
+    const url = new URL("blimy://open?type=web&url=https%3A%2F%2FBlimy.dev%2Fdocs");
     const result = parseWindowOpenUrl(url);
     expect(result).toEqual({
       type: "web",
-      url: "https://athas.dev/docs",
+      url: "https://Blimy.dev/docs",
     });
   });
 
   it("parses terminal requests", () => {
     const url = new URL(
-      "athas://open?type=terminal&command=npm%20test&cwd=%2FUsers%2Ftest%2Fproject",
+      "blimy://open?type=terminal&command=npm%20test&cwd=%2FUsers%2Ftest%2Fproject",
     );
     const result = parseWindowOpenUrl(url);
     expect(result).toEqual({
@@ -121,23 +121,23 @@ describe("parseWindowOpenUrl", () => {
   });
 
   it("returns null when path is missing", () => {
-    const url = new URL("athas://open");
+    const url = new URL("blimy://open");
     expect(parseWindowOpenUrl(url)).toBeNull();
   });
 
   it("returns null for non-open host", () => {
-    const url = new URL("athas://extension/install/foo");
+    const url = new URL("blimy://extension/install/foo");
     expect(parseWindowOpenUrl(url)).toBeNull();
   });
 
   it("ignores line=0", () => {
-    const url = new URL("athas://open?path=/foo.txt&line=0");
+    const url = new URL("blimy://open?path=/foo.txt&line=0");
     const result = parseWindowOpenUrl(url);
     expect(result?.line).toBeUndefined();
   });
 
   it("ignores column without a valid line", () => {
-    const url = new URL("athas://open?path=/foo.txt&line=0&column=7");
+    const url = new URL("blimy://open?path=/foo.txt&line=0&column=7");
     const result = parseWindowOpenUrl(url);
     expect(result?.line).toBeUndefined();
     expect(result?.column).toBeUndefined();

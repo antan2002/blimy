@@ -372,7 +372,7 @@ export const settingsSearchIndex: SettingSearchRecord[] = [
     tab: "git",
     section: "GitHub Account",
     label: "Token Source",
-    description: "Choose between a personal access token, your Athas account, or the GitHub CLI",
+    description: "Choose between a personal access token, your Blimy account, or the GitHub CLI",
     keywords: ["github", "token", "auth", "credential", "source", "gh", "cli", "organization"],
   },
   {
@@ -380,7 +380,7 @@ export const settingsSearchIndex: SettingSearchRecord[] = [
     tab: "git",
     section: "GitHub Account",
     label: "Personal Access Token",
-    description: "Use your own GitHub token when an organization has not approved Athas",
+    description: "Use your own GitHub token when an organization has not approved Blimy",
     keywords: ["github", "pat", "token", "personal access token", "org", "sso", "ghp"],
   },
   {
@@ -527,7 +527,7 @@ export const settingsSearchIndex: SettingSearchRecord[] = [
     tab: "appearance",
     section: "Theme",
     label: "Custom Themes",
-    description: "Create, import, and remove custom Athas theme JSON files",
+    description: "Create, import, and remove custom Blimy theme JSON files",
     keywords: ["custom", "theme", "json", "create", "generator", "import", "upload"],
   },
   {
@@ -614,25 +614,25 @@ export const settingsSearchIndex: SettingSearchRecord[] = [
 
   // AI Settings
   {
-    id: "ai-athas-plan",
+    id: "ai-Blimy-plan",
     tab: "ai",
-    section: "Athas",
+    section: "Blimy",
     label: "Plan",
-    description: "Your plan and the monthly credit it includes for Athas models",
-    keywords: ["ai", "athas", "pro", "plan", "billing", "subscription", "intelligence"],
+    description: "Your plan and the monthly credit it includes for Blimy models",
+    keywords: ["ai", "Blimy", "pro", "plan", "billing", "subscription", "intelligence"],
   },
   {
-    id: "ai-athas-credit",
+    id: "ai-Blimy-credit",
     tab: "ai",
-    section: "Athas",
+    section: "Blimy",
     label: "Included credit",
-    description: "How much of this month's included Athas credit is left",
+    description: "How much of this month's included Blimy credit is left",
     keywords: ["ai", "credit", "usage", "allowance", "limit", "quota"],
   },
   {
-    id: "ai-athas-balance",
+    id: "ai-Blimy-balance",
     tab: "ai",
-    section: "Athas",
+    section: "Blimy",
     label: "Balance",
     description: "Prepaid balance used after included credit runs out",
     keywords: ["ai", "wallet", "balance", "top up", "add credit", "prepaid", "billing"],
@@ -643,7 +643,7 @@ export const settingsSearchIndex: SettingSearchRecord[] = [
     section: "Default model",
     label: "Default model",
     description: "The model new chats, inline edits, and other AI features use",
-    keywords: ["ai", "provider", "model", "llm", "default", "chat", "agent", "athas", "automatic"],
+    keywords: ["ai", "provider", "model", "llm", "default", "chat", "agent", "Blimy", "automatic"],
   },
   {
     id: "ai-feature-models",
@@ -813,7 +813,7 @@ export const settingsSearchIndex: SettingSearchRecord[] = [
     tab: "ai-agents",
     section: "Agent behavior",
     label: "Steps before pausing",
-    description: "Model requests one Athas agent turn may make before it pauses",
+    description: "Model requests one Blimy agent turn may make before it pauses",
     keywords: ["ai", "agent", "steps", "budget", "limit", "tool", "calls", "continue"],
   },
   {
@@ -829,7 +829,7 @@ export const settingsSearchIndex: SettingSearchRecord[] = [
     tab: "ai-agents",
     section: "Allowed Commands",
     label: "Allowed Commands",
-    description: "Commands and MCP tools the Athas agent runs without asking",
+    description: "Commands and MCP tools the Blimy agent runs without asking",
     keywords: ["ai", "agent", "allow", "always", "command", "permission", "approve", "mcp", "tool"],
   },
   {

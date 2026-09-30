@@ -68,11 +68,11 @@ fn secure_store_path(app: &AppHandle) -> Result<PathBuf, String> {
    }
 
    if let Some(dir) = dirs::data_dir() {
-      candidates.push(dir.join("athas"));
+      candidates.push(dir.join("Blimy"));
    }
 
    if let Some(dir) = dirs::home_dir() {
-      candidates.push(dir.join(".athas"));
+      candidates.push(dir.join(".Blimy"));
    }
 
    for dir in candidates {
@@ -370,11 +370,11 @@ mod tests {
       let cache = Mutex::new(HashMap::new());
       let loads = AtomicUsize::new(0);
 
-      let first = get_secret_with_cache(&cache, "com.code.athas.preview", "github_token", || {
+      let first = get_secret_with_cache(&cache, "com.code.Blimy.preview", "github_token", || {
          loads.fetch_add(1, Ordering::Relaxed);
          Ok(Some("secret".to_string()))
       });
-      let second = get_secret_with_cache(&cache, "com.code.athas.preview", "github_token", || {
+      let second = get_secret_with_cache(&cache, "com.code.Blimy.preview", "github_token", || {
          loads.fetch_add(1, Ordering::Relaxed);
          Ok(Some("different".to_string()))
       });
@@ -389,11 +389,11 @@ mod tests {
       let cache = Mutex::new(HashMap::new());
       let loads = AtomicUsize::new(0);
 
-      let first = get_secret_with_cache(&cache, "com.code.athas.preview", "github_token", || {
+      let first = get_secret_with_cache(&cache, "com.code.Blimy.preview", "github_token", || {
          loads.fetch_add(1, Ordering::Relaxed);
          Ok(None)
       });
-      let second = get_secret_with_cache(&cache, "com.code.athas.preview", "github_token", || {
+      let second = get_secret_with_cache(&cache, "com.code.Blimy.preview", "github_token", || {
          loads.fetch_add(1, Ordering::Relaxed);
          Ok(Some("secret".to_string()))
       });
@@ -559,7 +559,7 @@ mod tests {
       use std::os::unix::fs::PermissionsExt;
 
       let temp_dir = tempfile::tempdir().expect("temp dir");
-      let store_dir = temp_dir.path().join("athas");
+      let store_dir = temp_dir.path().join("Blimy");
       let path = store_dir.join(SECURE_STORE_FILE);
       let mut store = Map::new();
       store.insert(

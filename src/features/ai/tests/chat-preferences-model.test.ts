@@ -16,7 +16,7 @@ function option(id: string, category: SessionConfigOption["category"]): SessionC
 }
 
 describe("AI chat preferences model", () => {
-  it("shows the Athas provider preferences and fallback mode in the shared composer", () => {
+  it("shows the Blimy provider preferences and fallback mode in the shared composer", () => {
     const preferences = getChatPreferencesModel({
       currentAgentId: "custom",
       canChangeAgent: true,
@@ -25,7 +25,7 @@ describe("AI chat preferences model", () => {
 
     expect(preferences).toMatchObject({
       showAgentPreference: true,
-      showAthasAgentPreferences: true,
+      showBlimyAgentPreferences: true,
       showModePreference: true,
       acpConfigOptions: [],
     });
@@ -41,7 +41,7 @@ describe("AI chat preferences model", () => {
     });
 
     expect(preferences.showAgentPreference).toBe(false);
-    expect(preferences.showAthasAgentPreferences).toBe(false);
+    expect(preferences.showBlimyAgentPreferences).toBe(false);
     expect(preferences.showModePreference).toBe(false);
     expect(preferences.acpConfigOptions).toEqual([model, mode]);
   });

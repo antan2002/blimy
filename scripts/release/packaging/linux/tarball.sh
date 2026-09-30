@@ -6,7 +6,7 @@ source "${script_dir}/cef.sh"
 
 arch_input="${1:?Usage: package-linux-tarball.sh <arch> [out-dir]}"
 out_dir="${2:-release-dist}"
-channel="${ATHAS_RELEASE_CHANNEL:-stable}"
+channel="${BLIMY_RELEASE_CHANNEL:-stable}"
 
 case "$arch_input" in
   X64 | x64 | amd64 | x86_64)
@@ -22,19 +22,19 @@ case "$arch_input" in
 esac
 
 if [[ "$channel" == "preview" ]]; then
-  product_name="Athas Preview"
-  app_dir_name="athas-preview.app"
+  product_name="Blimy Preview"
+  app_dir_name="Blimy-preview.app"
   icon_dir="preview"
-  desktop_id="com.code.athas.preview"
+  desktop_id="com.code.Blimy.preview"
 else
-  product_name="Athas"
-  app_dir_name="athas.app"
+  product_name="Blimy"
+  app_dir_name="Blimy.app"
   icon_dir="prod"
-  desktop_id="com.code.athas"
+  desktop_id="com.code.Blimy"
 fi
 
 version="$(bun -e 'console.log(JSON.parse(await Bun.file("package.json").text()).version)')"
-binary="target/release/athas"
+binary="target/release/Blimy"
 
 if [[ ! -x "$binary" ]]; then
   echo "Missing release binary at $binary" >&2
@@ -65,8 +65,8 @@ desktop_dir="${app_root}/share/applications"
 icon_base_dir="${app_root}/share/icons/hicolor"
 
 install -d "$bin_dir" "$libexec_dir" "$resource_dir" "$desktop_dir"
-install -m 755 "$binary" "${libexec_dir}/athas"
-cat > "${bin_dir}/athas" <<'EOF'
+install -m 755 "$binary" "${libexec_dir}/Blimy"
+cat > "${bin_dir}/Blimy" <<'EOF'
 #!/usr/bin/env bash
 set -euo pipefail
 
@@ -154,13 +154,13 @@ if [[ ${#preloads[@]} -gt 0 ]]; then
   export LD_PRELOAD="${preload_str}${LD_PRELOAD:+:$LD_PRELOAD}"
 fi
 
-exec "${bin_dir}/../libexec/athas" \
+exec "${bin_dir}/../libexec/Blimy" \
   --ozone-platform=x11 \
   --disable-vulkan \
   --disable-features=Vulkan \
   "$@"
 EOF
-chmod 755 "${bin_dir}/athas"
+chmod 755 "${bin_dir}/Blimy"
 
 mkdir -p "${resource_dir}/bundled"
 cp -R src/extensions/bundled/icon-themes "${resource_dir}/bundled/icon-themes"
@@ -215,7 +215,7 @@ is_glibc_runtime_library() {
   esac
 }
 
-ldd_output="$(ldd "${libexec_dir}/athas")" || {
+ldd_output="$(ldd "${libexec_dir}/Blimy")" || {
   echo "Could not inspect Linux tarball runtime libraries." >&2
   exit 1
 }
@@ -247,22 +247,22 @@ fi
 for size in 32 128; do
   icon_src="src-tauri/icons/${icon_dir}/${size}x${size}.png"
   if [[ -f "$icon_src" ]]; then
-    install -D -m 644 "$icon_src" "${icon_base_dir}/${size}x${size}/apps/athas.png"
+    install -D -m 644 "$icon_src" "${icon_base_dir}/${size}x${size}/apps/Blimy.png"
   fi
 done
 
 if [[ -f "src-tauri/icons/${icon_dir}/128x128@2x.png" ]]; then
   install -D -m 644 \
     "src-tauri/icons/${icon_dir}/128x128@2x.png" \
-    "${icon_base_dir}/256x256@2/apps/athas.png"
+    "${icon_base_dir}/256x256@2/apps/Blimy.png"
 fi
 
 cat > "${desktop_dir}/${desktop_id}.desktop" <<EOF
 [Desktop Entry]
 Type=Application
 Name=${product_name}
-Exec=athas %U
-Icon=athas
+Exec=Blimy %U
+Icon=Blimy
 Terminal=false
 Categories=Utility;TextEditor;Development;
 Keywords=Code;Editor;Text;Development;Programming;
@@ -279,7 +279,7 @@ archive_contents="${staging}/archive-contents.txt"
 tar -tzf "$archive_path" > "$archive_contents"
 
 for required in \
-  "${app_dir_name}/libexec/athas" \
+  "${app_dir_name}/libexec/Blimy" \
   "${app_dir_name}/libexec/libcef.so" \
   "${app_dir_name}/libexec/libgdk_pixbuf-2.0.so.0" \
   "${app_dir_name}/libexec/icudtl.dat" \

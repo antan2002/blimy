@@ -1,11 +1,11 @@
 {
-  "$schema": "https://athas.dev/schemas/extension.json",
-  "id": "athas.bash",
+  "$schema": "https://Blimy.dev/schemas/extension.json",
+  "id": "Blimy.bash",
   "name": "Bash",
   "displayName": "Bash",
   "version": "1.0.0",
   "description": "Bash/Shell script support with LSP",
-  "publisher": "Athas",
+  "publisher": "Blimy",
   "categories": ["Language"],
   "languages": [
     {

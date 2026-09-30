@@ -33,7 +33,7 @@ jobs:
         run: nix flake check --no-write-lock-file
 
       - name: Validate packaged editor
-        run: nix build --no-write-lock-file --no-link .#athas
+        run: nix build --no-write-lock-file --no-link .#Blimy
 
       - name: Validate dev tools
         run: |

@@ -12,11 +12,11 @@ export interface TerminalSplitDropOptions {
   placement: SplitPlacement;
 }
 
-export const TERMINAL_PANE_DROP_HOVER_EVENT = "athas-terminal-pane-drop-hover";
+export const TERMINAL_PANE_DROP_HOVER_EVENT = "Blimy-terminal-pane-drop-hover";
 
 declare global {
   interface Window {
-    __athasTerminalPaneDropHover?: TerminalPaneDropTarget | null;
+    __BlimyTerminalPaneDropHover?: TerminalPaneDropTarget | null;
   }
 }
 
@@ -50,12 +50,12 @@ export function resolveTerminalPaneDropTarget(point: {
 }
 
 export function setTerminalPaneDropHover(next: TerminalPaneDropTarget | null) {
-  const previous = window.__athasTerminalPaneDropHover ?? null;
+  const previous = window.__BlimyTerminalPaneDropHover ?? null;
   if (previous?.terminalId === next?.terminalId && previous?.zone === next?.zone) return;
-  window.__athasTerminalPaneDropHover = next;
+  window.__BlimyTerminalPaneDropHover = next;
   window.dispatchEvent(new CustomEvent(TERMINAL_PANE_DROP_HOVER_EVENT));
 }
 
 export function getTerminalPaneDropHover(): TerminalPaneDropTarget | null {
-  return window.__athasTerminalPaneDropHover ?? null;
+  return window.__BlimyTerminalPaneDropHover ?? null;
 }

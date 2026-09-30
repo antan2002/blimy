@@ -123,7 +123,7 @@ describe("editor API model operations", () => {
       onChange: () => {},
     });
     useHistoryStore?.getState().actions.clearAllHistories();
-    useEditorSettingsStore?.setState({ theme: "athas-dark" });
+    useEditorSettingsStore?.setState({ theme: "blimy-dark" });
     editorAPI?.setActiveEditorAdapter(null);
     editorAPI?.setActiveFindAdapter(null);
     vi.unstubAllGlobals();

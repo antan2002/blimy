@@ -1,11 +1,11 @@
 {
-  "$schema": "https://athas.dev/schemas/extension.json",
-  "id": "athas.swift",
+  "$schema": "https://Blimy.dev/schemas/extension.json",
+  "id": "Blimy.swift",
   "name": "Swift",
   "displayName": "Swift",
   "version": "1.0.0",
   "description": "Swift language support with LSP",
-  "publisher": "Athas",
+  "publisher": "Blimy",
   "categories": ["Language"],
   "languages": [
     {

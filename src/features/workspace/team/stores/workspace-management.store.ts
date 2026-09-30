@@ -157,7 +157,7 @@ export const useWorkspaceManagementStore = createSelectors(
         },
       }),
       {
-        name: "athas-workspace-management",
+        name: "Blimy-workspace-management",
         storage: createSafeJSONStorage(),
         partialize: ({ roots, selectedRoot, section, bindings }) => ({
           roots,

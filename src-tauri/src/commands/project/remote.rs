@@ -1,5 +1,5 @@
 use crate::terminal::FrontendTerminalSessions;
-use athas_remote::{
+use BLIMY_remote::{
    RemoteFileEntry, SshConnection, close_remote_terminal as remote_close_terminal,
    create_remote_terminal as remote_create_terminal,
    remote_terminal_resize as remote_terminal_resize_impl,
@@ -12,7 +12,7 @@ use athas_remote::{
    ssh_read_directory as remote_ssh_read_directory, ssh_read_file as remote_ssh_read_file,
    ssh_rename_path as remote_ssh_rename_path, ssh_write_file as remote_ssh_write_file,
 };
-use athas_terminal::{TerminalInput, TerminalSize};
+use BLIMY_terminal::{TerminalInput, TerminalSize};
 use tauri::{
    Emitter, State,
    ipc::{Channel, InvokeResponseBody},

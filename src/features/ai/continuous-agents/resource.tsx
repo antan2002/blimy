@@ -184,8 +184,8 @@ function ContinuousAgentsSidebar({
             <ClockIcon className="mt-0.5 shrink-0" />
             <span>
               {activeCount > 0
-                ? `${activeCount} active while Athas is open`
-                : "Runs resume while Athas is open"}
+                ? `${activeCount} active while Blimy is open`
+                : "Runs resume while Blimy is open"}
             </span>
           </div>
         </SidebarFooter>
@@ -218,9 +218,9 @@ function OverviewContent({
         <CardHeader>
           <div className="mb-1 flex flex-wrap items-center gap-2">
             <Badge tone="accent">Continuous</Badge>
-            <span className="text-subtle-foreground ui-text-sm">Runs while Athas is open</span>
+            <span className="text-subtle-foreground ui-text-sm">Runs while Blimy is open</span>
           </div>
-          <CardTitle>Give Athas an outcome, not another reminder.</CardTitle>
+          <CardTitle>Give Blimy an outcome, not another reminder.</CardTitle>
           <CardDescription>
             Every cadence starts a fresh Agent session in {projectName}, keeps the workspace in
             context, and leaves a verifiable handoff in history.
@@ -409,7 +409,7 @@ function CreateContent({ onCreated }: { onCreated: (taskId: string) => void }) {
           </div>
           <CardTitle>Define the outcome once.</CardTitle>
           <CardDescription>
-            Athas starts one run now and continues in fresh Agent sessions on your cadence.
+            Blimy starts one run now and continues in fresh Agent sessions on your cadence.
           </CardDescription>
         </CardHeader>
       </Card>

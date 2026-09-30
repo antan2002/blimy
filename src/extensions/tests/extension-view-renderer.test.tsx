@@ -4,7 +4,7 @@ import { ExtensionViewRenderer } from "../ui/components/extension-view-renderer"
 import type { ExtensionViewNode } from "../ui/types/extension-view";
 
 describe("ExtensionViewRenderer", () => {
-  it("renders composable data and status nodes with Athas primitives", () => {
+  it("renders composable data and status nodes with Blimy primitives", () => {
     const node: ExtensionViewNode = {
       type: "stack",
       children: [
@@ -82,21 +82,21 @@ describe("ExtensionViewRenderer", () => {
           type: "button",
           label: "Deploy",
           pendingLabel: "Deploying",
-          action: { command: "athas.release.deploy" },
+          action: { command: "Blimy.release.deploy" },
           tone: "accent",
         },
         {
           type: "input",
           label: "Release note",
           placeholder: "Describe this release",
-          onSubmit: { command: "athas.release.note" },
+          onSubmit: { command: "Blimy.release.note" },
         },
         {
           type: "textarea",
           label: "Deployment summary",
           placeholder: "Summarize the rollout",
           rows: 5,
-          onSubmit: { command: "athas.release.summary" },
+          onSubmit: { command: "Blimy.release.summary" },
         },
         {
           type: "numberInput",
@@ -104,7 +104,7 @@ describe("ExtensionViewRenderer", () => {
           value: 3,
           min: 1,
           max: 10,
-          onChange: { command: "athas.release.replicas" },
+          onChange: { command: "Blimy.release.replicas" },
         },
         {
           type: "select",
@@ -114,21 +114,21 @@ describe("ExtensionViewRenderer", () => {
             { label: "Production", value: "production" },
             { label: "Staging", value: "staging" },
           ],
-          onChange: { command: "athas.environment.change" },
+          onChange: { command: "Blimy.environment.change" },
         },
         {
           type: "toggle",
           label: "Auto deploy",
           description: "Deploy after checks pass",
           checked: true,
-          onChange: { command: "athas.autoDeploy.change" },
+          onChange: { command: "Blimy.autoDeploy.change" },
         },
         {
           type: "checkbox",
           label: "Include migration notes",
           description: "Attach migration details to the release.",
           checked: true,
-          onChange: { command: "athas.release.includeMigrations" },
+          onChange: { command: "Blimy.release.includeMigrations" },
         },
         {
           type: "choice",
@@ -139,7 +139,7 @@ describe("ExtensionViewRenderer", () => {
             { label: "Production", value: "production" },
             { label: "Preview", value: "preview" },
           ],
-          onChange: { command: "athas.release.environmentType" },
+          onChange: { command: "Blimy.release.environmentType" },
         },
         {
           type: "tabs",
@@ -188,7 +188,7 @@ describe("ExtensionViewRenderer", () => {
                   meta: "line 42",
                   icon: "file-text",
                   badges: [{ label: "Changed", tone: "warning" }],
-                  onSelect: { command: "athas.workspace.open", args: ["src/main.ts"] },
+                  onSelect: { command: "Blimy.workspace.open", args: ["src/main.ts"] },
                 },
               ],
             },
@@ -198,14 +198,14 @@ describe("ExtensionViewRenderer", () => {
           type: "form",
           submitLabel: "Create release",
           pendingLabel: "Creating release",
-          onSubmit: { command: "athas.release.create" },
+          onSubmit: { command: "Blimy.release.create" },
           children: [
             {
               type: "input",
               name: "releaseName",
               required: true,
               label: "Release name",
-              value: "Athas 1.0",
+              value: "Blimy 1.0",
             },
           ],
         },

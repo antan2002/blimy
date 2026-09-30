@@ -1,4 +1,4 @@
-const EXTENSION_ID = "athas.ai.v0";
+const EXTENSION_ID = "Blimy.ai.v0";
 const PROVIDER_ID = "v0";
 const DIALOG_ID = `${EXTENSION_ID}.designSystems`;
 const command = (name) => `${EXTENSION_ID}.${name}`;

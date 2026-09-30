@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import { getRequiredAthasDefaultColor } from "@/extensions/themes/default-theme";
+import { getRequiredBlimyDefaultColor } from "@/extensions/themes/default-theme";
 
 export interface TerminalTheme {
   background: string;
@@ -26,33 +26,33 @@ export interface TerminalTheme {
   brightWhite: string;
 }
 
-function athasTerminalColor(name: string): string {
-  return getRequiredAthasDefaultColor("dark", name);
+function BlimyTerminalColor(name: string): string {
+  return getRequiredBlimyDefaultColor("dark", name);
 }
 
 const DEFAULT_THEME: TerminalTheme = {
-  background: athasTerminalColor("background"),
-  foreground: athasTerminalColor("foreground"),
-  cursor: athasTerminalColor("primary"),
-  cursorAccent: athasTerminalColor("background"),
-  selectionBackground: athasTerminalColor("selection"),
-  selectionForeground: athasTerminalColor("foreground"),
-  black: athasTerminalColor("terminal-black"),
-  red: athasTerminalColor("terminal-red"),
-  green: athasTerminalColor("terminal-green"),
-  yellow: athasTerminalColor("terminal-yellow"),
-  blue: athasTerminalColor("terminal-blue"),
-  magenta: athasTerminalColor("terminal-magenta"),
-  cyan: athasTerminalColor("terminal-cyan"),
-  white: athasTerminalColor("terminal-white"),
-  brightBlack: athasTerminalColor("terminal-bright-black"),
-  brightRed: athasTerminalColor("terminal-bright-red"),
-  brightGreen: athasTerminalColor("terminal-bright-green"),
-  brightYellow: athasTerminalColor("terminal-bright-yellow"),
-  brightBlue: athasTerminalColor("terminal-bright-blue"),
-  brightMagenta: athasTerminalColor("terminal-bright-magenta"),
-  brightCyan: athasTerminalColor("terminal-bright-cyan"),
-  brightWhite: athasTerminalColor("terminal-bright-white"),
+  background: BlimyTerminalColor("background"),
+  foreground: BlimyTerminalColor("foreground"),
+  cursor: BlimyTerminalColor("primary"),
+  cursorAccent: BlimyTerminalColor("background"),
+  selectionBackground: BlimyTerminalColor("selection"),
+  selectionForeground: BlimyTerminalColor("foreground"),
+  black: BlimyTerminalColor("terminal-black"),
+  red: BlimyTerminalColor("terminal-red"),
+  green: BlimyTerminalColor("terminal-green"),
+  yellow: BlimyTerminalColor("terminal-yellow"),
+  blue: BlimyTerminalColor("terminal-blue"),
+  magenta: BlimyTerminalColor("terminal-magenta"),
+  cyan: BlimyTerminalColor("terminal-cyan"),
+  white: BlimyTerminalColor("terminal-white"),
+  brightBlack: BlimyTerminalColor("terminal-bright-black"),
+  brightRed: BlimyTerminalColor("terminal-bright-red"),
+  brightGreen: BlimyTerminalColor("terminal-bright-green"),
+  brightYellow: BlimyTerminalColor("terminal-bright-yellow"),
+  brightBlue: BlimyTerminalColor("terminal-bright-blue"),
+  brightMagenta: BlimyTerminalColor("terminal-bright-magenta"),
+  brightCyan: BlimyTerminalColor("terminal-bright-cyan"),
+  brightWhite: BlimyTerminalColor("terminal-bright-white"),
 };
 
 // Check if a value is a valid hex color

@@ -1,11 +1,11 @@
 {
-  "$schema": "https://athas.dev/schemas/extension.json",
-  "id": "athas.css",
+  "$schema": "https://Blimy.dev/schemas/extension.json",
+  "id": "Blimy.css",
   "name": "CSS",
   "displayName": "CSS",
   "version": "1.0.0",
   "description": "CSS, SCSS, SASS, and Less language support with LSP and formatting",
-  "publisher": "Athas",
+  "publisher": "Blimy",
   "categories": ["Language"],
   "languages": [
     {

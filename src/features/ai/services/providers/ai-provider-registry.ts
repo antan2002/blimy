@@ -1,4 +1,4 @@
-import { AthasProvider } from "./athas-provider";
+import { BlimyProvider } from "./Blimy-provider";
 import { getApiBase } from "@/utils/api-base";
 import { AnthropicProvider } from "./anthropic-provider";
 import { GeminiProvider } from "./gemini-provider";
@@ -34,16 +34,16 @@ export interface AIProviderRuntimeContribution {
 
 function initializeProviders(): void {
   providers.set(
-    "athas",
-    new AthasProvider({
-      id: "athas",
-      name: "Athas",
+    "Blimy",
+    new BlimyProvider({
+      id: "Blimy",
+      name: "Blimy",
       apiUrl: `${getApiBase()}/api/ai/chat`,
       requiresApiKey: false,
       maxTokens: 4096,
     }),
   );
-  providerFetchModes.set("athas", true);
+  providerFetchModes.set("Blimy", true);
   const anthropicConfig: ProviderConfig = {
     id: "anthropic",
     name: "Anthropic",

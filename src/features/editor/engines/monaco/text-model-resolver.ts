@@ -44,7 +44,7 @@ function reference(
 }
 
 /**
- * Editor buffers live under `athas://` URIs, but LSP locations point at `file://`
+ * Editor buffers live under `blimy://` URIs, but LSP locations point at `file://`
  * URIs. Monaco's standalone text model service only knows models by their exact
  * URI, so the go-to-definition hover, the references peek and similar features
  * rejected with "Model not found". This resolver maps a location onto the open

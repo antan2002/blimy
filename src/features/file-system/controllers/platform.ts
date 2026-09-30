@@ -133,7 +133,7 @@ export async function openFolder(): Promise<string | null> {
   } catch (error) {
     if (!IS_LINUX) throw error;
 
-    console.warn("Native folder dialog failed, using the Athas folder picker:", error);
+    console.warn("Native folder dialog failed, using the Blimy folder picker:", error);
     return useLinuxFolderPickerStore.getState().actions.open();
   }
 }

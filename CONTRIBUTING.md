@@ -4,7 +4,7 @@ Thank you for contributing to Blimy! Please check existing issues and pull reque
 
 ## Setup
 
-See [setup guides](https://athas.dev/docs/contributing) for your platform.
+See [setup guides](https://Blimy.dev/docs/contributing) for your platform.
 
 Prerequisites:
 

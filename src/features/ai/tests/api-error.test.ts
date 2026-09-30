@@ -31,7 +31,7 @@ describe("API error parsing", () => {
 
   it("recognizes HTTP NNN and the server's error codes in legacy strings", () => {
     expect(getApiErrorCode("Request failed with HTTP 503")).toBe("503");
-    expect(getApiErrorCode("athas API error: 402|||{}")).toBe("402");
+    expect(getApiErrorCode("Blimy API error: 402|||{}")).toBe("402");
     expect(getApiErrorCode("Stream ended: allowance_exhausted")).toBe("402");
     expect(getApiErrorCode("Upstream said http_429")).toBe("429");
     expect(getApiErrorCode({ code: "timeout" })).toBe("408");

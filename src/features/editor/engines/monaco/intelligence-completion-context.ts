@@ -3,7 +3,7 @@ import type {
   AutocompleteDiagnostic,
   AutocompleteRecentEdit,
 } from "@/features/ai/intelligence/services/intelligence-text-service";
-import { filePathFromAthasModelUri } from "./model-uri";
+import { filePathFromBlimyModelUri } from "./model-uri";
 
 const MAX_RECENT_EDITS = 5;
 const MAX_SNIPPET_CHARS = 400;
@@ -29,12 +29,12 @@ interface RecentEditEntry extends AutocompleteRecentEdit {
 
 const recentEdits: RecentEditEntry[] = [];
 
-export function isAthasEditorModel(model: Monaco.editor.ITextModel) {
-  return model.uri.scheme === "athas" && model.uri.authority === "editor";
+export function isBlimyEditorModel(model: Monaco.editor.ITextModel) {
+  return model.uri.scheme === "Blimy" && model.uri.authority === "editor";
 }
 
 export function getModelFilePath(model: Monaco.editor.ITextModel) {
-  return filePathFromAthasModelUri(model.uri.path, model.uri.query);
+  return filePathFromBlimyModelUri(model.uri.path, model.uri.query);
 }
 
 /** Records the lines touched by a content change as a short snippet for completion context. */
@@ -42,7 +42,7 @@ export function recordRecentEdit(
   model: Monaco.editor.ITextModel,
   changes: readonly Pick<Monaco.editor.IModelContentChange, "range" | "text">[],
 ) {
-  if (!isAthasEditorModel(model) || model.isDisposed() || changes.length === 0) return;
+  if (!isBlimyEditorModel(model) || model.isDisposed() || changes.length === 0) return;
   const filePath = getModelFilePath(model);
   if (SENSITIVE_FILE_PATTERN.test(filePath)) return;
 

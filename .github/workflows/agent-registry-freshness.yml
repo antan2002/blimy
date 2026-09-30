@@ -11,7 +11,7 @@ permissions:
 
 jobs:
   validate:
-    if: github.repository == 'athasdev/athas'
+    if: github.repository == 'antan2002/blimy'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

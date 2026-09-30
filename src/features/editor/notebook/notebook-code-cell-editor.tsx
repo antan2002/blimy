@@ -58,7 +58,7 @@ export function NotebookCodeCellEditor({
   } = useMonacoEditorSettings();
   const monacoLanguage = toMonacoLanguageId(language);
   const modelUri = useMemo(
-    () => Uri.parse(`athas://notebook-cell/${encodeURIComponent(id)}.${monacoLanguage}`),
+    () => Uri.parse(`blimy://notebook-cell/${encodeURIComponent(id)}.${monacoLanguage}`),
     [id, monacoLanguage],
   );
 
@@ -249,9 +249,9 @@ export function NotebookCodeCellEditor({
 
   const shellStyle = {
     height,
-    "--athas-monaco-font-family": fontFamily,
-    "--athas-monaco-font-size": `${fontSize}px`,
-    "--athas-monaco-line-height": `${lineHeight}px`,
+    "--Blimy-monaco-font-family": fontFamily,
+    "--Blimy-monaco-font-size": `${fontSize}px`,
+    "--Blimy-monaco-line-height": `${lineHeight}px`,
   } as CSSProperties;
 
   return (

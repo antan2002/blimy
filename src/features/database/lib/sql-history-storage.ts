@@ -3,7 +3,7 @@ import { getSqlHistoryEntryKey, SQL_HISTORY_LIMIT } from "./sql-history";
 
 type SqlHistoryMode = "file" | "connection";
 
-const SQL_HISTORY_STORAGE_PREFIX = "athas:database:sql-history:v1";
+const SQL_HISTORY_STORAGE_PREFIX = "blimy:database:sql-history:v1";
 
 export function getSqlHistoryStorageKey(
   dbType: DatabaseType,

@@ -1,11 +1,11 @@
 {
-  "$schema": "https://athas.dev/schemas/extension.json",
-  "id": "athas.solidity",
+  "$schema": "https://Blimy.dev/schemas/extension.json",
+  "id": "Blimy.solidity",
   "name": "Solidity",
   "displayName": "Solidity",
   "version": "1.0.0",
   "description": "Solidity language support with LSP",
-  "publisher": "Athas",
+  "publisher": "Blimy",
   "categories": ["Language"],
   "languages": [
     {

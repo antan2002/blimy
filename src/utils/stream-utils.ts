@@ -268,7 +268,7 @@ class SSEStreamParser {
       return;
     }
     if (!this.hasVisibleContent && this.hasToolCalls) {
-      this.fail("The provider returned a tool call that Athas did not request or cannot execute.");
+      this.fail("The provider returned a tool call that Blimy did not request or cannot execute.");
       return;
     }
     if (!this.hasVisibleContent && this.hasReasoning) {

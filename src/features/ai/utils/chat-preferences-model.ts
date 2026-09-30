@@ -27,7 +27,7 @@ export function getChatPreferencesModel({
   return {
     isCustomAgent,
     showAgentPreference: canChangeAgent,
-    showAthasAgentPreferences: isCustomAgent,
+    showBlimyAgentPreferences: isCustomAgent,
     showModePreference: isCustomAgent || !hasAcpConfigModeOption,
     acpConfigOptions: acpConfigOptions.map(({ option }) => option),
   };

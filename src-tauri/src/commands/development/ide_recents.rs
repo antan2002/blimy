@@ -580,8 +580,8 @@ mod tests {
    fn parses_only_local_code_folder_uris() {
       let value = r#"{
          "entries": [
-            { "folderUri": "file:///Users/example/Projects/Athas" },
-            { "fileUri": "file:///Users/example/Projects/Athas/src/main.ts" },
+            { "folderUri": "file:///Users/example/Projects/Blimy" },
+            { "fileUri": "file:///Users/example/Projects/Blimy/src/main.ts" },
             { "folderUri": "vscode-remote://ssh-remote+host/home/sw/app" },
             { "folderUri": "file:///Users/example/Projects/Other%20Project" }
          ]
@@ -590,7 +590,7 @@ mod tests {
       assert_eq!(
          parse_code_recent_folder_paths(value),
          vec![
-            "/Users/example/Projects/Athas".to_string(),
+            "/Users/example/Projects/Blimy".to_string(),
             "/Users/example/Projects/Other Project".to_string()
          ]
       );
@@ -601,7 +601,7 @@ mod tests {
       let value = r#"{
          "profileAssociations": {
             "workspaces": {
-               "file:///Users/example/Projects/Athas": "__default__profile__",
+               "file:///Users/example/Projects/Blimy": "__default__profile__",
                "vscode-remote://ssh-remote+host/home/sw/app": "__default__profile__"
             }
          }
@@ -616,7 +616,7 @@ mod tests {
          .filter_map(|uri| file_uri_to_path(&uri))
          .collect();
 
-      assert_eq!(paths, vec!["/Users/example/Projects/Athas".to_string()]);
+      assert_eq!(paths, vec!["/Users/example/Projects/Blimy".to_string()]);
    }
 
    #[test]
@@ -647,7 +647,7 @@ mod tests {
            <component name="RecentProjectsManager">
              <option name="recentPaths">
                <list>
-                 <option value="$USER_HOME$/Projects/Athas" />
+                 <option value="$USER_HOME$/Projects/Blimy" />
                  <option value="ssh://host/project" />
                </list>
              </option>
@@ -656,7 +656,7 @@ mod tests {
       "#;
 
       let paths = parse_jetbrains_recent_paths(value);
-      assert!(paths.iter().any(|path| path.ends_with("/Projects/Athas")));
+      assert!(paths.iter().any(|path| path.ends_with("/Projects/Blimy")));
       assert!(!paths.iter().any(|path| path.contains("ssh://")));
    }
 }

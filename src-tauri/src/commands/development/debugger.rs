@@ -1,4 +1,4 @@
-use athas_debugger::{DebugAdapterLaunch, DebugManager, DebugSessionInfo};
+use BLIMY_debugger::{DebugAdapterLaunch, DebugManager, DebugSessionInfo};
 use serde_json::Value;
 use tauri::{State, command};
 

@@ -51,7 +51,7 @@ pkgs.mkShell (
       ++ lib.optionals stdenv.isLinux linuxPackages;
 
     shellHook = ''
-      echo "Athas Nix shell"
+      echo "Blimy Nix shell"
       echo "  bun install --frozen-lockfile"
       echo "  bun dev"
     '';

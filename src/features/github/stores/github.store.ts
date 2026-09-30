@@ -183,7 +183,7 @@ const useGitHubStoreBase = create(
                     githubAccountStatus,
                     currentUser: null,
                     authError:
-                      "A GitHub token was synced from your Athas account, but GitHub rejected it.",
+                      "A GitHub token was synced from your Blimy account, but GitHub rejected it.",
                   });
                   authCheckedAt = Date.now();
                   return;

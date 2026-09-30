@@ -607,7 +607,7 @@ export function useInlineEdit({
       const useHosted = !hasProviderKey && canUseIntelligenceProvider(aiProviderId, subscription);
 
       if (useHosted && !isAuthenticated) {
-        setInlineEditError("Sign in to use Athas AI.");
+        setInlineEditError("Sign in to use Blimy AI.");
         return;
       }
 

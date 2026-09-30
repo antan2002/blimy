@@ -29,7 +29,7 @@ function errorResult(error: unknown): ThemeUploadResult {
   if (error instanceof ThemeFileValidationError) {
     return {
       success: false,
-      error: "The theme file does not match the Athas theme format.",
+      error: "The theme file does not match the Blimy theme format.",
       details: error.issues,
     };
   }
@@ -102,7 +102,7 @@ export async function uploadTheme(file: File): Promise<ThemeUploadResult> {
   if (!file.name.toLowerCase().endsWith(".json")) {
     return {
       success: false,
-      error: "Choose an Athas theme JSON file.",
+      error: "Choose an Blimy theme JSON file.",
       details: [`${file.name} does not use the .json extension`],
     };
   }
@@ -111,7 +111,7 @@ export async function uploadTheme(file: File): Promise<ThemeUploadResult> {
     return {
       success: false,
       error: "The theme file is too large.",
-      details: ["Athas theme files must be 2 MB or smaller"],
+      details: ["Blimy theme files must be 2 MB or smaller"],
     };
   }
 

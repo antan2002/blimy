@@ -6,7 +6,7 @@ use crate::{
    app_runtime::AppHandle,
    secure_storage::{get_secret, remove_secret, store_secret},
 };
-use athas_ai::{McpServerConfig, McpServerSecrets, McpServerSetting, mcp_stdio::McpStdioEvent};
+use BLIMY_ai::{McpServerConfig, McpServerSecrets, McpServerSetting, mcp_stdio::McpStdioEvent};
 use tauri::command;
 
 fn secrets_key(server_id: &str) -> Result<String, String> {
@@ -86,10 +86,10 @@ pub async fn intelligence_mcp_start(
       .into_iter()
       .next()
       .ok_or_else(|| format!("MCP server '{name}' is disabled or incomplete"))?;
-   let listener: athas_ai::mcp_stdio::McpStdioListener = std::sync::Arc::new(move |event| {
+   let listener: BLIMY_ai::mcp_stdio::McpStdioListener = std::sync::Arc::new(move |event| {
       let _ = on_event.send(event);
    });
-   athas_ai::mcp_stdio::start_mcp_stdio(
+   BLIMY_ai::mcp_stdio::start_mcp_stdio(
       &process_id,
       &config,
       cwd.as_deref().map(std::path::Path::new),
@@ -100,12 +100,12 @@ pub async fn intelligence_mcp_start(
 
 #[command]
 pub async fn intelligence_mcp_send(process_id: String, message: String) -> Result<(), String> {
-   athas_ai::mcp_stdio::send_mcp_stdio(&process_id, &message).await
+   BLIMY_ai::mcp_stdio::send_mcp_stdio(&process_id, &message).await
 }
 
 #[command]
 pub fn intelligence_mcp_stop(process_id: String) {
-   athas_ai::mcp_stdio::stop_mcp_stdio(&process_id);
+   BLIMY_ai::mcp_stdio::stop_mcp_stdio(&process_id);
 }
 
 #[command]

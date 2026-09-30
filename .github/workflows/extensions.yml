@@ -14,7 +14,7 @@ on:
 
 jobs:
   validate:
-    if: github.repository == 'athasdev/athas'
+    if: github.repository == 'antan2002/blimy'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -37,7 +37,7 @@ jobs:
           )
 
   package-databases:
-    if: github.repository == 'athasdev/athas' && github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+    if: github.repository == 'antan2002/blimy' && github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
     needs: validate
     runs-on: macos-latest
     steps:
@@ -76,7 +76,7 @@ jobs:
           retention-days: 1
 
   deploy:
-    if: github.repository == 'athasdev/athas' && github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+    if: github.repository == 'antan2002/blimy' && github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
     needs: [validate, package-databases]
     runs-on: ubuntu-latest
     steps:

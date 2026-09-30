@@ -105,7 +105,7 @@ describe("buildAgentSessionContext", () => {
         messages: [
           assistant("m1", 1, {
             content:
-              "See https://github.com/athasdev/athas/pull/42 and https://github.com/athasdev/athas/issues/7, docs at https://example.com/guide.",
+              "See https://github.com/antan2002/blimy/pull/42 and https://github.com/antan2002/blimy/issues/7, docs at https://example.com/guide.",
             resources: [{ uri: "https://example.com/spec", name: "Spec" }],
           }),
         ],
@@ -114,8 +114,8 @@ describe("buildAgentSessionContext", () => {
     );
 
     expect(context.resources).toEqual([
-      expect.objectContaining({ kind: "pullRequest", number: 42, label: "athas#42" }),
-      expect.objectContaining({ kind: "issue", number: 7, label: "athas#7" }),
+      expect.objectContaining({ kind: "pullRequest", number: 42, label: "Blimy#42" }),
+      expect.objectContaining({ kind: "issue", number: 7, label: "Blimy#7" }),
       expect.objectContaining({ kind: "link", label: "example.com/guide" }),
       expect.objectContaining({ kind: "link", label: "Spec" }),
     ]);
@@ -132,7 +132,7 @@ describe("buildAgentSessionContext", () => {
                 kind: "other",
                 status: "completed",
                 input: {},
-                output: { type: "athas_ui", view: { type: "text", value: "first" } },
+                output: { type: "BLIMY_ui", view: { type: "text", value: "first" } },
                 timestamp: at(1),
               },
             ],

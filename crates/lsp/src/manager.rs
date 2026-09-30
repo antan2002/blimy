@@ -37,7 +37,7 @@ impl LspManager {
    pub fn get_server_path(&self, server_name: &str) -> Result<PathBuf> {
       // For TypeScript, try multiple detection strategies
       if server_name == "typescript" {
-         // Prefer Athas-managed tools so stale global language servers do not
+         // Prefer Blimy-managed tools so stale global language servers do not
          // shadow the version installed by the extension manager.
          if let Ok(app_dir) = self.app_handle.path().app_data_dir() {
             let tools_dir = app_dir.join("tools");
@@ -126,7 +126,7 @@ impl LspManager {
 
       if server_path.components().count() == 1 {
          bail!(
-            "LSP tool '{}' is unavailable. Athas could not resolve an installed binary. Reinstall \
+            "LSP tool '{}' is unavailable. Blimy could not resolve an installed binary. Reinstall \
              the language tools.",
             server_path.display()
          );

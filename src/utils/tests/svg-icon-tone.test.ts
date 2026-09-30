@@ -36,6 +36,6 @@ describe("decodeSvgDataUri", () => {
     const markup = svg('<path fill="currentColor" d="M0 0"/>');
     expect(decodeSvgDataUri(`data:image/svg+xml;base64,${btoa(markup)}`)).toBe(markup);
     expect(decodeSvgDataUri(`data:image/svg+xml,${encodeURIComponent(markup)}`)).toBe(markup);
-    expect(decodeSvgDataUri("https://athas.dev/icon.svg")).toBeNull();
+    expect(decodeSvgDataUri("https://Blimy.dev/icon.svg")).toBeNull();
   });
 });

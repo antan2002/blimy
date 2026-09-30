@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vite-plus/test";
-import athasThemeFile from "@/extensions/themes/builtin/athas.json";
+import BlimyThemeFile from "@/extensions/themes/builtin/Blimy.json";
 import ayuThemeFile from "@/extensions/themes/builtin/ayu.json";
 import catppuccinThemeFile from "@/extensions/themes/builtin/catppuccin.json";
 import christmasThemeFile from "@/extensions/themes/builtin/christmas.json";
@@ -36,7 +36,7 @@ const VISIBLE_COLOR_KEYS = TERMINAL_COLOR_KEYS.filter(
 );
 
 const builtinThemes = [
-  athasThemeFile,
+  BlimyThemeFile,
   ayuThemeFile,
   catppuccinThemeFile,
   christmasThemeFile,

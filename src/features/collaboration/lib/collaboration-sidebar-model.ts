@@ -57,13 +57,13 @@ export interface CollaborationSidebarModel {
 }
 
 const CHAT_LINE_PATTERN = /^-\s+\*\*(.+?)\*\*:\s*(.+)$/;
-const THREADS_START_MARKER = "<!-- athas:threads -->";
-const THREADS_END_MARKER = "<!-- /athas:threads -->";
-const NOTES_START_MARKER = "<!-- athas:notes -->";
-const NOTES_END_MARKER = "<!-- /athas:notes -->";
-const NOTES_WORKSPACE_START_MARKER = "<!-- athas:notes-workspace";
-const NOTES_WORKSPACE_END_MARKER = "/athas:notes-workspace -->";
-const COLLABORATION_NOTE_BUFFER_PREFIX = "athas-collaboration://channel/";
+const THREADS_START_MARKER = "<!-- blimy:threads -->";
+const THREADS_END_MARKER = "<!-- /blimy:threads -->";
+const NOTES_START_MARKER = "<!-- blimy:notes -->";
+const NOTES_END_MARKER = "<!-- /blimy:notes -->";
+const NOTES_WORKSPACE_START_MARKER = "<!-- blimy:notes-workspace";
+const NOTES_WORKSPACE_END_MARKER = "/blimy:notes-workspace -->";
+const COLLABORATION_NOTE_BUFFER_PREFIX = "Blimy-collaboration://channel/";
 
 function getMarkedSection(contentMarkdown: string, startMarker: string, endMarker: string) {
   const start = contentMarkdown.indexOf(startMarker);

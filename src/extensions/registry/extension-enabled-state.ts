@@ -1,4 +1,4 @@
-const DISABLED_EXTENSION_IDS_KEY = "athas.disabledExtensions";
+const DISABLED_EXTENSION_IDS_KEY = "Blimy.disabledExtensions";
 
 function canUseStorage(): boolean {
   return typeof window !== "undefined" && typeof window.localStorage !== "undefined";

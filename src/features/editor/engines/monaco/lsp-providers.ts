@@ -22,12 +22,12 @@ import {
 } from "@/features/editor/lsp/workspace-edit";
 import { extensionRegistry } from "@/extensions/registry/extension-registry";
 import { MONACO_HIGHLIGHT_LANGUAGE_IDS } from "./language";
-import { filePathFromAthasModelUri } from "./model-uri";
+import { filePathFromBlimyModelUri } from "./model-uri";
 import { createMonacoSemanticTokenProvider } from "./semantic-token-provider";
 
 let providersRegistered = false;
-const EXECUTE_LSP_CODE_ACTION_COMMAND = "athas.executeLspCodeAction";
-const EXECUTE_LSP_COMPLETION_COMMAND = "athas.executeLspCompletionCommand";
+const EXECUTE_LSP_CODE_ACTION_COMMAND = "Blimy.executeLspCodeAction";
+const EXECUTE_LSP_COMPLETION_COMMAND = "Blimy.executeLspCompletionCommand";
 
 interface ExecuteLspCodeActionPayload {
   filePath: string;
@@ -46,11 +46,11 @@ function filePathFromModel(model: Monaco.editor.ITextModel): string {
     return filePathFromUri(model.uri.toString());
   }
 
-  if (model.uri.scheme !== "athas") {
+  if (model.uri.scheme !== "Blimy") {
     return decodeURIComponent(model.uri.path);
   }
 
-  return filePathFromAthasModelUri(model.uri.path, model.uri.query);
+  return filePathFromBlimyModelUri(model.uri.path, model.uri.query);
 }
 
 function toMonacoRange(range: {
@@ -252,7 +252,7 @@ function openModelUriForFile(filePath: string): Monaco.Uri | null {
     .find(
       (candidate) =>
         !candidate.isDisposed() &&
-        candidate.uri.scheme === "athas" &&
+        candidate.uri.scheme === "Blimy" &&
         filePathFromModel(candidate) === filePath,
     );
   return model?.uri ?? null;
@@ -261,7 +261,7 @@ function openModelUriForFile(filePath: string): Monaco.Uri | null {
 /**
  * Split an LSP workspace edit into edits Monaco can apply to open buffer models and
  * the files that have no model. Monaco's standalone bulk edit service only edits
- * existing models, and buffers live under `athas://` URIs, so `file://` resources
+ * existing models, and buffers live under `blimy://` URIs, so `file://` resources
  * failed with "bad edit - model not found".
  */
 export function toWorkspaceEdit(edit: unknown): {

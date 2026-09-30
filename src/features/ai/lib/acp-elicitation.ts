@@ -176,7 +176,7 @@ function toOptions(values: string[] | undefined, titled: EnumOption[] | undefine
   return (values ?? []).map((value) => ({ value, label: value }));
 }
 
-/** A question for each field Athas can render; null for types it does not know. */
+/** A question for each field Blimy can render; null for types it does not know. */
 function toQuestion(
   name: string,
   property: AcpElicitationProperty,
@@ -293,7 +293,7 @@ export function toElicitationQuestions(request: AcpFormElicitationRequest): Elic
   return [...questions.values()];
 }
 
-/** True when a required field has a type Athas cannot render, so the form cannot be accepted. */
+/** True when a required field has a type Blimy cannot render, so the form cannot be accepted. */
 export function hasUnanswerableFields(
   request: AcpFormElicitationRequest,
   questions: ElicitationQuestion[],
@@ -400,7 +400,7 @@ export function inspectElicitationUrl(url: string): ElicitationLink {
     return { openable: false, reason: "This link is not a valid URL." };
   }
   if (parsed.protocol !== "https:" && parsed.protocol !== "http:") {
-    return { openable: false, reason: `Athas only opens web links, not ${parsed.protocol} links.` };
+    return { openable: false, reason: `Blimy only opens web links, not ${parsed.protocol} links.` };
   }
   if (!parsed.hostname) return { openable: false, reason: "This link has no host." };
   return {

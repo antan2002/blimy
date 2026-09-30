@@ -82,11 +82,11 @@ describe("R Markdown chunks", () => {
         "```{r model}",
         "1 + 1",
         "```",
-        "<!-- athas:r-output:start -->",
+        "<!-- blimy:r-output:start -->",
         "````text",
         "[1] 2",
         "````",
-        "<!-- athas:r-output:end -->",
+        "<!-- blimy:r-output:end -->",
         "",
         "More text",
       ].join("\n"),
@@ -98,11 +98,11 @@ describe("R Markdown chunks", () => {
       "```{r model}",
       "1 + 1",
       "```",
-      "<!-- athas:r-output:start -->",
+      "<!-- blimy:r-output:start -->",
       "````text",
       "[1] 2",
       "````",
-      "<!-- athas:r-output:end -->",
+      "<!-- blimy:r-output:end -->",
       "",
     ].join("\n");
     const [chunk] = getRMarkdownChunks(content);
@@ -115,7 +115,7 @@ describe("R Markdown chunks", () => {
 
     expect(nextContent).toContain("[1] 3");
     expect(nextContent).not.toContain("[1] 2");
-    expect(nextContent.match(/athas:r-output:start/g)).toHaveLength(1);
+    expect(nextContent.match(/blimy:r-output:start/g)).toHaveLength(1);
   });
 
   it("persists errors and timeouts as output blocks", () => {
@@ -202,11 +202,11 @@ describe("R Markdown chunks", () => {
       "```{r model, include=FALSE}",
       "1 + 1",
       "```",
-      "<!-- athas:r-output:start -->",
+      "<!-- blimy:r-output:start -->",
       "````text",
       "[1] 2",
       "````",
-      "<!-- athas:r-output:end -->",
+      "<!-- blimy:r-output:end -->",
       "",
       "More text",
     ].join("\n");
@@ -214,7 +214,7 @@ describe("R Markdown chunks", () => {
 
     const nextContent = clearRMarkdownChunkOutput(content, chunk);
 
-    expect(nextContent).not.toContain("athas:r-output");
+    expect(nextContent).not.toContain("blimy:r-output");
     expect(nextContent).toContain("More text");
   });
 });

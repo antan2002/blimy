@@ -40,9 +40,9 @@ const MAX_LOGS: usize = 16;
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize)]
 #[serde(rename_all = "lowercase")]
 pub enum TrafficDirection {
-   /// From the agent to Athas.
+   /// From the agent to Blimy.
    In,
-   /// From Athas to the agent.
+   /// From Blimy to the agent.
    Out,
    /// A line the agent wrote to stderr.
    Stderr,
@@ -596,7 +596,7 @@ fn summarize(line: &str) -> (Option<String>, Option<Value>) {
    )
 }
 
-/// Returns `line` with the MCP server secrets Athas sends in session setup (stdio `env` values
+/// Returns `line` with the MCP server secrets Blimy sends in session setup (stdio `env` values
 /// and HTTP/SSE `headers` values) replaced, or `None` when it carries none.
 fn redact_line(line: &str) -> Option<String> {
    if !line.contains("\"mcpServers\"") {

@@ -94,8 +94,8 @@ interface GoToLineEventDetail {
   path?: string;
 }
 
-const PYTHON_SCRIPT_CELL_COMMAND = "athas.runPythonScriptCell";
-const R_MARKDOWN_CHUNK_COMMAND = "athas.runRMarkdownChunk";
+const PYTHON_SCRIPT_CELL_COMMAND = "Blimy.runPythonScriptCell";
+const R_MARKDOWN_CHUNK_COMMAND = "Blimy.runRMarkdownChunk";
 
 interface NotebookRunResult {
   stdout: string;

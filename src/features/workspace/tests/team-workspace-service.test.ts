@@ -28,13 +28,13 @@ describe("team workspace persistence", () => {
   it("writes a new profile to its captured workspace", async () => {
     await saveTeamWorkspace("/repo", config, null);
     expect(mocks.writeFile).toHaveBeenCalledWith(
-      "/repo/athas.workspace.json",
+      "/repo/Blimy.workspace.json",
       expect.stringContaining('"Use Bun"'),
     );
     expect(mocks.dispatchEvent).toHaveBeenCalledOnce();
   });
   it("refuses to overwrite a profile changed outside the dialog", async () => {
-    mocks.readDirectory.mockResolvedValue([{ name: "athas.workspace.json" }]);
+    mocks.readDirectory.mockResolvedValue([{ name: "Blimy.workspace.json" }]);
     mocks.readText.mockResolvedValue(JSON.stringify({ ...config, name: "Changed" }));
     await expect(saveTeamWorkspace("/repo", config, JSON.stringify(config))).rejects.toThrow(
       "changed on disk",
@@ -42,7 +42,7 @@ describe("team workspace persistence", () => {
     expect(mocks.writeFile).not.toHaveBeenCalled();
   });
   it("reports malformed profiles without treating them as new", async () => {
-    mocks.readDirectory.mockResolvedValue([{ name: "athas.workspace.json" }]);
+    mocks.readDirectory.mockResolvedValue([{ name: "Blimy.workspace.json" }]);
     mocks.readText.mockResolvedValue("{");
     await expect(loadTeamWorkspace("/repo")).rejects.toThrow("valid JSON");
   });
@@ -50,7 +50,7 @@ describe("team workspace persistence", () => {
     await saveTeamWorkspace("remote://connection/repo", config, null);
     expect(mocks.invoke).toHaveBeenCalledWith("ssh_write_file", {
       connectionId: "connection",
-      filePath: "/repo/athas.workspace.json",
+      filePath: "/repo/Blimy.workspace.json",
       content: expect.any(String),
     });
     expect(mocks.writeFile).not.toHaveBeenCalled();

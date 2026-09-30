@@ -161,8 +161,8 @@ export function ProjectSwitcher({
     const connectionId = getProjectRemoteConnectionId(availableProject.path);
     const confirmed = await showConfirmDialog(
       connectionId
-        ? `Remove “${availableProject.name}” from Athas? Remote files will not be deleted.`
-        : `Remove “${availableProject.name}” from Athas? Files on disk will not be deleted.`,
+        ? `Remove “${availableProject.name}” from Blimy? Remote files will not be deleted.`
+        : `Remove “${availableProject.name}” from Blimy? Files on disk will not be deleted.`,
       {
         title: connectionId ? "Remove Remote Connection" : "Remove Project",
         confirmLabel: "Remove",
@@ -179,17 +179,17 @@ export function ProjectSwitcher({
       } else {
         removeFromRecents(availableProject.path);
       }
-      toast.success(`Removed “${availableProject.name}” from Athas.`);
+      toast.success(`Removed “${availableProject.name}” from Blimy.`);
     } catch (error) {
-      console.error("Failed to remove project from Athas:", error);
-      toast.error("Failed to remove the project from Athas.");
+      console.error("Failed to remove project from blimy:", error);
+      toast.error("Failed to remove the project from Blimy.");
     }
   };
 
   const handleRemoveRemoteConnection = async (connection: RemoteConnection) => {
     setIsOpen(false);
     const confirmed = await showConfirmDialog(
-      `Remove “${connection.name}” from Athas? Remote files will not be deleted.`,
+      `Remove “${connection.name}” from Blimy? Remote files will not be deleted.`,
       {
         title: "Remove Remote Connection",
         confirmLabel: "Remove",
@@ -200,10 +200,10 @@ export function ProjectSwitcher({
     try {
       await connectionStore.deleteConnection(connection.id);
       await refreshRemoteConnections();
-      toast.success(`Removed “${connection.name}” from Athas.`);
+      toast.success(`Removed “${connection.name}” from Blimy.`);
     } catch (error) {
-      console.error("Failed to remove remote connection from Athas:", error);
-      toast.error("Failed to remove the remote connection from Athas.");
+      console.error("Failed to remove remote connection from blimy:", error);
+      toast.error("Failed to remove the remote connection from Blimy.");
     }
   };
 
@@ -364,7 +364,7 @@ function ProjectRowActions({
         ) : null}
         <DropdownMenuItem variant="destructive" onClick={onRemove}>
           <TrashIcon />
-          Remove from Athas…
+          Remove from Blimy…
         </DropdownMenuItem>
       </DropdownMenuSubContent>
     </DropdownMenuSub>

@@ -10,18 +10,18 @@ export function resolveAgentModel(params: {
   const fallback =
     params.provider.id === "custom"
       ? params.customDefault?.trim()
-      : params.provider.id === "athas"
+      : params.provider.id === "Blimy"
         ? "auto"
         : "";
   const modelId = params.modelId.trim() || fallback;
   if (!modelId) return undefined;
   const fromStatic = params.provider.models.find((model) => model.id === modelId);
   const fromCatalog = params.dynamicModels.find((model) => model.id === modelId);
-  // Athas's bundled list is only a placeholder until the server's catalog, with real limits, arrives.
+  // Blimy's bundled list is only a placeholder until the server's catalog, with real limits, arrives.
   const known =
-    params.provider.id === "athas" ? (fromCatalog ?? fromStatic) : (fromStatic ?? fromCatalog);
-  // The Athas server applies each model's own output limit, so it gets no local default.
-  const defaultOutput = params.provider.id === "athas" ? undefined : 4096;
+    params.provider.id === "Blimy" ? (fromCatalog ?? fromStatic) : (fromStatic ?? fromCatalog);
+  // The Blimy server applies each model's own output limit, so it gets no local default.
+  const defaultOutput = params.provider.id === "Blimy" ? undefined : 4096;
   return known
     ? { ...known, maxOutputTokens: known.maxOutputTokens ?? known.maxTokens ?? defaultOutput }
     : { id: modelId, name: modelId, maxOutputTokens: defaultOutput };

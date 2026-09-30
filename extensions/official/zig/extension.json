@@ -1,11 +1,11 @@
 {
-  "$schema": "https://athas.dev/schemas/extension.json",
-  "id": "athas.zig",
+  "$schema": "https://Blimy.dev/schemas/extension.json",
+  "id": "Blimy.zig",
   "name": "Zig",
   "displayName": "Zig",
   "version": "1.0.0",
   "description": "Zig language support with LSP",
-  "publisher": "Athas",
+  "publisher": "Blimy",
   "categories": ["Language"],
   "languages": [
     {

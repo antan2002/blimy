@@ -58,8 +58,8 @@ fn connect_to_test_server(key: &str) -> Result<ssh2::Session, String> {
       .unwrap()
       .parse()
       .unwrap();
-   let username = std::env::var("ATHAS_SSH_TEST_USER").unwrap();
-   let test_home = std::env::var("ATHAS_SSH_TEST_HOME").unwrap();
+   let username = std::env::var("BLIMY_SSH_TEST_USER").unwrap();
+   let test_home = std::env::var("BLIMY_SSH_TEST_HOME").unwrap();
    create_ssh_session_with_config(
       "127.0.0.1",
       port,
@@ -72,8 +72,8 @@ fn connect_to_test_server(key: &str) -> Result<ssh2::Session, String> {
 }
 
 #[test]
-#[ignore = "requires an isolated local SSH server and BLIMY_SSH_TEST_PORT, ATHAS_SSH_TEST_USER, \
-            ATHAS_SSH_TEST_HOME"]
+#[ignore = "requires an isolated local SSH server and BLIMY_SSH_TEST_PORT, BLIMY_SSH_TEST_USER, \
+            BLIMY_SSH_TEST_HOME"]
 fn authenticates_with_home_relative_openssh_identity() {
    let session = connect_to_test_server("~/.ssh/custom_ed25519").unwrap();
    assert!(session.authenticated());
@@ -87,8 +87,8 @@ fn authenticates_with_home_relative_openssh_identity() {
 }
 
 #[test]
-#[ignore = "requires an isolated local SSH server and BLIMY_SSH_TEST_PORT, ATHAS_SSH_TEST_USER, \
-            ATHAS_SSH_TEST_HOME"]
+#[ignore = "requires an isolated local SSH server and BLIMY_SSH_TEST_PORT, BLIMY_SSH_TEST_USER, \
+            BLIMY_SSH_TEST_HOME"]
 fn reports_configured_key_failure() {
    let error = connect_to_test_server("~/.ssh/missing_ed25519")
       .err()

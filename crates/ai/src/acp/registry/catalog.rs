@@ -1,13 +1,13 @@
-//! Merges the ACP Registry into the agent catalog built from Athas's extension manifests.
+//! Merges the ACP Registry into the agent catalog built from Blimy's extension manifests.
 //!
 //! Precedence:
-//! - An agent Athas ships a manifest for keeps its manifest entry (name, description, the binary
+//! - An agent Blimy ships a manifest for keeps its manifest entry (name, description, the binary
 //!   name used to find a copy on PATH). When the registry can install it on this machine and has
 //!   not quarantined it, installs and updates come from the registry: its version becomes the
 //!   available version and its args and env are used to launch the agent. Otherwise the manifest's
 //!   own install stays in charge (for example a binary the registry publishes without a checksum).
 //! - An agent only the registry lists is added as a registry agent. It is launched only from
-//!   Athas's own install, never from a same-named program on PATH.
+//!   Blimy's own install, never from a same-named program on PATH.
 
 use super::{
    schema::{RegistryAgent, resolve_distribution},
@@ -16,24 +16,24 @@ use super::{
 use crate::acp::types::{AgentConfig, AgentRuntime, AgentSource, RegistryAgentInfo};
 use std::collections::HashMap;
 
-/// Registry ids that Athas's manifests name differently.
-const ATHAS_AGENT_IDS: &[(&str, &str)] = &[("gemini", "gemini-cli"), ("kimi", "kimi-cli")];
+/// Registry ids that Blimy's manifests name differently.
+const BLIMY_AGENT_IDS: &[(&str, &str)] = &[("gemini", "gemini-cli"), ("kimi", "kimi-cli")];
 
-/// The Athas agent id for a registry id.
+/// The Blimy agent id for a registry id.
 pub fn blimy_agent_id(registry_id: &str) -> &str {
-   ATHAS_AGENT_IDS
+   BLIMY_AGENT_IDS
       .iter()
       .find(|(registry, _)| *registry == registry_id)
       .map_or(registry_id, |(_, blimy)| blimy)
 }
 
-/// Registry agents that sit next to an Athas integration for the same product. They stay
-/// available, since the ACP adapter works like every other agent (Athas's MCP servers, the
+/// Registry agents that sit next to an Blimy integration for the same product. They stay
+/// available, since the ACP adapter works like every other agent (Blimy's MCP servers, the
 /// inspector, session import), but get a name and note that tell the two apart.
 const ADAPTER_LABELS: &[(&str, &str, &str)] = &[(
    "codex-acp",
    "Codex (ACP)",
-   "Codex through its ACP adapter. Athas also has a built-in Codex integration with native \
+   "Codex through its ACP adapter. Blimy also has a built-in Codex integration with native \
     threads, review and skills; pick that one unless you want Codex to run as an ACP agent.",
 )];
 
@@ -86,7 +86,7 @@ fn apply_distribution(agent: &mut AgentConfig, resolved: &super::ResolvedDistrib
    );
 }
 
-/// The catalog with the registry merged in. `include` filters registry ids (Athas keeps some
+/// The catalog with the registry merged in. `include` filters registry ids (Blimy keeps some
 /// agents, such as its terminal integrations, out of the ACP catalog).
 pub fn merge_registry_agents(
    manifest_agents: Vec<AgentConfig>,

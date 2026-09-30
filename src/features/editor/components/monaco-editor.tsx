@@ -695,7 +695,7 @@ export function MonacoEditor({
     const replacement = result.content.slice(result.selectionStart, result.selectionEnd);
 
     editor.pushUndoStop();
-    editor.executeEdits("athas-context-menu", [
+    editor.executeEdits("Blimy-context-menu", [
       { range: selection, text: replacement, forceMoveMarkers: true },
     ]);
     editor.setSelection(selection);
@@ -719,7 +719,7 @@ export function MonacoEditor({
       const editor = editorRef.current;
       if (!editor) return;
 
-      editor.trigger("athas-keybinding", actionId, null);
+      editor.trigger("Blimy-keybinding", actionId, null);
       editor.focus();
       syncCursorAndSelection();
     },
@@ -734,7 +734,7 @@ export function MonacoEditor({
 
       const startOffset = model.getOffsetAt(range.getStartPosition());
       editor.pushUndoStop();
-      editor.executeEdits("athas-api", [{ range, text, forceMoveMarkers: true }]);
+      editor.executeEdits("Blimy-api", [{ range, text, forceMoveMarkers: true }]);
       const nextPosition = model.getPositionAt(startOffset + text.length);
       editor.setSelection(
         new MonacoRange(
@@ -1347,7 +1347,7 @@ export function MonacoEditor({
       ownerId: adapterOwnerId,
       openFind: (replace) => {
         editorRef.current?.trigger(
-          "athas-keybinding",
+          "Blimy-keybinding",
           replace ? "editor.action.startFindReplaceAction" : "actions.find",
           null,
         );
@@ -1416,11 +1416,11 @@ export function MonacoEditor({
           runMonacoSelectionAction("editor.action.insertCursorAtEndOfEachLineSelected"),
         removeSecondaryCursors: () => runMonacoSelectionAction("removeSecondaryCursors"),
         undo: () => {
-          editorRef.current?.trigger("athas-api", "undo", null);
+          editorRef.current?.trigger("Blimy-api", "undo", null);
           syncCursorAndSelection();
         },
         redo: () => {
-          editorRef.current?.trigger("athas-api", "redo", null);
+          editorRef.current?.trigger("Blimy-api", "redo", null);
           syncCursorAndSelection();
         },
       });
@@ -1513,7 +1513,7 @@ export function MonacoEditor({
 
     monacoEditor.setModelMarkers(
       model,
-      "athas",
+      "Blimy",
       diagnosticsForFile.map((diagnostic) => ({
         severity:
           diagnostic.severity === "error"
@@ -1533,7 +1533,7 @@ export function MonacoEditor({
 
     return () => {
       if (!model.isDisposed()) {
-        monacoEditor.setModelMarkers(model, "athas", []);
+        monacoEditor.setModelMarkers(model, "Blimy", []);
       }
     };
   }, [diagnosticsForFile]);
@@ -1571,7 +1571,7 @@ export function MonacoEditor({
       if (!editor) return;
 
       editor.focus();
-      editor.trigger("athas", "editor.action.triggerSuggest", {});
+      editor.trigger("Blimy", "editor.action.triggerSuggest", {});
     };
 
     window.addEventListener("editor-trigger-suggest", handleTriggerSuggest);
@@ -1586,7 +1586,7 @@ export function MonacoEditor({
       if (!editor) return;
 
       editor.focus();
-      editor.trigger("athas", "editor.action.showHover", {});
+      editor.trigger("Blimy", "editor.action.showHover", {});
     };
 
     window.addEventListener("editor-show-hover", handleShowHover);
@@ -1886,9 +1886,9 @@ export function MonacoEditor({
   if (!buffer) return null;
 
   const shellStyle = {
-    "--athas-monaco-font-family": fontFamily,
-    "--athas-monaco-font-size": `${fontSize}px`,
-    "--athas-monaco-line-height": `${lineHeight}px`,
+    "--Blimy-monaco-font-family": fontFamily,
+    "--Blimy-monaco-font-size": `${fontSize}px`,
+    "--Blimy-monaco-line-height": `${lineHeight}px`,
   } as CSSProperties;
   const canEdit = !readOnly && !isPreviewMode;
 

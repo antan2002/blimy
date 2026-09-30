@@ -39,4 +39,4 @@ fi
 
 bun install
 
-echo "Athas development environment is ready. Run bun dev to start the app."
+echo "Blimy development environment is ready. Run bun dev to start the app."

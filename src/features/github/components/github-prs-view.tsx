@@ -434,8 +434,8 @@ const GitHubPRsView = memo(() => {
       }
     };
 
-    window.addEventListener("athas:github-palette-action", handlePaletteAction);
-    return () => window.removeEventListener("athas:github-palette-action", handlePaletteAction);
+    window.addEventListener("blimy:github-palette-action", handlePaletteAction);
+    return () => window.removeEventListener("blimy:github-palette-action", handlePaletteAction);
   }, [handleRefreshActiveSection]);
 
   const handleSelectRepository = useCallback(async () => {

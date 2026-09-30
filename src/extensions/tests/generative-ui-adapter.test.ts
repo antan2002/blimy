@@ -40,7 +40,7 @@ describe("generative UI adapter", () => {
         {
           id: "open",
           label: "Open release",
-          url: "https://athas.dev/releases",
+          url: "https://Blimy.dev/releases",
           style: "primary",
         },
       ],
@@ -55,7 +55,7 @@ describe("generative UI adapter", () => {
       label: "Open release",
       action: {
         command: OPEN_EXTERNAL_VIEW_COMMAND,
-        args: ["https://athas.dev/releases"],
+        args: ["https://Blimy.dev/releases"],
       },
       tone: "accent",
       disabled: undefined,

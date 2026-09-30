@@ -64,14 +64,14 @@ pub fn user_shell_path() -> Option<&'static str> {
          }
          let shell = env::var("SHELL").unwrap_or_else(|_| "/bin/zsh".to_string());
          let output = probe_command(
-            Command::new(&shell).args(["-ilc", "printf '\nATHAS_PATH=%s\n' \"$PATH\""]),
+            Command::new(&shell).args(["-ilc", "printf '\nBLIMY_PATH=%s\n' \"$PATH\""]),
             Duration::from_secs(2),
          )
          .ok()?;
          let text = String::from_utf8(output.stdout).ok()?;
          let path = text
             .lines()
-            .find_map(|line| line.strip_prefix("ATHAS_PATH="))?
+            .find_map(|line| line.strip_prefix("BLIMY_PATH="))?
             .to_string();
          if path.is_empty() { None } else { Some(path) }
       })

@@ -83,12 +83,12 @@ describe("Composer context budget", () => {
     expect(getComposerBudgetTone(over)).toBe("error");
   });
 
-  it("measures hosted Athas requests against their request size cap", () => {
-    expect(resolveComposerContextWindow("athas", undefined)).toEqual({
+  it("measures hosted Blimy requests against their request size cap", () => {
+    expect(resolveComposerContextWindow("Blimy", undefined)).toEqual({
       contextWindowTokens: 100_000,
       reservedOutputTokens: 0,
     });
-    expect(resolveComposerContextWindow("athas", 1_000_000)).toEqual({
+    expect(resolveComposerContextWindow("Blimy", 1_000_000)).toEqual({
       contextWindowTokens: 100_000,
       reservedOutputTokens: 0,
     });
@@ -96,7 +96,7 @@ describe("Composer context budget", () => {
   });
 
   it("uses a hosted model's own context window when it is smaller than the request cap", () => {
-    expect(resolveComposerContextWindow("athas", 64_000)).toEqual({ contextWindowTokens: 64_000 });
+    expect(resolveComposerContextWindow("Blimy", 64_000)).toEqual({ contextWindowTokens: 64_000 });
   });
 
   it("stays hidden for a new chat that only carries the agent's instructions", () => {

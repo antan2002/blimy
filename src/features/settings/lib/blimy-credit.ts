@@ -4,7 +4,7 @@ import {
   type HostedUsageState,
 } from "@/features/ai/lib/hosted-usage";
 
-/** One short line about the included credit, for the Athas row in Settings. */
+/** One short line about the included credit, for the Blimy row in Settings. */
 export function describeIncludedCredit(usage: HostedUsageState) {
   const resets = usage.periodEnd ? ` · resets ${formatResetDate(usage.periodEnd)}` : "";
   if (usage.level === "included_exhausted") return `Included credit used, on balance${resets}`;

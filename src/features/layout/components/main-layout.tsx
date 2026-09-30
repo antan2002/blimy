@@ -260,7 +260,7 @@ export function MainLayout() {
   return (
     <div
       ref={setLayoutShellElement}
-      className="athas-layout-shell relative flex size-full flex-col overflow-hidden bg-surface"
+      className="Blimy-layout-shell relative flex size-full flex-col overflow-hidden bg-surface"
     >
       <WorkbenchFullscreenRootContext.Provider value={layoutShell}>
         {/* Drag-and-drop overlay */}
@@ -282,7 +282,7 @@ export function MainLayout() {
           <TitleLeading />
         </div>
 
-        <div className="athas-workbench-glass relative z-10 flex flex-1 flex-col overflow-hidden pb-workbench">
+        <div className="Blimy-workbench-glass relative z-10 flex flex-1 flex-col overflow-hidden pb-workbench">
           <div
             className="flex flex-1 flex-row overflow-hidden pr-workbench"
             style={{ minHeight: 0 }}
@@ -302,7 +302,7 @@ export function MainLayout() {
             <div className="flex min-h-0 min-w-0 flex-1 flex-col">
               <div
                 className={cn(
-                  "athas-glass-island relative min-h-0 flex-1 overflow-hidden border-border border-y border-r bg-background",
+                  "Blimy-glass-island relative min-h-0 flex-1 overflow-hidden border-border border-y border-r bg-background",
                   roundMainContentLeftEdge &&
                     (isEditorBottomPaneVisible
                       ? "rounded-tl-xl border-l"

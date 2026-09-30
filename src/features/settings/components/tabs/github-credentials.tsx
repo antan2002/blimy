@@ -20,12 +20,12 @@ import Select from "@/ui/select";
 import { Spinner } from "@/ui/spinner";
 import Section, { SettingRow, SettingStatus } from "../settings-section";
 
-type TokenSourceSetting = "auto" | "athas" | "pat" | "gh";
+type TokenSourceSetting = "auto" | "Blimy" | "pat" | "gh";
 
 const TOKEN_SOURCE_OPTIONS = [
   { value: "auto", label: "Automatic" },
   { value: "pat", label: "Personal access token" },
-  { value: "athas", label: "Athas account" },
+  { value: "Blimy", label: "Blimy account" },
   { value: "gh", label: "GitHub CLI (gh)" },
 ];
 

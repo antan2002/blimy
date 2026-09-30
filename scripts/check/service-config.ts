@@ -49,11 +49,11 @@ export function getServiceConfigErrors({
   }
 
   if (!stable.app?.security?.csp?.includes(services.websiteBaseUrl)) {
-    errors.push("Tauri CSP does not allow the configured Athas website origin.");
+    errors.push("Tauri CSP does not allow the configured Blimy website origin.");
   }
 
   if (!allowedUrls.some((entry) => entry.url === `${services.websiteBaseUrl}/**`)) {
-    errors.push("Tauri capabilities do not allow the configured Athas website origin.");
+    errors.push("Tauri capabilities do not allow the configured Blimy website origin.");
   }
 
   return errors;
@@ -75,7 +75,7 @@ async function main() {
     throw new Error(errors.join("\n"));
   }
 
-  console.log("Athas service configuration is consistent across frontend and Tauri.");
+  console.log("Blimy service configuration is consistent across frontend and Tauri.");
 }
 
 if (import.meta.main) {

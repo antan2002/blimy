@@ -24,7 +24,7 @@ describe("ChatMessage layout", () => {
 [ERROR_BLOCK]
 title: API Error
 code:
-message: Failed to connect to athas API: Payment Required
+message: Failed to connect to Blimy API: Payment Required
 details:
 [/ERROR_BLOCK]`,
         })}

@@ -109,8 +109,8 @@ export function getAgentAccessMessage(
   providerId: string,
   accessError: string | undefined,
 ): string {
-  return agentId === "custom" && providerId === "athas"
-    ? "Sign in and add Athas Agent balance to use hosted models."
+  return agentId === "custom" && providerId === "Blimy"
+    ? "Sign in and add Blimy Agent balance to use hosted models."
     : (accessError ?? "This agent is not ready.");
 }
 
@@ -119,7 +119,7 @@ function runKind(agentId: string): AiRunKind {
   return isAcpAgent(agentId) ? "acp" : "builtin";
 }
 
-/** What Athas's own agent adds to a completion: its step count and what the turn cost. */
+/** What Blimy's own agent adds to a completion: its step count and what the turn cost. */
 type BuiltInCompletion = AgentCompletionResult & { steps?: number; costUsd?: number };
 
 /** Per-turn usage for the message footer, when the run reported any. */
@@ -261,7 +261,7 @@ async function buildTurnContext(
     host.allProjectFiles,
   );
   const mentionedPaths = new Set(mentionedFiles.map((file) => file.path));
-  // `athas-context:*` selections (folders, diffs, problems, past chats) resolve separately.
+  // `Blimy-context:*` selections (folders, diffs, problems, past chats) resolve separately.
   const contextSelections = partitionContextSelections(host.selectedFilesPaths);
   const attachedFiles = turn.isAcp
     ? []
@@ -361,7 +361,7 @@ class AgentTurnStream {
     this.host.finishRun(this.chatId, this.turn.runId, ending);
     this.releaseAbortController();
     // Hosted turns spend credits; keep the usage ring and balance banner current.
-    if (this.turn.agentId === "custom" && this.turn.providerId === "athas") {
+    if (this.turn.agentId === "custom" && this.turn.providerId === "Blimy") {
       useAuthStore.getState().actions.scheduleSubscriptionRefresh();
     }
   }
@@ -629,7 +629,7 @@ class AgentTurnStream {
   };
 
   onAcpEvent = (event: AcpEvent) => {
-    // Athas's own agent sends only its todo list through here.
+    // Blimy's own agent sends only its todo list through here.
     if (
       !this.turn.isAcp &&
       this.turn.agentId !== CODEX_INTEGRATION_ID &&

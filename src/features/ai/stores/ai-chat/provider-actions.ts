@@ -27,7 +27,7 @@ export function getProviderAccessFromMap(
 ) {
   const provider = getProviderById(providerId);
   if (!provider) return false;
-  if (!provider.requiresApiKey && providerId !== "athas") return true;
+  if (!provider.requiresApiKey && providerId !== "Blimy") return true;
   return providerApiKeys.get(providerId) ?? false;
 }
 

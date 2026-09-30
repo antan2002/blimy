@@ -156,7 +156,7 @@ describe("ACP traffic messages", () => {
         method: "initialize",
         params: {
           protocolVersion: 1,
-          clientInfo: { name: "athas" },
+          clientInfo: { name: "Blimy" },
           clientCapabilities: { terminal: true },
         },
       },

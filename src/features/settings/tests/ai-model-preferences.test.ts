@@ -9,7 +9,7 @@ import {
   withDefaultConnection,
   withTaskConnection,
 } from "../lib/ai-model-preferences";
-import { describeIncludedCredit } from "../lib/athas-credit";
+import { describeIncludedCredit } from "../lib/Blimy-credit";
 
 const openai = { providerId: "openai", modelId: "gpt-test" };
 const ollama = { providerId: "ollama", modelId: "llama3" };
@@ -25,7 +25,7 @@ describe("AI model preferences", () => {
         personalConnection: openai,
         personalConnectionIsLocal: false,
       }),
-    ).toEqual({ providerId: "athas", modelId: "auto" });
+    ).toEqual({ providerId: "Blimy", modelId: "auto" });
     expect(
       getEffectiveDefaultConnection({
         preferences,
@@ -44,9 +44,9 @@ describe("AI model preferences", () => {
     ).toEqual(ollama);
   });
 
-  it("treats Athas as unavailable without a plan that includes it", () => {
-    expect(isConnectionAvailable({ providerId: "athas", modelId: "auto" }, false)).toBe(false);
-    expect(isConnectionAvailable({ providerId: "athas", modelId: "auto" }, true)).toBe(true);
+  it("treats Blimy as unavailable without a plan that includes it", () => {
+    expect(isConnectionAvailable({ providerId: "Blimy", modelId: "auto" }, false)).toBe(false);
+    expect(isConnectionAvailable({ providerId: "Blimy", modelId: "auto" }, true)).toBe(true);
     expect(isConnectionAvailable(ollama, false)).toBe(true);
   });
 
@@ -95,7 +95,7 @@ describe("AI model preferences", () => {
   });
 });
 
-describe("Athas included credit", () => {
+describe("Blimy included credit", () => {
   const usage: HostedUsageState = {
     usedPercent: 25,
     level: "ok",

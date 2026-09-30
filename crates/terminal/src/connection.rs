@@ -519,7 +519,7 @@ impl TerminalConnection {
    ) -> anyhow::Error {
       if err.kind() == std::io::ErrorKind::PermissionDenied {
          return anyhow!(
-            "Athas does not have permission to {operation}: {working_dir}. On macOS, allow Athas \
+            "Blimy does not have permission to {operation}: {working_dir}. On macOS, allow Blimy \
              in System Settings > Privacy & Security > Files and Folders, or grant Full Disk \
              Access for developer tools that need broad project access."
          );

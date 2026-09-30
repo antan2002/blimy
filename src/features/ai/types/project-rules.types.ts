@@ -1,4 +1,4 @@
-export type ProjectRuleSource = "user" | "agents" | "claude" | "cursor" | "athas";
+export type ProjectRuleSource = "user" | "agents" | "claude" | "cursor" | "Blimy";
 
 export interface ProjectRule {
   source: ProjectRuleSource;

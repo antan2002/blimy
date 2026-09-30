@@ -6,7 +6,7 @@ import type {
 import type { ExtensionViewNode } from "../types/extension-view";
 import { EXTENSION_VIEW_LIMITS, parseExtensionViewNode } from "./extension-view-schema";
 
-export const OPEN_EXTERNAL_VIEW_COMMAND = "athas.openExternal";
+export const OPEN_EXTERNAL_VIEW_COMMAND = "Blimy.openExternal";
 
 interface AdapterContext {
   nodes: number;

@@ -24,26 +24,26 @@ export interface ProviderRequestLimits {
 }
 
 /**
- * The hosted Athas chat endpoint accepts up to 400 messages, a 4 MB body and 1,000,000
+ * The hosted Blimy chat endpoint accepts up to 400 messages, a 4 MB body and 1,000,000
  * characters per message. The client stays well below that: about 140,000 to 190,000 tokens
  * fits every hosted model's context window, and each step of a tool loop resends the whole
  * request, so a smaller request also keeps a long turn's cost down.
  */
-export const HOSTED_ATHAS_REQUEST_LIMITS: ProviderRequestLimits = {
+export const HOSTED_BLIMY_REQUEST_LIMITS: ProviderRequestLimits = {
   maxMessages: 360,
   maxBytes: 560_000,
   maxMessageChars: 200_000,
 };
 
-/** Providers whose chat endpoint takes text only. Athas depends on the selected model. */
+/** Providers whose chat endpoint takes text only. Blimy depends on the selected model. */
 const TEXT_ONLY_PROVIDERS = new Set(["deepseek"]);
 
 /**
- * Inline images the hosted Athas endpoint accepts, in decoded bytes: PNG, JPEG, GIF and WebP,
+ * Inline images the hosted Blimy endpoint accepts, in decoded bytes: PNG, JPEG, GIF and WebP,
  * up to 16 per request, 1.5 MB each and 2.25 MB in total. Images do not count toward
  * `maxBytes`; they have their own share of the 4 MB body.
  */
-export const HOSTED_ATHAS_IMAGE_LIMITS = {
+export const HOSTED_BLIMY_IMAGE_LIMITS = {
   mediaTypes: ["image/png", "image/jpeg", "image/gif", "image/webp"],
   maxImages: 16,
   maxImageBytes: 1_500_000,
@@ -54,27 +54,27 @@ export const HOSTED_ATHAS_IMAGE_LIMITS = {
  * Room the built-in agent's tool loop needs on top of the first request: each step adds an
  * assistant tool call and a tool result, and a turn runs up to 25 steps.
  */
-export const HOSTED_ATHAS_TOOL_LOOP_RESERVE = { messages: 50, bytes: 160_000 };
+export const HOSTED_BLIMY_TOOL_LOOP_RESERVE = { messages: 50, bytes: 160_000 };
 
 /** What the first request of a turn may use, with the tool loop's reserve held back. */
 export function getProviderRequestLimits(providerId: string): ProviderRequestLimits | null {
-  if (providerId !== "athas") return null;
+  if (providerId !== "Blimy") return null;
   return {
-    maxMessages: HOSTED_ATHAS_REQUEST_LIMITS.maxMessages - HOSTED_ATHAS_TOOL_LOOP_RESERVE.messages,
-    maxBytes: HOSTED_ATHAS_REQUEST_LIMITS.maxBytes - HOSTED_ATHAS_TOOL_LOOP_RESERVE.bytes,
-    maxMessageChars: HOSTED_ATHAS_REQUEST_LIMITS.maxMessageChars,
+    maxMessages: HOSTED_BLIMY_REQUEST_LIMITS.maxMessages - HOSTED_BLIMY_TOOL_LOOP_RESERVE.messages,
+    maxBytes: HOSTED_BLIMY_REQUEST_LIMITS.maxBytes - HOSTED_BLIMY_TOOL_LOOP_RESERVE.bytes,
+    maxMessageChars: HOSTED_BLIMY_REQUEST_LIMITS.maxMessageChars,
   };
 }
 
 /**
- * Whether a request to this provider may carry images. Athas decides per model from its catalog
+ * Whether a request to this provider may carry images. Blimy decides per model from its catalog
  * (`supportsImages`; `auto` reports its default model), so without the model it is text only.
  */
 export function providerAcceptsImages(
   providerId: string,
   model?: { supportsImages?: boolean },
 ): boolean {
-  if (providerId === "athas") return model?.supportsImages === true;
+  if (providerId === "Blimy") return model?.supportsImages === true;
   return !TEXT_ONLY_PROVIDERS.has(providerId);
 }
 
@@ -93,7 +93,7 @@ export function imagesOmittedNotice(params: {
   const images = params.omitted === 1 ? "An image was" : `${params.omitted} images were`;
   if (!params.acceptsImages)
     return `${images} not sent: ${params.modelName} cannot read images. Choose a model that supports images to include them.`;
-  return `${images} not sent: Athas AI takes PNG, JPEG, GIF or WebP images up to 1.5 MB each and 2.25 MB per request.`;
+  return `${images} not sent: Blimy AI takes PNG, JPEG, GIF or WebP images up to 1.5 MB each and 2.25 MB per request.`;
 }
 
 function clip(text: string, maxChars: number) {
@@ -306,7 +306,7 @@ const decodedBytes = (base64: string) =>
  * note, so an old screenshot never blocks the conversation.
  */
 function withinHostedImageLimits(messages: AIMessage[]): AIMessage[] {
-  const limits = HOSTED_ATHAS_IMAGE_LIMITS;
+  const limits = HOSTED_BLIMY_IMAGE_LIMITS;
   let count = 0;
   let total = 0;
   const fitted = [...messages];
@@ -348,7 +348,7 @@ function capMessage<T extends AIMessage>(message: T, maxChars: number): T {
 
 /**
  * Fits a full request (system prompt first, current user message last) to what the provider
- * accepts: images are dropped for text-only models (and kept within Athas's image limits
+ * accepts: images are dropped for text-only models (and kept within Blimy's image limits
  * otherwise), oversized messages are truncated, and the oldest turns are summarised away until
  * the count and size limits hold.
  */
@@ -360,7 +360,7 @@ export function fitMessagesToProviderLimits(
 ): AIMessage[] {
   let fitted = !acceptsImages
     ? messages.map(withoutImages)
-    : providerId === "athas"
+    : providerId === "Blimy"
       ? withinHostedImageLimits(messages)
       : messages;
   if (!limits) return fitted;

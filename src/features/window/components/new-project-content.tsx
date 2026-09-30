@@ -247,7 +247,7 @@ export default function NewProjectContent({ onBack, onClose }: NewProjectContent
 
       const opened = await handleOpenFolderByPath(destinationPath);
       if (!opened) {
-        throw new Error("The project was created but Athas could not open it.");
+        throw new Error("The project was created but Blimy could not open it.");
       }
 
       onClose();

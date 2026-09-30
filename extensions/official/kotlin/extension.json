@@ -1,11 +1,11 @@
 {
-  "$schema": "https://athas.dev/schemas/extension.json",
-  "id": "athas.kotlin",
+  "$schema": "https://Blimy.dev/schemas/extension.json",
+  "id": "Blimy.kotlin",
   "name": "Kotlin",
   "displayName": "Kotlin",
   "version": "1.0.0",
   "description": "Kotlin language support with LSP",
-  "publisher": "Athas",
+  "publisher": "Blimy",
   "categories": ["Language"],
   "languages": [
     {

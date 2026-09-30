@@ -33,7 +33,7 @@ describe("commit message context", () => {
       {
         hash: "abc123",
         message: "Keep commit messages direct",
-        author: "Athas",
+        author: "Blimy",
         date: "2026-08-14T12:00:00.000Z",
       },
     ]);
@@ -42,13 +42,13 @@ describe("commit message context", () => {
 
   it("includes repository style, staged files, and sampled diff content", async () => {
     const context = await buildCommitMessageContext({
-      repoPath: "/workspace/athas",
+      repoPath: "/workspace/Blimy",
       currentBranch: "main",
       stagedFiles: [stagedFile],
       existingDraftHint: "Draft subject",
     });
 
-    expect(context).toContain("Repository: athas");
+    expect(context).toContain("Repository: Blimy");
     expect(context).toContain("Branch: main");
     expect(context).toContain("- Keep commit messages direct");
     expect(context).toContain("- modified staged: src/example.ts");

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import athasThemeFile from "@/extensions/themes/builtin/athas.json";
+import BlimyThemeFile from "@/extensions/themes/builtin/Blimy.json";
 import ayuThemeFile from "@/extensions/themes/builtin/ayu.json";
 import catppuccinThemeFile from "@/extensions/themes/builtin/catppuccin.json";
 import christmasThemeFile from "@/extensions/themes/builtin/christmas.json";
@@ -77,8 +77,8 @@ function contrastRatio(foreground: string, background: string) {
   );
 }
 
-describe("Athas theme contrast", () => {
-  it.each(athasThemeFile.themes)("keeps $name text colors above WCAG AA", (theme) => {
+describe("Blimy theme contrast", () => {
+  it.each(BlimyThemeFile.themes)("keeps $name text colors above WCAG AA", (theme) => {
     const foregrounds = [
       "foreground",
       "muted-foreground",
@@ -112,7 +112,7 @@ describe("Athas theme contrast", () => {
     );
   });
 
-  it.each(athasThemeFile.themes)("keeps $name interaction planes perceptible", (theme) => {
+  it.each(BlimyThemeFile.themes)("keeps $name interaction planes perceptible", (theme) => {
     const { background, surface, accent, selected, border } = theme.colors;
     expect(contrastRatio(accent, background)).toBeGreaterThanOrEqual(1.12);
     expect(contrastRatio(accent, surface)).toBeGreaterThanOrEqual(1.1);

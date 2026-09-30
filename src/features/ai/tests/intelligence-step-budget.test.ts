@@ -6,7 +6,7 @@ import {
   serializedBytes,
   TRIMMED_TOOL_RESULT,
 } from "../intelligence/lib/intelligence-step-budget";
-import { HOSTED_ATHAS_REQUEST_LIMITS } from "../lib/conversation-history";
+import { HOSTED_BLIMY_REQUEST_LIMITS } from "../lib/conversation-history";
 
 function toolStep(id: string, toolName: string, size: number): ModelMessage[] {
   return [
@@ -43,13 +43,13 @@ function outputs(messages: ModelMessage[]) {
 }
 
 describe("agent step budget", () => {
-  it("uses the hosted limits for Athas and a generous cap for other providers", () => {
-    expect(getStepRequestLimits("athas")).toEqual({
-      maxMessages: HOSTED_ATHAS_REQUEST_LIMITS.maxMessages,
-      maxBytes: HOSTED_ATHAS_REQUEST_LIMITS.maxBytes,
+  it("uses the hosted limits for Blimy and a generous cap for other providers", () => {
+    expect(getStepRequestLimits("Blimy")).toEqual({
+      maxMessages: HOSTED_BLIMY_REQUEST_LIMITS.maxMessages,
+      maxBytes: HOSTED_BLIMY_REQUEST_LIMITS.maxBytes,
     });
     expect(getStepRequestLimits("openai").maxBytes).toBeGreaterThan(
-      HOSTED_ATHAS_REQUEST_LIMITS.maxBytes,
+      HOSTED_BLIMY_REQUEST_LIMITS.maxBytes,
     );
   });
 

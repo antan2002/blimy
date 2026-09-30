@@ -1,11 +1,11 @@
 {
-  "$schema": "https://athas.dev/schemas/extension.json",
-  "id": "athas.typescript",
+  "$schema": "https://Blimy.dev/schemas/extension.json",
+  "id": "Blimy.typescript",
   "name": "TypeScript",
   "displayName": "TypeScript",
   "version": "1.0.0",
   "description": "TypeScript language support with LSP and tooling",
-  "publisher": "Athas",
+  "publisher": "Blimy",
   "categories": ["Language"],
   "languages": [
     {

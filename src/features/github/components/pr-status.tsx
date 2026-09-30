@@ -29,7 +29,7 @@ import type { PullRequestStatus } from "../utils/github-pr-viewer-utils";
 // CI Status Indicator
 interface CIStatusProps {
   checks: StatusCheck[];
-  /** When set, checks backed by an Actions run of this repository open inside Athas. */
+  /** When set, checks backed by an Actions run of this repository open inside Blimy. */
   repoPath?: string;
   repositoryUrl?: string;
 }
@@ -240,7 +240,7 @@ export function getMergeStatusInfo({
 // Linked Issues
 interface LinkedIssuesProps {
   issues: LinkedIssue[];
-  /** When set, issues of this repository open inside Athas instead of the browser. */
+  /** When set, issues of this repository open inside Blimy instead of the browser. */
   repoPath?: string;
   repositoryUrl?: string;
 }

@@ -1,11 +1,11 @@
 {
-  "$schema": "https://athas.dev/schemas/extension.json",
-  "id": "athas.php",
+  "$schema": "https://Blimy.dev/schemas/extension.json",
+  "id": "Blimy.php",
   "name": "PHP",
   "displayName": "PHP",
   "version": "1.0.0",
   "description": "PHP language support with LSP",
-  "publisher": "Athas",
+  "publisher": "Blimy",
   "categories": ["Language"],
   "languages": [
     {

@@ -7,7 +7,7 @@ describe("extension catalog loading", () => {
       .fn<typeof fetch>()
       .mockResolvedValueOnce(new Response(null, { status: 503, statusText: "Unavailable" }))
       .mockResolvedValueOnce(
-        new Response(JSON.stringify({ rust: { id: "athas.rust" } }), {
+        new Response(JSON.stringify({ rust: { id: "Blimy.rust" } }), {
           status: 200,
           headers: { "content-type": "application/json" },
         }),
@@ -18,7 +18,7 @@ describe("extension catalog loading", () => {
         ["http://localhost:3000/catalog", "https://cdn.example.com/catalog"],
         fetcher,
       ),
-    ).resolves.toEqual({ rust: { id: "athas.rust" } });
+    ).resolves.toEqual({ rust: { id: "Blimy.rust" } });
     expect(fetcher).toHaveBeenCalledTimes(2);
   });
 

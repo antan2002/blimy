@@ -20,7 +20,7 @@ const DIRECTORY_RULE_FILES: [string, ProjectRuleSource][] = [
   ["CLAUDE.md", "claude"],
 ];
 const RULE_DIRECTORIES: [string, ProjectRuleSource][] = [
-  [".athas/rules", "athas"],
+  [".Blimy/rules", "Blimy"],
   [".cursor/rules", "cursor"],
 ];
 
@@ -280,7 +280,7 @@ export interface LoadProjectRulesOptions {
 
 /**
  * Loads the rules best-in-class editors honour: AGENTS.md and CLAUDE.md at the root and in the
- * directories of attached files, `.athas/rules` and `.cursor/rules` with their frontmatter, and
+ * directories of attached files, `.Blimy/rules` and `.cursor/rules` with their frontmatter, and
  * the legacy `.cursorrules` file. Files that cannot be read are skipped.
  */
 export async function loadProjectRules({

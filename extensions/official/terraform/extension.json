@@ -1,11 +1,11 @@
 {
-  "$schema": "https://athas.dev/schemas/extension.json",
-  "id": "athas.terraform",
+  "$schema": "https://Blimy.dev/schemas/extension.json",
+  "id": "Blimy.terraform",
   "name": "Terraform",
   "displayName": "Terraform",
   "version": "1.0.0",
   "description": "Terraform and HCL language support with LSP",
-  "publisher": "Athas",
+  "publisher": "Blimy",
   "categories": ["Language"],
   "languages": [
     {

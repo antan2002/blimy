@@ -105,7 +105,7 @@ export const AccountSettings = () => {
             </div>
           </SettingRow>
         ) : (
-          <SettingRow label="Account" description="Sign in for Pro, Athas AI, and settings sync">
+          <SettingRow label="Account" description="Sign in for Pro, Blimy AI, and settings sync">
             <Button
               variant="accent"
               onClick={() => void signIn().catch(() => undefined)}

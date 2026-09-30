@@ -3,10 +3,10 @@ import { parseCsv } from "../lib/csv-utils";
 
 describe("parseCsv", () => {
   it("parses quoted delimiters, escaped quotes, and CRLF rows", () => {
-    expect(parseCsv('name,notes\r\nAthas,"fast, focused"\r\nEditor,"says ""hi"""')).toEqual({
+    expect(parseCsv('name,notes\r\nBlimy,"fast, focused"\r\nEditor,"says ""hi"""')).toEqual({
       headers: ["name", "notes"],
       rows: [
-        ["Athas", "fast, focused"],
+        ["Blimy", "fast, focused"],
         ["Editor", 'says "hi"'],
       ],
     });
@@ -23,9 +23,9 @@ describe("parseCsv", () => {
   });
 
   it("keeps trailing empty fields", () => {
-    expect(parseCsv("first,last\nAthas,", ",", true)).toEqual({
+    expect(parseCsv("first,last\nBlimy,", ",", true)).toEqual({
       headers: ["first", "last"],
-      rows: [["Athas", ""]],
+      rows: [["Blimy", ""]],
     });
   });
 });

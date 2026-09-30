@@ -31,7 +31,7 @@ describe("AI provider extension registry", () => {
   });
 
   it("adds and removes extension providers from provider lookups", () => {
-    const extensionId = "athas.test.ai-provider";
+    const extensionId = "Blimy.test.ai-provider";
 
     registerAIProviderExtension({
       extensionId,

@@ -23,7 +23,7 @@ export function getWindowDocumentState({
   const titleParts = [
     documentName,
     documentName === contextName ? null : contextName,
-    "Athas",
+    "Blimy",
   ].filter((part): part is string => Boolean(part));
   const representedPath =
     activeBuffer && activeBuffer.path.startsWith("/") && !isVirtualContent(activeBuffer)

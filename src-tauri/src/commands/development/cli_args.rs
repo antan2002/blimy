@@ -25,7 +25,7 @@ impl PendingCliOpenRequests {
 
 #[tauri::command]
 pub fn take_pending_cli_open_requests(
-   window: tauri::WebviewWindow<crate::app_runtime::AthasRuntime>,
+   window: tauri::WebviewWindow<crate::app_runtime::BlimyRuntime>,
    state: State<'_, PendingCliOpenRequests>,
 ) -> Vec<CliRequest> {
    let mut pending = state.0.lock().expect("pending CLI requests lock poisoned");
@@ -318,7 +318,7 @@ pub fn parse_cli_args(args: &[String], cwd: &Path) -> Vec<CliRequest> {
 /// Parses a full process argv vector, dropping the executable path before routing user args.
 ///
 /// Used by both cold app startup and the single-instance callback so platform routing keeps the
-/// same semantics whether Athas was already running or launched from scratch.
+/// same semantics whether Blimy was already running or launched from scratch.
 pub fn parse_cli_argv(argv: &[String], cwd: &Path) -> Vec<CliRequest> {
    parse_cli_args(argv.get(1..).unwrap_or_default(), cwd)
 }
@@ -339,7 +339,7 @@ pub fn parse_opened_urls(urls: &[tauri::Url]) -> Vec<CliRequest> {
 mod tests {
    fn to_deep_link_url(req: &OpenRequest) -> String {
       let encoded_path = url_encode_path(&req.path);
-      let mut url = format!("athas://open?path={}", encoded_path);
+      let mut url = format!("blimy://open?path={}", encoded_path);
       if let Some(line) = req.line {
          url.push_str(&format!("&line={}", line));
       }
@@ -393,7 +393,7 @@ mod tests {
 
    #[test]
    fn ignores_non_file_opened_urls() {
-      let url = tauri::Url::parse("athas://open?path=/tmp/file.txt").expect("valid URL");
+      let url = tauri::Url::parse("blimy://open?path=/tmp/file.txt").expect("valid URL");
       assert!(parse_opened_urls(&[url]).is_empty());
    }
 
@@ -440,7 +440,7 @@ mod tests {
          line: Some(42),
       };
       let url = to_deep_link_url(&req);
-      assert_eq!(url, "athas://open?path=/Users/test/foo.txt&line=42");
+      assert_eq!(url, "blimy://open?path=/Users/test/foo.txt&line=42");
    }
 
    #[test]
@@ -451,7 +451,7 @@ mod tests {
          line: None,
       };
       let url = to_deep_link_url(&req);
-      assert_eq!(url, "athas://open?path=/Users/test/project&type=directory");
+      assert_eq!(url, "blimy://open?path=/Users/test/project&type=directory");
    }
 
    #[test]
@@ -462,7 +462,7 @@ mod tests {
          line: None,
       };
       let url = to_deep_link_url(&req);
-      assert_eq!(url, "athas://open?path=/Users/test/my%20project/file.txt");
+      assert_eq!(url, "blimy://open?path=/Users/test/my%20project/file.txt");
    }
 
    #[test]
@@ -484,11 +484,11 @@ mod tests {
    #[test]
    fn parse_cli_args_web_command() {
       let cwd = std::env::current_dir().unwrap();
-      let args = vec!["web".to_string(), "https://athas.dev".to_string()];
+      let args = vec!["web".to_string(), "https://Blimy.dev".to_string()];
       assert_eq!(
          parse_cli_args(&args, &cwd),
          vec![CliRequest::Web {
-            url: "https://athas.dev".to_string()
+            url: "https://Blimy.dev".to_string()
          }]
       );
    }
@@ -504,13 +504,13 @@ mod tests {
          "--disable-gpu-compositing".to_string(),
          "--disable-setuid-sandbox".to_string(),
          "web".to_string(),
-         "https://athas.dev".to_string(),
+         "https://Blimy.dev".to_string(),
       ];
 
       assert_eq!(
          parse_cli_args(&args, &cwd),
          vec![CliRequest::Web {
-            url: "https://athas.dev".to_string()
+            url: "https://Blimy.dev".to_string()
          }]
       );
    }
@@ -575,7 +575,7 @@ mod tests {
    fn parse_cli_argv_drops_executable_for_cold_start() {
       let cwd = std::env::current_dir().unwrap();
       let args = vec![
-         "/Applications/Athas.app/Contents/MacOS/athas".to_string(),
+         "/Applications/Blimy.app/Contents/MacOS/Blimy".to_string(),
          ".".to_string(),
       ];
       let requests = parse_cli_argv(&args, &cwd);
@@ -588,7 +588,7 @@ mod tests {
    fn parse_cli_argv_drops_executable_for_single_instance_forwarding() {
       let cwd = std::env::current_dir().unwrap();
       let args = vec![
-         "C:\\Program Files\\Athas\\athas.exe".to_string(),
+         "C:\\Program Files\\Blimy\\Blimy.exe".to_string(),
          "terminal".to_string(),
          "bun test".to_string(),
       ];
@@ -669,12 +669,12 @@ mod tests {
       let cwd = std::env::current_dir().unwrap();
       for args in [
          vec!["terminal", "--cwd"],
-         vec!["terminal", "--cwd", "/athas-nonexistent-dir-123"],
+         vec!["terminal", "--cwd", "/Blimy-nonexistent-dir-123"],
          vec!["--unknown"],
          vec!["issue", "0"],
          vec!["pr"],
          vec!["settings", "extra"],
-         vec!["open", ".", "/athas-nonexistent-dir-123"],
+         vec!["open", ".", "/Blimy-nonexistent-dir-123"],
       ] {
          assert!(
             parse_cli_args(
@@ -694,7 +694,7 @@ mod tests {
       state.push_all(
          "main-2",
          vec![CliRequest::Web {
-            url: "https://athas.dev".into(),
+            url: "https://Blimy.dev".into(),
          }],
       );
       let mut pending = state.0.lock().unwrap();

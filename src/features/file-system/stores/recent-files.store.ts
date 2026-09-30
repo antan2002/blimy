@@ -91,7 +91,7 @@ const useRecentFilesStoreBase = create<RecentFilesStore>()(
         },
       }),
       {
-        name: "athas-recent-files",
+        name: "Blimy-recent-files",
         version: 1,
         storage: createSafeJSONStorage<RecentFilesState>(),
         partialize: ({ recentFiles, maxRecentFiles }) => ({ recentFiles, maxRecentFiles }),

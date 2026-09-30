@@ -1,11 +1,11 @@
 {
-  "$schema": "https://athas.dev/schemas/extension.json",
-  "id": "athas.java",
+  "$schema": "https://Blimy.dev/schemas/extension.json",
+  "id": "Blimy.java",
   "name": "Java",
   "displayName": "Java",
   "version": "1.0.0",
   "description": "Java language support with LSP",
-  "publisher": "Athas",
+  "publisher": "Blimy",
   "categories": ["Language"],
   "languages": [
     {

@@ -42,6 +42,6 @@ describe("parseDetachedWindowUrl", () => {
   });
 
   it("derives one channel name per window", () => {
-    expect(getDetachedWindowChannelName("abc")).toBe("athas-window-abc");
+    expect(getDetachedWindowChannelName("abc")).toBe("Blimy-window-abc");
   });
 });

@@ -25,7 +25,7 @@ export function ApiErrorActions({
   const [keyManagerOpen, setKeyManagerOpen] = useState(false);
   const [busy, setBusy] = useState(false);
   const { signIn, isSigningIn, reopen, cancel } = useDesktopSignIn();
-  const hosted = providerId === "athas";
+  const hosted = providerId === "Blimy";
   const authentication = code === "401";
   const tooLarge = serverCode === "request_too_large" || code === "413";
   const payment = !tooLarge && (code === "402" || HOSTED_BILLING_CODES.has(serverCode ?? ""));
@@ -63,7 +63,7 @@ export function ApiErrorActions({
         ? "Add credit"
         : "Manage billing"
       : hosted && authentication
-        ? "Sign in to Athas"
+        ? "Sign in to Blimy"
         : configure && !hosted
           ? "Configure provider"
           : hosted && code === "403"

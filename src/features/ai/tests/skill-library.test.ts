@@ -20,18 +20,18 @@ describe("skill library", () => {
       new Response(
         JSON.stringify({
           "skills/review": {
-            id: "athas.skill.review",
+            id: "Blimy.skill.review",
             name: "review",
             displayName: "Review",
             description: "Review code changes",
             version: "1.0.0",
-            publisher: "Athas",
+            publisher: "Blimy",
             license: "MIT",
             categories: ["Skill"],
             contributes: {
               skills: [
                 {
-                  id: "athas.review",
+                  id: "Blimy.review",
                   name: "Review",
                   description: "Review code changes",
                   path: "SKILL.md",
@@ -46,9 +46,9 @@ describe("skill library", () => {
 
     await expect(loadMarketplaceSkills()).resolves.toEqual([
       expect.objectContaining({
-        id: "athas.review",
+        id: "Blimy.review",
         title: "Review",
-        detailUrl: "https://athas.dev/extensions/skills/review/SKILL.md",
+        detailUrl: "https://Blimy.dev/extensions/skills/review/SKILL.md",
       }),
     ]);
     expect(fetchMock).toHaveBeenCalledTimes(1);
@@ -68,10 +68,10 @@ describe("skill library", () => {
 
     await expect(
       resolveMarketplaceSkill({
-        id: "athas.review",
+        id: "Blimy.review",
         title: "Review",
         description: "Review code changes",
-        detailUrl: "https://athas.dev/extensions/skills/review/SKILL.md",
+        detailUrl: "https://Blimy.dev/extensions/skills/review/SKILL.md",
         tags: [],
       }),
     ).resolves.toMatchObject({
@@ -99,25 +99,25 @@ describe("skill library", () => {
         id: "skills-sh:review",
         title: "Review",
         description: "Review code changes",
-        detailUrl: "https://athas.dev/api/skills/details/review",
+        detailUrl: "https://Blimy.dev/api/skills/details/review",
         tags: ["skills.sh"],
       }),
     ).resolves.toMatchObject({
       content: "Review this diff carefully.",
       version: "abc123",
     });
-    expect(fetchMock).toHaveBeenCalledWith("https://athas.dev/api/skills/details/review");
+    expect(fetchMock).toHaveBeenCalledWith("https://Blimy.dev/api/skills/details/review");
   });
 
   it("creates installable Agent skills from marketplace entries", () => {
     const skill = createSkillFromMarketplace({
-      id: "athas.review",
+      id: "Blimy.review",
       title: "Review",
       description: "Review code changes",
       content: "Review this diff carefully.",
-      author: "Athas",
+      author: "Blimy",
       license: "MIT",
-      sourceUrl: "https://github.com/athasdev/athas",
+      sourceUrl: "https://github.com/antan2002/blimy",
       version: "1.0.0",
       tags: ["review"],
     });
@@ -126,11 +126,11 @@ describe("skill library", () => {
       title: "Review",
       description: "Review code changes",
       content: "Review this diff carefully.",
-      author: "Athas",
+      author: "Blimy",
       license: "MIT",
-      sourceUrl: "https://github.com/athasdev/athas",
+      sourceUrl: "https://github.com/antan2002/blimy",
       source: "marketplace",
-      sourceId: "athas.review",
+      sourceId: "Blimy.review",
       version: "1.0.0",
       tags: ["review"],
       localOverride: false,
@@ -142,20 +142,20 @@ describe("skill library", () => {
 
   it("detects installed marketplace skills by source id", () => {
     const installed = createSkillFromMarketplace({
-      id: "athas.review",
+      id: "Blimy.review",
       title: "Review",
       description: "Review code changes",
       content: "Review this diff carefully.",
       tags: [],
     });
 
-    expect(isMarketplaceSkillInstalled([installed], "athas.review")).toBe(true);
-    expect(isMarketplaceSkillInstalled([installed], "athas.other")).toBe(false);
+    expect(isMarketplaceSkillInstalled([installed], "Blimy.review")).toBe(true);
+    expect(isMarketplaceSkillInstalled([installed], "Blimy.other")).toBe(false);
   });
 
   it("updates untouched marketplace skills in place", () => {
     const installed = createSkillFromMarketplace({
-      id: "athas.review",
+      id: "Blimy.review",
       title: "Review",
       description: "Review code changes",
       content: "Review this diff carefully.",
@@ -163,7 +163,7 @@ describe("skill library", () => {
       tags: ["review"],
     });
     const nextMarketplaceSkill = {
-      id: "athas.review",
+      id: "Blimy.review",
       title: "Review v2",
       description: "Review code changes with tests",
       content: "Review this diff and test coverage carefully.",
@@ -190,7 +190,7 @@ describe("skill library", () => {
   it("keeps local overrides when marketplace skills update", () => {
     const installed = {
       ...createSkillFromMarketplace({
-        id: "athas.review",
+        id: "Blimy.review",
         title: "Review",
         description: "Review code changes",
         content: "Review this diff carefully.",
@@ -202,7 +202,7 @@ describe("skill library", () => {
       localOverride: true,
     };
     const nextMarketplaceSkill = {
-      id: "athas.review",
+      id: "Blimy.review",
       title: "Review v2",
       description: "Review code changes with tests",
       content: "Review this diff and test coverage carefully.",

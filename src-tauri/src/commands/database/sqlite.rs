@@ -1,4 +1,4 @@
-use athas_database::providers::{
+use BLIMY_database::providers::{
    FilteredQueryParams, FilteredQueryResult, ForeignKeyInfo, QueryResult, TableInfo,
    delete_sqlite_row as db_delete_sqlite_row, execute_sqlite as db_execute_sqlite,
    get_sqlite_foreign_keys as db_get_sqlite_foreign_keys,

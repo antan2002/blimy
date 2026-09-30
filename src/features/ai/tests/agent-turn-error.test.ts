@@ -6,7 +6,7 @@ import { toIntelligenceAgentError } from "../intelligence/lib/intelligence-agent
 const describeFailure = (error: string, overrides: { isAcp?: boolean; offline?: boolean } = {}) =>
   describeAgentTurnFailure({
     error,
-    providerId: "athas",
+    providerId: "Blimy",
     isAcp: overrides.isAcp ?? false,
     offline: overrides.offline ?? false,
   });
@@ -14,7 +14,7 @@ const describeFailure = (error: string, overrides: { isAcp?: boolean; offline?: 
 describe("agent turn failures", () => {
   it("explains an exhausted allowance and keeps it structured", () => {
     const failure = describeFailure(
-      'athas API error: 402|||{"error":{"code":"allowance_exhausted","message":"Used up"}}',
+      'Blimy API error: 402|||{"error":{"code":"allowance_exhausted","message":"Used up"}}',
     );
     expect(failure.title).toBe("Included credit used up");
     expect(failure.blockCode).toBe("402");
@@ -25,14 +25,14 @@ describe("agent turn failures", () => {
       title: "Included credit used up",
       message: failure.message,
       details: failure.details,
-      providerId: "athas",
+      providerId: "Blimy",
       retryable: false,
     });
   });
 
   it("explains each hosted billing refusal and keeps the server's billing page", () => {
     const body = (code: string, extra: Record<string, unknown> = {}) =>
-      `athas API error: 402|||${JSON.stringify({ error: "Server text", code, billingUrl: "/dashboard/settings/billing", ...extra })}`;
+      `Blimy API error: 402|||${JSON.stringify({ error: "Server text", code, billingUrl: "/dashboard/settings/billing", ...extra })}`;
     const short = describeFailure(body("allowance_exhausted", { walletBalanceCents: 12.5 }));
     expect(short.message).toContain("balance ($0.13) doesn't cover this request");
     expect(short.error.billingUrl).toBe("/dashboard/settings/billing");
@@ -45,27 +45,27 @@ describe("agent turn failures", () => {
 
   it("asks for a new chat when a request is too large, whatever its status", () => {
     const tooLarge = describeFailure(
-      'athas API error: 413|||{"error":"Too large","code":"request_too_large"}',
+      'Blimy API error: 413|||{"error":"Too large","code":"request_too_large"}',
     );
     expect(tooLarge).toMatchObject({ title: "Conversation too large", blockCode: "413" });
     expect(tooLarge.message).toContain("Start a new chat");
     expect(tooLarge.error.retryable).toBe(false);
     expect(
-      describeFailure('athas API error: 402|||{"error":"Too large","code":"request_too_large"}')
+      describeFailure('Blimy API error: 402|||{"error":"Too large","code":"request_too_large"}')
         .title,
     ).toBe("Conversation too large");
   });
 
   it("prefers the server's explanation for other failures", () => {
     const failure = describeFailure(
-      'athas API error: 429|||{"code":"http_429","error":"Slow down"}',
+      'Blimy API error: 429|||{"code":"http_429","error":"Slow down"}',
     );
     expect(failure.message).toBe("Slow down");
     expect(failure.error).toMatchObject({ status: 429, code: "http_429", retryable: true });
   });
 
   it("reports an offline failure as retryable without a toast", () => {
-    const failure = describeFailure("Failed to connect to athas API: error sending request", {
+    const failure = describeFailure("Failed to connect to Blimy API: error sending request", {
       offline: true,
     });
     expect(failure).toMatchObject({
@@ -77,7 +77,7 @@ describe("agent turn failures", () => {
   });
 
   it("recognizes a network failure while the system still reports a connection", () => {
-    const failure = describeFailure("Failed to connect to athas API: error sending request");
+    const failure = describeFailure("Failed to connect to Blimy API: error sending request");
     expect(failure.title).toBe("Connection Failed");
     expect(failure.error).toMatchObject({ code: "network", retryable: true });
   });
@@ -94,11 +94,11 @@ describe("agent turn failures", () => {
   });
 
   it("keeps the status a hosted stream error chunk carries in param", () => {
-    // What the SDK hands over for an Athas SSE `error` event: only the OpenAI-style fields.
+    // What the SDK hands over for an Blimy SSE `error` event: only the OpenAI-style fields.
     const chunk = (code: string, param: Record<string, unknown> = {}) =>
       describeFailure(
         formatApiError(
-          "athas",
+          "Blimy",
           toIntelligenceAgentError({ message: "Upstream failed", type: code, code, param }),
         ),
       ).error;

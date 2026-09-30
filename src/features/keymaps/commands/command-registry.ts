@@ -708,15 +708,15 @@ const viewCommands: Command[] = [
   },
   {
     id: "workbench.hostedAgent",
-    title: "New Athas Agent",
+    title: "New Blimy Agent",
     category: "Agent",
     execute: async () => {
       const { useSettingsStore } = await import("@/features/settings/stores/settings.store");
       const { openNewAgentChat } = await import("@/features/ai/lib/open-new-agent-chat");
       const { useAIChatStore } = await import("@/features/ai/stores/ai-chat.store");
-      await useSettingsStore.getState().actions.updateSetting("aiProviderId", "athas");
+      await useSettingsStore.getState().actions.updateSetting("aiProviderId", "Blimy");
       await useSettingsStore.getState().actions.updateSetting("aiModelId", "auto");
-      await useAIChatStore.getState().actions.checkApiKey("athas");
+      await useAIChatStore.getState().actions.checkApiKey("Blimy");
       openNewAgentChat("custom");
     },
   },
@@ -1167,7 +1167,7 @@ const databaseCommands: Command[] = [
 const windowCommands: Command[] = [
   {
     id: "workbench.openBrowserBilling",
-    title: "Manage Athas Cloud Usage",
+    title: "Manage Blimy Cloud Usage",
     category: "Window",
     execute: async () => {
       const { openUrl } = await import("@tauri-apps/plugin-opener");

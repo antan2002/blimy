@@ -407,7 +407,7 @@ const ToolCallRow = memo(function ToolCallRow({
   // Only the change this call recorded; a diff against HEAD would mix in every other edit.
   const canOpenDiff = diffItems.length > 0;
   const canOpenFile = Boolean(summary.path) && summary.kind !== "execute";
-  // Only a terminal Athas runs for the agent, and only while it still runs, has a tab to open.
+  // Only a terminal Blimy runs for the agent, and only while it still runs, has a tab to open.
   const canOpenTerminal = liveTerminals.some(
     (terminal) => terminal && !terminal.displayOnly && !terminal.exit,
   );

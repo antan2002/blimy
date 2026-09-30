@@ -95,7 +95,7 @@ function setup(path = "/project/file.ts") {
   let version = 1;
   const dispose = vi.fn();
   const model = {
-    uri: { scheme: "athas", authority: "editor", path, query: "buffer=1" },
+    uri: { scheme: "Blimy", authority: "editor", path, query: "buffer=1" },
     getOffsetAt: () => 20000,
     getPositionAt: (offset: number) => ({ lineNumber: 1, column: offset + 1 }),
     getValueInRange: vi.fn().mockReturnValueOnce("const value = ").mockReturnValueOnce(";"),
@@ -272,7 +272,7 @@ describe("Intelligence editor completions", () => {
     expect(mocks.request).toHaveBeenCalledOnce();
   });
 
-  it("pauses for organization policy only when Athas refuses", async () => {
+  it("pauses for organization policy only when Blimy refuses", async () => {
     mocks.request.mockRejectedValueOnce(new InlineEditError("Model not allowed", 403));
     await setup().run();
     expect(status()).toEqual({ kind: "error", message: "Model not allowed" });
@@ -293,7 +293,7 @@ describe("Intelligence editor completions", () => {
   it("sends recent edits and nearby diagnostics as context", async () => {
     mocks.request.mockResolvedValue({ editedText: "x" });
     const other = {
-      uri: { scheme: "athas", authority: "editor", path: "/project/other.ts", query: "" },
+      uri: { scheme: "Blimy", authority: "editor", path: "/project/other.ts", query: "" },
       isDisposed: () => false,
       getLineCount: () => 3,
       getLineMaxColumn: () => 20,
@@ -323,7 +323,7 @@ describe("Intelligence editor completions", () => {
 describe("Intelligence completion context", () => {
   it("keeps the latest edits and skips the one at the cursor", () => {
     const model = (path: string) => ({
-      uri: { scheme: "athas", authority: "editor", path, query: "" },
+      uri: { scheme: "Blimy", authority: "editor", path, query: "" },
       isDisposed: () => false,
       getLineCount: () => 100,
       getLineMaxColumn: () => 10,

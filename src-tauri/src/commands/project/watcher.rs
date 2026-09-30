@@ -1,4 +1,4 @@
-use athas_project::FileWatcher;
+use BLIMY_project::FileWatcher;
 use std::{path::Path, sync::Arc, time::Instant};
 use tauri::command;
 

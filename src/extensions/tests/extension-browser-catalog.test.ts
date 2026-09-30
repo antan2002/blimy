@@ -18,12 +18,12 @@ function available(manifest: ExtensionManifest, isInstalled = true): AvailableEx
 
 function manifest(overrides: Partial<ExtensionManifest>): ExtensionManifest {
   return {
-    id: "athas.example",
+    id: "Blimy.example",
     name: "example",
     displayName: "Example",
     description: "Example integration",
     version: "1.0.0",
-    publisher: "Athas",
+    publisher: "Blimy",
     categories: ["Other"],
     ...overrides,
   };
@@ -34,7 +34,7 @@ describe("integration browser catalog", () => {
     "shares the %s brand asset with database navigation",
     (providerId) => {
       const databaseManifest = manifest({
-        id: `athas.database.${providerId}`,
+        id: `Blimy.database.${providerId}`,
         databases: [getDatabaseProviderContribution(providerId)!],
         icon: "https://cdn.example.com/icon.svg",
       });
@@ -43,7 +43,7 @@ describe("integration browser catalog", () => {
         agents: [],
         marketplaceSkills: [],
         aiSkills: [],
-        selectedThemeId: "athas-dark",
+        selectedThemeId: "blimy-dark",
         selectedIconThemeId: "pierre-icons-complete",
       });
       const image = getDatabaseBrandImage(providerId);
@@ -53,7 +53,7 @@ describe("integration browser catalog", () => {
     },
   );
 
-  it("keeps personal and unknown skills out of the Athas catalog", () => {
+  it("keeps personal and unknown skills out of the Blimy catalog", () => {
     const skill = {
       title: "Skill",
       content: "Instructions",
@@ -64,14 +64,14 @@ describe("integration browser catalog", () => {
       availableExtensions: new Map(),
       agents: [],
       marketplaceSkills: [
-        { id: "athas.review", title: "Review", description: "Review code", tags: [] },
+        { id: "Blimy.review", title: "Review", description: "Review code", tags: [] },
       ],
       aiSkills: [
         { ...skill, id: "personal", source: "local" },
         { ...skill, id: "unknown", source: "marketplace" },
-        { ...skill, id: "installed-review", source: "marketplace", sourceId: "athas.review" },
+        { ...skill, id: "installed-review", source: "marketplace", sourceId: "Blimy.review" },
       ],
-      selectedThemeId: "athas-dark",
+      selectedThemeId: "blimy-dark",
       selectedIconThemeId: "pierre-icons-complete",
     });
     expect(result.filter((item) => item.category === "skill").map((item) => item.id)).toEqual([
@@ -81,7 +81,7 @@ describe("integration browser catalog", () => {
 
   it("surfaces managed ACP agent versions and updates", () => {
     const agentManifest = manifest({
-      id: "athas.agent.example",
+      id: "Blimy.agent.example",
       agents: [
         {
           id: "example-agent",
@@ -122,7 +122,7 @@ describe("integration browser catalog", () => {
       ],
       marketplaceSkills: [],
       aiSkills: [],
-      selectedThemeId: "athas-dark",
+      selectedThemeId: "blimy-dark",
       selectedIconThemeId: "pierre-icons-complete",
     });
 
@@ -181,7 +181,7 @@ describe("integration browser catalog", () => {
       agents,
       marketplaceSkills: [],
       aiSkills: [],
-      selectedThemeId: "athas-dark",
+      selectedThemeId: "blimy-dark",
       selectedIconThemeId: "pierre-icons-complete",
     });
   }
@@ -221,9 +221,9 @@ describe("integration browser catalog", () => {
     expect(crow?.distribution).toBeUndefined();
   });
 
-  it("adds registry details to agents Athas ships a manifest for", () => {
+  it("adds registry details to agents Blimy ships a manifest for", () => {
     const geminiManifest = manifest({
-      id: "athas.agent.gemini-cli",
+      id: "Blimy.agent.gemini-cli",
       agents: [{ id: "gemini-cli", name: "Gemini CLI", binaryName: "gemini", args: ["--acp"] }],
     });
     const gemini = catalogFor(
@@ -253,7 +253,7 @@ describe("integration browser catalog", () => {
 
   it("normalizes language packages for the browser", () => {
     const language = manifest({
-      id: "athas.example-language",
+      id: "Blimy.example-language",
       icon: "/extensions/official/example/icon.svg",
       languages: [{ id: "example", extensions: [".example"], aliases: ["Example"] }],
     });
@@ -263,7 +263,7 @@ describe("integration browser catalog", () => {
       agents: [],
       marketplaceSkills: [],
       aiSkills: [],
-      selectedThemeId: "athas-dark",
+      selectedThemeId: "blimy-dark",
       selectedIconThemeId: "pierre-icons-complete",
     });
 
@@ -280,7 +280,7 @@ describe("integration browser catalog", () => {
 
   it("marks only the selected contributed appearance options active", () => {
     const theme = manifest({
-      id: "athas.example-theme",
+      id: "Blimy.example-theme",
       themes: [
         {
           id: "example-dark",
@@ -321,10 +321,10 @@ describe("integration browser catalog", () => {
 
   it("bundles only Pierre while keeping other icon themes downloadable", () => {
     const pierreManifest = bundledExtensionManifests.find(
-      ({ manifest: extensionManifest }) => extensionManifest.id === "athas.icon-theme.pierre",
+      ({ manifest: extensionManifest }) => extensionManifest.id === "Blimy.icon-theme.pierre",
     )?.manifest;
     const symbolsManifest = manifest({
-      id: "athas.icon-theme.symbols",
+      id: "Blimy.icon-theme.symbols",
       categories: ["Icon Theme"],
       icons: [
         {
@@ -337,7 +337,7 @@ describe("integration browser catalog", () => {
     });
 
     expect(bundledExtensionManifests.map(({ manifest: bundled }) => bundled.id)).toEqual([
-      "athas.icon-theme.pierre",
+      "Blimy.icon-theme.pierre",
     ]);
     expect(pierreManifest).toBeDefined();
     const result = buildExtensionCatalog({
@@ -345,17 +345,17 @@ describe("integration browser catalog", () => {
       agents: [],
       marketplaceSkills: [],
       aiSkills: [],
-      selectedThemeId: "athas-dark",
+      selectedThemeId: "blimy-dark",
       selectedIconThemeId: "pierre-icons-complete",
     });
 
-    expect(result.find((extension) => extension.id === "athas.icon-theme.pierre")).toMatchObject({
+    expect(result.find((extension) => extension.id === "Blimy.icon-theme.pierre")).toMatchObject({
       category: "icon-theme",
       isActive: true,
       isBundled: true,
       selectionId: "pierre-icons-complete",
     });
-    expect(result.find((extension) => extension.id === "athas.icon-theme.symbols")).toMatchObject({
+    expect(result.find((extension) => extension.id === "Blimy.icon-theme.symbols")).toMatchObject({
       category: "icon-theme",
       isBundled: false,
       isInstalled: false,

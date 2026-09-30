@@ -3,7 +3,7 @@ import { useBufferStore } from "@/features/editor/stores/buffer.store";
 import { useProjectStore } from "@/features/window/stores/project.store";
 import { getAgentCli } from "./agent-clis";
 
-/** Opens an agent's own CLI in an Athas terminal. Only explicit user actions call this. */
+/** Opens an agent's own CLI in an Blimy terminal. Only explicit user actions call this. */
 export function openAgentCliInTerminal(agentId: AgentType): string | null {
   const cli = getAgentCli(agentId);
   if (!cli) return null;

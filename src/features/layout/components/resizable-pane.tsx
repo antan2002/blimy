@@ -154,8 +154,8 @@ export function ResizablePane({
       onMouseDown={handleMouseDown}
       style={
         position === "left"
-          ? { right: "calc(var(--athas-workbench-gap) / -2)" }
-          : { left: "calc(var(--athas-workbench-gap) / -2)" }
+          ? { right: "calc(var(--Blimy-workbench-gap) / -2)" }
+          : { left: "calc(var(--Blimy-workbench-gap) / -2)" }
       }
       className={cn(
         "group absolute top-0 z-30 flex h-full w-workbench cursor-col-resize items-center justify-center",
@@ -183,7 +183,7 @@ export function ResizablePane({
       ref={paneRef}
       style={{ width: totalWidth }}
       className={cn(
-        "athas-resizable-pane relative flex h-full min-w-0 shrink-0 overflow-visible bg-transparent",
+        "Blimy-resizable-pane relative flex h-full min-w-0 shrink-0 overflow-visible bg-transparent",
         isTogglingVisibility &&
           !isResizing &&
           "transition-[width] duration-fast ease-smooth motion-reduce:transition-none",
@@ -206,7 +206,7 @@ export function ResizablePane({
       >
         <div
           className={cn(
-            "athas-glass-island flex min-h-0 flex-1 flex-col overflow-hidden border-border border-y bg-background",
+            "Blimy-glass-island flex min-h-0 flex-1 flex-col overflow-hidden border-border border-y bg-background",
             position === "left" && "border-l border-r",
             position === "right" && "border-r",
             !hidden && position === "left" && "rounded-l-xl",

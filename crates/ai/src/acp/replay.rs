@@ -1,6 +1,6 @@
 //! What happens to a session's updates while `session/load` replays its history. The agent
 //! sends the whole conversation again as `session/update` notifications before it answers the
-//! load. Athas keeps its own history, so reattaching a chat drops the replayed messages; importing
+//! load. Blimy keeps its own history, so reattaching a chat drops the replayed messages; importing
 //! an agent's session collects them so the new chat can show them. Everything else the replay
 //! carries (commands, modes, config options, session info, usage) still describes the session and
 //! is emitted as usual.
@@ -20,7 +20,7 @@ const MAX_DISCARDED_SESSIONS: usize = 256;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub(super) enum ReplayMode {
-   /// Reattaching a chat Athas has the history for: drop the replayed conversation.
+   /// Reattaching a chat Blimy has the history for: drop the replayed conversation.
    Suppress,
    /// Importing a session into a new chat: keep the replayed conversation for the caller.
    Collect,

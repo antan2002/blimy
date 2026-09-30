@@ -1,11 +1,11 @@
 {
-  "$schema": "https://athas.dev/schemas/extension.json",
-  "id": "athas.dart",
+  "$schema": "https://Blimy.dev/schemas/extension.json",
+  "id": "Blimy.dart",
   "name": "Dart",
   "displayName": "Dart",
   "version": "1.0.0",
   "description": "Dart language support with LSP",
-  "publisher": "Athas",
+  "publisher": "Blimy",
   "categories": ["Language"],
   "languages": [
     {

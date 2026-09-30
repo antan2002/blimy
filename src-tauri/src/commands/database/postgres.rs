@@ -1,4 +1,4 @@
-use athas_database::{
+use BLIMY_database::{
    ConnectionManager,
    providers::{
       create_postgres_subscription as db_create_postgres_subscription,

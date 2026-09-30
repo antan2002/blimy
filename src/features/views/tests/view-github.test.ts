@@ -7,9 +7,9 @@ import {
 
 describe("custom view GitHub integration", () => {
   it.each([
-    ["https://github.com/athasdev/athas.git", { owner: "athasdev", repo: "athas" }],
-    ["git@github.com:athasdev/athas.git", { owner: "athasdev", repo: "athas" }],
-    ["github://athasdev/athas", { owner: "athasdev", repo: "athas" }],
+    ["https://github.com/antan2002/blimy.git", { owner: "Blimydev", repo: "Blimy" }],
+    ["git@github.com:antan2002/blimy.git", { owner: "Blimydev", repo: "Blimy" }],
+    ["github://antan2002/blimy", { owner: "Blimydev", repo: "Blimy" }],
   ])("parses GitHub repository references", (value, expected) => {
     expect(parseGitHubRepository(value)).toEqual(expected);
   });
@@ -22,20 +22,20 @@ describe("custom view GitHub integration", () => {
   it("prefers the origin GitHub remote", async () => {
     const loadRemotes = vi.fn().mockResolvedValue([
       { name: "backup", url: "https://github.com/example/backup.git" },
-      { name: "origin", url: "git@github.com:athasdev/athas.git" },
+      { name: "origin", url: "git@github.com:antan2002/blimy.git" },
     ]);
 
-    await expect(resolveProjectGitHubRepository("/projects/athas", loadRemotes)).resolves.toEqual({
-      owner: "athasdev",
-      repo: "athas",
+    await expect(resolveProjectGitHubRepository("/projects/Blimy", loadRemotes)).resolves.toEqual({
+      owner: "Blimydev",
+      repo: "Blimy",
     });
   });
 
   it("builds project-scoped API URLs and rejects unsafe paths", () => {
-    const repository = { owner: "athasdev", repo: "athas" };
+    const repository = { owner: "Blimydev", repo: "Blimy" };
 
     expect(buildProjectGitHubApiUrl(repository, "/releases?per_page=100")).toBe(
-      "https://api.github.com/repos/athasdev/athas/releases?per_page=100",
+      "https://api.github.com/repos/antan2002/blimy/releases?per_page=100",
     );
     expect(() => buildProjectGitHubApiUrl(repository, "https://example.com/data")).toThrow(
       "invalid endpoint path",

@@ -1,11 +1,11 @@
 {
-  "$schema": "https://athas.dev/schemas/extension.json",
-  "id": "athas.gitlab",
+  "$schema": "https://Blimy.dev/schemas/extension.json",
+  "id": "Blimy.gitlab",
   "name": "gitlab",
   "displayName": "GitLab",
   "description": "Review merge requests, issues, and pipelines for the current GitLab repository.",
   "version": "1.0.0",
-  "publisher": "Athas",
+  "publisher": "Blimy",
   "categories": ["Integration"],
   "integrations": [
     {
@@ -27,6 +27,6 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/athasdev/athas"
+    "url": "https://github.com/antan2002/blimy"
   }
 }

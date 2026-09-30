@@ -8,7 +8,7 @@ export function resolveInstalledExtensionId(
   const candidates = [
     installed.extensionId,
     installed.extensionId?.replace(/-full$/, ""),
-    `athas.${installed.languageId}`,
+    `Blimy.${installed.languageId}`,
     `language.${installed.languageId}`,
   ].filter((candidate): candidate is string => Boolean(candidate));
 
@@ -26,5 +26,5 @@ export function resolveInstalledExtensionId(
     }
   }
 
-  return installed.extensionId || `athas.${installed.languageId}`;
+  return installed.extensionId || `Blimy.${installed.languageId}`;
 }

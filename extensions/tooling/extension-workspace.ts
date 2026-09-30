@@ -3,8 +3,8 @@ import { basename, join, relative, resolve } from "node:path";
 
 export type ExtensionManifestRecord = Record<string, unknown>;
 
-export const ATHAS_ROOT = resolve(import.meta.dirname, "../..");
-export const EXTENSIONS_ROOT = join(ATHAS_ROOT, "extensions");
+export const BLIMY_ROOT = resolve(import.meta.dirname, "../..");
+export const EXTENSIONS_ROOT = join(BLIMY_ROOT, "extensions");
 export const GENERATED_CDN_DIR = join(EXTENSIONS_ROOT, "generated", "cdn");
 export const EXTENSION_ARTIFACTS_PATH = join(EXTENSIONS_ROOT, "artifacts.json");
 export const CATALOG_DIR = join(import.meta.dirname, "catalog");
@@ -36,8 +36,8 @@ const CONTRIBUTION_ALIASES: Record<string, string[]> = {
   iconThemes: ["icons", "iconThemes"],
 };
 
-const RESERVED_BUILT_IN_THEME_IDS = new Set(["athas-light", "athas-dark"]);
-const RESERVED_BUILT_IN_THEME_NAMES = new Set(["athas light", "athas dark"]);
+const RESERVED_BUILT_IN_THEME_IDS = new Set(["blimy-light", "blimy-dark"]);
+const RESERVED_BUILT_IN_THEME_NAMES = new Set(["Blimy light", "Blimy dark"]);
 
 function contributionKeys(key: string): string[] {
   return CONTRIBUTION_ALIASES[key] ?? [key];

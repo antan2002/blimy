@@ -14,11 +14,11 @@ function escapeRegExp(value) {
 }
 
 function displayAppPrefix(channel) {
-  return channel === "preview" ? "Athas Preview" : "Athas";
+  return channel === "preview" ? "Blimy Preview" : "Blimy";
 }
 
 function releaseAssetPrefix(channel) {
-  return channel === "preview" ? "Athas.Preview" : "Athas";
+  return channel === "preview" ? "Blimy.Preview" : "Blimy";
 }
 
 function normalizeReleaseAssetName(name, channel) {
@@ -26,8 +26,8 @@ function normalizeReleaseAssetName(name, channel) {
     return name;
   }
 
-  return name.startsWith("Athas Preview")
-    ? name.replace("Athas Preview", releaseAssetPrefix(channel))
+  return name.startsWith("Blimy Preview")
+    ? name.replace("Blimy Preview", releaseAssetPrefix(channel))
     : name;
 }
 
@@ -145,7 +145,7 @@ export function requiredAssets(version, channel) {
 
 export function forbiddenAssetPatterns(version) {
   const escapedVersion = escapeRegExp(version);
-  const appPrefix = "Athas(?:[ .]Preview)?";
+  const appPrefix = "Blimy(?:[ .]Preview)?";
   return [
     new RegExp(`^${appPrefix}_${escapedVersion}_(?:amd64|aarch64)\\.AppImage(?:\\.sig)?$`),
     new RegExp(`^${appPrefix}_${escapedVersion}_(?:x64|arm64)-setup-machine\\.exe(?:\\.sig)?$`),

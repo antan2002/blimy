@@ -2,7 +2,7 @@
 
 set -e
 
-echo "Setting up Athas development environment for Linux..."
+echo "Setting up Blimy development environment for Linux..."
 
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -96,7 +96,7 @@ install_system_deps() {
             ;;
         "chimera"|"alpine")
             print_error "$DISTRO uses musl libc. This development setup script does not yet know the correct WebKitGTK/Tauri dependency set for this distribution."
-            print_error "Athas-managed tool downloads must use statically linked binaries or unknown-linux-musl assets on this system."
+            print_error "Blimy-managed tool downloads must use statically linked binaries or unknown-linux-musl assets on this system."
             exit 1
             ;;
         *)
@@ -177,7 +177,7 @@ verify_basic() {
 }
 
 main() {
-    print_status "Starting Athas development environment setup..."
+    print_status "Starting Blimy development environment setup..."
 
     if [[ "$OSTYPE" != linux* ]]; then
         print_error "This script is designed for Linux only."

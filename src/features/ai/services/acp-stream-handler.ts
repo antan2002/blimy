@@ -363,7 +363,7 @@ export class AcpStreamHandler {
     const details = getAcpStartupErrorDetails(message);
 
     if (normalized.includes("acp protocol version")) {
-      return `${this.agentId} uses a protocol version Athas does not support. Update the agent or Athas.`;
+      return `${this.agentId} uses a protocol version Blimy does not support. Update the agent or Blimy.`;
     }
     if (normalized.includes("runtime")) {
       return `${this.agentId} could not start because a required runtime is unavailable.`;
@@ -914,7 +914,7 @@ export class AcpStreamHandler {
   }
 
   /**
-   * Logs out of the agent. Athas then leaves sign-in to the user: the next prompt that needs it
+   * Logs out of the agent. Blimy then leaves sign-in to the user: the next prompt that needs it
    * shows the agent's sign-in methods.
    */
   static async logoutAgent(agentId: string): Promise<void> {

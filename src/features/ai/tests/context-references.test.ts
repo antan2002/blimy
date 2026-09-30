@@ -95,11 +95,11 @@ describe("context references", () => {
 
     expect(parseContextReference(folder)).toEqual({ kind: "folder", path: "/w/src: odd" });
     expect(parseContextReference(chat)).toEqual({ kind: "chat", chatId: "c:1", title: "A: B" });
-    expect(parseContextReference("athas-context:git-diff:staged")).toEqual({
+    expect(parseContextReference("Blimy-context:git-diff:staged")).toEqual({
       kind: "gitDiff",
       scope: "staged",
     });
-    expect(parseContextReference("athas-context:unknown")).toBeNull();
+    expect(parseContextReference("Blimy-context:unknown")).toBeNull();
     expect(partitionContextSelections(["/w/a.ts", folder])).toEqual({
       filePaths: ["/w/a.ts"],
       references: [folder],
@@ -126,7 +126,7 @@ describe("context references", () => {
 
   it("resolves working tree and staged diffs separately", async () => {
     const [working, staged] = await resolveContextReferences(
-      ["athas-context:git-diff:working", "athas-context:git-diff:staged"],
+      ["Blimy-context:git-diff:working", "Blimy-context:git-diff:staged"],
       { projectRoot: "/w", repoPath: "/w", sources: sources() },
     );
 
@@ -136,7 +136,7 @@ describe("context references", () => {
   });
 
   it("lists problems with errors first and 1-based positions", async () => {
-    const [problems] = await resolveContextReferences(["athas-context:problems"], {
+    const [problems] = await resolveContextReferences(["Blimy-context:problems"], {
       projectRoot: "/w",
       sources: sources(),
     });
@@ -163,7 +163,7 @@ describe("context references", () => {
   });
 
   it("keeps a failing reference from failing the request", async () => {
-    const [problems] = await resolveContextReferences(["athas-context:problems"], {
+    const [problems] = await resolveContextReferences(["Blimy-context:problems"], {
       projectRoot: "/w",
       sources: sources({
         getDiagnostics: () => {
@@ -177,7 +177,7 @@ describe("context references", () => {
   it("puts resolved references into the context prompt", () => {
     const prompt = buildContextPrompt({
       contextReferences: [
-        { id: "athas-context:problems", label: "Problems", content: "0 errors", truncated: true },
+        { id: "Blimy-context:problems", label: "Problems", content: "0 errors", truncated: true },
       ],
     });
     expect(prompt).toContain(
@@ -191,8 +191,8 @@ describe("context references", () => {
       selectedBufferIds: new Set(),
       selectedFilesPaths: new Set([
         formatContextReference({ kind: "folder", path: "/w/src" }),
-        "athas-context:git-diff:working",
-        "athas-context:problems",
+        "Blimy-context:git-diff:working",
+        "Blimy-context:problems",
         formatContextReference({ kind: "chat", chatId: "c1", title: "Routing" }),
       ]),
       selectedEditorContexts: [],

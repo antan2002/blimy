@@ -1,7 +1,7 @@
 import type { IntelligenceCredits } from "@/features/window/services/auth-api";
 
 /**
- * Where a Pro account stands against this period's included Athas credit: `included_exhausted`
+ * Where a Pro account stands against this period's included Blimy credit: `included_exhausted`
  * means usage continues from the pay-as-you-go balance, `exhausted` means nothing is left.
  */
 export type HostedUsageLevel = "ok" | "low" | "included_exhausted" | "exhausted";

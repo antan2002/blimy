@@ -71,12 +71,12 @@ async function click(
 describe("API error recovery", () => {
   it("opens billing on the website, not the API server", async () => {
     state.base = "http://localhost:3000";
-    await click("402", "athas");
+    await click("402", "Blimy");
     expect(state.openUrl).toHaveBeenCalledWith("https://website.test/dashboard/settings/billing");
     expect(state.signIn).not.toHaveBeenCalled();
   });
   it("offers to add credit and opens the billing page the server sent", async () => {
-    const label = await click("402", "athas", undefined, {
+    const label = await click("402", "Blimy", undefined, {
       serverCode: "insufficient_balance",
       billingUrl: "/dashboard/settings/billing?topup=1",
     });
@@ -86,7 +86,7 @@ describe("API error recovery", () => {
     );
   });
   it("ignores a billing link to another site", async () => {
-    const label = await click("402", "athas", undefined, {
+    const label = await click("402", "Blimy", undefined, {
       serverCode: "spending_limit_reached",
       billingUrl: "https://elsewhere.test/pay",
     });
@@ -94,14 +94,14 @@ describe("API error recovery", () => {
     expect(state.openUrl).toHaveBeenCalledWith("https://website.test/dashboard/settings/billing");
   });
   it("starts a new chat when the conversation is too large", async () => {
-    expect(await click("402", "athas", undefined, { serverCode: "request_too_large" })).toBe(
+    expect(await click("402", "Blimy", undefined, { serverCode: "request_too_large" })).toBe(
       "Start new chat",
     );
     expect(state.newChat).toHaveBeenCalledOnce();
     expect(state.openUrl).not.toHaveBeenCalled();
   });
-  it("starts sign-in when Athas rejects the session", async () => {
-    await click("401", "athas");
+  it("starts sign-in when Blimy rejects the session", async () => {
+    await click("401", "Blimy");
     expect(state.signIn).toHaveBeenCalledOnce();
   });
   it.each(["401", "402", "403"])(
@@ -114,18 +114,18 @@ describe("API error recovery", () => {
   );
   it("retries a transient failure through the conversation callback", async () => {
     const retry = vi.fn();
-    await click("503", "athas", retry);
+    await click("503", "Blimy", retry);
     expect(retry).toHaveBeenCalledOnce();
   });
   it("does not retry a permission failure without changing configuration", async () => {
     const retry = vi.fn();
-    await click("403", "athas", retry);
+    await click("403", "Blimy", retry);
     expect(state.settings).toHaveBeenCalledWith("ai");
     expect(retry).not.toHaveBeenCalled();
   });
   it("reports navigation failures and restores the action", async () => {
     state.openUrl.mockRejectedValueOnce(new Error("Could not open browser"));
-    await click("402", "athas");
+    await click("402", "Blimy");
     expect(state.error).toHaveBeenCalledWith("Could not open browser");
     expect(container.querySelector("button")?.disabled).toBe(false);
   });
@@ -134,12 +134,12 @@ describe("API error recovery", () => {
       statusCode: 402,
       responseBody: '{"error":"Monthly spending limit reached"}',
     });
-    const formatted = formatApiError("athas", error);
+    const formatted = formatApiError("Blimy", error);
     expect(getApiErrorCode(formatted)).toBe("402");
     expect(formatted).toContain(error.responseBody);
   });
   it("recognizes previously saved payment errors without an HTTP code", () => {
-    expect(getApiErrorCode("Failed to connect to athas API: Payment Required")).toBe("402");
+    expect(getApiErrorCode("Failed to connect to Blimy API: Payment Required")).toBe("402");
     expect(getApiErrorCode("Network unavailable")).toBe("");
   });
 });

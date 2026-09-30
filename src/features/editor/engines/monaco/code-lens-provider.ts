@@ -12,9 +12,9 @@ import { LspClient } from "@/features/editor/lsp/lsp-client";
 import { useLspStore } from "@/features/editor/lsp/stores/lsp.store";
 import { filePathFromUri } from "@/features/editor/lsp/workspace-edit";
 import { MONACO_HIGHLIGHT_LANGUAGE_IDS } from "./language";
-import { filePathFromAthasModelUri } from "./model-uri";
+import { filePathFromBlimyModelUri } from "./model-uri";
 
-const EXECUTE_LSP_CODE_LENS_COMMAND = "athas.executeLspCodeLens";
+const EXECUTE_LSP_CODE_LENS_COMMAND = "Blimy.executeLspCodeLens";
 const SHOW_REFERENCES_COMMAND = "editor.action.showReferences";
 
 interface LspCodeLens {
@@ -49,11 +49,11 @@ function filePathFromModel(model: Monaco.editor.ITextModel): string {
     return filePathFromUri(model.uri.toString());
   }
 
-  if (model.uri.scheme !== "athas") {
+  if (model.uri.scheme !== "Blimy") {
     return decodeURIComponent(model.uri.path);
   }
 
-  return filePathFromAthasModelUri(model.uri.path, model.uri.query);
+  return filePathFromBlimyModelUri(model.uri.path, model.uri.query);
 }
 
 function isLspPosition(value: unknown): value is LspPosition {

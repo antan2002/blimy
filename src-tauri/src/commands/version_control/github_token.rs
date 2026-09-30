@@ -1,14 +1,14 @@
-//! Resolves which GitHub credential Athas should use for API calls.
+//! Resolves which GitHub credential Blimy should use for API calls.
 //!
 //! Three sources can supply one, in descending priority under `Auto`:
 //!
 //! 1. a personal access token the user pasted into Settings,
-//! 2. the token synced from the connected Athas account,
+//! 2. the token synced from the connected Blimy account,
 //! 3. the token owned by the user's `gh` CLI installation.
 //!
-//! The `gh` token is the escape hatch for repositories the Athas OAuth app
+//! The `gh` token is the escape hatch for repositories the Blimy OAuth app
 //! cannot reach — typically an organization that has not approved it. Users can
-//! also pin a single source explicitly, because an Athas token that authenticates
+//! also pin a single source explicitly, because an Blimy token that authenticates
 //! fine while being blind to org repositories would otherwise always win.
 
 use crate::{app_runtime::AppHandle, secure_storage::get_secret};
@@ -18,7 +18,7 @@ use std::{
 };
 use tauri_plugin_store::StoreExt;
 
-pub const ATHAS_ACCOUNT_SECRET_KEY: &str = "github_token";
+pub const BLIMY_ACCOUNT_SECRET_KEY: &str = "github_token";
 pub const PERSONAL_ACCESS_TOKEN_SECRET_KEY: &str = "github_pat";
 const TOKEN_SOURCE_SETTING_KEY: &str = "githubTokenSource";
 
@@ -32,7 +32,7 @@ static GH_TOKEN_CACHE: Mutex<Option<(Instant, Option<String>)>> = Mutex::new(Non
 #[derive(Clone, Copy, PartialEq, Eq, serde::Serialize)]
 #[serde(rename_all = "camelCase")]
 pub enum GitHubTokenSource {
-   Athas,
+   Blimy,
    PersonalAccessToken,
    GhCli,
 }
@@ -45,7 +45,7 @@ pub struct ResolvedGitHubToken {
 #[derive(Clone, Copy, PartialEq, Eq)]
 enum TokenSourcePreference {
    Auto,
-   Athas,
+   Blimy,
    PersonalAccessToken,
    GhCli,
 }
@@ -60,7 +60,7 @@ fn read_token_source_preference(app: &AppHandle) -> TokenSourcePreference {
       .and_then(|value| value.as_str().map(ToOwned::to_owned))
       .as_deref()
    {
-      Some("athas") => TokenSourcePreference::Athas,
+      Some("Blimy") => TokenSourcePreference::Blimy,
       Some("pat") => TokenSourcePreference::PersonalAccessToken,
       Some("gh") => TokenSourcePreference::GhCli,
       _ => TokenSourcePreference::Auto,
@@ -79,8 +79,8 @@ pub fn has_personal_access_token(app: &AppHandle) -> bool {
    read_stored_secret(app, PERSONAL_ACCESS_TOKEN_SECRET_KEY).is_some()
 }
 
-pub fn has_athas_account_token(app: &AppHandle) -> bool {
-   read_stored_secret(app, ATHAS_ACCOUNT_SECRET_KEY).is_some()
+pub fn has_BLIMY_account_token(app: &AppHandle) -> bool {
+   read_stored_secret(app, BLIMY_ACCOUNT_SECRET_KEY).is_some()
 }
 
 pub fn cached_gh_cli_token() -> Option<String> {
@@ -92,7 +92,7 @@ pub fn cached_gh_cli_token() -> Option<String> {
       return token.clone();
    }
 
-   let token = athas_github::gh_cli_token();
+   let token = BLIMY_github::gh_cli_token();
    *cache = Some((Instant::now(), token.clone()));
    token
 }
@@ -115,18 +115,18 @@ pub fn resolve_github_token(app: &AppHandle) -> ResolvedGitHubToken {
       read_stored_secret(app, PERSONAL_ACCESS_TOKEN_SECRET_KEY)
          .map(|token| (token, GitHubTokenSource::PersonalAccessToken))
    };
-   let athas_account_token = || {
-      read_stored_secret(app, ATHAS_ACCOUNT_SECRET_KEY)
-         .map(|token| (token, GitHubTokenSource::Athas))
+   let BLIMY_account_token = || {
+      read_stored_secret(app, BLIMY_ACCOUNT_SECRET_KEY)
+         .map(|token| (token, GitHubTokenSource::Blimy))
    };
    let gh_cli_token = || cached_gh_cli_token().map(|token| (token, GitHubTokenSource::GhCli));
 
    let resolved = match preference {
       TokenSourcePreference::Auto => personal_access_token()
-         .or_else(athas_account_token)
+         .or_else(BLIMY_account_token)
          .or_else(gh_cli_token),
       TokenSourcePreference::PersonalAccessToken => personal_access_token(),
-      TokenSourcePreference::Athas => athas_account_token(),
+      TokenSourcePreference::Blimy => BLIMY_account_token(),
       TokenSourcePreference::GhCli => gh_cli_token(),
    };
 

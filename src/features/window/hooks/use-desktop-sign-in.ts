@@ -18,7 +18,7 @@ export function useDesktopSignIn(options: UseDesktopSignInOptions = {}) {
   const signIn = async () => {
     const completed = await actions.signIn(options.apiBase);
     if (completed) {
-      toast.success("Signed in to Athas Desktop.");
+      toast.success("Signed in to Blimy Desktop.");
       options.onSuccess?.();
     } else {
       const reason = useDesktopSignInStore.getState().error;

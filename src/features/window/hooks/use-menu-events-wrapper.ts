@@ -228,7 +228,7 @@ export function useMenuEventsWrapper() {
     },
     onChangelog: async () => {
       const { openUrl } = await import("@tauri-apps/plugin-opener");
-      await openUrl("https://github.com/athasdev/athas/releases");
+      await openUrl("https://github.com/antan2002/blimy/releases");
     },
     onWhatsNew: () => {
       void openWhatsNew();
@@ -247,18 +247,18 @@ export function useMenuEventsWrapper() {
           osSummary = navigator.userAgent;
         }
 
-        const text = `Environment\n\n- App: Athas ${version}\n- OS: ${osSummary}\n\nProblem\n\nDescribe the issue here. Steps to reproduce, expected vs actual.\n`;
+        const text = `Environment\n\n- App: Blimy ${version}\n- OS: ${osSummary}\n\nProblem\n\nDescribe the issue here. Steps to reproduce, expected vs actual.\n`;
         await writeClipboardText(text);
 
         const { openUrl } = await import("@tauri-apps/plugin-opener");
-        await openUrl("https://github.com/athasdev/athas/issues/new?template=01-bug.yml");
+        await openUrl("https://github.com/antan2002/blimy/issues/new?template=01-bug.yml");
       } catch (e) {
         console.error("Failed to prepare bug report:", e);
       }
     },
     onRequestFeature: async () => {
       const { openUrl } = await import("@tauri-apps/plugin-opener");
-      await openUrl("https://github.com/athasdev/athas/issues/new?template=02-feature.yml");
+      await openUrl("https://github.com/antan2002/blimy/issues/new?template=02-feature.yml");
     },
     onCheckForUpdates: async () => {
       const hasUpdate = await checkForUpdates({ ignoreSuppression: true });

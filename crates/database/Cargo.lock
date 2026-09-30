@@ -262,7 +262,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "athas-database"
+name = "Blimy-database"
 version = "0.1.0"
 dependencies = [
  "duckdb",

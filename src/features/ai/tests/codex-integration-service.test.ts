@@ -83,7 +83,7 @@ describe("Codex integration service", () => {
       threadId: string;
       handleEvent: (event: { method: string; id: number; params: Record<string, unknown> }) => void;
     };
-    service.projectRoot = "/workspace/athas";
+    service.projectRoot = "/workspace/Blimy";
     service.threadId = "thread-1";
 
     service.handleEvent({
@@ -91,13 +91,13 @@ describe("Codex integration service", () => {
       id: 91,
       params: {
         threadId: "thread-1",
-        tool: "athas_open_pull_request",
+        tool: "BLIMY_open_pull_request",
         arguments: { number: 73, title: "Native PR tabs" },
       },
     });
 
     expect(useBufferStore.getState().actions.openPRBuffer).toHaveBeenCalledWith(73, {
-      repoPath: "/workspace/athas",
+      repoPath: "/workspace/Blimy",
       title: "Native PR tabs",
       initialView: "activity",
     });
@@ -105,7 +105,7 @@ describe("Codex integration service", () => {
       response: {
         requestId: 91,
         decision: {
-          contentItems: [{ type: "inputText", text: "Pull request #73 opened in Athas." }],
+          contentItems: [{ type: "inputText", text: "Pull request #73 opened in Blimy." }],
           success: true,
         },
       },
@@ -122,7 +122,7 @@ describe("Codex integration service", () => {
       threadId: string;
       handleEvent: (event: { method: string; id: number; params: Record<string, unknown> }) => void;
     };
-    service.projectRoot = "/workspace/athas";
+    service.projectRoot = "/workspace/Blimy";
     service.threadId = "thread-1";
 
     service.handleEvent({
@@ -130,28 +130,28 @@ describe("Codex integration service", () => {
       id: 92,
       params: {
         threadId: "thread-1",
-        tool: "athas_open_issue",
+        tool: "BLIMY_open_issue",
         arguments: { number: 735, title: "Test issue" },
       },
     });
 
     expect(useBufferStore.getState().actions.openGitHubIssueBuffer).toHaveBeenCalledWith({
       issueNumber: 735,
-      repoPath: "/workspace/athas",
+      repoPath: "/workspace/Blimy",
       title: "Test issue",
     });
     expect(invoke).toHaveBeenCalledWith("respond_codex_request", {
       response: {
         requestId: 92,
         decision: {
-          contentItems: [{ type: "inputText", text: "Issue #735 opened in Athas." }],
+          contentItems: [{ type: "inputText", text: "Issue #735 opened in Blimy." }],
           success: true,
         },
       },
     });
   });
 
-  it("renames only the Codex service's Athas chat", () => {
+  it("renames only the Codex service's Blimy chat", () => {
     const service = new CodexIntegrationService(
       {
         onChunk: vi.fn(),
@@ -170,7 +170,7 @@ describe("Codex integration service", () => {
       id: 93,
       params: {
         threadId: "thread-1",
-        tool: "athas_set_chat_title",
+        tool: "BLIMY_set_chat_title",
         arguments: { title: "Native GitHub Tabs" },
       },
     });
@@ -181,7 +181,7 @@ describe("Codex integration service", () => {
         requestId: 93,
         decision: {
           contentItems: [
-            { type: "inputText", text: 'Athas chat renamed to "Native GitHub Tabs".' },
+            { type: "inputText", text: 'Blimy chat renamed to "Native GitHub Tabs".' },
           ],
           success: true,
         },
@@ -189,7 +189,7 @@ describe("Codex integration service", () => {
     });
   });
 
-  it("syncs Codex thread names to the matching Athas chat", () => {
+  it("syncs Codex thread names to the matching Blimy chat", () => {
     const service = new CodexIntegrationService(
       {
         onChunk: vi.fn(),
@@ -271,7 +271,7 @@ describe("Codex integration service", () => {
         item: {
           id: "tool-1",
           type: "dynamicToolCall",
-          tool: "athas_set_chat_title",
+          tool: "BLIMY_set_chat_title",
         },
       },
     });
@@ -282,7 +282,7 @@ describe("Codex integration service", () => {
         item: {
           id: "tool-1",
           type: "dynamicToolCall",
-          tool: "athas_set_chat_title",
+          tool: "BLIMY_set_chat_title",
         },
       },
     });
@@ -292,7 +292,7 @@ describe("Codex integration service", () => {
     });
 
     expect(onToolUse).toHaveBeenCalledWith(
-      expect.objectContaining({ toolId: "tool-1", toolName: "athas_set_chat_title" }),
+      expect.objectContaining({ toolId: "tool-1", toolName: "BLIMY_set_chat_title" }),
     );
     expect(calls).toEqual(["tool-start", "tool-complete", "response-continuation", "chunk"]);
   });

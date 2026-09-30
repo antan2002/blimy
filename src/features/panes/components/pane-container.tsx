@@ -609,8 +609,8 @@ export function PaneContainer({ pane }: PaneContainerProps) {
       setInternalHoverZone(hover.paneId === pane.id ? hover.zone : null);
     };
 
-    window.addEventListener("athas-internal-tab-drag-hover", syncHover);
-    return () => window.removeEventListener("athas-internal-tab-drag-hover", syncHover);
+    window.addEventListener("Blimy-internal-tab-drag-hover", syncHover);
+    return () => window.removeEventListener("Blimy-internal-tab-drag-hover", syncHover);
   }, [isWorkspaceSurfaceActive, pane.id]);
 
   useEffect(() => {
@@ -858,7 +858,7 @@ export function PaneContainer({ pane }: PaneContainerProps) {
       setDraggedCarouselBufferId(bufferId);
       setCarouselDropBufferId(bufferId);
       e.dataTransfer.effectAllowed = "move";
-      e.dataTransfer.setData("application/x-athas-carousel-buffer", bufferId);
+      e.dataTransfer.setData("application/x-Blimy-carousel-buffer", bufferId);
     },
     [],
   );
@@ -878,7 +878,7 @@ export function PaneContainer({ pane }: PaneContainerProps) {
       e.preventDefault();
 
       const sourceBufferId =
-        draggedCarouselBufferId || e.dataTransfer.getData("application/x-athas-carousel-buffer");
+        draggedCarouselBufferId || e.dataTransfer.getData("application/x-Blimy-carousel-buffer");
       if (!sourceBufferId || sourceBufferId === targetBufferId) {
         setDraggedCarouselBufferId(null);
         setCarouselDropBufferId(null);

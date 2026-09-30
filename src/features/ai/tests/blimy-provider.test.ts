@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vite-plus/test";
 import { getApiErrorCode } from "../lib/api-error";
-import { AthasProvider } from "../services/providers/athas-provider";
+import { BlimyProvider } from "../services/providers/Blimy-provider";
 
 const state = vi.hoisted(() => ({
   fetch: vi.fn(),
@@ -17,9 +17,9 @@ vi.mock("@/features/ai/intelligence/stores/intelligence-settings.store", () => (
 }));
 
 const provider = () =>
-  new AthasProvider({
-    id: "athas",
-    name: "Athas",
+  new BlimyProvider({
+    id: "Blimy",
+    name: "Blimy",
     apiUrl: "",
     requiresApiKey: false,
     models: [],
@@ -30,7 +30,7 @@ beforeEach(() => {
   state.plan = "free";
 });
 
-describe("Athas hosted models", () => {
+describe("Blimy hosted models", () => {
   it("asks a user without Pro or balance to upgrade or top up", async () => {
     state.fetch.mockResolvedValue(Response.json({ enabled: false, data: [] }));
     const error = await provider()
@@ -43,7 +43,7 @@ describe("Athas hosted models", () => {
   it("says the server is off when a Pro account still gets no models", async () => {
     state.plan = "pro";
     state.fetch.mockResolvedValue(Response.json({ enabled: false, data: [] }));
-    await expect(provider().getModels()).rejects.toThrow("not available on this Athas server");
+    await expect(provider().getModels()).rejects.toThrow("not available on this Blimy server");
   });
 
   it("asks for the model's own output limit instead of a fixed 4096", () => {

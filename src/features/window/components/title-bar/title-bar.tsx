@@ -84,7 +84,7 @@ export default function TitleBar({
       data-tauri-drag-region
       onMouseDown={handleMouseDown}
       className={cn(
-        "athas-title-bar z-50 justify-end select-none",
+        "Blimy-title-bar z-50 justify-end select-none",
         overlay ? "pointer-events-none absolute top-0 right-0 w-auto" : "relative",
       )}
     >
@@ -93,7 +93,7 @@ export default function TitleBar({
           align="center"
           className="pointer-events-none absolute inset-y-0 overflow-hidden"
           style={{
-            insetInline: `max(${IS_MAC ? "var(--athas-title-bar-leading-inset)" : "var(--athas-chrome-padding-inline)"}, calc(${titleControlsWidth}px + var(--athas-chrome-padding-inline)))`,
+            insetInline: `max(${IS_MAC ? "var(--Blimy-title-bar-leading-inset)" : "var(--Blimy-chrome-padding-inline)"}, calc(${titleControlsWidth}px + var(--Blimy-chrome-padding-inline)))`,
           }}
         >
           {titleIcon}

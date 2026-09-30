@@ -1,6 +1,6 @@
 export type ContextualTipId = "agent-queue-controls" | "global-search-shortcut";
 
-const STORAGE_KEY = "athas-contextual-tips-v1";
+const STORAGE_KEY = "Blimy-contextual-tips-v1";
 
 export function claimContextualTip(
   tipId: ContextualTipId,

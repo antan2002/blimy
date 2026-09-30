@@ -12,7 +12,7 @@ import {
 } from "../services/debug-adapter-service";
 
 describe("debug adapter service", () => {
-  test("passes Java launch options through without leaking Athas adapter fields", () => {
+  test("passes Java launch options through without leaking Blimy adapter fields", () => {
     const config: DebugLaunchConfig = {
       id: "java",
       name: "Launch Java",

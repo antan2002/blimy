@@ -1,11 +1,11 @@
 {
-  "$schema": "https://athas.dev/schemas/extension.json",
-  "id": "athas.javascript",
+  "$schema": "https://Blimy.dev/schemas/extension.json",
+  "id": "Blimy.javascript",
   "name": "JavaScript",
   "displayName": "JavaScript",
   "version": "1.0.0",
   "description": "JavaScript language support with LSP and tooling",
-  "publisher": "Athas",
+  "publisher": "Blimy",
   "categories": ["Language"],
   "languages": [
     {

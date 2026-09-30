@@ -26,7 +26,7 @@ interface WhatsNewStorageState {
   lastReadVersion?: string;
 }
 
-const STORAGE_KEY = "athas-whats-new";
+const STORAGE_KEY = "Blimy-whats-new";
 
 function escapeMarkdownLinkLabel(value: string): string {
   return value.replace(/\[/g, "\\[").replace(/\]/g, "\\]");
@@ -91,7 +91,7 @@ export function buildReleaseNotesMarkdown(info: WhatsNewInfo): string {
 }
 
 export function buildWhatsNewMarkdown(info: WhatsNewInfo): string {
-  const lines = ["---", "title: What's New in Athas", `description: Version ${info.version}`];
+  const lines = ["---", "title: What's New in Blimy", `description: Version ${info.version}`];
 
   if (info.previousVersion) {
     lines.push(`updated-from: ${info.previousVersion}`);

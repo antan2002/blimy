@@ -1,11 +1,11 @@
 {
-  "$schema": "https://athas.dev/schemas/extension.json",
-  "id": "athas.graphql",
+  "$schema": "https://Blimy.dev/schemas/extension.json",
+  "id": "Blimy.graphql",
   "name": "GraphQL",
   "displayName": "GraphQL",
   "version": "1.0.0",
   "description": "GraphQL language support with LSP and formatting",
-  "publisher": "Athas",
+  "publisher": "Blimy",
   "categories": ["Language"],
   "languages": [
     {

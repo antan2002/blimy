@@ -2,7 +2,7 @@ import path from "node:path";
 import { describe, expect, it } from "vitest";
 import { withMacosDevSigning } from "../macos-dev-signing";
 
-const repoRoot = "/repo/athas";
+const repoRoot = "/repo/Blimy";
 
 describe("withMacosDevSigning", () => {
   it("configures the native Apple Silicon Cargo runner", () => {
@@ -10,7 +10,7 @@ describe("withMacosDevSigning", () => {
       { EXISTING_VALUE: "preserved" },
       {
         arch: "arm64",
-        identifier: "com.code.athas.preview",
+        identifier: "com.code.Blimy.preview",
         platform: "darwin",
         repoRoot,
       },
@@ -18,7 +18,7 @@ describe("withMacosDevSigning", () => {
 
     expect(environment).toMatchObject({
       EXISTING_VALUE: "preserved",
-      ATHAS_DEV_CODE_SIGN_IDENTIFIER: "com.code.athas.preview",
+      BLIMY_DEV_CODE_SIGN_IDENTIFIER: "com.code.Blimy.preview",
       CARGO_TARGET_AARCH64_APPLE_DARWIN_RUNNER: path.join(
         repoRoot,
         "scripts/dev/macos-dev-runner.zsh",
@@ -31,7 +31,7 @@ describe("withMacosDevSigning", () => {
       {},
       {
         arch: "x64",
-        identifier: "com.code.athas.preview",
+        identifier: "com.code.Blimy.preview",
         platform: "darwin",
         repoRoot,
       },
@@ -47,7 +47,7 @@ describe("withMacosDevSigning", () => {
 
     expect(
       withMacosDevSigning(environment, {
-        identifier: "com.code.athas.preview",
+        identifier: "com.code.Blimy.preview",
         platform: "linux",
         repoRoot,
       }),

@@ -14,7 +14,7 @@ jobs:
   update-nix:
     # Preview archives use a different product name and are not the default package.
     if: >-
-      github.repository == 'athasdev/athas' &&
+      github.repository == 'antan2002/blimy' &&
       (github.event_name != 'release' || github.event.release.prerelease == false)
     runs-on: ubuntu-latest
     steps:
@@ -68,7 +68,7 @@ jobs:
         run: |
           set -euo pipefail
           for arch in x86_64 aarch64; do
-            url="https://github.com/${REPO}/releases/download/v${VERSION}/Athas_${VERSION}_linux-${arch}.tar.gz"
+            url="https://github.com/${REPO}/releases/download/v${VERSION}/BLIMY_${VERSION}_linux-${arch}.tar.gz"
             tmp="$(mktemp)"
             echo "Fetching ${url}"
             curl -fSL --retry 3 --retry-delay 10 "$url" -o "$tmp"
@@ -114,13 +114,13 @@ jobs:
           git checkout -b "$branch"
           git add nix/package.nix
           git commit \
-            -m "Update the wrapped Athas Linux release" \
+            -m "Update the wrapped Blimy Linux release" \
             -m "Bump the pinned Linux package to v${VERSION} and update both architecture hashes."
           git push origin "$branch"
 
           gh pr create \
-            --title "Update the wrapped Athas Linux release" \
-            --body "Update the wrapped Athas Linux release to v${VERSION}.
+            --title "Update the wrapped Blimy Linux release" \
+            --body "Update the wrapped Blimy Linux release to v${VERSION}.
 
           - Update \`version\` and both per-arch SRI hashes in \`nix/package.nix\`
           - Generated automatically by the \`Update Nix package\` workflow"

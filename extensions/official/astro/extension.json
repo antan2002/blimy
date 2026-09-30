@@ -1,11 +1,11 @@
 {
-  "$schema": "https://athas.dev/schemas/extension.json",
-  "id": "athas.astro",
+  "$schema": "https://Blimy.dev/schemas/extension.json",
+  "id": "Blimy.astro",
   "name": "Astro",
   "displayName": "Astro",
   "version": "1.0.0",
   "description": "Astro language support with LSP and formatting",
-  "publisher": "Athas",
+  "publisher": "Blimy",
   "categories": ["Language"],
   "languages": [
     {

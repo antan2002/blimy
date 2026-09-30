@@ -7,7 +7,7 @@ interface PerformanceMeasureStore {
 }
 
 type PerformanceCleanupRegistry = typeof globalThis & {
-  athasPerformanceMeasureCleanup?: () => void;
+  BlimyPerformanceMeasureCleanup?: () => void;
 };
 
 export function clearExcessPerformanceMeasures(
@@ -23,7 +23,7 @@ export function clearExcessPerformanceMeasures(
 
 export function installDevelopmentPerformanceMeasureCleanup(): () => void {
   const registry = globalThis as PerformanceCleanupRegistry;
-  registry.athasPerformanceMeasureCleanup?.();
+  registry.BlimyPerformanceMeasureCleanup?.();
 
   const clearExcessMeasures = () => clearExcessPerformanceMeasures();
   const clearWhenHidden = () => {
@@ -41,11 +41,11 @@ export function installDevelopmentPerformanceMeasureCleanup(): () => void {
   const cleanup = () => {
     window.clearInterval(intervalId);
     document.removeEventListener("visibilitychange", clearWhenHidden);
-    if (registry.athasPerformanceMeasureCleanup === cleanup) {
-      delete registry.athasPerformanceMeasureCleanup;
+    if (registry.BlimyPerformanceMeasureCleanup === cleanup) {
+      delete registry.BlimyPerformanceMeasureCleanup;
     }
   };
 
-  registry.athasPerformanceMeasureCleanup = cleanup;
+  registry.BlimyPerformanceMeasureCleanup = cleanup;
   return cleanup;
 }

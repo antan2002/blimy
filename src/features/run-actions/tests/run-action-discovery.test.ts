@@ -76,14 +76,14 @@ describe("run action discovery", () => {
       parsePyprojectRunActions(
         [
           "[project.scripts]",
-          'athas = "athas.cli:main"',
+          'Blimy = "Blimy.cli:main"',
           "",
           "[tool.pytest.ini_options]",
           'testpaths = ["tests"]',
         ].join("\n"),
         "/repo",
       ).map((item) => item.command),
-    ).toEqual(["athas", "pytest"]);
+    ).toEqual(["Blimy", "pytest"]);
   });
 
   test("keeps only runnable LSP CodeLens commands and preserves their source location", () => {

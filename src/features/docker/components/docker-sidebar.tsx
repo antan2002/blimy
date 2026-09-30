@@ -1100,7 +1100,7 @@ export function DockerSidebar() {
             description={
               isDockerConnectionError(composeError)
                 ? undefined
-                : "Athas couldn't load Compose services for this project."
+                : "Blimy couldn't load Compose services for this project."
             }
             isRetrying={isComposeLoading}
             onRetry={() => void loadComposeProject()}

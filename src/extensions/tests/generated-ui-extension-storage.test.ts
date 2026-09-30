@@ -31,7 +31,7 @@ describe("generated UI extension storage", () => {
       id: "generated.release-health",
       name: "Release Health",
       main: "generated.js",
-      publisher: "athas.generated",
+      publisher: "Blimy.generated",
       permissions: { workspace: "read" },
     });
     expect(wrapGeneratedExtensionSource(extension.code)).toBe(

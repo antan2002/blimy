@@ -8,7 +8,7 @@ const passedRun: CiRun = {
   event: "push",
   status: "completed",
   conclusion: "success",
-  html_url: "https://github.com/athasdev/athas/actions/runs/10",
+  html_url: "https://github.com/antan2002/blimy/actions/runs/10",
 };
 const passedJobs: CiJob[] = [
   { name: "Bun — typecheck, frontend check", status: "completed", conclusion: "success" },

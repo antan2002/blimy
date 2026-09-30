@@ -167,11 +167,11 @@ async function main() {
     return { passed: true };
   });
 
-  await runCheck("Origin remote targets athasdev/athas", async () => {
+  await runCheck("Origin remote targets antan2002/blimy", async () => {
     const remoteUrl = (await $`git remote get-url origin`.text()).trim();
     const isExpectedRemote =
-      remoteUrl.includes("github.com/athasdev/athas") ||
-      remoteUrl.includes("github.com:athasdev/athas");
+      remoteUrl.includes("github.com/antan2002/blimy") ||
+      remoteUrl.includes("github.com:antan2002/blimy");
 
     if (!isExpectedRemote) {
       return {
@@ -372,7 +372,7 @@ async function main() {
     });
 
     await runCheck("Cargo check (release)", async () => {
-      const result = await $`cargo check --release -p athas`.quiet().nothrow();
+      const result = await $`cargo check --release -p Blimy`.quiet().nothrow();
       if (result.exitCode !== 0) {
         return { passed: false, message: "Release-profile compilation errors found" };
       }

@@ -56,9 +56,9 @@ case "$target" in
 esac
 
 config_args=()
-product_name="Athas"
+product_name="Blimy"
 if [[ "$channel" == "--preview" ]]; then
-  product_name="Athas Preview"
+  product_name="Blimy Preview"
   config_args+=(--config src-tauri/tauri.preview.conf.json)
 elif [[ -n "$channel" ]]; then
   echo "Unsupported option: $channel" >&2
@@ -215,7 +215,7 @@ cargo tauri build \
   --no-default-features \
   --features linux
 
-release_binary="${CARGO_TARGET_DIR:-target}/release/athas"
+release_binary="${CARGO_TARGET_DIR:-target}/release/Blimy"
 expected_cef_rpath="\$ORIGIN/../lib/${product_name}"
 actual_rpath="$(patchelf --print-rpath "$release_binary")"
 if [[ ":${actual_rpath}:" != *":${expected_cef_rpath}:"* ]]; then

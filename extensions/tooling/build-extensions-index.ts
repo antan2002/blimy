@@ -5,7 +5,7 @@ import { getIconThemePreviewDefinitions } from "@/extensions/icon-themes/icon-th
 import type { IconThemeContribution } from "@/extensions/types/extension-manifest";
 import {
   GENERATED_CDN_DIR,
-  ATHAS_ROOT,
+  BLIMY_ROOT,
   getContributionArray,
   getExtensionCdnPath,
   getExtensionSourceDir,
@@ -241,7 +241,7 @@ function buildIconThemePreviews(
 }
 
 async function loadBuiltInThemeIndexEntries(): Promise<IndexEntry[]> {
-  const themeDirectory = join(ATHAS_ROOT, "src/extensions/themes/builtin");
+  const themeDirectory = join(BLIMY_ROOT, "src/extensions/themes/builtin");
   const fileNames = (await readdir(themeDirectory))
     .filter((fileName) => fileName.endsWith(".json"))
     .sort();
@@ -306,7 +306,7 @@ async function buildCatalog() {
     const reservedTheme = themes.find(getReservedBuiltInThemeContribution);
     if (reservedTheme) {
       throw new Error(
-        `Extension ${manifest.id} contributes reserved built-in Athas theme "${String(reservedTheme.name || reservedTheme.id)}"`,
+        `Extension ${manifest.id} contributes reserved built-in Blimy theme "${String(reservedTheme.name || reservedTheme.id)}"`,
       );
     }
 

@@ -1,5 +1,5 @@
 import {
-  ATHAS_BROWSER_TOOL,
+  BLIMY_BROWSER_TOOL,
   runHostedBrowserTool,
 } from "@/features/browser-use/services/browser-tool";
 import { invoke } from "@tauri-apps/api/core";
@@ -28,8 +28,8 @@ interface CodexHandlers {
   onEvent?: (event: AcpEvent) => void;
 }
 
-export const codexSettingsKey = "athas-codex-integration-settings";
-export const codexSettingsChanged = "athas-codex-settings-changed";
+export const codexSettingsKey = "Blimy-codex-integration-settings";
+export const codexSettingsChanged = "Blimy-codex-settings-changed";
 export const defaultCodexSettings: CodexThreadSettings = {
   effort: "medium",
   approvalPolicy: "on-request",
@@ -151,7 +151,7 @@ export class CodexIntegrationService {
 
     if (method === "item/tool/call" && event.id != null) {
       const toolName = String(params.tool ?? "");
-      if (toolName === ATHAS_BROWSER_TOOL) {
+      if (toolName === BLIMY_BROWSER_TOOL) {
         const requestId = event.id;
         void runHostedBrowserTool(params.arguments, `${this.threadId}:${this.turnId}:${requestId}`)
           .then((decision) =>
@@ -172,7 +172,7 @@ export class CodexIntegrationService {
           return true;
         },
       }) ?? {
-        contentItems: [{ type: "inputText" as const, text: `Unknown Athas tool: ${toolName}` }],
+        contentItems: [{ type: "inputText" as const, text: `Unknown Blimy tool: ${toolName}` }],
         success: false,
       };
       void invoke("respond_codex_request", {

@@ -9,30 +9,30 @@ vi.mock("dompurify", () => ({
 }));
 
 describe("normalizeGitHubMarkdown", () => {
-  const repositoryUrl = "https://github.com/athasdev/athas";
+  const repositoryUrl = "https://github.com/antan2002/blimy";
 
   it("autolinks bare URLs and shortens same-repository entity links", () => {
     expect(
       normalizeGitHubMarkdown(
-        "Tracked in https://github.com/athasdev/athas/actions/runs/42.",
+        "Tracked in https://github.com/antan2002/blimy/actions/runs/42.",
         repositoryUrl,
       ),
     ).toBe(
-      "Tracked in [https://github.com/athasdev/athas/actions/runs/42](https://github.com/athasdev/athas/actions/runs/42).",
+      "Tracked in [https://github.com/antan2002/blimy/actions/runs/42](https://github.com/antan2002/blimy/actions/runs/42).",
     );
     expect(
       normalizeGitHubMarkdown(
-        "See https://github.com/athasdev/athas/pull/734, thanks",
+        "See https://github.com/antan2002/blimy/pull/734, thanks",
         repositoryUrl,
       ),
-    ).toBe("See [#734](https://github.com/athasdev/athas/pull/734), thanks");
+    ).toBe("See [#734](https://github.com/antan2002/blimy/pull/734), thanks");
     expect(
       normalizeGitHubMarkdown(
-        "Fixed in https://github.com/athasdev/athas/commit/bb423c6a1b2c3d4e5f60718293a4b5c6d7e8f901",
+        "Fixed in https://github.com/antan2002/blimy/commit/bb423c6a1b2c3d4e5f60718293a4b5c6d7e8f901",
         repositoryUrl,
       ),
     ).toBe(
-      "Fixed in [bb423c6](https://github.com/athasdev/athas/commit/bb423c6a1b2c3d4e5f60718293a4b5c6d7e8f901)",
+      "Fixed in [bb423c6](https://github.com/antan2002/blimy/commit/bb423c6a1b2c3d4e5f60718293a4b5c6d7e8f901)",
     );
     expect(
       normalizeGitHubMarkdown("Other repo https://github.com/foo/bar/pull/1", repositoryUrl),
@@ -70,7 +70,7 @@ describe("normalizeGitHubMarkdown", () => {
   it("links issue references without rewriting code or existing links", () => {
     const content = [
       "Fixes #714 and keeps `#715` literal.",
-      "[Existing #716](https://github.com/athasdev/athas/issues/716)",
+      "[Existing #716](https://github.com/antan2002/blimy/issues/716)",
       "```text",
       "#717",
       "```",
@@ -79,15 +79,15 @@ describe("normalizeGitHubMarkdown", () => {
     const normalized = normalizeGitHubMarkdown(content, repositoryUrl);
 
     expect(normalized).toContain(
-      "Fixes [#714](https://github.com/athasdev/athas/issues/714) and keeps `#715` literal.",
+      "Fixes [#714](https://github.com/antan2002/blimy/issues/714) and keeps `#715` literal.",
     );
-    expect(normalized).toContain("[Existing #716](https://github.com/athasdev/athas/issues/716)");
+    expect(normalized).toContain("[Existing #716](https://github.com/antan2002/blimy/issues/716)");
     expect(normalized).toContain("```text\n#717\n```");
   });
 
   it("links cross-repository references to the referenced repository", () => {
-    expect(normalizeGitHubMarkdown("See athasdev/www#42", repositoryUrl)).toBe(
-      "See [athasdev/www#42](https://github.com/athasdev/www/issues/42)",
+    expect(normalizeGitHubMarkdown("See Blimydev/www#42", repositoryUrl)).toBe(
+      "See [Blimydev/www#42](https://github.com/Blimydev/www/issues/42)",
     );
   });
 
