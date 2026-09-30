@@ -1,4 +1,4 @@
-use crate::app_runtime::AthasRuntime;
+use crate::app_runtime::BlimyRuntime;
 use serde::{Deserialize, Serialize};
 #[cfg(target_os = "macos")]
 use std::path::PathBuf;
@@ -18,9 +18,9 @@ use window_vibrancy::{
 };
 
 #[cfg(all(target_os = "macos", not(feature = "linux")))]
-const ATHAS_WINDOW_MATERIAL: NSVisualEffectMaterial = NSVisualEffectMaterial::Sidebar;
+const BLIMY_WINDOW_MATERIAL: NSVisualEffectMaterial = NSVisualEffectMaterial::Sidebar;
 #[cfg(all(target_os = "macos", not(feature = "linux")))]
-const ATHAS_WINDOW_STATE: NSVisualEffectState = NSVisualEffectState::FollowsWindowActiveState;
+const BLIMY_WINDOW_STATE: NSVisualEffectState = NSVisualEffectState::FollowsWindowActiveState;
 #[cfg(target_os = "windows")]
 const ATHAS_WINDOWS_DARK_ACRYLIC_TINT: VibrancyColor = (18, 18, 18, 125);
 #[cfg(target_os = "windows")]
@@ -88,7 +88,7 @@ mod agent_window_tests {
          ..Default::default()
       };
       let url = tauri::Url::parse(&format!(
-         "https://athas.local{}",
+         "https://blimy.local{}",
          build_window_open_url(Some(&request), "main-4", 123)
       ))
       .unwrap();
@@ -118,14 +118,14 @@ mod agent_window_tests {
    #[test]
    fn preserves_empty_windows() {
       let url = build_window_open_url(None, "main-2", 123);
-      assert!(url.starts_with("/?athasWindowTraceId=main-2&"));
+      assert!(url.starts_with("/?blimyWindowTraceId=main-2&"));
       assert_eq!(window_title_for_request(None), "Athas");
    }
 }
 
 fn append_window_trace_params(url: String, label: &str, created_at_ms: u128) -> String {
    let separator = if url.contains('?') { '&' } else { '?' };
-   format!("{url}{separator}athasWindowTraceId={label}&athasWindowCreatedAtMs={created_at_ms}")
+   format!("{url}{separator}blimyWindowTraceId={label}&blimyWindowCreatedAtMs={created_at_ms}")
 }
 
 fn build_window_open_url(
@@ -274,14 +274,14 @@ fn window_title_for_request(request: Option<&CreateAppWindowRequest>) -> String 
    }
 }
 
-pub fn configure_app_window(window: &tauri::WebviewWindow<AthasRuntime>) {
+pub fn configure_app_window(window: &tauri::WebviewWindow<BlimyRuntime>) {
    #[cfg(all(target_os = "macos", not(feature = "linux")))]
    {
       let _ = window.set_background_color(Some(tauri::window::Color(0, 0, 0, 0)));
       if let Err(error) = apply_vibrancy(
          window,
-         ATHAS_WINDOW_MATERIAL,
-         Some(ATHAS_WINDOW_STATE),
+         BLIMY_WINDOW_MATERIAL,
+         Some(BLIMY_WINDOW_STATE),
          None,
       ) {
          log::warn!("Failed to initialize macOS window vibrancy: {error}");
@@ -327,7 +327,7 @@ fn windows_acrylic_tint(theme_type: Option<&str>) -> VibrancyColor {
 
 #[cfg(target_os = "windows")]
 fn set_windows_window_transparency(
-   window: &tauri::WebviewWindow<AthasRuntime>,
+   window: &tauri::WebviewWindow<BlimyRuntime>,
    enabled: bool,
    theme_type: Option<&str>,
 ) -> Result<(), String> {
@@ -378,7 +378,7 @@ fn set_ns_appearance(
 
 #[cfg(all(target_os = "macos", not(feature = "linux")))]
 fn sync_macos_window_appearance(
-   window: &tauri::WebviewWindow<AthasRuntime>,
+   window: &tauri::WebviewWindow<BlimyRuntime>,
    theme_type: &str,
    transparency_enabled: bool,
    follow_system: bool,
@@ -409,8 +409,8 @@ fn sync_macos_window_appearance(
       let _ = clear_vibrancy(window);
       apply_vibrancy(
          window,
-         ATHAS_WINDOW_MATERIAL,
-         Some(ATHAS_WINDOW_STATE),
+         BLIMY_WINDOW_MATERIAL,
+         Some(BLIMY_WINDOW_STATE),
          None,
       )
       .map_err(|e| format!("Failed to refresh macOS vibrancy: {e}"))?;
@@ -429,7 +429,7 @@ pub fn uses_native_window_chrome() -> bool {
 
 #[command]
 pub fn set_native_window_appearance(
-   window: tauri::WebviewWindow<AthasRuntime>,
+   window: tauri::WebviewWindow<BlimyRuntime>,
    theme_type: String,
    transparency_enabled: Option<bool>,
    follow_system: Option<bool>,
@@ -468,7 +468,7 @@ pub fn set_native_window_appearance(
 
 #[command]
 pub fn set_window_transparency_enabled(
-   window: tauri::WebviewWindow<AthasRuntime>,
+   window: tauri::WebviewWindow<BlimyRuntime>,
    enabled: bool,
    theme_type: Option<String>,
 ) -> Result<(), String> {
@@ -480,8 +480,8 @@ pub fn set_window_transparency_enabled(
          let _ = clear_vibrancy(&window);
          if let Err(error) = apply_vibrancy(
             &window,
-            ATHAS_WINDOW_MATERIAL,
-            Some(ATHAS_WINDOW_STATE),
+            BLIMY_WINDOW_MATERIAL,
+            Some(BLIMY_WINDOW_STATE),
             None,
          ) {
             log::warn!("Failed to apply macOS window vibrancy: {error}");
@@ -508,7 +508,7 @@ pub fn set_window_transparency_enabled(
 }
 
 fn create_labeled_app_window_internal(
-   app: &tauri::AppHandle<AthasRuntime>,
+   app: &tauri::AppHandle<BlimyRuntime>,
    label: String,
    request: Option<CreateAppWindowRequest>,
 ) -> Result<String, String> {
@@ -589,7 +589,7 @@ fn create_labeled_app_window_internal(
 }
 
 #[cfg(target_os = "linux")]
-pub fn ensure_app_windows_reachable(app: &tauri::AppHandle<AthasRuntime>) {
+pub fn ensure_app_windows_reachable(app: &tauri::AppHandle<BlimyRuntime>) {
    for window in app.webview_windows().into_values() {
       if let Err(error) = ensure_window_reachable(&window) {
          log::warn!(
@@ -601,7 +601,7 @@ pub fn ensure_app_windows_reachable(app: &tauri::AppHandle<AthasRuntime>) {
 }
 
 #[cfg(target_os = "linux")]
-fn ensure_window_reachable(window: &tauri::WebviewWindow<AthasRuntime>) -> Result<(), String> {
+fn ensure_window_reachable(window: &tauri::WebviewWindow<BlimyRuntime>) -> Result<(), String> {
    if window.is_maximized().map_err(|error| error.to_string())?
       || window.is_fullscreen().map_err(|error| error.to_string())?
    {
@@ -666,7 +666,7 @@ fn ensure_window_reachable(window: &tauri::WebviewWindow<AthasRuntime>) -> Resul
 }
 
 pub fn create_app_window_internal(
-   app: &tauri::AppHandle<AthasRuntime>,
+   app: &tauri::AppHandle<BlimyRuntime>,
    request: Option<CreateAppWindowRequest>,
 ) -> Result<String, String> {
    let label = format!(
@@ -679,7 +679,7 @@ pub fn create_app_window_internal(
 
 #[command]
 pub async fn create_app_window(
-   app: tauri::AppHandle<AthasRuntime>,
+   app: tauri::AppHandle<BlimyRuntime>,
    request: Option<CreateAppWindowRequest>,
 ) -> Result<String, String> {
    let started_at = Instant::now();
@@ -714,7 +714,7 @@ pub async fn create_app_window(
 
 #[command]
 pub async fn note_recent_document(
-   app: tauri::AppHandle<AthasRuntime>,
+   app: tauri::AppHandle<BlimyRuntime>,
    path: String,
 ) -> Result<(), String> {
    #[cfg(target_os = "macos")]
@@ -739,7 +739,7 @@ pub async fn note_recent_document(
 
 #[command]
 pub async fn set_window_document_state(
-   window: tauri::WebviewWindow<AthasRuntime>,
+   window: tauri::WebviewWindow<BlimyRuntime>,
    title: String,
    represented_path: Option<String>,
    is_edited: bool,
@@ -776,7 +776,7 @@ pub async fn set_window_document_state(
 
 #[command]
 pub async fn show_native_choice_sheet(
-   window: tauri::WebviewWindow<AthasRuntime>,
+   window: tauri::WebviewWindow<BlimyRuntime>,
    message: String,
    informative_text: String,
    primary_label: String,
@@ -830,7 +830,7 @@ pub async fn show_native_choice_sheet(
 
 #[command]
 pub async fn reopen_current_webview_devtools(
-   window: tauri::WebviewWindow<AthasRuntime>,
+   window: tauri::WebviewWindow<BlimyRuntime>,
 ) -> Result<(), String> {
    #[cfg(any(debug_assertions, feature = "devtools"))]
    {

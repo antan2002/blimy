@@ -1,7 +1,7 @@
 #[cfg(feature = "linux")]
-pub type AthasRuntime = tauri::Cef;
+pub type BlimyRuntime = tauri::Cef;
 
 #[cfg(not(feature = "linux"))]
-pub type AthasRuntime = tauri::Wry;
+pub type BlimyRuntime = tauri::Wry;
 
-pub type AppHandle = tauri::AppHandle<AthasRuntime>;
+pub type AppHandle = tauri::AppHandle<BlimyRuntime>;

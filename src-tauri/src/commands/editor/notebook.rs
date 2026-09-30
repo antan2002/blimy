@@ -139,12 +139,12 @@ def run_code(code, capture, capture_result=False):
         if tree.body and isinstance(tree.body[-1], ast.Expr):
             body = ast.Module(body=tree.body[:-1], type_ignores=[])
             expr = ast.Expression(tree.body[-1].value)
-            exec(compile(body, "<athas-cell>", "exec"), namespace, namespace)
-            result = eval(compile(expr, "<athas-cell>", "eval"), namespace, namespace)
+            exec(compile(body, "<blimy-cell>", "exec"), namespace, namespace)
+            result = eval(compile(expr, "<blimy-cell>", "eval"), namespace, namespace)
             if result is not None:
                 append_display(result, "execute_result")
         else:
-            exec(compile(tree, "<athas-cell>", "exec"), namespace, namespace)
+            exec(compile(tree, "<blimy-cell>", "exec"), namespace, namespace)
 
 setup_capture = {"stdout": io.StringIO(), "stderr": io.StringIO()}
 cell_capture = {"stdout": io.StringIO(), "stderr": io.StringIO()}
@@ -200,7 +200,7 @@ fn temp_script_path(label: &str, extension: &str) -> PathBuf {
       .map(|duration| duration.as_nanos())
       .unwrap_or_default();
    std::env::temp_dir().join(format!(
-      "athas-{label}-{}-{nanos}.{extension}",
+      "blimy-{label}-{}-{nanos}.{extension}",
       process::id()
    ))
 }

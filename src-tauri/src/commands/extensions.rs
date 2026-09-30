@@ -2,7 +2,7 @@ use crate::{
    app_runtime::AppHandle,
    secure_storage::{get_secret, remove_secret, store_secret},
 };
-use athas_extensions::{
+use blimy_extensions::{
    DownloadInfo, ExtensionInstaller, ExtensionMetadata, validate_extension_id,
 };
 use std::{env, fs, path::Path};
@@ -42,7 +42,7 @@ fn validate_extension_entrypoint(entrypoint: &str) -> Result<(), String> {
 }
 
 fn is_allowed_extension_host(host: &str) -> bool {
-   host == "athas.dev" || host.ends_with(".athas.dev")
+   host == "blimy.dev" || host.ends_with(".blimy.dev")
 }
 
 fn validate_extension_download_url(input: &str) -> Result<(), String> {
@@ -242,10 +242,10 @@ mod tests {
    #[test]
    fn extension_secret_keys_are_scoped_and_validated() {
       assert_eq!(
-         extension_secret_key("athas.gitlab", "token").unwrap(),
-         "extension:athas.gitlab:token"
+         extension_secret_key("blimy.gitlab", "token").unwrap(),
+         "extension:blimy.gitlab:token"
       );
-      assert!(extension_secret_key("athas.gitlab", "../token").is_err());
+      assert!(extension_secret_key("blimy.gitlab", "../token").is_err());
    }
 
    #[test]
@@ -336,9 +336,9 @@ mod tests {
 
    #[test]
    fn test_validate_extension_download_url_accepts_expected_hosts() {
-      assert!(validate_extension_download_url("https://athas.dev/extensions/test.tar.gz").is_ok());
+      assert!(validate_extension_download_url("https://blimy.dev/extensions/test.tar.gz").is_ok());
       assert!(
-         validate_extension_download_url("https://cdn.athas.dev/extensions/test.tar.gz").is_ok()
+         validate_extension_download_url("https://cdn.blimy.dev/extensions/test.tar.gz").is_ok()
       );
 
       if cfg!(debug_assertions) {
@@ -348,13 +348,13 @@ mod tests {
 
    #[test]
    fn test_is_allowed_extension_host_rejects_suffix_spoofing() {
-      assert!(is_allowed_extension_host("athas.dev"));
-      assert!(is_allowed_extension_host("cdn.athas.dev"));
-      assert!(is_allowed_extension_host("a.b.athas.dev"));
+      assert!(is_allowed_extension_host("blimy.dev"));
+      assert!(is_allowed_extension_host("cdn.blimy.dev"));
+      assert!(is_allowed_extension_host("a.b.blimy.dev"));
       // Suffix-match spoofing attempts must be rejected.
-      assert!(!is_allowed_extension_host("evilathas.dev"));
-      assert!(!is_allowed_extension_host("athas.dev.attacker.example"));
-      assert!(!is_allowed_extension_host("not-athas.dev"));
+      assert!(!is_allowed_extension_host("evilblimy.dev"));
+      assert!(!is_allowed_extension_host("blimy.dev.attacker.example"));
+      assert!(!is_allowed_extension_host("not-blimy.dev"));
       assert!(!is_allowed_extension_host(""));
    }
 }

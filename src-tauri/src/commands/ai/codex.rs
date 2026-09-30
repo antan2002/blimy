@@ -1,4 +1,4 @@
-use athas_ai::{CodexAppServer, CodexIntegrationStatus, CodexRequestDecision, CodexThreadSettings};
+use blimy_ai::{CodexAppServer, CodexIntegrationStatus, CodexRequestDecision, CodexThreadSettings};
 use serde::Deserialize;
 use serde_json::Value;
 use tauri::State;

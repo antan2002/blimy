@@ -7,7 +7,7 @@
 //! 3. the token owned by the user's `gh` CLI installation.
 //!
 //! The `gh` token is the escape hatch for repositories the Athas OAuth app
-//! cannot reach — typically an organization that has not approved it. Users can
+//! cannot reach â€” typically an organization that has not approved it. Users can
 //! also pin a single source explicitly, because an Athas token that authenticates
 //! fine while being blind to org repositories would otherwise always win.
 
@@ -60,7 +60,7 @@ fn read_token_source_preference(app: &AppHandle) -> TokenSourcePreference {
       .and_then(|value| value.as_str().map(ToOwned::to_owned))
       .as_deref()
    {
-      Some("athas") => TokenSourcePreference::Athas,
+      Some("blimy") => TokenSourcePreference::Athas,
       Some("pat") => TokenSourcePreference::PersonalAccessToken,
       Some("gh") => TokenSourcePreference::GhCli,
       _ => TokenSourcePreference::Auto,
@@ -79,7 +79,7 @@ pub fn has_personal_access_token(app: &AppHandle) -> bool {
    read_stored_secret(app, PERSONAL_ACCESS_TOKEN_SECRET_KEY).is_some()
 }
 
-pub fn has_athas_account_token(app: &AppHandle) -> bool {
+pub fn has_blimy_account_token(app: &AppHandle) -> bool {
    read_stored_secret(app, ATHAS_ACCOUNT_SECRET_KEY).is_some()
 }
 
@@ -92,7 +92,7 @@ pub fn cached_gh_cli_token() -> Option<String> {
       return token.clone();
    }
 
-   let token = athas_github::gh_cli_token();
+   let token = blimy_github::gh_cli_token();
    *cache = Some((Instant::now(), token.clone()));
    token
 }
@@ -115,7 +115,7 @@ pub fn resolve_github_token(app: &AppHandle) -> ResolvedGitHubToken {
       read_stored_secret(app, PERSONAL_ACCESS_TOKEN_SECRET_KEY)
          .map(|token| (token, GitHubTokenSource::PersonalAccessToken))
    };
-   let athas_account_token = || {
+   let blimy_account_token = || {
       read_stored_secret(app, ATHAS_ACCOUNT_SECRET_KEY)
          .map(|token| (token, GitHubTokenSource::Athas))
    };
@@ -123,10 +123,10 @@ pub fn resolve_github_token(app: &AppHandle) -> ResolvedGitHubToken {
 
    let resolved = match preference {
       TokenSourcePreference::Auto => personal_access_token()
-         .or_else(athas_account_token)
+         .or_else(blimy_account_token)
          .or_else(gh_cli_token),
       TokenSourcePreference::PersonalAccessToken => personal_access_token(),
-      TokenSourcePreference::Athas => athas_account_token(),
+      TokenSourcePreference::Athas => blimy_account_token(),
       TokenSourcePreference::GhCli => gh_cli_token(),
    };
 

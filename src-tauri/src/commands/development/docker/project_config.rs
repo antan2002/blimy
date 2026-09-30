@@ -97,7 +97,7 @@ pub(super) fn is_env_file_path(path: &Path) -> bool {
 }
 
 pub(super) fn project_config_path(workspace_path: &Path) -> PathBuf {
-   workspace_path.join(".athas").join("docker.json")
+   workspace_path.join(".blimy").join("docker.json")
 }
 
 pub(super) fn read_project_config(workspace_path: &Path) -> Result<DockerProjectConfig, String> {

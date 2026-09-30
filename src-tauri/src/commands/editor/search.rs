@@ -2,7 +2,7 @@ use crate::{
    app_runtime::AppHandle,
    commands::fuzzy::{FffSearchState, local_workspace_paths},
 };
-use athas_fff_search::{FffGrepOptions, GrepMode};
+use blimy_fff_search::{FffGrepOptions, GrepMode};
 use serde::{Deserialize, Serialize};
 use tauri::State;
 
@@ -256,7 +256,7 @@ mod tests {
 
    #[test]
    fn converts_utf8_byte_ranges_to_character_ranges() {
-      assert_eq!(byte_range_to_char_range("aé日z", 1, 6), (1, 3));
+      assert_eq!(byte_range_to_char_range("aÃ©æ—¥z", 1, 6), (1, 3));
    }
 
    #[test]

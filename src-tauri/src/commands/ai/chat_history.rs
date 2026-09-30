@@ -1,4 +1,4 @@
-use athas_ai::{
+use blimy_ai::{
    ChatData, ChatHistoryRepository, ChatStats, ChatWithMessages, MessageData, ToolCallData,
 };
 use std::path::PathBuf;

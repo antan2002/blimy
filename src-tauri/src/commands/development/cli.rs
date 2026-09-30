@@ -10,7 +10,7 @@ fn get_cli_script_path() -> Result<std::path::PathBuf, String> {
    Ok(std::path::PathBuf::from(home)
       .join(".local")
       .join("bin")
-      .join("athas"))
+      .join("blimy"))
 }
 
 #[cfg(windows)]
@@ -18,9 +18,9 @@ fn get_cli_script_path() -> Result<std::path::PathBuf, String> {
    let home = std::env::var("USERPROFILE")
       .map_err(|_| "Failed to get user profile directory".to_string())?;
    Ok(std::path::PathBuf::from(home)
-      .join(".athas")
+      .join(".blimy")
       .join("bin")
-      .join("athas.cmd"))
+      .join("blimy.cmd"))
 }
 
 #[cfg(windows)]
@@ -58,17 +58,17 @@ pub fn check_cli_installed() -> Result<bool, String> {
 pub const CLI_HELP_TEXT: &str = r#"Athas CLI
 
 Usage:
-  athas [--new-window | --reuse-window] [paths...]
-  athas open [--new-window | --reuse-window] <paths...>
-  athas window
-  athas terminal [--cwd <directory>] [--reuse-window] [--] [command...]
-  athas settings
-  athas extensions
-  athas pr <number> [--cwd <repository>]
-  athas issue <number> [--cwd <repository>]
-  athas action <run-id> [--cwd <repository>]
-  athas remote [--new-window] <connection-id> [name]
-  athas web <url>
+  blimy [--new-window | --reuse-window] [paths...]
+  blimy open [--new-window | --reuse-window] <paths...>
+  blimy window
+  blimy terminal [--cwd <directory>] [--reuse-window] [--] [command...]
+  blimy settings
+  blimy extensions
+  blimy pr <number> [--cwd <repository>]
+  blimy issue <number> [--cwd <repository>]
+  blimy action <run-id> [--cwd <repository>]
+  blimy remote [--new-window] <connection-id> [name]
+  blimy web <url>
 
 Options:
   -n, --new-window     Open each target in a new window
@@ -82,12 +82,12 @@ Files, folders, and remote connections use the editor. Web URLs use your browser
 Pass shell expressions as one quoted command string.
 
 Examples:
-  athas terminal
-  athas terminal --cwd ~/projects/my-app
-  athas terminal -- bun test
-  athas terminal 'git status && git diff'
-  athas --new-window src/main.rs:120
-  athas pr 42 --cwd ~/projects/my-app
+  blimy terminal
+  blimy terminal --cwd ~/projects/my-app
+  blimy terminal -- bun test
+  blimy terminal 'git status && git diff'
+  blimy --new-window src/main.rs:120
+  blimy pr 42 --cwd ~/projects/my-app
 "#;
 
 #[cfg(unix)]
@@ -96,12 +96,12 @@ fn unix_cli_script(binary: &std::path::Path) -> String {
    format!(
       r#"#!/bin/bash
 # Athas CLI launcher
-athas_binary='{binary}'
+blimy_binary='{binary}'
 case "${{1:-}}" in
-    help|-h|--help) exec "$athas_binary" --help ;;
+    help|-h|--help) exec "$blimy_binary" --help ;;
 esac
-"$athas_binary" --validate-cli "$@" || exit $?
-nohup "$athas_binary" "$@" >/dev/null 2>&1 &
+"$blimy_binary" --validate-cli "$@" || exit $?
+nohup "$blimy_binary" "$@" >/dev/null 2>&1 &
 "#
    )
 }
@@ -109,7 +109,7 @@ nohup "$athas_binary" "$@" >/dev/null 2>&1 &
 #[cfg(windows)]
 fn windows_cmd_script() -> String {
    r#"@echo off
-powershell -NoProfile -ExecutionPolicy Bypass -File "%~dp0athas.ps1" %*
+powershell -NoProfile -ExecutionPolicy Bypass -File "%~dp0blimy.ps1" %*
 "#
    .to_string()
 }
@@ -120,7 +120,7 @@ fn windows_powershell_script() -> Result<String, String> {
    let binary = binary.to_string_lossy().replace('\'', "''");
    Ok(format!(
       r#"$ErrorActionPreference = 'Stop'
-$athasBinary = '{binary}'
+$blimyBinary = '{binary}'
 if ($args.Count -gt 0 -and $args[0] -in @('help', '-h', '--help')) {{
   Write-Output @'
 {CLI_HELP_TEXT}
@@ -134,7 +134,7 @@ function Quote-NativeArgument([string]$value) {{
 }}
 $encodedArgs = @($args | ForEach-Object {{ Quote-NativeArgument $_ }}) -join ' '
 $start = New-Object System.Diagnostics.ProcessStartInfo
-$start.FileName = $athasBinary
+$start.FileName = $blimyBinary
 $start.WorkingDirectory = (Get-Location).Path
 $start.UseShellExecute = $false
 $start.CreateNoWindow = $true
@@ -142,7 +142,7 @@ $start.Arguments = '--validate-cli ' + $encodedArgs
 $validation = [System.Diagnostics.Process]::Start($start)
 $validation.WaitForExit()
 if ($validation.ExitCode -ne 0) {{
-  Write-Error 'Invalid arguments or inaccessible path. Run athas --help for usage.'
+  Write-Error 'Invalid arguments or inaccessible path. Run blimy --help for usage.'
   exit $validation.ExitCode
 }}
 $start.Arguments = $encodedArgs
@@ -189,7 +189,7 @@ fn ensure_installable_location() -> Result<(), String> {
 fn launcher_binary(script: &str) -> Option<std::path::PathBuf> {
    let quoted = script
       .lines()
-      .find_map(|line| line.strip_prefix("athas_binary="))?;
+      .find_map(|line| line.strip_prefix("blimy_binary="))?;
    let inner = quoted.strip_prefix('\'')?.strip_suffix('\'')?;
    Some(std::path::PathBuf::from(inner.replace("'\\''", "'")))
 }
@@ -291,7 +291,7 @@ pub fn install_cli_command() -> Result<String, String> {
       .map_err(|e| format!("Failed to write PowerShell CLI script: {}", e))?;
 
    let path_instruction = format!(
-      "CLI command installed successfully at {}.\n\nTo use 'athas' from anywhere, add the \
+      "CLI command installed successfully at {}.\n\nTo use 'blimy' from anywhere, add the \
        following directory to your PATH:\n{}\n\nYou can do this by:\n1. Search for 'Environment \
        Variables' in Windows Settings\n2. Edit the 'Path' variable under User variables\n3. Add \
        the directory above\n4. Restart your terminal",
@@ -309,8 +309,8 @@ pub fn get_cli_install_command() -> Result<String, String> {
    let script = current_cli_script()?;
 
    Ok(format!(
-      "mkdir -p ~/.local/bin && cat > ~/.local/bin/athas << 'SCRIPT'\n{}\nSCRIPT\nchmod +x \
-       ~/.local/bin/athas",
+      "mkdir -p ~/.local/bin && cat > ~/.local/bin/blimy << 'SCRIPT'\n{}\nSCRIPT\nchmod +x \
+       ~/.local/bin/blimy",
       script.trim()
    ))
 }
@@ -320,8 +320,8 @@ pub fn get_cli_install_command() -> Result<String, String> {
 pub fn get_cli_install_command() -> Result<String, String> {
    let script = current_cli_script()?;
    Ok(format!(
-      "mkdir -p ~/.local/bin && cat > ~/.local/bin/athas << 'EOF'\n{}\nEOF\nchmod +x \
-       ~/.local/bin/athas",
+      "mkdir -p ~/.local/bin && cat > ~/.local/bin/blimy << 'EOF'\n{}\nEOF\nchmod +x \
+       ~/.local/bin/blimy",
       script.trim()
    ))
 }
@@ -331,12 +331,12 @@ pub fn get_cli_install_command() -> Result<String, String> {
 pub fn get_cli_install_command() -> Result<String, String> {
    let powershell_script = windows_powershell_script()?.replace('\'', "''");
    Ok(format!(
-      r#"mkdir "%USERPROFILE%\.athas\bin" 2>nul && (
+      r#"mkdir "%USERPROFILE%\.blimy\bin" 2>nul && (
 echo @echo off
-echo powershell -NoProfile -ExecutionPolicy Bypass -File "%%~dp0athas.ps1" %%*
-) > "%USERPROFILE%\.athas\bin\athas.cmd" && powershell -NoProfile -ExecutionPolicy Bypass -Command "$script = @'
+echo powershell -NoProfile -ExecutionPolicy Bypass -File "%%~dp0blimy.ps1" %%*
+) > "%USERPROFILE%\.blimy\bin\blimy.cmd" && powershell -NoProfile -ExecutionPolicy Bypass -Command "$script = @'
 {powershell_script}
-'@; Set-Content -LiteralPath \"$env:USERPROFILE\.athas\bin\athas.ps1\" -Value $script""#
+'@; Set-Content -LiteralPath \"$env:USERPROFILE\.blimy\bin\blimy.ps1\" -Value $script""#
    ))
 }
 
@@ -402,7 +402,7 @@ pub fn auto_fix_cli_on_startup() {
 }
 
 /// On macOS, replace launchers written by older Athas versions. Those ran
-/// `open "athas://open?..."`, which could leave a blank window instead of
+/// `open "blimy://open?..."`, which could leave a blank window instead of
 /// opening the requested path.
 #[cfg(target_os = "macos")]
 pub fn auto_fix_cli_on_startup() {
@@ -439,7 +439,7 @@ mod tests {
 
    #[test]
    fn reads_the_binary_back_from_a_launcher() {
-      let binary = std::path::Path::new("/Applications/Athas's App.app/Contents/MacOS/athas");
+      let binary = std::path::Path::new("/Applications/Athas's App.app/Contents/MacOS/blimy");
       assert_eq!(
          launcher_binary(&unix_cli_script(binary)).as_deref(),
          Some(binary)
@@ -449,10 +449,10 @@ mod tests {
    #[test]
    fn rewrites_legacy_launchers_and_ones_pointing_at_missing_binaries() {
       let current = unix_cli_script(std::path::Path::new("/bin/sh"));
-      let legacy = "#!/bin/bash\n# Athas CLI launcher\n\nopen \"athas://open?path=$1\"\n";
+      let legacy = "#!/bin/bash\n# Athas CLI launcher\n\nopen \"blimy://open?path=$1\"\n";
       assert!(launcher_needs_rewrite(legacy, &current));
 
-      let missing = unix_cli_script(std::path::Path::new("/nonexistent/Athas.app/athas"));
+      let missing = unix_cli_script(std::path::Path::new("/nonexistent/Athas.app/blimy"));
       assert!(launcher_needs_rewrite(&missing, &current));
    }
 
@@ -472,7 +472,7 @@ mod tests {
    #[test]
    fn launcher_preserves_arguments_and_the_callers_directory() {
       let directory = std::env::temp_dir().join(format!(
-         "athas-cli-test-{}",
+         "blimy-cli-test-{}",
          SystemTime::now()
             .duration_since(UNIX_EPOCH)
             .unwrap()
@@ -487,7 +487,7 @@ mod tests {
       )
       .unwrap();
       fs::set_permissions(&binary, fs::Permissions::from_mode(0o755)).unwrap();
-      let launcher = directory.join("athas");
+      let launcher = directory.join("blimy");
       fs::write(&launcher, unix_cli_script(&binary)).unwrap();
       let status = Command::new("bash")
          .arg(&launcher)
@@ -497,7 +497,7 @@ mod tests {
             "printf",
             "two words",
             "$(echo literal)",
-            "ünicode",
+            "Ã¼nicode",
          ])
          .current_dir(&directory)
          .status()
@@ -523,7 +523,7 @@ mod tests {
             "printf",
             "two words",
             "$(echo literal)",
-            "ünicode"
+            "Ã¼nicode"
          ]
       );
       assert_eq!(

@@ -39,7 +39,7 @@ pub fn disable_macos_autofill_heuristics() {
 }
 
 #[cfg(target_os = "macos")]
-use crate::app_runtime::{AppHandle, AthasRuntime};
+use crate::app_runtime::{AppHandle, BlimyRuntime};
 #[cfg(target_os = "macos")]
 use objc::{
    class,
@@ -135,7 +135,7 @@ unsafe extern "C" fn dock_menu(
       let item: *mut Object = msg_send![
          item,
          initWithTitle: ns_string("New Window")
-         action: sel!(athasDockNewWindow:)
+         action: sel!(blimyDockNewWindow:)
          keyEquivalent: ns_string("")
       ];
       let _: () = msg_send![item, setTarget: delegate];
@@ -241,7 +241,7 @@ unsafe extern "C" fn continue_spotlight_activity(
 }
 
 #[cfg(target_os = "macos")]
-unsafe extern "C" fn open_in_athas_service(
+unsafe extern "C" fn open_in_blimy_service(
    _provider: *mut Object,
    _selector: runtime::Sel,
    pasteboard: *mut Object,
@@ -306,7 +306,7 @@ unsafe fn add_delegate_method(
 }
 
 #[cfg(target_os = "macos")]
-pub fn install_dock_menu(app: &tauri::AppHandle<AthasRuntime>) -> Result<(), String> {
+pub fn install_dock_menu(app: &tauri::AppHandle<BlimyRuntime>) -> Result<(), String> {
    let _ = DOCK_APP_HANDLE.set(app.clone());
 
    unsafe {
@@ -336,7 +336,7 @@ pub fn install_dock_menu(app: &tauri::AppHandle<AthasRuntime>) -> Result<(), Str
       );
       add_delegate_method(
          delegate_class,
-         sel!(athasDockNewWindow:),
+         sel!(blimyDockNewWindow:),
          mem::transmute::<unsafe extern "C" fn(*mut Object, runtime::Sel, *mut Object), Imp>(
             dock_new_window,
          ),
@@ -354,7 +354,7 @@ pub fn install_dock_menu(app: &tauri::AppHandle<AthasRuntime>) -> Result<(), Str
 }
 
 #[cfg(target_os = "macos")]
-pub fn install_accessibility_observer(app: &tauri::AppHandle<AthasRuntime>) -> Result<(), String> {
+pub fn install_accessibility_observer(app: &tauri::AppHandle<BlimyRuntime>) -> Result<(), String> {
    let _ = ACCESSIBILITY_APP_HANDLE.set(app.clone());
 
    unsafe {
@@ -370,7 +370,7 @@ pub fn install_accessibility_observer(app: &tauri::AppHandle<AthasRuntime>) -> R
       }
       add_delegate_method(
          delegate_class,
-         sel!(athasAccessibilityDisplayOptionsDidChange:),
+         sel!(blimyAccessibilityDisplayOptionsDidChange:),
          mem::transmute::<unsafe extern "C" fn(*mut Object, runtime::Sel, *mut Object), Imp>(
             accessibility_options_changed,
          ),
@@ -386,7 +386,7 @@ pub fn install_accessibility_observer(app: &tauri::AppHandle<AthasRuntime>) -> R
       let _: () = msg_send![
          notification_center,
          addObserver: delegate
-         selector: sel!(athasAccessibilityDisplayOptionsDidChange:)
+         selector: sel!(blimyAccessibilityDisplayOptionsDidChange:)
          name: ns_string("NSWorkspaceAccessibilityDisplayOptionsDidChangeNotification")
          object: workspace
       ];
@@ -411,7 +411,7 @@ pub fn install_native_choice_sheet_handler() -> Result<(), String> {
 
       add_delegate_method(
          delegate_class,
-         sel!(athasNativeChoiceSheetDidEnd:returnCode:contextInfo:),
+         sel!(blimyNativeChoiceSheetDidEnd:returnCode:contextInfo:),
          mem::transmute::<
             unsafe extern "C" fn(*mut Object, runtime::Sel, *mut Object, isize, *mut c_void),
             Imp,
@@ -423,7 +423,7 @@ pub fn install_native_choice_sheet_handler() -> Result<(), String> {
 
 #[cfg(target_os = "macos")]
 pub fn install_spotlight_activity_handler(
-   app: &tauri::AppHandle<AthasRuntime>,
+   app: &tauri::AppHandle<BlimyRuntime>,
 ) -> Result<(), String> {
    let _ = SPOTLIGHT_APP_HANDLE.set(app.clone());
 
@@ -458,7 +458,7 @@ pub fn install_spotlight_activity_handler(
 }
 
 #[cfg(target_os = "macos")]
-pub fn install_services_provider(app: &tauri::AppHandle<AthasRuntime>) -> Result<(), String> {
+pub fn install_services_provider(app: &tauri::AppHandle<BlimyRuntime>) -> Result<(), String> {
    let _ = SERVICES_APP_HANDLE.set(app.clone());
 
    unsafe {
@@ -484,7 +484,7 @@ pub fn install_services_provider(app: &tauri::AppHandle<AthasRuntime>) -> Result
                *mut *mut Object,
             ),
             Imp,
-         >(open_in_athas_service),
+         >(open_in_blimy_service),
          b"v@:@@^@\0",
       )?;
 
@@ -580,7 +580,7 @@ pub fn show_native_choice_sheet(
          alert,
          beginSheetModalForWindow: ns_window.cast::<Object>()
          modalDelegate: delegate
-         didEndSelector: sel!(athasNativeChoiceSheetDidEnd:returnCode:contextInfo:)
+         didEndSelector: sel!(blimyNativeChoiceSheetDidEnd:returnCode:contextInfo:)
          contextInfo: context
       ];
    }
@@ -692,7 +692,7 @@ fn index_spotlight_item(path: &Path) -> Result<(), String> {
       let item: *mut Object = msg_send![
          item,
          initWithUniqueIdentifier: ns_string(path_text)
-         domainIdentifier: ns_string("com.athas.recent-items")
+         domainIdentifier: ns_string("com.blimy.recent-items")
          attributeSet: attribute_set
       ];
       let index: *mut Object = msg_send![class!(CSSearchableIndex), alloc];
@@ -813,7 +813,7 @@ pub fn configure_window_tabbing(ns_window: *mut c_void) -> Result<(), String> {
       let _: () = msg_send![class!(NSWindow), setAllowsAutomaticWindowTabbing: runtime::YES];
       let ns_window = ns_window.cast::<Object>();
       let _: () = msg_send![ns_window, setTabbingMode: 1usize];
-      let _: () = msg_send![ns_window, setTabbingIdentifier: ns_string("com.athas.workspace")];
+      let _: () = msg_send![ns_window, setTabbingIdentifier: ns_string("com.blimy.workspace")];
    }
 
    Ok(())

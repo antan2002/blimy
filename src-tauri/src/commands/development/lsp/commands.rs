@@ -10,8 +10,8 @@ use super::{
    },
 };
 use crate::app_runtime::AppHandle;
-use athas_lsp::{LspError, LspManager, LspResult};
-use athas_tooling::{LanguageToolConfigSet, ToolInstaller, ToolRegistry, ToolType};
+use blimy_lsp::{LspError, LspManager, LspResult};
+use blimy_tooling::{LanguageToolConfigSet, ToolInstaller, ToolRegistry, ToolType};
 use lsp_types::{
    CallHierarchyIncomingCall, CallHierarchyItem, CallHierarchyOutgoingCall, CodeActionOrCommand,
    CompletionItem, DocumentHighlight, DocumentSymbolResponse, FoldingRange, GotoDefinitionResponse,

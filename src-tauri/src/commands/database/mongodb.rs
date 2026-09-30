@@ -1,4 +1,4 @@
-use athas_database::{
+use blimy_database::{
    ConnectionManager,
    providers::{
       MongoCollectionInfo, delete_mongo_document as db_delete_mongo_document,

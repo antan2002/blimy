@@ -5,13 +5,13 @@ use super::{
    mcp::resolve_mcp_servers,
 };
 use crate::{app_runtime::AppHandle, service_urls};
-use athas_ai::{
+use blimy_ai::{
    AcpAgentBridge, AcpAgentStatus, AcpOpenedSession, AcpSessionList, AgentConfig, AgentRuntime,
    AgentSource, McpServerSetting, SessionConfigValue,
    acp::registry::{catalog::merge_registry_agents, current_registry_platform},
 };
-use athas_runtime::{RuntimeManager, RuntimeType};
-use athas_tooling::{ToolConfig, ToolInstaller, ToolRuntime};
+use blimy_runtime::{RuntimeManager, RuntimeType};
+use blimy_tooling::{ToolConfig, ToolInstaller, ToolRuntime};
 use serde::Deserialize;
 use std::{
    collections::HashMap,
@@ -925,7 +925,7 @@ mod tests {
    use super::{
       bundled_agent_catalog, is_acp_agent_id, merge_agent_catalog, node_package_identity,
    };
-   use athas_ai::AgentConfig;
+   use blimy_ai::AgentConfig;
 
    #[test]
    fn keeps_terminal_integrations_out_of_the_acp_catalog() {

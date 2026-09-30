@@ -1,5 +1,5 @@
 use crate::app_runtime::AppHandle;
-use athas_extensions::ExtensionInstaller;
+use blimy_extensions::ExtensionInstaller;
 use serde::Deserialize;
 use serde_json::{Map, Value, json};
 use std::{
@@ -65,7 +65,7 @@ fn database_extension_id(provider_id: &str) -> Result<String, String> {
       return Err("Invalid database provider id".to_string());
    }
 
-   Ok(format!("athas.database.{}", provider_id))
+   Ok(format!("blimy.database.{}", provider_id))
 }
 
 fn platform_arch() -> &'static str {
@@ -280,7 +280,7 @@ pub async fn run_database_sidecar(
    if is_builtin_database_provider(&provider_id) {
       return run_with_database_sidecar_timeout(
          DATABASE_SIDECAR_TIMEOUT,
-         athas_database::sidecar::run_provider_command(provider_id, command, payload),
+         blimy_database::sidecar::run_provider_command(provider_id, command, payload),
       )
       .await;
    }

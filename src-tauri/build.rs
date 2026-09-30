@@ -2,9 +2,9 @@ fn main() {
    if std::env::var_os("CARGO_FEATURE_LINUX").is_some()
       && std::env::var("CARGO_CFG_TARGET_OS").as_deref() == Ok("linux")
    {
-      println!("cargo:rustc-link-arg-bin=athas=-Wl,-rpath,$ORIGIN");
-      println!("cargo:rustc-link-arg-bin=athas=-Wl,-rpath,$ORIGIN/../lib/Athas");
-      println!("cargo:rustc-link-arg-bin=athas=-Wl,-rpath,$ORIGIN/../lib/Athas Preview");
+      println!("cargo:rustc-link-arg-bin=blimy=-Wl,-rpath,$ORIGIN");
+      println!("cargo:rustc-link-arg-bin=blimy=-Wl,-rpath,$ORIGIN/../lib/Athas");
+      println!("cargo:rustc-link-arg-bin=blimy=-Wl,-rpath,$ORIGIN/../lib/Athas Preview");
    }
 
    tauri_build::build()

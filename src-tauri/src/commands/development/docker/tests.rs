@@ -150,7 +150,7 @@ fn allows_only_env_file_names() {
 #[test]
 fn normalizes_project_config_presets_when_loading() {
    let workspace = tempfile::tempdir().expect("workspace tempdir");
-   let config_dir = workspace.path().join(".athas");
+   let config_dir = workspace.path().join(".blimy");
    fs::create_dir_all(&config_dir).expect("config directory");
    fs::write(
       config_dir.join("docker.json"),
@@ -161,7 +161,7 @@ fn normalizes_project_config_presets_when_loading() {
                "name": " Web ",
                "contextPath": " . ",
                "dockerfilePath": " ",
-               "tag": " athas/web:latest ",
+               "tag": " blimy/web:latest ",
                "buildArgs": [" --no-cache ", " "]
             },
             { "name": " ", "contextPath": ".", "buildArgs": [] }
@@ -184,7 +184,7 @@ fn normalizes_project_config_presets_when_loading() {
    assert_eq!(config.build_presets[0].dockerfile_path, None);
    assert_eq!(
       config.build_presets[0].tag.as_deref(),
-      Some("athas/web:latest")
+      Some("blimy/web:latest")
    );
    assert_eq!(config.build_presets[0].build_args, vec!["--no-cache"]);
 }
@@ -373,7 +373,7 @@ fn discovers_devcontainer_definitions() {
         "workspaceFolder": "/workspaces/app",
         "workspaceMount": "source=${localWorkspaceFolder},target=${containerWorkspaceFolder},type=bind",
         "containerEnv": { "RUST_LOG": "debug", "PORT": 3000 },
-        "remoteEnv": { "EDITOR": "athas" },
+        "remoteEnv": { "EDITOR": "blimy" },
         "mounts": [
           "source=cache,target=/cache,type=volume",
           "source=${localWorkspaceFolderBasename}-cache,target=${containerWorkspaceFolder}/.cache,type=volume"
@@ -417,7 +417,7 @@ fn discovers_devcontainer_definitions() {
       definitions[0].container_env,
       vec!["PORT=3000", "RUST_LOG=debug"]
    );
-   assert_eq!(definitions[0].remote_env, vec!["EDITOR=athas"]);
+   assert_eq!(definitions[0].remote_env, vec!["EDITOR=blimy"]);
    assert_eq!(
       definitions[0].mounts,
       vec![

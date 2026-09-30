@@ -18,7 +18,7 @@ pub struct AthasLogFile {
 }
 
 #[command]
-pub fn read_athas_log(app: AppHandle) -> Result<AthasLogFile, String> {
+pub fn read_blimy_log(app: AppHandle) -> Result<AthasLogFile, String> {
    let log_dir = app
       .path()
       .app_log_dir()

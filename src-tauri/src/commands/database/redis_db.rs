@@ -1,4 +1,4 @@
-use athas_database::{
+use blimy_database::{
    ConnectionManager,
    providers::{
       RedisKeyInfo, RedisServerInfo, redis_delete_key as db_redis_delete_key,

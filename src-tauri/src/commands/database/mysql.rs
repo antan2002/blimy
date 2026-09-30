@@ -1,4 +1,4 @@
-use athas_database::{
+use blimy_database::{
    ConnectionManager,
    providers::{
       delete_mysql_row as db_delete_mysql_row, execute_mysql as db_execute_mysql,

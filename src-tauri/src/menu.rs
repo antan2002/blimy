@@ -326,7 +326,7 @@ fn build_open_recent_submenu<R: tauri::Runtime>(
 
 #[cfg(target_os = "macos")]
 pub fn refresh_open_recent_submenu(
-   app: &tauri::AppHandle<crate::app_runtime::AthasRuntime>,
+   app: &tauri::AppHandle<crate::app_runtime::BlimyRuntime>,
 ) -> Result<(), String> {
    let Some(menu) = app.menu() else {
       return Ok(());
