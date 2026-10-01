@@ -135,15 +135,9 @@ export const GeneralSettings = () => {
       const { openUrl } = await import("@tauri-apps/plugin-opener");
       const report = await buildBugReport();
 
-      if (channel.id === "email") {
-        await openUrl(
-          `${channel.url}?subject=${encodeURIComponent("Blimy bug report")}&body=${encodeURIComponent(report)}`,
-        );
-      } else {
-        await writeClipboardText(report);
-        await openUrl(channel.url);
-        showToast({ message: "Report template copied", type: "success" });
-      }
+      await writeClipboardText(report);
+      await openUrl(channel.url);
+      showToast({ message: "Report template copied", type: "success" });
 
       setIsReportBugDialogOpen(false);
     } catch (err) {
