@@ -59,6 +59,13 @@ function handleDeepLink(url: string) {
       installExtensionFromDeepLink(action.extensionId);
     } else if (action.type === "extensions") {
       void openExtensionsTabFromDeepLink(action.extensionsCategory);
+    } else if (action.type === "auth") {
+      const parsedUrl = new URL(action.url);
+      if (parsedUrl.hash) {
+        window.location.hash = parsedUrl.hash;
+      } else if (parsedUrl.search) {
+        window.location.search = parsedUrl.search;
+      }
     } else {
       void openSettingsFromDeepLink(action.tab, action.extensionsCategory);
     }
@@ -77,7 +84,8 @@ type DeepLinkAction =
   | { type: "windowOpen"; request: WindowOpenRequest }
   | { type: "extensionInstall"; extensionId: string }
   | { type: "extensions"; extensionsCategory?: Settings["extensionsActiveTab"] }
-  | { type: "settings"; tab: SettingsTab; extensionsCategory?: Settings["extensionsActiveTab"] };
+  | { type: "settings"; tab: SettingsTab; extensionsCategory?: Settings["extensionsActiveTab"] }
+  | { type: "auth"; url: string };
 
 const SUPPORTED_SETTINGS_TABS = new Set<SettingsTab>([
   "account",
@@ -163,6 +171,10 @@ function parseDeepLinkAction(url: string): DeepLinkAction | null {
 
   const path = parsed.pathname.replace(/^\/\//, "");
   const segments = [parsed.host, ...path.split("/")].filter(Boolean);
+
+  if (segments[0] === "auth") {
+    return { type: "auth", url };
+  }
 
   if (segments[0] === "extension" && segments[1] === "install" && segments[2]) {
     return {
