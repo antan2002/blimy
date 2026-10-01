@@ -39,7 +39,7 @@ import {
   restartAllLanguageServers,
   stopAllLanguageServers,
 } from "@/features/keymaps/commands/lsp-command-actions";
-import { openBlimyLogBuffer } from "@/features/settings/services/Blimy-log-service";
+import { openBlimyLogBuffer } from "@/features/settings/services/blimy-log-service";
 import { useUIState } from "@/features/window/stores/ui-state.store";
 import { showAlertDialog } from "@/ui/dialog";
 import { keymapRegistry } from "@/features/keymaps/utils/registry";

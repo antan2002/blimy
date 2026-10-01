@@ -15,7 +15,7 @@ import { useSettingsStore } from "@/features/settings/stores/settings.store";
 import NumberInput from "@/ui/number-input";
 import Switch from "@/ui/switch";
 import { AgentsSection } from "../ai/agents-section";
-import { BlimyPlanSection } from "../ai/Blimy-plan-section";
+import { BlimyPlanSection } from "../ai/blimy-plan-section";
 import { CustomEndpointSection } from "../ai/custom-endpoint-section";
 import { DefaultModelSection } from "../ai/default-model-section";
 import { FeatureModelsSection } from "../ai/feature-models-section";

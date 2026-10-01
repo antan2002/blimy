@@ -15,7 +15,7 @@ import { Button } from "@/ui/button";
 import { Progress } from "@/ui/progress";
 import { ProviderIcon } from "@/features/ai/components/icons/provider-icons";
 import Section, { SettingRow } from "../settings-section";
-import { describeIncludedCredit } from "../../lib/Blimy-credit";
+import { describeIncludedCredit } from "../../lib/blimy-credit";
 
 function openBilling() {
   void openUrl(getServiceUrls().dashboardBillingUrl).catch((error: unknown) =>

@@ -9,7 +9,7 @@ import {
   withDefaultConnection,
   withTaskConnection,
 } from "../lib/ai-model-preferences";
-import { describeIncludedCredit } from "../lib/Blimy-credit";
+import { describeIncludedCredit } from "../lib/blimy-credit";
 
 const openai = { providerId: "openai", modelId: "gpt-test" };
 const ollama = { providerId: "ollama", modelId: "llama3" };

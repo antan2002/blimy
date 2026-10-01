@@ -7,7 +7,7 @@ import { MistralProvider } from "../services/providers/mistral-provider";
 import { OllamaProvider } from "../services/providers/ollama-provider";
 import { AnthropicProvider } from "../services/providers/anthropic-provider";
 import { GeminiProvider } from "../services/providers/gemini-provider";
-import { BlimyProvider } from "../services/providers/Blimy-provider";
+import { BlimyProvider } from "../services/providers/blimy-provider";
 import type { StreamRequest } from "../services/providers/ai-provider-interface";
 
 const config = {

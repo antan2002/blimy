@@ -622,7 +622,7 @@ export const settingsSearchIndex: SettingSearchRecord[] = [
     keywords: ["ai", "Blimy", "pro", "plan", "billing", "subscription", "intelligence"],
   },
   {
-    id: "ai-Blimy-credit",
+    id: "ai-blimy-credit",
     tab: "ai",
     section: "Blimy",
     label: "Included credit",

@@ -7,7 +7,7 @@ import { invoke } from "@tauri-apps/api/core";
  * token in particular is read from the CLI on demand and never leaves the
  * machine — it is not persisted into Blimy' own keychain entry.
  */
-export type GitHubTokenSource = "Blimy" | "personalAccessToken" | "ghCli";
+export type GitHubTokenSource = "blimy" | "personalAccessToken" | "ghCli";
 
 export interface GitHubTokenStatus {
   source: GitHubTokenSource | null;

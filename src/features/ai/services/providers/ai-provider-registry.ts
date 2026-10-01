@@ -1,4 +1,4 @@
-import { BlimyProvider } from "./Blimy-provider";
+import { BlimyProvider } from "./blimy-provider";
 import { getApiBase } from "@/utils/api-base";
 import { AnthropicProvider } from "./anthropic-provider";
 import { GeminiProvider } from "./gemini-provider";

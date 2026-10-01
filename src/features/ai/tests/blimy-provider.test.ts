@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vite-plus/test";
 import { getApiErrorCode } from "../lib/api-error";
-import { BlimyProvider } from "../services/providers/Blimy-provider";
+import { BlimyProvider } from "../services/providers/blimy-provider";
 
 const state = vi.hoisted(() => ({
   fetch: vi.fn(),
