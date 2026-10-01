@@ -22,12 +22,12 @@ const binary = resolve(
   targetDirectory,
   process.env.CARGO_BUILD_TARGET ?? "",
   "debug",
-  process.platform === "win32" ? "athas.exe" : "athas",
+  process.platform === "win32" ? "Blimy.exe" : "Blimy",
 );
 
 if (!existsSync(binary)) {
   console.error(
-    "The Athas development binary is not built yet. Start bun dev, then retry bun run cli.",
+    "The Blimy development binary is not built yet. Start bun dev, then retry bun run cli.",
   );
   process.exit(1);
 }

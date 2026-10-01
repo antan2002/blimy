@@ -4,7 +4,7 @@ import { promisify } from "node:util";
 
 const execute = promisify(execFile);
 
-const repository = "athasdev/athas";
+const repository = "Blimydev/Blimy";
 const requiredJobs = ["Bun — typecheck, frontend check", "Rust — fmt, check, clippy, test"];
 
 export interface CiRun {

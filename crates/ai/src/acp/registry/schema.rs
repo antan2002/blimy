@@ -1,4 +1,4 @@
-//! The ACP Registry's `registry.json` and `quarantine.json`, and how Athas picks the
+//! The ACP Registry's `registry.json` and `quarantine.json`, and how Blimy picks the
 //! distribution it installs for this machine. Format:
 //! https://github.com/agentclientprotocol/registry/blob/main/FORMAT.md
 
@@ -62,7 +62,7 @@ pub struct PackageDistribution {
    pub env: BTreeMap<String, String>,
 }
 
-/// The distribution Athas installs for an agent on this machine.
+/// The distribution Blimy installs for an agent on this machine.
 #[derive(Debug, Clone, PartialEq)]
 pub enum ResolvedDistribution {
    /// A verified download. `sha256` is lowercase hex.
@@ -73,7 +73,7 @@ pub enum ResolvedDistribution {
       args: Vec<String>,
       env: BTreeMap<String, String>,
    },
-   /// An npm package installed with npm into Athas's own directory and run with Node.
+   /// An npm package installed with npm into Blimy's own directory and run with Node.
    Npx {
       name: String,
       version: String,
@@ -197,7 +197,7 @@ pub fn resolve_distribution(
 
    Err(binary_problem.unwrap_or_else(|| {
       if agent.distribution.binary.is_empty() {
-         "The registry lists no distribution Athas can install".to_string()
+         "The registry lists no distribution Blimy can install".to_string()
       } else {
          "The registry has no build for this platform".to_string()
       }

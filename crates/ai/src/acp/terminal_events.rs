@@ -1,4 +1,4 @@
-//! Tells the chat what the terminals Athas runs for agents print and how they end. Output is
+//! Tells the chat what the terminals Blimy runs for agents print and how they end. Output is
 //! coalesced per terminal: a busy command's PTY reads come in small pieces, and one event per
 //! read would flood the frontend, so what arrives within [`OUTPUT_FLUSH_DELAY`] goes out as one
 //! event. An exit sends the output still waiting first, so the chat never sees them reversed.

@@ -25,7 +25,7 @@ pub fn cef_command_line_args() -> Vec<(&'static str, Option<&'static str>)> {
 }
 
 fn linux_gpu_disabled() -> bool {
-   std::env::var("ATHAS_DISABLE_LINUX_GPU").is_ok_and(|value| env_flag_enabled(&value))
+   std::env::var("Blimy_DISABLE_LINUX_GPU").is_ok_and(|value| env_flag_enabled(&value))
 }
 
 fn env_flag_enabled(value: &str) -> bool {

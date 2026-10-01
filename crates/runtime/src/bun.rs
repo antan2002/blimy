@@ -25,7 +25,7 @@ impl BunRuntime {
    ///
    /// Priority:
    /// 1. Check system PATH for a compatible Bun
-   /// 2. Check if Athas-managed Bun is compatible
+   /// 2. Check if Blimy-managed Bun is compatible
    /// 3. Download Bun from GitHub releases
    pub async fn get_or_install(managed_root: Option<&Path>) -> Result<Self, RuntimeError> {
       // 1. Check system PATH
@@ -39,12 +39,12 @@ impl BunRuntime {
       if let Ok(runtime) = Self::from_managed_path(&managed_dir) {
          match runtime.check_version().await {
             Ok(version) if version >= MIN_BUN_VERSION => {
-               log::info!("Using Athas-managed Bun at {:?}", runtime.binary_path);
+               log::info!("Using Blimy-managed Bun at {:?}", runtime.binary_path);
                return Ok(runtime);
             }
             Ok(version) => {
                log::info!(
-                  "Athas-managed Bun {}.{}.{} is below required version {}, upgrading",
+                  "Blimy-managed Bun {}.{}.{} is below required version {}, upgrading",
                   version.0,
                   version.1,
                   version.2,
@@ -53,7 +53,7 @@ impl BunRuntime {
             }
             Err(error) => {
                log::warn!(
-                  "Athas-managed Bun could not be validated and will be reinstalled: {}",
+                  "Blimy-managed Bun could not be validated and will be reinstalled: {}",
                   error
                );
             }

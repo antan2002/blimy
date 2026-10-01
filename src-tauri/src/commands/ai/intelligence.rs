@@ -117,7 +117,7 @@ pub async fn intelligence_search_files(
    .map_err(|e| e.to_string())?
 }
 
-/// A write by Athas's own agent, in the shape of the ACP `agent_file_write` event, so the chat
+/// A write by Blimy's own agent, in the shape of the ACP `agent_file_write` event, so the chat
 /// records it for keep-or-reject review exactly like an ACP agent's write.
 #[derive(Serialize)]
 #[serde(rename_all = "camelCase")]

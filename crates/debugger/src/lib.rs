@@ -529,7 +529,7 @@ mod tests {
 
    #[test]
    fn encodes_content_length_in_bytes() {
-      let message = json!({ "message": "Athas ÄŸ" });
+      let message = json!({ "message": "Blimy ÄŸ" });
       let encoded = encode_protocol_message(&message).expect("protocol message");
       let (header, content) = encoded.split_once("\r\n\r\n").expect("header separator");
 

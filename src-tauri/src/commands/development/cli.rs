@@ -55,7 +55,7 @@ pub fn check_cli_installed() -> Result<bool, String> {
    Ok(true)
 }
 
-pub const CLI_HELP_TEXT: &str = r#"Athas CLI
+pub const CLI_HELP_TEXT: &str = r#"Blimy CLI
 
 Usage:
   blimy [--new-window | --reuse-window] [paths...]
@@ -74,7 +74,7 @@ Options:
   -n, --new-window     Open each target in a new window
   -r, --reuse-window   Open in an existing editor (create one if needed)
   --cwd <directory>   Working directory for terminals and repository commands
-  --                  End Athas options; following arguments belong to the command
+  --                  End Blimy options; following arguments belong to the command
   -h, --help          Show this help
 
 Terminal, Settings, Extensions, and GitHub resources open in their own windows.
@@ -95,7 +95,7 @@ fn unix_cli_script(binary: &std::path::Path) -> String {
    let binary = binary.to_string_lossy().replace('\'', "'\\''");
    format!(
       r#"#!/bin/bash
-# Athas CLI launcher
+# Blimy CLI launcher
 blimy_binary='{binary}'
 case "${{1:-}}" in
     help|-h|--help) exec "$blimy_binary" --help ;;
@@ -152,7 +152,7 @@ $start.Arguments = $encodedArgs
 }
 
 #[cfg(any(target_os = "macos", test))]
-const UNIX_CLI_SCRIPT_HEADER: &str = "#!/bin/bash\n# Athas CLI launcher\n";
+const UNIX_CLI_SCRIPT_HEADER: &str = "#!/bin/bash\n# Blimy CLI launcher\n";
 
 #[cfg(unix)]
 fn current_cli_script() -> Result<String, String> {
@@ -175,7 +175,7 @@ fn ensure_installable_location() -> Result<(), String> {
    let binary = std::env::current_exe().map_err(|error| error.to_string())?;
    if is_translocated(&binary) {
       return Err(
-         "Athas is running from a temporary location. Move Athas to your Applications folder, \
+         "Blimy is running from a temporary location. Move Blimy to your Applications folder, \
           reopen it, and install the CLI command again."
             .to_string(),
       );
@@ -183,7 +183,7 @@ fn ensure_installable_location() -> Result<(), String> {
    Ok(())
 }
 
-/// Returns the binary an Athas launcher script execs, or `None` for launchers
+/// Returns the binary an Blimy launcher script execs, or `None` for launchers
 /// written by older versions that went through `open` and URL schemes instead.
 #[cfg(any(target_os = "macos", test))]
 fn launcher_binary(script: &str) -> Option<std::path::PathBuf> {
@@ -195,8 +195,8 @@ fn launcher_binary(script: &str) -> Option<std::path::PathBuf> {
 }
 
 /// Decides whether a launcher found on disk should be replaced by `current`.
-/// Scripts Athas did not write are left alone, and a working launcher that
-/// points at another existing Athas build (for example a preview channel) is
+/// Scripts Blimy did not write are left alone, and a working launcher that
+/// points at another existing Blimy build (for example a preview channel) is
 /// kept so channels do not keep overwriting each other.
 #[cfg(any(target_os = "macos", test))]
 fn launcher_needs_rewrite(existing: &str, current: &str) -> bool {
@@ -401,7 +401,7 @@ pub fn auto_fix_cli_on_startup() {
    }
 }
 
-/// On macOS, replace launchers written by older Athas versions. Those ran
+/// On macOS, replace launchers written by older Blimy versions. Those ran
 /// `open "blimy://open?..."`, which could leave a blank window instead of
 /// opening the requested path.
 #[cfg(target_os = "macos")]
@@ -439,7 +439,7 @@ mod tests {
 
    #[test]
    fn reads_the_binary_back_from_a_launcher() {
-      let binary = std::path::Path::new("/Applications/Athas's App.app/Contents/MacOS/blimy");
+      let binary = std::path::Path::new("/Applications/Blimy's App.app/Contents/MacOS/blimy");
       assert_eq!(
          launcher_binary(&unix_cli_script(binary)).as_deref(),
          Some(binary)
@@ -449,10 +449,10 @@ mod tests {
    #[test]
    fn rewrites_legacy_launchers_and_ones_pointing_at_missing_binaries() {
       let current = unix_cli_script(std::path::Path::new("/bin/sh"));
-      let legacy = "#!/bin/bash\n# Athas CLI launcher\n\nopen \"blimy://open?path=$1\"\n";
+      let legacy = "#!/bin/bash\n# Blimy CLI launcher\n\nopen \"blimy://open?path=$1\"\n";
       assert!(launcher_needs_rewrite(legacy, &current));
 
-      let missing = unix_cli_script(std::path::Path::new("/nonexistent/Athas.app/blimy"));
+      let missing = unix_cli_script(std::path::Path::new("/nonexistent/Blimy.app/blimy"));
       assert!(launcher_needs_rewrite(&missing, &current));
    }
 
@@ -479,7 +479,7 @@ mod tests {
             .as_nanos()
       ));
       fs::create_dir_all(&directory).unwrap();
-      let binary = directory.join("Athas's binary");
+      let binary = directory.join("Blimy's binary");
       fs::write(
          &binary,
          "#!/bin/bash\nif [ \"$1\" = --validate-cli ]; then exit 0; fi\nprintf '%s\\0' \"$PWD\" \

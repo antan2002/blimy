@@ -279,7 +279,7 @@ struct MarketplaceExtensionManifest {
 }
 
 fn extensions_manifest_url() -> String {
-   let base_url = std::env::var("ATHAS_EXTENSIONS_CDN_URL")
+   let base_url = std::env::var("Blimy_EXTENSIONS_CDN_URL")
       .unwrap_or_else(|_| service_urls::extensions_cdn_base_url().to_string());
    format!("{}/manifests.json", base_url.trim_end_matches('/'))
 }

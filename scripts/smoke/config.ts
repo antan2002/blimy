@@ -11,15 +11,15 @@ export type SmokeOptions = {
 
 export const smokeTargets: Record<SmokeIdentity, { config?: string; macosAppName: string }> = {
   stable: {
-    macosAppName: "Athas.app",
+    macosAppName: "Blimy.app",
   },
   preview: {
     config: "src-tauri/tauri.preview.conf.json",
-    macosAppName: "Athas Preview.app",
+    macosAppName: "Blimy Preview.app",
   },
   smoke: {
     config: "src-tauri/tauri.smoke.conf.json",
-    macosAppName: "Athas Smoke.app",
+    macosAppName: "Blimy Smoke.app",
   },
 };
 
@@ -85,8 +85,8 @@ export function getSmokeLaunchPath(cwd: string, platform: SmokePlatform, identit
         smokeTargets[identity].macosAppName,
       );
     case "linux":
-      return path.join(cwd, "target", "debug", "athas");
+      return path.join(cwd, "target", "debug", "Blimy");
     case "windows":
-      return path.join(cwd, "target", "debug", "athas.exe");
+      return path.join(cwd, "target", "debug", "Blimy.exe");
   }
 }

@@ -52,7 +52,7 @@ try {
           VITE_EXTENSION_MARKETPLACE_LOCAL: "true",
           WEBKIT_DISABLE_DMABUF_RENDERER: "1",
         },
-        { identifier: "com.code.athas.preview" },
+        { identifier: "com.code.Blimy.preview" },
       ),
       stdin: "inherit",
       stdout: "inherit",

@@ -25,7 +25,7 @@ const GITHUB_JSON_ACCEPT: &str = "application/vnd.github+json";
 const GITHUB_WORKFLOW_JOB_LOGS_ACCEPT: &str = GITHUB_JSON_ACCEPT;
 const WORKFLOW_JOB_LOGS_UNAVAILABLE_MESSAGE: &str =
    "GitHub Actions logs are not available yet. Try again after the job finishes.";
-const USER_AGENT_VALUE: &str = "Athas";
+const USER_AGENT_VALUE: &str = "Blimy";
 const GITHUB_REQUEST_INTERVAL: Duration = Duration::from_millis(200);
 
 static GITHUB_REQUEST_GATE: LazyLock<Mutex<Instant>> = LazyLock::new(|| Mutex::new(Instant::now()));
@@ -336,7 +336,7 @@ impl GitHubApi {
          .as_deref()
          .is_none_or(|token| token.trim().is_empty())
       {
-         return Err("GitHub account required. Connect GitHub in Athas and try again.".to_string());
+         return Err("GitHub account required. Connect GitHub in Blimy and try again.".to_string());
       }
 
       Self::new(github_token)
@@ -552,7 +552,7 @@ fn send_github_request(request: RequestBuilder) -> Result<Response, String> {
 
    if status.as_u16() == 401 {
       return Err(
-         "GitHub authentication failed. Connect GitHub in Athas and try again.".to_string(),
+         "GitHub authentication failed. Connect GitHub in Blimy and try again.".to_string(),
       );
    }
 
@@ -2371,7 +2371,7 @@ mod api_tests {
    #[test]
    fn only_treats_explicit_github_authentication_failures_as_invalid_tokens() {
       assert!(super::is_github_authentication_error(
-         "GitHub authentication failed. Connect GitHub in Athas and try again."
+         "GitHub authentication failed. Connect GitHub in Blimy and try again."
       ));
       assert!(!super::is_github_authentication_error(
          "GitHub API request failed (503 Service Unavailable): unavailable"

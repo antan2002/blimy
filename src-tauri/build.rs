@@ -3,8 +3,8 @@ fn main() {
       && std::env::var("CARGO_CFG_TARGET_OS").as_deref() == Ok("linux")
    {
       println!("cargo:rustc-link-arg-bin=blimy=-Wl,-rpath,$ORIGIN");
-      println!("cargo:rustc-link-arg-bin=blimy=-Wl,-rpath,$ORIGIN/../lib/Athas");
-      println!("cargo:rustc-link-arg-bin=blimy=-Wl,-rpath,$ORIGIN/../lib/Athas Preview");
+      println!("cargo:rustc-link-arg-bin=blimy=-Wl,-rpath,$ORIGIN/../lib/Blimy");
+      println!("cargo:rustc-link-arg-bin=blimy=-Wl,-rpath,$ORIGIN/../lib/Blimy Preview");
    }
 
    tauri_build::build()

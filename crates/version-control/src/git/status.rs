@@ -472,7 +472,7 @@ mod tests {
          index.write_tree().expect("write tree")
       };
       let tree = repo.find_tree(tree_id).expect("tree");
-      let signature = Signature::now("Athas Test", "blimy@example.com").expect("signature");
+      let signature = Signature::now("Blimy Test", "blimy@example.com").expect("signature");
       repo
          .commit(Some("HEAD"), &signature, &signature, "initial", &tree, &[])
          .expect("commit");

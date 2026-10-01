@@ -139,7 +139,7 @@ mod tests {
       index.write().expect("write index");
       let tree_id = index.write_tree().expect("write tree");
       let tree = repo.find_tree(tree_id).expect("find tree");
-      let signature = Signature::now("Athas Test", "test@blimy.dev").expect("signature");
+      let signature = Signature::now("Blimy Test", "test@blimy.dev").expect("signature");
       repo
          .commit(
             Some("HEAD"),
@@ -179,7 +179,7 @@ mod tests {
       assert!(inserted.is_uncommitted);
       assert!(inserted.commit_hash.is_empty());
       assert!(!committed.is_uncommitted);
-      assert_eq!(committed.author, "Athas Test");
+      assert_eq!(committed.author, "Blimy Test");
    }
 
    #[test]
@@ -201,7 +201,7 @@ mod tests {
          .expect("first visible line blame");
 
       assert!(!first_line.is_uncommitted);
-      assert_eq!(first_line.author, "Athas Test");
+      assert_eq!(first_line.author, "Blimy Test");
    }
 
    #[test]

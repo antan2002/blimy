@@ -5,7 +5,7 @@
 //! - `<agents_root>/<id>/<version>-<key>/`: one complete install per version. Directories are built
 //!   under a `.staging-*` name and renamed into place, so a version directory that exists is
 //!   complete.
-//! - `<launcher_dir>/<id>` (`<id>.cmd` on Windows): the script Athas starts, rewritten atomically
+//! - `<launcher_dir>/<id>` (`<id>.cmd` on Windows): the script Blimy starts, rewritten atomically
 //!   to switch versions, next to `<id>.json` with the installed version.
 //!
 //! Binary downloads are checked against the registry's SHA-256 before they are unpacked, and
@@ -375,7 +375,7 @@ fn cmd_quote(word: &str) -> Result<String, String> {
    Ok(format!("\"{}\"", word.replace('%', "%%")))
 }
 
-/// A script that runs `program` with `leading_args`, then whatever Athas passes.
+/// A script that runs `program` with `leading_args`, then whatever Blimy passes.
 pub fn launcher_script(program: &Path, leading_args: &[String]) -> Result<String, String> {
    let program = program.to_string_lossy();
    if cfg!(windows) {

@@ -22,9 +22,9 @@ const BLIMY_WINDOW_MATERIAL: NSVisualEffectMaterial = NSVisualEffectMaterial::Si
 #[cfg(all(target_os = "macos", not(feature = "linux")))]
 const BLIMY_WINDOW_STATE: NSVisualEffectState = NSVisualEffectState::FollowsWindowActiveState;
 #[cfg(target_os = "windows")]
-const ATHAS_WINDOWS_DARK_ACRYLIC_TINT: VibrancyColor = (18, 18, 18, 125);
+const Blimy_WINDOWS_DARK_ACRYLIC_TINT: VibrancyColor = (18, 18, 18, 125);
 #[cfg(target_os = "windows")]
-const ATHAS_WINDOWS_LIGHT_ACRYLIC_TINT: VibrancyColor = (245, 245, 245, 125);
+const Blimy_WINDOWS_LIGHT_ACRYLIC_TINT: VibrancyColor = (245, 245, 245, 125);
 
 static APP_WINDOW_COUNTER: AtomicU32 = AtomicU32::new(0);
 
@@ -65,7 +65,7 @@ mod agent_window_tests {
       let url = build_window_open_url(Some(&request), "main-2", 123);
       assert!(url.starts_with("/?view=detached&kind=agent&channel=test-channel&"));
       assert!(!url.contains("target=open"));
-      assert_eq!(window_title_for_request(Some(&request)), "Agents - Athas");
+      assert_eq!(window_title_for_request(Some(&request)), "Agents - Blimy");
 
       let request: CreateAppWindowRequest = serde_json::from_value(serde_json::json!({
          "detached": { "kind": "resource", "channel": "abc", "payload": "{\"a\":1}" }
@@ -75,7 +75,7 @@ mod agent_window_tests {
       assert!(
          url.starts_with("/?view=detached&kind=resource&channel=abc&payload=%7B%22a%22%3A1%7D&")
       );
-      assert_eq!(window_title_for_request(Some(&request)), "Athas");
+      assert_eq!(window_title_for_request(Some(&request)), "Blimy");
    }
 
    #[test]
@@ -99,7 +99,7 @@ mod agent_window_tests {
       let payload: serde_json::Value = serde_json::from_str(&query["payload"]).unwrap();
       assert_eq!(payload["content"]["command"], "echo 'a & b'");
       assert_eq!(payload["workspacePath"], "/my project");
-      assert_eq!(window_title_for_request(Some(&request)), "Terminal - Athas");
+      assert_eq!(window_title_for_request(Some(&request)), "Terminal - Blimy");
       assert!(!query.contains_key("target"));
    }
 
@@ -112,14 +112,14 @@ mod agent_window_tests {
       let url = build_window_open_url(Some(&request), "main-2", 123);
       assert!(url.contains("target=open&type=directory&path="));
       assert!(!url.contains("view=detached"));
-      assert_eq!(window_title_for_request(Some(&request)), "project - Athas");
+      assert_eq!(window_title_for_request(Some(&request)), "project - Blimy");
    }
 
    #[test]
    fn preserves_empty_windows() {
       let url = build_window_open_url(None, "main-2", 123);
       assert!(url.starts_with("/?blimyWindowTraceId=main-2&"));
-      assert_eq!(window_title_for_request(None), "Athas");
+      assert_eq!(window_title_for_request(None), "Blimy");
    }
 }
 
@@ -239,15 +239,15 @@ fn window_title_for_request(request: Option<&CreateAppWindowRequest>) -> String 
          Some("terminal") => "Terminal",
          Some("settings") => "Settings",
          Some("extensions") => "Extensions",
-         _ => "Athas",
+         _ => "Blimy",
       };
-      return format!("{title} - Athas");
+      return format!("{title} - Blimy");
    }
    if let Some(detached) = request.and_then(|request| request.detached.as_ref()) {
       return if detached.kind == "agent" {
-         "Agents - Athas".to_string()
+         "Agents - Blimy".to_string()
       } else {
-         "Athas".to_string()
+         "Blimy".to_string()
       };
    }
    let name = request.and_then(|request| {
@@ -269,8 +269,8 @@ fn window_title_for_request(request: Option<&CreateAppWindowRequest>) -> String 
    });
 
    match name {
-      Some(name) => format!("{name} - Athas"),
-      None => "Athas".to_string(),
+      Some(name) => format!("{name} - Blimy"),
+      None => "Blimy".to_string(),
    }
 }
 
@@ -320,8 +320,8 @@ pub fn configure_app_window(window: &tauri::WebviewWindow<BlimyRuntime>) {
 #[cfg(target_os = "windows")]
 fn windows_acrylic_tint(theme_type: Option<&str>) -> VibrancyColor {
    match theme_type {
-      Some("light") => ATHAS_WINDOWS_LIGHT_ACRYLIC_TINT,
-      _ => ATHAS_WINDOWS_DARK_ACRYLIC_TINT,
+      Some("light") => Blimy_WINDOWS_LIGHT_ACRYLIC_TINT,
+      _ => Blimy_WINDOWS_DARK_ACRYLIC_TINT,
    }
 }
 

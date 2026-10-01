@@ -57,7 +57,7 @@ describe("Linux release packaging", () => {
   it("bundles non-glibc runtime libraries in portable tarballs", () => {
     const script = readRepoFile("scripts/release/packaging/linux/tarball.sh");
 
-    expect(script).toContain('ldd "${libexec_dir}/athas"');
+    expect(script).toContain('ldd "${libexec_dir}/Blimy"');
     expect(script).toContain("is_glibc_runtime_library");
     expect(script).toContain("patchelf --add-rpath '$ORIGIN'");
     expect(script).toContain("${app_dir_name}/libexec/libgdk_pixbuf-2.0.so.0");
@@ -115,7 +115,7 @@ describe("Linux release packaging", () => {
     }
   });
 
-  it("keeps the dialog plugin, permission, and Athas fallback surface connected", () => {
+  it("keeps the dialog plugin, permission, and Blimy fallback surface connected", () => {
     const main = readRepoFile("src-tauri/src/main.rs");
     const capability = JSON.parse(readRepoFile("src-tauri/capabilities/main.json"));
     const mainLayout = readRepoFile("src/features/layout/components/main-layout.tsx");
@@ -131,9 +131,9 @@ describe("Linux release packaging", () => {
     const buildScript = readRepoFile("src-tauri/build.rs");
     const packagingScript = readRepoFile("scripts/release/packaging/linux/native.sh");
 
-    expect(buildScript).toContain("$ORIGIN/../lib/Athas");
-    expect(buildScript).toContain("$ORIGIN/../lib/Athas Preview");
-    expect(packagingScript).toContain('product_name="Athas Preview"');
+    expect(buildScript).toContain("$ORIGIN/../lib/Blimy");
+    expect(buildScript).toContain("$ORIGIN/../lib/Blimy Preview");
+    expect(packagingScript).toContain('product_name="Blimy Preview"');
     expect(packagingScript).toContain('patchelf --print-rpath "$release_binary"');
     expect(packagingScript).toContain('expected_cef_rpath="\\$ORIGIN/../lib/${product_name}"');
   });
@@ -148,15 +148,15 @@ describe("Linux release packaging", () => {
     expect(script).not.toContain("src/extensions/bundled");
   });
 
-  it("classifies Athas desktop entries for Linux application menus", () => {
+  it("classifies Blimy desktop entries for Linux application menus", () => {
     const config = JSON.parse(readRepoFile("src-tauri/tauri.conf.json"));
-    const template = readRepoFile("src-tauri/linux/athas.desktop");
+    const template = readRepoFile("src-tauri/linux/Blimy.desktop");
     const tarball = readRepoFile("scripts/release/packaging/linux/tarball.sh");
     const categories = "Categories=Utility;TextEditor;Development;";
     const keywords = "Keywords=Code;Editor;Text;Development;Programming;";
 
-    expect(config.bundle.linux.deb.desktopTemplate).toBe("linux/athas.desktop");
-    expect(config.bundle.linux.rpm.desktopTemplate).toBe("linux/athas.desktop");
+    expect(config.bundle.linux.deb.desktopTemplate).toBe("linux/Blimy.desktop");
+    expect(config.bundle.linux.rpm.desktopTemplate).toBe("linux/Blimy.desktop");
     expect(template.split("\n")).toContain(categories);
     expect(template.split("\n")).toContain(keywords);
     expect(tarball).toContain(categories);

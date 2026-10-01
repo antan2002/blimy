@@ -1388,7 +1388,7 @@ impl ToolInstaller {
       Self::validate_and_prepare(&wrapper_path)
    }
 
-   /// Install a package via RubyGems into an Athas-managed GEM_HOME.
+   /// Install a package via RubyGems into an Blimy-managed GEM_HOME.
    async fn install_via_gem(
       app_handle: &AppHandle,
       package: &str,
@@ -1478,7 +1478,7 @@ impl ToolInstaller {
       Self::validate_and_prepare(&wrapper_path)
    }
 
-   /// Install an R package into an Athas-managed R library and write an LSP wrapper.
+   /// Install an R package into an Blimy-managed R library and write an LSP wrapper.
    async fn install_via_r_package(
       app_handle: &AppHandle,
       package: &str,

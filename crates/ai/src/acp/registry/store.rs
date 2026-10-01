@@ -27,7 +27,7 @@ const QUARANTINE_FILE: &str = "quarantine.json";
 const STATE_FILE: &str = "state.json";
 const ICONS_DIR: &str = "icons";
 
-/// What Athas knows about the registry right now.
+/// What Blimy knows about the registry right now.
 #[derive(Debug, Clone, Default)]
 pub struct RegistrySnapshot {
    pub agents: Vec<RegistryAgent>,

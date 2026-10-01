@@ -295,7 +295,7 @@ pub async fn run_database_sidecar(
 
    let mut child = Command::new(&sidecar_path)
       .current_dir(sidecar_dir)
-      .env("ATHAS_DB_SIDECAR_DIR", sidecar_dir)
+      .env("Blimy_DB_SIDECAR_DIR", sidecar_dir)
       .stdin(Stdio::piped())
       .stdout(Stdio::piped())
       .stderr(Stdio::piped())

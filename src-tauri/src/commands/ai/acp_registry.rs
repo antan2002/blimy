@@ -1,5 +1,5 @@
 //! Installs agents from the ACP Registry: the registry copy lives in `<app data>/acp-registry`,
-//! installs in `<app data>/agents/<agent id>/<version>`, and the launcher Athas starts in
+//! installs in `<app data>/agents/<agent id>/<version>`, and the launcher Blimy starts in
 //! `<app data>/tools/acp`, where installed agents are detected.
 
 use crate::app_runtime::AppHandle;
@@ -101,7 +101,7 @@ pub async fn install_registry_agent(
             .await
             .map_err(|error| {
                format!(
-                  "{} needs Node.js 24 or newer, which Athas could not find or download: {error}",
+                  "{} needs Node.js 24 or newer, which Blimy could not find or download: {error}",
                   agent.name
                )
             })?;

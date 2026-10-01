@@ -29,7 +29,7 @@ function runLauncher({
 }) {
   if (!launcher) throw new Error("Tarball launcher heredoc was not found");
 
-  const root = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), "athas-launcher-")));
+  const root = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), "Blimy-launcher-")));
   try {
     for (const file of [...bundled.map((name) => `/libexec/${name}`), ...host]) {
       const filePath = path.join(root, file);
@@ -38,7 +38,7 @@ function runLauncher({
     }
     const binDir = path.join(root, "bin");
     fs.mkdirSync(binDir);
-    const launcherPath = path.join(binDir, "athas");
+    const launcherPath = path.join(binDir, "Blimy");
     // Redirect only the host filesystem and final exec; run the real selection logic.
     const fixtureLauncher = launcher
       .replace(
@@ -64,7 +64,7 @@ function runLauncher({
     expect(result.stderr).toBe("");
     expect(result.status).toBe(0);
     const [selected, executable, ...forwardedArgs] = result.stdout.split("\0").slice(0, -1);
-    expect(path.normalize(executable!)).toBe(path.join(root, "libexec/athas"));
+    expect(path.normalize(executable!)).toBe(path.join(root, "libexec/Blimy"));
     return {
       preloads: selected ? selected.split(":").map((file) => file.replace(root, "")) : [],
       args: forwardedArgs,

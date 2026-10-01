@@ -318,7 +318,7 @@ pub fn parse_cli_args(args: &[String], cwd: &Path) -> Vec<CliRequest> {
 /// Parses a full process argv vector, dropping the executable path before routing user args.
 ///
 /// Used by both cold app startup and the single-instance callback so platform routing keeps the
-/// same semantics whether Athas was already running or launched from scratch.
+/// same semantics whether Blimy was already running or launched from scratch.
 pub fn parse_cli_argv(argv: &[String], cwd: &Path) -> Vec<CliRequest> {
    parse_cli_args(argv.get(1..).unwrap_or_default(), cwd)
 }
@@ -575,7 +575,7 @@ mod tests {
    fn parse_cli_argv_drops_executable_for_cold_start() {
       let cwd = std::env::current_dir().unwrap();
       let args = vec![
-         "/Applications/Athas.app/Contents/MacOS/blimy".to_string(),
+         "/Applications/Blimy.app/Contents/MacOS/blimy".to_string(),
          ".".to_string(),
       ];
       let requests = parse_cli_argv(&args, &cwd);
@@ -588,7 +588,7 @@ mod tests {
    fn parse_cli_argv_drops_executable_for_single_instance_forwarding() {
       let cwd = std::env::current_dir().unwrap();
       let args = vec![
-         "C:\\Program Files\\Athas\\blimy.exe".to_string(),
+         "C:\\Program Files\\Blimy\\blimy.exe".to_string(),
          "terminal".to_string(),
          "bun test".to_string(),
       ];

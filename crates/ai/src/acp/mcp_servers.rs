@@ -1,4 +1,4 @@
-//! MCP servers the user configured in Athas, handed to ACP agents in `session/new`,
+//! MCP servers the user configured in Blimy, handed to ACP agents in `session/new`,
 //! `session/load` and `session/resume`.
 //!
 //! The server list lives in the frontend settings without secrets; environment variables and

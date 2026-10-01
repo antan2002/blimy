@@ -1,5 +1,5 @@
 //! Redacts likely secrets from the free text the traffic inspector records, beyond the MCP server
-//! settings it redacts by shape: the values of secret-looking environment variables Athas starts
+//! settings it redacts by shape: the values of secret-looking environment variables Blimy starts
 //! the agent with, `Authorization` values and `Bearer`/`Basic` credentials, and tokens with a
 //! well-known prefix. It errs towards leaving text alone: a candidate is redacted only when it is
 //! long enough and has a digit, so prose such as "Bearer authentication" or "sk-learn" stays.

@@ -1,7 +1,7 @@
 //! Reads the GitHub token owned by the user's `gh` CLI installation.
 //!
-//! The token is read on demand and never persisted by Athas: `gh auth switch`,
-//! `gh auth logout` and token rotation must take effect immediately, and Athas
+//! The token is read on demand and never persisted by Blimy: `gh auth switch`,
+//! `gh auth logout` and token rotation must take effect immediately, and Blimy
 //! should not hold a second copy of a credential it did not mint.
 
 use blimy_exec_path::{find_executable, probe_command, user_shell_path};

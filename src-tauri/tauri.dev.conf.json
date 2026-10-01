@@ -1,6 +1,6 @@
 {
-  "productName": "Athas Dev",
-  "identifier": "com.code.athas.dev",
+  "productName": "Blimy Dev",
+  "identifier": "com.code.Blimy.dev",
   "bundle": {
     "createUpdaterArtifacts": false,
     "icon": [
@@ -14,7 +14,7 @@
   "plugins": {
     "deep-link": {
       "desktop": {
-        "schemes": ["athas-dev"]
+        "schemes": ["Blimy-dev"]
       }
     },
     "updater": {

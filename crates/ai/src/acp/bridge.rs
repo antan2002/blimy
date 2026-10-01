@@ -3,7 +3,7 @@ use super::{
    bridge_commands::{AcpCommand, OpenRequest, WorkerFollowUp, run_worker_loop},
    bridge_init::{ConnectionHandle, SessionTarget, StartedConnection},
    bridge_prompt::{PromptAuth, run_prompt},
-   client::{AthasAcpClient, ClientResponders, PermissionResponse},
+   client::{BlimyAcpClient, ClientResponders, PermissionResponse},
    config::AgentRegistry,
    mcp_servers::{AcpSkippedMcpServer, McpServerConfig},
    process::{stop_child_tree, terminate_process_group},
@@ -63,7 +63,7 @@ pub(super) fn map_config_options(
 ) -> Vec<SessionConfigOption> {
    options
       .into_iter()
-      .filter_map(AthasAcpClient::map_session_config_option)
+      .filter_map(BlimyAcpClient::map_session_config_option)
       .collect()
 }
 
@@ -176,7 +176,7 @@ pub(super) struct AcpWorker {
    /// Session opens in flight, by connection and requested session, so a second open of the
    /// same session waits for the first instead of loading it twice.
    pending_session_opens: HashMap<(u64, String), Vec<oneshot::Sender<Result<AcpOpenedSession>>>>,
-   /// Agents the user logged out of. Athas does not sign them back in on its own; the user
+   /// Agents the user logged out of. Blimy does not sign them back in on its own; the user
    /// chooses a method again. Kept across restarts until a sign-in succeeds.
    logged_out_agents: Rc<RefCell<HashSet<String>>>,
    responders: ResponderRegistry,

@@ -36,7 +36,7 @@ const { identity, openOnly, targetPlatform } = options;
 const getLaunchPath = () => getSmokeLaunchPath(process.cwd(), targetPlatform, identity);
 
 const getExpectedMacosExecutablePath = (launchPath: string) =>
-  path.resolve(process.cwd(), launchPath, "Contents", "MacOS", "athas");
+  path.resolve(process.cwd(), launchPath, "Contents", "MacOS", "Blimy");
 
 const getRunningMacosProcessForPath = async (executablePath: string) => {
   const processList = await $`ps -axo pid=,command=`.quiet().text();

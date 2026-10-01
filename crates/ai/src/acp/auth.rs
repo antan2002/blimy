@@ -1,4 +1,4 @@
-//! ACP sign-in: which methods the user can pick from, which one Athas may use on its own, and
+//! ACP sign-in: which methods the user can pick from, which one Blimy may use on its own, and
 //! how terminal methods are launched.
 //!
 //! `agent` methods are completed by calling `authenticate` with the method id. `terminal`
@@ -14,7 +14,7 @@ use std::{collections::HashMap, time::Duration};
 /// How long an `authenticate` call may take. Agents often wait on a browser sign-in here.
 pub(super) const ACP_AUTHENTICATE_TIMEOUT: Duration = Duration::from_secs(5 * 60);
 
-/// Client capability `_meta` key that tells agents predating `auth.terminal` that Athas can run
+/// Client capability `_meta` key that tells agents predating `auth.terminal` that Blimy can run
 /// their terminal sign-in, and the method `_meta` key those agents describe it under.
 pub(super) const LEGACY_TERMINAL_AUTH_META_KEY: &str = "terminal-auth";
 
@@ -120,7 +120,7 @@ pub(super) fn describe_auth_methods(
       .collect()
 }
 
-/// The method Athas may use without asking: the agent offers exactly one way to sign in, and it
+/// The method Blimy may use without asking: the agent offers exactly one way to sign in, and it
 /// runs through `authenticate`. Anything else is the user's choice.
 pub(super) fn automatic_auth_method(methods: &[acp::AuthMethod]) -> Option<acp::AuthMethodId> {
    match methods {

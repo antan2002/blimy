@@ -92,7 +92,7 @@ impl AgentRegistry {
             continue;
          }
 
-         // Registry-only agents run from Athas's own install, never a same-named program.
+         // Registry-only agents run from Blimy's own install, never a same-named program.
          let on_path = (config.source == AgentSource::Extension)
             .then(|| find_executable(&config.binary_name))
             .flatten();

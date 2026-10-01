@@ -164,7 +164,7 @@ async function updateCargoToml(newVersion: string) {
 }
 
 async function updateCargoLock() {
-  const result = await $`cargo check -p athas`.nothrow().cwd(process.cwd());
+  const result = await $`cargo check -p Blimy`.nothrow().cwd(process.cwd());
 
   if (result.exitCode !== 0) {
     throw new Error("Could not refresh Cargo.lock");
@@ -298,7 +298,7 @@ async function release() {
       const validationBranch = `release-validation/v${newVersion}`;
       await $`git push origin ${`${releaseSha}:refs/heads/${validationBranch}`}`;
       try {
-        await $`gh workflow run ci.yml --repo athasdev/athas --ref ${validationBranch}`;
+        await $`gh workflow run ci.yml --repo Blimydev/Blimy --ref ${validationBranch}`;
         await waitForReleaseCi(releaseSha);
       } finally {
         await $`git push origin --delete ${validationBranch}`;
@@ -320,7 +320,7 @@ async function release() {
 
     log("\n✨ Release process complete!\n", "green");
     log(`GitHub Actions will now build draft release v${newVersion}`, "cyan");
-    log("View the progress at: https://github.com/athasdev/athas/actions\n", "cyan");
+    log("View the progress at: https://github.com/Blimydev/Blimy/actions\n", "cyan");
     log(
       `After the workflow finishes, verify it with: bun release:verify --tag v${newVersion}`,
       "cyan",

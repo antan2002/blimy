@@ -28,7 +28,7 @@ describe("smoke configuration", () => {
 
   it("resolves the expected identity-specific macOS bundle", () => {
     expect(getSmokeLaunchPath("/repo", "macos", "preview")).toBe(
-      "/repo/target/debug/bundle/macos/Athas Preview.app",
+      "/repo/target/debug/bundle/macos/Blimy Preview.app",
     );
   });
 });

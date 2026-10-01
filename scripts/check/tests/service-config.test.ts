@@ -2,16 +2,16 @@ import { describe, expect, it } from "vitest";
 import { getServiceConfigErrors, type Services } from "../service-config";
 
 const services: Services = {
-  websiteBaseUrl: "https://athas.dev",
-  stableUpdateUrl: "https://athas.dev/api/releases/stable",
-  previewUpdateUrl: "https://athas.dev/api/releases/preview",
+  websiteBaseUrl: "https://Blimy.dev",
+  stableUpdateUrl: "https://Blimy.dev/api/releases/stable",
+  previewUpdateUrl: "https://Blimy.dev/api/releases/preview",
 };
 
 function validInput() {
   return {
     services,
     stable: {
-      app: { security: { csp: "default-src 'self' https://athas.dev" } },
+      app: { security: { csp: "default-src 'self' https://Blimy.dev" } },
       plugins: { updater: { endpoints: [services.stableUpdateUrl] } },
     },
     preview: {
@@ -35,7 +35,7 @@ describe("service configuration", () => {
 
     expect(getServiceConfigErrors(input)).toEqual([
       "Preview Tauri updater endpoint does not match src/config/services.json.",
-      "Tauri capabilities do not allow the configured Athas website origin.",
+      "Tauri capabilities do not allow the configured Blimy website origin.",
     ]);
   });
 });
