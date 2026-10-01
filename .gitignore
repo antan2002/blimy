@@ -11,6 +11,13 @@ result-*
 # Build output
 dist/
 
+# TypeScript build output emitted next to the sources
+*.tsbuildinfo
+/vite.config.js
+/vite.config.d.ts
+/scripts/vite/*.js
+/scripts/vite/*.d.ts
+
 # Optional npm and yarn cache directory
 .npm/
 .yarn/
