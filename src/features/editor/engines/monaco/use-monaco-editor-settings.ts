@@ -11,10 +11,7 @@ import { calculateLineHeight } from "../../utils/lines";
 import { useMonacoFontRemeasure } from "./font-remeasure";
 
 export function useMonacoEditorSettings() {
-  const webgpu = usePerformanceExperiments.use.webgpu();
-  const gpuSupport = useWebGpuSupport();
-  const experimentalGpuAcceleration: "on" | "off" =
-    webgpu && gpuSupport === "available" ? "on" : "off";
+  const experimentalGpuAcceleration: "on" | "off" = "off";
   const baseFontSize = useEditorSettingsStore.use.fontSize();
   const fontFamilySetting = useEditorSettingsStore.use.fontFamily();
   const editorLineHeight = useEditorSettingsStore.use.lineHeight();
