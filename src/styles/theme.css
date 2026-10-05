@@ -1,0 +1,297 @@
+/*
+ * Design tokens.
+ *
+ * A theme file supplies the base palette (background, surface, foreground,
+ * muted-foreground, subtle-foreground, border, accent, selected, primary, and
+ * optionally the status, git, cursor and terminal colors). Everything else the
+ * UI needs is derived here so every theme, including custom ones, renders the
+ * same system.
+ *
+ * Planes, from recessed to floating:
+ *   surface    chrome: sidebars, panels, cards, inputs, footers
+ *   background content: the editor and document areas
+ *   overlay    floating: menus, popovers, tooltips, dialogs
+ *
+ * Interaction fills: accent is the hover fill, selected is the active or
+ * selected fill. Both sit on either plane.
+ *
+ * Text ramp: foreground > muted-foreground > subtle-foreground. Use the ramp,
+ * never an opacity modifier, to de-emphasise text.
+ *
+ * Borders: border is the only hairline. border-strong marks a focused or
+ * emphasised edge. Prefer plane contrast over borders.
+ *
+ * Status: primary, success, warning, destructive, info. Each has a `-soft`
+ * tint for fills behind status text. Text on a solid primary fill uses
+ * primary-foreground.
+ */
+@theme inline {
+  --font-sans: var(--app-font-family);
+  --font-heading: "Inter Display", var(--app-font-family);
+  --font-mono: var(--editor-font-family);
+  --leading-row: 1.35;
+  --leading-chrome: var(--blimy-chrome-line-height);
+
+  --spacing-title-bar: var(--blimy-title-bar-height);
+  --spacing-title-bar-leading: var(--blimy-title-bar-leading-inset);
+  --spacing-pane-header: var(--blimy-pane-header-height);
+  --spacing-tab-bar: var(--blimy-tab-bar-height);
+  --spacing-tab: var(--blimy-tab-height);
+  --spacing-tab-max: var(--blimy-tab-max-width);
+  --spacing-disclosure-indent: calc(1em + var(--blimy-chrome-gap));
+  --spacing-palette-offset: 10vh;
+  --shadow-seam-top: 0 -1px 0 0 var(--background);
+  --spacing-sidebar-header: var(--blimy-sidebar-header-height);
+  --spacing-workbench: var(--blimy-workbench-gap);
+  --spacing-chrome-control: var(--blimy-chrome-control-height);
+  --spacing-rail-control: var(--blimy-rail-control-size);
+  --spacing-chrome-hit-target: var(--blimy-chrome-hit-target);
+  --spacing-chrome-tight: var(--blimy-chrome-gap-tight);
+  --spacing-chrome: var(--blimy-chrome-gap);
+  --spacing-chrome-loose: var(--blimy-chrome-gap-loose);
+  --spacing-chrome-inline: var(--blimy-chrome-padding-inline);
+
+  --radius-xs: calc(var(--radius) * 0.5);
+  --radius-sm: calc(var(--radius) * 0.75);
+  --radius-md: var(--radius);
+  --radius-lg: calc(var(--radius) * 1.5);
+  --radius-xl: calc(var(--radius) * 2);
+  --radius-2xl: calc(var(--radius) * 3);
+  --radius-3xl: calc(var(--radius) * 4);
+  --radius-4xl: calc(var(--radius) * 5);
+  --radius-chrome: var(--blimy-chrome-radius);
+
+  --ease-smooth: var(--app-ease-smooth);
+
+  --color-background: var(--background);
+  --color-island: var(--blimy-glass-island-bg, var(--background));
+  --color-surface: var(--surface);
+  --color-overlay: var(--overlay);
+  --color-scrim: var(--scrim);
+  --color-foreground: var(--foreground);
+  --color-muted-foreground: var(--app-muted-foreground);
+  --color-subtle-foreground: var(--app-subtle-foreground);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-accent: var(--accent);
+  --color-selected: var(--selected);
+  --color-tab-active: var(--tab-active);
+  --color-selection: var(--selection);
+  --color-focus: var(--focus-ring);
+  --color-scrollbar-thumb: var(--app-scrollbar-thumb);
+  --color-scrollbar-thumb-hover: var(--app-scrollbar-thumb-hover);
+
+  --color-primary: var(--app-primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-primary-soft: var(--primary-soft);
+  --color-primary-foreground: var(--primary-foreground);
+
+  --color-cursor: var(--cursor);
+  --color-cursor-vim-normal: var(--cursor-vim-normal);
+  --color-cursor-vim-insert: var(--cursor-vim-insert);
+
+  --color-destructive: var(--destructive);
+  --color-destructive-soft: var(--destructive-soft);
+  --color-success: var(--success);
+  --color-success-soft: var(--success-soft);
+  --color-warning: var(--warning);
+  --color-warning-soft: var(--warning-soft);
+  --color-info: var(--info);
+  --color-info-soft: var(--info-soft);
+
+  --color-git-modified: var(--git-modified);
+  --color-git-modified-soft: var(--git-modified-soft);
+  --color-git-modified-staged: var(--git-modified-staged);
+  --color-git-added: var(--git-added);
+  --color-git-added-soft: var(--git-added-soft);
+  --color-git-deleted: var(--git-deleted);
+  --color-git-deleted-soft: var(--git-deleted-soft);
+  --color-git-untracked: var(--git-untracked);
+  --color-git-renamed: var(--git-renamed);
+  --color-git-renamed-soft: var(--git-renamed-soft);
+
+  --color-syntax-comment: var(--syntax-comment);
+  --color-syntax-keyword: var(--syntax-keyword);
+  --color-syntax-string: var(--syntax-string);
+  --color-syntax-number: var(--syntax-number);
+  --color-syntax-function: var(--syntax-function);
+  --color-syntax-variable: var(--syntax-variable);
+  --color-syntax-tag: var(--syntax-tag);
+  --color-syntax-attribute: var(--syntax-attribute);
+  --color-syntax-punctuation: var(--syntax-punctuation);
+  --color-syntax-constant: var(--syntax-constant);
+  --color-syntax-property: var(--syntax-property);
+  --color-syntax-type: var(--syntax-type);
+  --color-syntax-operator: var(--syntax-operator);
+  --color-syntax-boolean: var(--syntax-boolean);
+  --color-syntax-null: var(--syntax-null);
+  --color-syntax-regex: var(--syntax-regex);
+  --color-syntax-jsx: var(--syntax-jsx);
+  --color-syntax-jsx-attribute: var(--syntax-jsx-attribute);
+
+  --color-symbol-function: var(--symbol-function);
+  --color-symbol-type: var(--symbol-type);
+  --color-symbol-interface: var(--symbol-interface);
+  --color-symbol-enum: var(--symbol-enum);
+  --color-symbol-variable: var(--symbol-variable);
+  --color-symbol-property: var(--symbol-property);
+  --color-symbol-type-parameter: var(--symbol-type-parameter);
+
+  --color-terminal-black: var(--terminal-black);
+  --color-terminal-red: var(--terminal-red);
+  --color-terminal-green: var(--terminal-green);
+  --color-terminal-yellow: var(--terminal-yellow);
+  --color-terminal-blue: var(--terminal-blue);
+  --color-terminal-magenta: var(--terminal-magenta);
+  --color-terminal-cyan: var(--terminal-cyan);
+  --color-terminal-white: var(--terminal-white);
+  --color-terminal-bright-black: var(--terminal-bright-black);
+  --color-terminal-bright-red: var(--terminal-bright-red);
+  --color-terminal-bright-green: var(--terminal-bright-green);
+  --color-terminal-bright-yellow: var(--terminal-bright-yellow);
+  --color-terminal-bright-blue: var(--terminal-bright-blue);
+  --color-terminal-bright-magenta: var(--terminal-bright-magenta);
+  --color-terminal-bright-cyan: var(--terminal-bright-cyan);
+  --color-terminal-bright-white: var(--terminal-bright-white);
+}
+
+@layer base {
+  :root {
+    --app-font-family:
+      "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue",
+      Arial, sans-serif;
+    --editor-font-family:
+      "JetBrains Mono", ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono",
+      monospace;
+    --app-ui-font-size: 13px;
+    --app-ui-scale: 1;
+    --ui-text-base: var(--app-ui-font-size);
+    --ui-text-lg: calc(var(--app-ui-font-size) + 2px);
+    --ui-text-sm: max(10px, calc(var(--app-ui-font-size) - 1px));
+    --ui-text-caption: max(10px, calc(var(--app-ui-font-size) - 3px));
+    --ui-text-chrome: var(--ui-text-sm);
+    --blimy-title-bar-height: 2.5rem;
+    --blimy-title-bar-leading-inset: var(--blimy-chrome-padding-inline);
+    --blimy-tab-bar-height: 1.875rem;
+    --blimy-pane-header-height: var(--blimy-tab-bar-height);
+    --blimy-tab-height: 1.5rem;
+    --blimy-tab-max-width: 12.5rem;
+    --blimy-sidebar-header-height: 2rem;
+    --blimy-workbench-gap: 8px;
+    --blimy-chrome-control-height: 1.5rem;
+    --blimy-rail-control-size: 2rem;
+    --blimy-chrome-hit-target: 1.75rem;
+    --blimy-chrome-line-height: 1rem;
+    --blimy-chrome-gap-tight: 2px;
+    --blimy-chrome-gap: 4px;
+    --blimy-chrome-gap-loose: 6px;
+    --blimy-chrome-padding-inline: 8px;
+    --blimy-chrome-radius: var(--radius);
+    --radius: 0.25rem;
+    --app-duration-fast: 150ms;
+    --app-duration-normal: 200ms;
+    --app-ease-smooth: cubic-bezier(0.22, 1, 0.36, 1);
+    --app-ease-in-out: cubic-bezier(0.66, 0, 0.34, 1);
+    --app-muted-foreground: var(--muted-foreground);
+    --app-subtle-foreground: var(--subtle-foreground);
+    --app-primary: var(--primary);
+    --blimy-navigation-material: var(--surface);
+
+    /* Optional theme colors, derived from the palette every theme must have. */
+    --destructive: var(--terminal-red, var(--primary));
+    --success: var(--terminal-green, var(--primary));
+    --warning: var(--terminal-yellow, var(--primary));
+    --info: var(--terminal-blue, var(--primary));
+    --selection: color-mix(in srgb, var(--primary) 25%, transparent);
+    --cursor: var(--foreground);
+    --cursor-vim-normal: color-mix(in srgb, var(--primary) 60%, transparent);
+    --cursor-vim-insert: var(--primary);
+
+    /* Derived tokens. */
+    --overlay: var(--background);
+    /* The active tab on a background-coloured tab bar: a tint in light themes, where the
+       overlay would match the bar, and the raised overlay in dark ones. */
+    --tab-active: color-mix(in srgb, var(--background) 91%, var(--foreground) 9%);
+    --scrim: rgb(0 0 0 / 0.24);
+    --border-strong: color-mix(in srgb, var(--border) 60%, var(--foreground) 40%);
+    --focus-ring: color-mix(in srgb, var(--primary) 40%, transparent);
+    --primary-hover: color-mix(in srgb, var(--primary) 88%, var(--foreground) 12%);
+    --primary-foreground: var(--background);
+    --primary-soft: color-mix(in srgb, var(--primary) 12%, transparent);
+    --destructive-soft: color-mix(in srgb, var(--destructive) 12%, transparent);
+    --success-soft: color-mix(in srgb, var(--success) 12%, transparent);
+    --warning-soft: color-mix(in srgb, var(--warning) 14%, transparent);
+    --info-soft: color-mix(in srgb, var(--info) 12%, transparent);
+    --git-added-soft: color-mix(in srgb, var(--git-added) 16%, transparent);
+    --git-deleted-soft: color-mix(in srgb, var(--git-deleted) 16%, transparent);
+    --git-modified-soft: color-mix(in srgb, var(--git-modified) 16%, transparent);
+    --git-renamed-soft: color-mix(in srgb, var(--git-renamed) 16%, transparent);
+
+    --shadow-card:
+      0 1px 2px rgb(0 0 0 / 0.05), 0 2px 4px rgb(0 0 0 / 0.02), 0 0 0 0.5px rgb(0 0 0 / 0.08);
+    --shadow-popover:
+      0 8px 16px rgb(0 0 0 / 0.04), 0 16px 32px rgb(0 0 0 / 0.03), 0 2px 4px rgb(0 0 0 / 0.04),
+      0 0 0 0.5px rgb(0 0 0 / 0.1);
+    --shadow-dialog:
+      0 8px 16px rgb(0 0 0 / 0.04), 0 24px 56px rgb(0 0 0 / 0.08), 0 2px 6px rgb(0 0 0 / 0.04),
+      0 0 0 0.5px rgb(0 0 0 / 0.12);
+    --shadow-drag:
+      0 8px 18px rgb(0 0 0 / 0.12), 0 18px 44px rgb(0 0 0 / 0.12), 0 0 0 0.5px rgb(0 0 0 / 0.12);
+    --shadow-editor-sticky: 0 8px 16px -14px rgb(0 0 0 / 0.28);
+
+    --symbol-function: var(--syntax-function);
+    --symbol-type: var(--syntax-type, var(--syntax-tag));
+    --symbol-interface: var(--syntax-regex, var(--syntax-operator, var(--syntax-attribute)));
+    --symbol-enum: var(--syntax-number);
+    --symbol-variable: var(--syntax-property, var(--syntax-variable));
+    --symbol-property: var(--syntax-string);
+    --symbol-type-parameter: var(--syntax-operator, var(--syntax-attribute));
+  }
+
+  html.platform-macos {
+    /* Matches the native title bar, so the traffic lights keep AppKit's own position. */
+    --blimy-title-bar-height: 2rem;
+    --blimy-tab-bar-height: 2rem;
+    --blimy-title-bar-leading-inset: 4.75rem;
+  }
+
+  :root[data-increase-contrast="true"] {
+    --app-muted-foreground: color-mix(in srgb, var(--muted-foreground) 70%, var(--foreground) 30%);
+    --app-subtle-foreground: color-mix(
+      in srgb,
+      var(--subtle-foreground) 60%,
+      var(--foreground) 40%
+    );
+    --border: color-mix(in srgb, var(--border) 55%, var(--foreground) 45%);
+    --border-strong: color-mix(in srgb, var(--border) 25%, var(--foreground) 75%);
+  }
+
+  :root[data-differentiate-without-color="true"]
+    :is([aria-current="page"], [aria-selected="true"], [data-active="true"]) {
+    outline: 1px solid var(--border-strong);
+    outline-offset: -1px;
+  }
+
+  :root[data-theme-type="dark"] {
+    --overlay: color-mix(in srgb, var(--background) 92%, var(--foreground) 8%);
+    --tab-active: var(--overlay);
+    --scrim: rgb(0 0 0 / 0.45);
+    --shadow-card:
+      0 1px 2px rgb(0 0 0 / 0.24), 0 2px 4px rgb(0 0 0 / 0.18), 0 0 0 0.5px rgb(255 255 255 / 0.1);
+    --shadow-popover:
+      0 8px 16px rgb(0 0 0 / 0.26), 0 16px 32px rgb(0 0 0 / 0.22), 0 2px 4px rgb(0 0 0 / 0.22),
+      0 0 0 0.5px rgb(255 255 255 / 0.1);
+    --shadow-dialog:
+      0 8px 16px rgb(0 0 0 / 0.3), 0 24px 56px rgb(0 0 0 / 0.36), 0 2px 6px rgb(0 0 0 / 0.24),
+      0 0 0 0.5px rgb(255 255 255 / 0.12);
+    --shadow-drag:
+      0 8px 18px rgb(0 0 0 / 0.36), 0 18px 44px rgb(0 0 0 / 0.34),
+      0 0 0 0.5px rgb(255 255 255 / 0.12);
+    --shadow-editor-sticky: 0 10px 20px -16px rgb(0 0 0 / 0.72);
+  }
+
+  html {
+    font-family: var(--app-font-family);
+    font-size: calc(16px * var(--app-ui-scale));
+  }
+}

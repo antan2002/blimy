@@ -1,0 +1,133 @@
+/*
+ * Window transparency ("glass").
+ *
+ * With transparency on, the layout shell, the activity rail and the sidebar
+ * panes show the desktop through them (native vibrancy on macOS, a backdrop
+ * blur on Windows), while the editor, sidebar contents and bottom pane sit on
+ * translucent islands.
+ *
+ * Nothing here restyles individual controls. Instead the interaction tokens
+ * are remapped inside the shell, so every hover, active fill, surface and
+ * hairline that the design system already uses reads the same over any
+ * wallpaper: fills are a foreground tint (white on dark themes, black on light
+ * ones), never the theme's opaque accent colour, and text keeps full contrast.
+ */
+
+.window-container {
+  overflow: hidden;
+}
+
+html:is(.platform-macos, .platform-windows):not([data-window-transparency="disabled"]) {
+  --blimy-glass-shell-bg: color-mix(in srgb, var(--surface) 12%, transparent);
+  --blimy-glass-island-bg: color-mix(in srgb, var(--background) 70%, transparent);
+  --blimy-glass-surface: color-mix(in srgb, var(--surface) 48%, transparent);
+  --blimy-glass-border: color-mix(in srgb, var(--foreground) 14%, transparent);
+  --blimy-glass-border-strong: color-mix(in srgb, var(--foreground) 32%, transparent);
+  --blimy-glass-hover: color-mix(in srgb, var(--foreground) 9%, transparent);
+  --blimy-glass-active: color-mix(in srgb, var(--foreground) 16%, transparent);
+  --blimy-navigation-material: color-mix(in srgb, var(--surface) 74%, transparent);
+}
+
+html:is(.platform-macos, .platform-windows):not(
+    [data-window-transparency="disabled"]
+  )[data-theme-type="light"] {
+  --blimy-glass-shell-bg: color-mix(in srgb, var(--surface) 46%, transparent);
+  --blimy-glass-island-bg: color-mix(in srgb, var(--background) 84%, transparent);
+  --blimy-glass-surface: color-mix(in srgb, var(--surface) 62%, transparent);
+  --blimy-glass-border: color-mix(in srgb, var(--foreground) 12%, transparent);
+  --blimy-glass-border-strong: color-mix(in srgb, var(--foreground) 28%, transparent);
+  --blimy-glass-hover: color-mix(in srgb, var(--foreground) 7%, transparent);
+  --blimy-glass-active: color-mix(in srgb, var(--foreground) 13%, transparent);
+  --blimy-navigation-material: color-mix(in srgb, var(--surface) 80%, transparent);
+}
+
+html:is(.platform-macos, .platform-windows):not([data-window-transparency="disabled"])
+  .window-container {
+  background: transparent !important;
+}
+
+/* The shell: see-through, and the token remap for everything inside it. */
+html:is(.platform-macos, .platform-windows):not([data-window-transparency="disabled"])
+  .blimy-layout-shell:not([data-window-surface="content"]) {
+  --accent: var(--blimy-glass-hover);
+  --selected: var(--blimy-glass-active);
+  --surface: var(--blimy-glass-surface);
+  --border: var(--blimy-glass-border);
+  --border-strong: var(--blimy-glass-border-strong);
+  background: var(--blimy-glass-shell-bg) !important;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+
+/* Rail and panes: the OS provides the material on macOS, we blur on Windows. */
+html:is(.platform-macos, .platform-windows):not([data-window-transparency="disabled"])
+  :is(.blimy-resizable-pane, .blimy-sidebar-rail) {
+  background: var(--blimy-navigation-material) !important;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+
+html.platform-macos:not([data-window-transparency="disabled"])
+  :is(.blimy-resizable-pane, .blimy-sidebar-rail) {
+  background: transparent !important;
+}
+
+html.platform-windows:not([data-window-transparency="disabled"])
+  :is(.blimy-resizable-pane, .blimy-sidebar-rail) {
+  -webkit-backdrop-filter: blur(18px) saturate(1.08);
+  backdrop-filter: blur(18px) saturate(1.08);
+}
+
+/* Islands: editor, sidebar contents, bottom pane. */
+html:is(.platform-macos, .platform-windows):not([data-window-transparency="disabled"])
+  .blimy-glass-island {
+  background: var(--blimy-glass-island-bg) !important;
+}
+
+html:is(.platform-macos, .platform-windows):not([data-window-transparency="disabled"])
+  .blimy-glass-island
+  :is(.monaco-editor-shell, .monaco-editor, .monaco-editor-background, .monaco-editor .margin) {
+  background-color: transparent !important;
+}
+
+html:is(.platform-macos, .platform-windows):not([data-window-transparency="disabled"])
+  .blimy-workbench-glass {
+  background: transparent !important;
+}
+
+html:is(.platform-macos, .platform-windows):not([data-window-transparency="disabled"])
+  .blimy-title-bar {
+  background: transparent !important;
+  border-color: transparent;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+
+/* Transparency off: opaque planes exactly as the theme defines them. */
+html[data-window-transparency="disabled"] .window-container {
+  background: var(--background) !important;
+}
+
+html[data-window-transparency="disabled"] .blimy-layout-shell:not([data-window-surface="content"]),
+html[data-window-transparency="disabled"] .blimy-resizable-pane {
+  background: var(--surface) !important;
+}
+
+/* OS "reduce transparency": keep the layout, drop the see-through materials. */
+html[data-reduce-transparency="true"] {
+  --blimy-navigation-material: var(--surface);
+  --blimy-glass-island-bg: var(--background);
+  --blimy-glass-shell-bg: var(--surface);
+}
+
+html[data-reduce-transparency="true"]
+  :is(.blimy-layout-shell, .blimy-resizable-pane, .blimy-sidebar-rail, .blimy-title-bar) {
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+}
+
+html.platform-windows [data-slot="menubar-content"],
+html.platform-windows [data-slot="menubar-sub-content"],
+html.platform-windows [data-slot="combobox-content"] {
+  will-change: opacity, transform, filter;
+}
