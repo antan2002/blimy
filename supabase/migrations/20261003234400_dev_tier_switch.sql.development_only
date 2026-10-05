@@ -1,0 +1,79 @@
+-- Developer tier switch
+--
+-- Lets the project owner move their own account between free, plus and pro without a
+-- payment provider, so every tier can be exercised end to end.
+--
+-- This is deliberately a SECURITY DEFINER function guarded on the caller's email, because
+-- there is no service-role client in the app and the SQL editor is the only place a real
+-- upgrade would come from. Remove this file before shipping.
+
+create or replace function public.dev_set_plan(target_status text)
+returns jsonb
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+   limits record;
+begin
+   -- Guard: only the project owner may escalate. Comparing against a hardcoded address
+   -- keeps this usable without a roles table.
+   if lower(auth.jwt() ->> 'email') <> 'antanroy502@gmail.com' then
+      raise exception 'dev_set_plan is restricted to the project owner';
+   end if;
+
+   if target_status not in ('free', 'plus', 'pro') then
+      raise exception 'unknown plan: %', target_status;
+   end if;
+
+   update public.subscriptions
+   set status = target_status,
+       plan = case when target_status = 'teams' then 'teams'
+                   when target_status = 'enterprise' then 'enterprise'
+                   else target_status
+              end,
+       capabilities = (select capabilities from public.plans where status = target_status),
+       ends_at = case when target_status = 'free' then null
+                      else timezone('utc'::text, now()) + interval '30 days'
+                 end
+   where user_id = auth.uid();
+
+   if not found then
+      raise exception 'no subscription for this user; sign in first';
+   end if;
+
+   -- Switching tier starts a fresh period, otherwise an exhausted free month would keep
+   -- the new tier blocked until the clock rolls over.
+   delete from public.usage_counters where user_id = auth.uid();
+
+   select monthly_requests, daily_requests into limits from public.plans where status = target_status;
+
+   return jsonb_build_object(
+      'status', target_status,
+      'monthly_requests', limits.monthly_requests,
+      'daily_requests', limits.daily_requests,
+      'reset', true
+   );
+end;
+$$;
+
+grant execute on function public.dev_set_plan(text) to authenticated;
+
+-- Convenience view: what the owner sees while testing.
+create or replace view public.dev_entitlement as
+select
+   auth.uid() as user_id,
+   s.status,
+   s.plan,
+   s.capabilities,
+   p.monthly_requests,
+   p.daily_requests,
+   coalesce((select m.requests from public.usage_counters m
+             where m.user_id = s.user_id and m.scope = 'month'
+               and m.period = date_trunc('month', timezone('utc'::text, now())::date)), 0) as monthly_used,
+   coalesce((select d.requests from public.usage_counters d
+             where d.user_id = s.user_id and d.scope = 'day'
+               and d.period = timezone('utc'::text, now())::date), 0) as daily_used
+from public.subscriptions s
+left join public.plans p on p.status = s.status
+where s.user_id = auth.uid();
