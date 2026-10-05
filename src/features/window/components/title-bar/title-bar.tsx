@@ -1,0 +1,146 @@
+import { getCurrentWindow, type Window as TauriWindow } from "@tauri-apps/api/window";
+import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from "react";
+import { useNativeWindowChrome } from "@/features/window/hooks/use-native-window-chrome";
+import { ChromeBar, ChromeGroup, ChromeLabel } from "@/ui/chrome";
+import { cn } from "@/utils/cn";
+import { IS_MAC } from "@/utils/platform";
+import { WindowControls } from "./window-controls";
+import { useFileSystemStore } from "@/features/file-system/stores/file-system.store";
+import { ProjectSwitcher } from "@/features/layout/components/project-switcher";
+import { useUIState } from "@/features/window/stores/ui-state.store";
+import { useWorkspaceTabsStore } from "@/features/window/stores/workspace-tabs.store";
+import GitBranchManager from "@/features/git/components/git-branch-manager";
+import { useGitStore } from "@/features/git/stores/git.store";
+
+interface TitleBarProps {
+  showMinimal?: boolean;
+  overlay?: boolean;
+  title?: string;
+  titleIcon?: ReactNode;
+  titleActions?: ReactNode;
+}
+
+export default function TitleBar({
+  overlay = false,
+  title,
+  titleIcon,
+  titleActions,
+}: TitleBarProps) {
+  const usesNativeWindowChrome = useNativeWindowChrome();
+  const showAppWindowControls = !IS_MAC && !usesNativeWindowChrome;
+  const titleControlsRef = useRef<HTMLDivElement>(null);
+  const [titleControlsWidth, setTitleControlsWidth] = useState(0);
+  const [currentWindow, setCurrentWindow] = useState<TauriWindow | null>(null);
+  const [isMaximized, setIsMaximized] = useState(false);
+  
+  const openProjectPicker = useUIState((state) => state.openProjectPicker);
+  const projectTabs = useWorkspaceTabsStore.use.projectTabs();
+  const activeProject = projectTabs.find((project) => project.isActive);
+  const switchToProject = useFileSystemStore((state) => state.switchToProject);
+  const isSwitchingProject = useFileSystemStore((state) => state.isSwitchingProject);
+  const rootFolderPath = useFileSystemStore((state) => state.rootFolderPath);
+  const currentBranch = useGitStore((state) => state.workspaceGitStatus?.branch);
+  const refreshWorkspaceGitStatus = useGitStore((state) => state.actions.refreshWorkspaceGitStatus);
+
+  useLayoutEffect(() => {
+    if (!title && !titleIcon) return;
+    const controls = titleControlsRef.current;
+    if (!controls) return;
+    const updateWidth = () => setTitleControlsWidth(controls.getBoundingClientRect().width);
+    updateWidth();
+    const observer = new ResizeObserver(updateWidth);
+    observer.observe(controls);
+    return () => observer.disconnect();
+  }, [title, titleIcon]);
+
+  useEffect(() => {
+    const window = getCurrentWindow();
+    setCurrentWindow(window);
+    let disposed = false;
+    let unlistenResize: (() => void) | undefined;
+    const syncMaximized = () => {
+      void window
+        .isMaximized()
+        .then((maximized) => {
+          if (!disposed) setIsMaximized(maximized);
+        })
+        .catch(console.error);
+    };
+    syncMaximized();
+    void window
+      .onResized(syncMaximized)
+      .then((unlisten) => {
+        if (disposed) unlisten();
+        else unlistenResize = unlisten;
+      })
+      .catch(console.error);
+    return () => {
+      disposed = true;
+      unlistenResize?.();
+    };
+  }, []);
+
+  const handleMouseDown = (event: React.MouseEvent<HTMLDivElement>) => {
+    if (event.button !== 0) return;
+    if (
+      (event.target as HTMLElement).closest(
+        "button, a, input, textarea, select, [role='tab'], [contenteditable='true']",
+      )
+    )
+      return;
+    void currentWindow?.startDragging().catch(console.error);
+  };
+
+  return (
+    <ChromeBar
+      region="title"
+      role="toolbar"
+      aria-label="Window toolbar"
+      data-tauri-drag-region
+      onMouseDown={handleMouseDown}
+      className={cn(
+        "blimy-title-bar z-50 justify-end select-none",
+        overlay ? "pointer-events-none absolute top-0 right-0 w-auto" : "relative",
+      )}
+    >
+      {(title || titleIcon) && (
+        <ChromeGroup
+          align="center"
+          className="pointer-events-none absolute inset-y-0 overflow-hidden"
+          style={{
+            insetInline: `max(${IS_MAC ? "var(--blimy-title-bar-leading-inset)" : "var(--blimy-chrome-padding-inline)"}, calc(${titleControlsWidth}px + var(--blimy-chrome-padding-inline)))`,
+          }}
+        >
+          {titleIcon}
+          {title ? <ChromeLabel tone="strong">{title}</ChromeLabel> : null}
+        </ChromeGroup>
+      )}
+      <ChromeGroup ref={titleControlsRef} className="pointer-events-auto">
+        <ProjectSwitcher
+          project={activeProject}
+          projects={projectTabs}
+          isSwitchingProject={isSwitchingProject}
+          onSelectProject={(projectId) => void switchToProject(projectId)}
+          onAddRemote={() => openProjectPicker("addRemote")}
+        />
+        {currentBranch && rootFolderPath ? (
+          <GitBranchManager
+            currentBranch={currentBranch}
+            repoPath={rootFolderPath}
+            triggerMode="branch"
+            onBranchChange={() => void refreshWorkspaceGitStatus(rootFolderPath)}
+          />
+        ) : null}
+        {titleActions}
+        {showAppWindowControls && (
+          <WindowControls
+            currentWindow={currentWindow}
+            isMaximized={isMaximized}
+            onMaximizedChange={setIsMaximized}
+          />
+        )}
+      </ChromeGroup>
+    </ChromeBar>
+  );
+}
+

@@ -1,0 +1,77 @@
+import { describe, expect, it } from "vite-plus/test";
+import { getDefaultSettingsSnapshot } from "@/features/settings/config/default-settings";
+
+describe("default settings", () => {
+  it("starts with window transparency disabled", () => {
+    expect(getDefaultSettingsSnapshot().windowTransparency).toBe(false);
+  });
+
+  it("opens new projects in separate windows by default", () => {
+    expect(getDefaultSettingsSnapshot().openFoldersInNewWindow).toBe(true);
+  });
+
+  it("enables agent and command notifications but disables workflow notifications by default", () => {
+    const settings = getDefaultSettingsSnapshot();
+
+    expect(settings.aiAgentNotifications).toBe(true);
+    expect(settings.terminalCommandNotifications).toBe(true);
+    expect(settings.githubActionNotifications).toBe(false);
+  });
+
+  it("defaults chat to Blimy Automatic", () => {
+    const settings = getDefaultSettingsSnapshot();
+
+    expect(settings.aiProviderId).toBe("blimy");
+    expect(settings.aiModelId).toBe("auto");
+  });
+
+  it("preserves the established editor and terminal interaction behavior", () => {
+    const settings = getDefaultSettingsSnapshot();
+
+    expect(settings.editorFontLigatures).toBe(false);
+    expect(settings.editorItalicComments).toBe(false);
+    expect(settings.editorStickyScroll).toBe(false);
+    expect(settings.showOutline).toBe(false);
+    expect(settings.editorBracketPairColorization).toBe(true);
+    expect(settings.editorSmoothScrolling).toBe(false);
+    expect(settings.editorScrollBeyondLastLine).toBe(false);
+    expect(settings.editorCursorStyle).toBe("line");
+    expect(settings.editorCursorBlinking).toBe("blink");
+    expect(settings.terminalCursorInactiveStyle).toBe("outline");
+    expect(settings.terminalAltClickMovesCursor).toBe(true);
+    expect(settings.terminalMacOptionIsMeta).toBe(false);
+    expect(settings.terminalRightClickSelectsWord).toBe(false);
+  });
+
+  it("starts with a focused Activity rail while keeping specialist tools available", () => {
+    const settings = getDefaultSettingsSnapshot();
+
+    expect(settings.reduceMotion).toBe(false);
+    expect(settings.showTabIcons).toBe(true);
+    expect(settings.tabCloseButtonVisibility).toBe("active");
+    expect(settings.hiddenSidebarActivityItems).toEqual([
+      "github-prs",
+      "views",
+      "debugger",
+      "databases",
+      "docker",
+      "extensions",
+    ]);
+    expect(settings.pinnedSidebarExtensionItems).toEqual([]);
+    expect(settings.hiddenGitSidebarItems).toEqual([]);
+    expect(settings.sidebarWidth).toBe(220);
+    expect(settings.rightSidebarWidth).toBe(220);
+  });
+
+  it("preserves established file-tree behavior", () => {
+    const settings = getDefaultSettingsSnapshot();
+
+    expect(settings.fileTreeSortOrder).toBe("folders-first");
+    expect(settings.compactFoldersInFileTree).toBe(false);
+    expect(settings.autoRevealActiveFileInFileTree).toBe(true);
+    expect(settings.showFileIconsInFileTree).toBe(true);
+    expect(settings.showFolderArrowsInFileTree).toBe(false);
+    expect(settings.showIndentGuidesInFileTree).toBe(true);
+    expect(settings.confirmBeforeFileDelete).toBe(true);
+  });
+});

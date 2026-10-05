@@ -1,0 +1,198 @@
+import { Activity, lazy, memo, type ReactNode, Suspense, useState } from "react";
+import { CollaborationSidebarView } from "@/features/collaboration/components/collaboration-sidebar";
+import { DockerSidebar } from "@/features/docker/components/docker-sidebar";
+import { FileExplorerPane } from "@/features/file-explorer/components/file-explorer-pane";
+import { useFileSystemStore } from "@/features/file-system/stores/file-system.store";
+import GitView from "@/features/git/components/git-view";
+import GitHubPRsView from "@/features/github/components/github-prs-view";
+import {
+  getActiveSidebarView,
+  getSidebarPaneLevel,
+  type SidebarView,
+} from "@/features/layout/utils/sidebar-pane-utils";
+import { useSettingsStore } from "@/features/settings/stores/settings.store";
+import { ViewsSidebar } from "@/features/views/components/views-sidebar";
+import { useAuthStore } from "@/features/window/stores/auth.store";
+import { useUIState } from "@/features/window/stores/ui-state.store";
+import { ExtensionErrorBoundary } from "@/extensions/ui/components/extension-error-boundary";
+import { useExtensionViews } from "@/extensions/ui/hooks/use-extension-views";
+
+// Loaded on demand so the layout does not pull the AI stores into its import graph.
+
+
+const WorkspaceSidebar = lazy(() =>
+  import("@/features/workspace/team/components/workspace-sidebar").then((module) => ({
+    default: module.WorkspaceSidebar,
+  })),
+);
+
+const AgentsSidebar = lazy(() =>
+  import("@/features/ai/components/sidebar/agents-sidebar").then((module) => ({
+    default: module.AgentsSidebar,
+  })),
+);
+const DatabaseSidebar = lazy(() =>
+  import("@/features/database/components/database-sidebar").then((module) => ({
+    default: module.DatabaseSidebar,
+  })),
+);
+
+interface SidebarPaneProps {
+  visible?: boolean;
+  paneLevel?: "primary" | "edge";
+  activeView?: SidebarView;
+  isGitActive?: boolean;
+  isGitHubPRsActive?: boolean;
+}
+
+interface SidebarPaneEntry {
+  id: SidebarView;
+  content: ReactNode;
+}
+
+/** How many sidebar views stay mounted after the user switches away from them. */
+const MAX_KEPT_SIDEBAR_VIEWS = 4;
+
+export const SidebarPane = memo(
+  ({
+    visible = true,
+    paneLevel = "primary",
+    activeView,
+    isGitActive,
+    isGitHubPRsActive,
+  }: SidebarPaneProps) => {
+    const uiGitViewActive = useUIState((state) => state.isGitViewActive);
+    const uiGitHubPRsViewActive = useUIState((state) => state.isGitHubPRsViewActive);
+    const uiActiveSidebarView = useUIState((state) => state.activeSidebarView);
+    const isGitViewActive = isGitActive ?? uiGitViewActive;
+    const isGitHubPRsViewActive = isGitHubPRsActive ?? uiGitHubPRsViewActive;
+    const activeSidebarView = activeView ?? uiActiveSidebarView;
+    const extensionViews = useExtensionViews();
+    const handleFileSelect = useFileSystemStore.use.handleFileSelect?.();
+    const rootFolderPath = useFileSystemStore.use.rootFolderPath?.();
+    const coreFeatures = useSettingsStore((state) => state.settings.coreFeatures);
+    const hasTeamsCollaborationAccess = useAuthStore(
+      (state) => state.subscription?.collaboration?.enabled === true,
+    );
+    const activePaneId = getActiveSidebarView({
+      isGitViewActive,
+      isGitHubPRsViewActive,
+      activeSidebarView,
+    });
+
+    const paneEntries: SidebarPaneEntry[] = [
+      ...(coreFeatures.git
+        ? [
+            {
+              id: "git" as const,
+              content: (
+                <GitView
+                  repoPath={rootFolderPath}
+                  onFileSelect={handleFileSelect}
+                  isActive={isGitViewActive}
+                />
+              ),
+            },
+          ]
+        : []),
+      ...(coreFeatures.github ? [{ id: "github-prs" as const, content: <GitHubPRsView /> }] : []),
+      {
+        id: "views",
+        content: <ViewsSidebar projectPath={rootFolderPath ?? null} />,
+      },
+      ...(coreFeatures.docker ? [{ id: "docker" as const, content: <DockerSidebar /> }] : []),
+      {
+        id: "workspaces",
+        content: (
+          <Suspense fallback={null}>
+            <WorkspaceSidebar />
+          </Suspense>
+        ),
+      },
+      {
+        id: "databases",
+        content: (
+          <Suspense fallback={null}>
+            <DatabaseSidebar />
+          </Suspense>
+        ),
+      },
+      { id: "files", content: <FileExplorerPane /> },
+      ...(coreFeatures.aiChat
+        ? [
+            {
+              id: "agents" as const,
+              content: (
+                <Suspense fallback={null}>
+                  <AgentsSidebar />
+                </Suspense>
+              ),
+            },
+          ]
+        : []),
+
+      ...(hasTeamsCollaborationAccess && coreFeatures.teamCollaboration
+        ? [
+            {
+              id: "collaboration" as const,
+              content: <CollaborationSidebarView />,
+            },
+          ]
+        : []),
+      ...Array.from(extensionViews).map(
+        ([viewId, view]) =>
+          ({
+            id: viewId,
+            content: (
+              <ExtensionErrorBoundary extensionId={view.extensionId} name={view.title}>
+                {view.render()}
+              </ExtensionErrorBoundary>
+            ),
+          }) satisfies SidebarPaneEntry,
+      ),
+    ].filter((pane) => pane.id === activeSidebarView || getSidebarPaneLevel(pane.id) === paneLevel);
+    const activePane = paneEntries.find((pane) => pane.id === activePaneId) ?? paneEntries[0];
+    const suspendWhenHidden =
+      activePane &&
+      [
+        "files",
+        "agents",
+        "docker",
+        "views",
+        "github-prs",
+        "agent",
+        "workspaces",
+        "databases",
+      ].includes(activePane.id);
+
+    // Recently shown views stay mounted but hidden, so switching back keeps their scroll, search
+    // and loaded data instead of remounting into a loading state.
+    const [recentPaneIds, setRecentPaneIds] = useState<string[]>([]);
+    const nextRecentPaneIds = activePane
+      ? [activePane.id, ...recentPaneIds.filter((id) => id !== activePane.id)]
+          .filter((id) => paneEntries.some((pane) => pane.id === id))
+          .slice(0, MAX_KEPT_SIDEBAR_VIEWS)
+      : recentPaneIds;
+    if (
+      nextRecentPaneIds.length !== recentPaneIds.length ||
+      nextRecentPaneIds.some((id, index) => id !== recentPaneIds[index])
+    ) {
+      setRecentPaneIds(nextRecentPaneIds);
+    }
+
+    return (
+      <div className="flex h-full min-h-0" data-external-file-drop-scope="sidebar">
+        {paneEntries
+          .filter((pane) => nextRecentPaneIds.includes(pane.id))
+          .map((pane) => {
+            const isShown = pane.id === activePane?.id && (visible || !suspendWhenHidden);
+            return (
+              <Activity key={pane.id} mode={isShown ? "visible" : "hidden"}>
+                <div className="h-full min-h-0 flex-1 overflow-hidden">{pane.content}</div>
+              </Activity>
+            );
+          })}
+      </div>
+    );
+  },
+);

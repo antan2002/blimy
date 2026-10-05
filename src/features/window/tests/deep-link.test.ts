@@ -1,0 +1,76 @@
+import { describe, expect, it } from "vite-plus/test";
+import { __test__ } from "../hooks/use-deep-link";
+
+const { isSupportedDeepLinkProtocol, parseDeepLinkAction } = __test__;
+
+describe("isSupportedDeepLinkProtocol", () => {
+  it("accepts registered stable, preview, and dev schemes", () => {
+    expect(isSupportedDeepLinkProtocol("blimy:")).toBe(true);
+    expect(isSupportedDeepLinkProtocol("blimy-preview:")).toBe(true);
+    expect(isSupportedDeepLinkProtocol("blimy-dev:")).toBe(true);
+  });
+
+  it("rejects unrelated schemes", () => {
+    expect(isSupportedDeepLinkProtocol("https:")).toBe(false);
+    expect(isSupportedDeepLinkProtocol("file:")).toBe(false);
+    expect(isSupportedDeepLinkProtocol("blimy-alpha:")).toBe(false);
+  });
+});
+
+describe("parseDeepLinkAction", () => {
+  it("maps supported open URLs to queued window requests", () => {
+    expect(parseDeepLinkAction("blimy://open?path=/Users/test/project/file.ts&line=42")).toEqual({
+      type: "windowOpen",
+      request: {
+        type: "path",
+        source: "deepLink",
+        path: "/Users/test/project/file.ts",
+        isDirectory: false,
+        line: 42,
+      },
+    });
+  });
+
+  it("maps extension install URLs without touching extension state", () => {
+    expect(parseDeepLinkAction("blimy://extension/install/theme-dark")).toEqual({
+      type: "extensionInstall",
+      extensionId: "theme-dark",
+    });
+  });
+
+  it("maps settings URLs to settings dialog actions", () => {
+    expect(parseDeepLinkAction("blimy://settings?tab=features")).toEqual({
+      type: "settings",
+      tab: "advanced",
+      extensionsCategory: undefined,
+    });
+
+    expect(parseDeepLinkAction("blimy://settings?tab=advanced")).toEqual({
+      type: "settings",
+      tab: "advanced",
+      extensionsCategory: undefined,
+    });
+  });
+
+  it("maps legacy extension settings URLs to the extensions tab", () => {
+    expect(parseDeepLinkAction("blimy://settings?tab=extensions&category=agent")).toEqual({
+      type: "extensions",
+      extensionsCategory: "agent",
+    });
+
+    expect(parseDeepLinkAction("blimy://open?type=settings&tab=extensions")).toEqual({
+      type: "extensions",
+      extensionsCategory: undefined,
+    });
+
+    expect(parseDeepLinkAction("blimy://settings?tab=extensions&category=ai")).toEqual({
+      type: "extensions",
+      extensionsCategory: "ai",
+    });
+  });
+
+  it("drops unsupported schemes and malformed actions", () => {
+    expect(parseDeepLinkAction("blimy-alpha://open?path=/Users/test/file.ts")).toBeNull();
+    expect(parseDeepLinkAction("blimy://open")).toBeNull();
+  });
+});
