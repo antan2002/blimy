@@ -1,0 +1,7 @@
+Pin Tauri NPM plugin versions to match Rust crates
+
+Pin @tauri-apps/plugin-http, plugin-notification, and plugin-updater
+using tilde (~) instead of caret (^) in package.json. This prevents
+NPM from automatically resolving higher minor versions that cause
+Tauri to fail during the dev build due to strict major/minor version
+matching requirements between NPM packages and Rust crates.

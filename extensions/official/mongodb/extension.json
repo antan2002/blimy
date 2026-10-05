@@ -1,0 +1,33 @@
+{
+  "$schema": "https://blimy.dev/schemas/extension.json",
+  "id": "blimy.database.mongodb",
+  "name": "MongoDB",
+  "displayName": "MongoDB Provider",
+  "version": "1.0.0",
+  "description": "MongoDB connection, collection, and document provider.",
+  "publisher": "Blimy",
+  "categories": ["Database"],
+  "activationEvents": ["onDatabase:mongodb"],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/blimydev/blimy/tree/master/extensions/official/mongodb"
+  },
+  "icon": "icon.svg",
+  "databases": [
+    {
+      "id": "mongodb",
+      "label": "MongoDB",
+      "isFileBased": false,
+      "protocolVersion": 1,
+      "defaultPort": 27017,
+      "sidecar": {
+        "darwin-arm64": "bin/blimy-db-mongodb",
+        "darwin-x64": "bin/blimy-db-mongodb",
+        "linux-arm64": "bin/blimy-db-mongodb",
+        "linux-x64": "bin/blimy-db-mongodb",
+        "win32-x64": "bin/blimy-db-mongodb.exe"
+      }
+    }
+  ]
+}

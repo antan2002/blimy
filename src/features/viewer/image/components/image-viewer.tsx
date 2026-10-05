@@ -1,0 +1,360 @@
+import { convertFileSrc } from "@tauri-apps/api/core";
+import { ArrowDownIcon, ArrowUpIcon, XIcon } from "@/ui/icons";
+import { useEffect, useRef, useState } from "react";
+import { useBufferStore } from "@/features/editor/stores/buffer.store";
+import { FilePathBreadcrumb } from "@/features/editor/components/toolbar/file-path-breadcrumb";
+import {
+  PaneContentHeader,
+  PaneContentStatusBar,
+} from "@/features/panes/components/pane-content-chrome";
+import { useResizeObserver } from "@/features/panes/hooks/use-resize-observer";
+import { ViewerLayout } from "@/features/viewer/components/viewer-layout";
+import { ViewerLoadingState } from "@/features/viewer/components/viewer-state";
+import { ImageEditorToolbar } from "@/features/viewer/image/editor/components/image-editor-toolbar";
+import { ImageResizeDialog } from "@/features/viewer/image/editor/components/image-resize-dialog";
+import { useImageOperations } from "@/features/viewer/image/editor/hooks/use-image-operations";
+import {
+  blobToDataURL,
+  getImageDimensions,
+} from "@/features/viewer/image/editor/utils/canvas-utils";
+import {
+  getDataURLSize,
+  saveImageToFile,
+} from "@/features/viewer/image/editor/utils/image-file-utils";
+import { ViewerZoomControls } from "@/features/viewer/components/viewer-zoom-controls";
+import { useViewerZoom } from "@/features/viewer/hooks/use-viewer-zoom";
+import { Button } from "@/ui/button";
+import UnsavedChangesDialog from "@/features/window/components/unsaved-changes-dialog";
+import { cn } from "@/utils/cn";
+import { formatFileSize } from "@/utils/format-file-size";
+import { getImageMimeType } from "@/utils/image-file-types";
+import { ImageContextMenu } from "./image-context-menu";
+
+interface ImageViewerProps {
+  filePath: string;
+  fileName: string;
+  bufferId: string;
+  onClose?: () => void;
+}
+
+export function ImageViewer({ filePath, fileName, bufferId, onClose }: ImageViewerProps) {
+  const { zoom, zoomIn, zoomOut, setZoom, handleWheel } = useViewerZoom({ maxZoom: 5 });
+  const [initialImageSrc, setInitialImageSrc] = useState<string>("");
+  const [showResizeDialog, setShowResizeDialog] = useState(false);
+  const [showContextMenu, setShowContextMenu] = useState(false);
+  const [showUnsavedDialog, setShowUnsavedDialog] = useState(false);
+  const [contextMenuPos, setContextMenuPos] = useState({ x: 0, y: 0 });
+  const [imageDimensions, setImageDimensions] = useState({ width: 0, height: 0 });
+  const [originalSize, setOriginalSize] = useState(0);
+  const [currentSize, setCurrentSize] = useState(0);
+  const { markBufferDirty } = useBufferStore.use.actions();
+
+  const imageContainerRef = useRef<HTMLDivElement>(null);
+  const { width: containerWidth, height: containerHeight } = useResizeObserver(imageContainerRef);
+  const [isFitted, setIsFitted] = useState(true);
+
+  const fileExt = fileName.split(".").pop()?.toUpperCase() || "";
+
+  useEffect(() => {
+    let cancelled = false;
+    const loadImageSrc = async () => {
+      let fileSize = 0;
+
+      const applyImageSource = async (src: string) => {
+        const dims = await getImageDimensions(src);
+        if (cancelled) return;
+        setInitialImageSrc(src);
+        setImageDimensions(dims);
+        setOriginalSize(fileSize || getDataURLSize(src));
+        setCurrentSize(fileSize || getDataURLSize(src));
+      };
+
+      try {
+        const { readFile } = await import("@tauri-apps/plugin-fs");
+        const contents = await readFile(filePath);
+        fileSize = contents.byteLength;
+        const mimeType = getImageMimeType(filePath);
+
+        if (!mimeType) throw new Error(`Unsupported image type: ${filePath}`);
+
+        const dataURL = await blobToDataURL(new Blob([contents], { type: mimeType }));
+        await applyImageSource(dataURL);
+      } catch (error) {
+        console.error("Failed to load image:", error);
+        try {
+          await applyImageSource(convertFileSrc(filePath));
+        } catch (fallbackError) {
+          if (cancelled) return;
+          console.error("Fallback also failed:", fallbackError);
+        }
+      }
+    };
+
+    void loadImageSrc();
+    return () => {
+      cancelled = true;
+    };
+  }, [filePath]);
+
+  // Only initialize operations once we have the image loaded
+  const imageOperations = useImageOperations({
+    initialSrc: initialImageSrc,
+    onImageUpdate: async (newSrc) => {
+      // Update dimensions and size when image changes
+      try {
+        const dims = await getImageDimensions(newSrc);
+        setImageDimensions(dims);
+
+        const size = getDataURLSize(newSrc);
+        setCurrentSize(size);
+      } catch (error) {
+        console.error("Failed to update image metadata:", error);
+      }
+    },
+  });
+
+  // Sync image operations dirty state with buffer store
+  useEffect(() => {
+    markBufferDirty(bufferId, imageOperations.hasChanges);
+  }, [imageOperations.hasChanges, bufferId, markBufferDirty]);
+
+  // Calculate fit zoom
+  useEffect(() => {
+    if (
+      !isFitted ||
+      !containerWidth ||
+      !containerHeight ||
+      !imageDimensions.width ||
+      !imageDimensions.height
+    ) {
+      return;
+    }
+
+    const widthRatio = (containerWidth - 32) / imageDimensions.width;
+    const heightRatio = (containerHeight - 32) / imageDimensions.height;
+    const fitZoom = Math.min(widthRatio, heightRatio, 1);
+
+    setZoom(fitZoom);
+  }, [containerWidth, containerHeight, imageDimensions, isFitted, setZoom]);
+
+  // Wrap manual zoom handlers to disable auto-fit
+  const handleManualZoomIn = () => {
+    setIsFitted(false);
+    zoomIn();
+  };
+
+  const handleManualZoomOut = () => {
+    setIsFitted(false);
+    zoomOut();
+  };
+
+  const handleManualReset = () => {
+    setIsFitted(true);
+    // The effect will trigger and set the zoom
+  };
+
+  const handleManualWheel = (e: WheelEvent) => {
+    setIsFitted(false);
+    handleWheel(e);
+  };
+
+  // Attach wheel event listener using our wrapper
+  useEffect(() => {
+    const container = imageContainerRef.current;
+    if (!container) return;
+
+    container.addEventListener("wheel", handleManualWheel, { passive: false });
+
+    return () => {
+      container.removeEventListener("wheel", handleManualWheel);
+    };
+  }, [handleWheel]);
+
+  // Use the operations image if available, otherwise use initial
+  const displayImageSrc = imageOperations.imageSrc || initialImageSrc;
+
+  // Handlers
+  const handleResize = async (width: number, height: number, maintainAspectRatio: boolean) => {
+    await imageOperations.resize({ width, height, maintainAspectRatio });
+  };
+
+  const handleSave = async () => {
+    if (!displayImageSrc) return;
+
+    const success = await saveImageToFile(displayImageSrc, fileName);
+    if (success) {
+      // Reset to the new saved state
+      imageOperations.reset();
+      // Clear buffer dirty flag
+      markBufferDirty(bufferId, false);
+    }
+  };
+
+  const handleClose = () => {
+    if (imageOperations.hasChanges) {
+      setShowUnsavedDialog(true);
+    } else {
+      onClose?.();
+    }
+  };
+
+  const handleSaveAndClose = async () => {
+    await handleSave();
+    setShowUnsavedDialog(false);
+    onClose?.();
+  };
+
+  const handleDiscardAndClose = () => {
+    setShowUnsavedDialog(false);
+    onClose?.();
+  };
+
+  const handleCancelClose = () => {
+    setShowUnsavedDialog(false);
+  };
+
+  const handleContextMenu = (e: React.MouseEvent) => {
+    e.preventDefault();
+    setContextMenuPos({ x: e.clientX, y: e.clientY });
+    setShowContextMenu(true);
+  };
+
+  return (
+    <ViewerLayout className="select-none">
+      <PaneContentHeader
+        className="absolute inset-x-0 top-0 z-10"
+        context={<FilePathBreadcrumb filePath={filePath} />}
+        detail={fileExt || undefined}
+        actions={
+          <>
+            {initialImageSrc && (
+              <>
+                <ImageEditorToolbar
+                  onConvertFormat={imageOperations.convertFormat}
+                  onRotateCW={imageOperations.rotateCW}
+                  onRotateCCW={imageOperations.rotateCCW}
+                  onRotate180={imageOperations.rotate180}
+                  onFlipHorizontal={() => imageOperations.flip("horizontal")}
+                  onFlipVertical={() => imageOperations.flip("vertical")}
+                  onResize={() => setShowResizeDialog(true)}
+                  onUndo={imageOperations.undo}
+                  onSave={handleSave}
+                  canUndo={imageOperations.canUndo}
+                  hasChanges={imageOperations.hasChanges}
+                  isProcessing={imageOperations.isProcessing}
+                  currentImageSrc={displayImageSrc}
+                  currentFileName={fileName}
+                />
+                <div className="mx-1 h-4 w-px bg-border" />
+              </>
+            )}
+            <ViewerZoomControls
+              zoom={zoom}
+              onZoomIn={handleManualZoomIn}
+              onZoomOut={handleManualZoomOut}
+              onResetZoom={handleManualReset}
+            />
+            {onClose && (
+              <Button onClick={handleClose} variant="ghost" tooltip="Close image viewer" iconOnly>
+                <XIcon />
+              </Button>
+            )}
+          </>
+        }
+      />
+
+      {/* Image Content */}
+      <div
+        ref={imageContainerRef}
+        className={cn(
+          "absolute inset-x-0 top-7 bottom-7",
+          "flex items-center justify-center",
+          "overflow-auto bg-background p-4",
+        )}
+        onContextMenu={handleContextMenu}
+      >
+        {displayImageSrc ? (
+          <img
+            src={displayImageSrc}
+            alt={fileName}
+            style={{
+              width: imageDimensions.width ? imageDimensions.width * zoom : "auto",
+              height: imageDimensions.height ? imageDimensions.height * zoom : "auto",
+              maxWidth: "none",
+              maxHeight: "none",
+            }}
+            draggable={false}
+          />
+        ) : (
+          <ViewerLoadingState label="Loading image" className="p-8" />
+        )}
+      </div>
+
+      <div className="absolute inset-x-0 bottom-0 z-10">
+        <PaneContentStatusBar endContent={<span>Size: {formatFileSize(currentSize)}</span>}>
+          <span>Zoom: {Math.round(zoom * 100)}%</span>
+          {fileExt ? <span>Type: {fileExt}</span> : null}
+          <span>
+            {imageDimensions.width} × {imageDimensions.height}px
+          </span>
+          {imageOperations.hasChanges && originalSize !== currentSize ? (
+            <span className="flex items-center gap-0.5 text-primary">
+              {currentSize < originalSize ? (
+                <ArrowDownIcon className="inline" />
+              ) : (
+                <ArrowUpIcon className="inline" />
+              )}
+              {Math.abs(Math.round(((currentSize - originalSize) / originalSize) * 100))}%
+            </span>
+          ) : null}
+        </PaneContentStatusBar>
+      </div>
+
+      {/* Resize Dialog */}
+      <ImageResizeDialog
+        isOpen={showResizeDialog}
+        onClose={() => setShowResizeDialog(false)}
+        onResize={handleResize}
+        currentWidth={imageDimensions.width}
+        currentHeight={imageDimensions.height}
+      />
+
+      {/* Context Menu */}
+      {showContextMenu && (
+        <ImageContextMenu
+          x={contextMenuPos.x}
+          y={contextMenuPos.y}
+          filePath={filePath}
+          onClose={() => setShowContextMenu(false)}
+          onConvertFormat={imageOperations.convertFormat}
+          onRotateCW={imageOperations.rotateCW}
+          onRotateCCW={imageOperations.rotateCCW}
+          onRotate180={imageOperations.rotate180}
+          onFlipHorizontal={() => imageOperations.flip("horizontal")}
+          onFlipVertical={() => imageOperations.flip("vertical")}
+          onResize={() => {
+            setShowResizeDialog(true);
+            setShowContextMenu(false);
+          }}
+          onUndo={imageOperations.undo}
+          onSave={handleSave}
+          canUndo={imageOperations.canUndo}
+          hasChanges={imageOperations.hasChanges}
+          isProcessing={imageOperations.isProcessing}
+          currentImageSrc={displayImageSrc}
+          currentFileName={fileName}
+        />
+      )}
+
+      {/* Unsaved Changes Dialog */}
+      {showUnsavedDialog && (
+        <UnsavedChangesDialog
+          fileName={fileName}
+          onSave={handleSaveAndClose}
+          onDiscard={handleDiscardAndClose}
+          onCancel={handleCancelClose}
+        />
+      )}
+    </ViewerLayout>
+  );
+}

@@ -1,0 +1,38 @@
+export interface AIChatSkill {
+  id: string;
+  title: string;
+  description?: string;
+  content: string;
+  author?: string;
+  license?: string;
+  sourceUrl?: string;
+  source?: "local" | "marketplace";
+  sourceId?: string;
+  version?: string;
+  tags?: string[];
+  localOverride?: boolean;
+  upstreamTitle?: string;
+  upstreamDescription?: string;
+  upstreamContent?: string;
+  upstreamUpdatedAt?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface MarketplaceSkill {
+  id: string;
+  title: string;
+  description: string;
+  content?: string;
+  author?: string;
+  license?: string;
+  version?: string;
+  tags: string[];
+  detailUrl?: string;
+  sourceUrl?: string;
+  updatedAt?: string;
+}
+
+export interface ResolvedMarketplaceSkill extends MarketplaceSkill {
+  content: string;
+}

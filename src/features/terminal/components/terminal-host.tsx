@@ -1,0 +1,138 @@
+import { useEffect, useLayoutEffect, useMemo, useReducer, useRef, useState } from "react";
+import { createPortal } from "react-dom";
+import { useShallow } from "zustand/react/shallow";
+import { useTerminalSlotsStore } from "../stores/terminal-slots.store";
+import { type TerminalStore, useTerminalStore } from "../stores/terminal.store";
+import { workspaceRuntimeRegistry } from "@/features/workspace/runtime/workspace-runtime-registry";
+import { TerminalEmulator } from "./terminal";
+
+// Renders all live terminal frontends at app root. Each session owns a stable
+// wrapper <div> that's reparented (via raw appendChild) into whichever slot
+// is currently displaying it. React always portals TerminalEmulator into the
+// wrapper â€” only the wrapper's DOM parent changes. Pane moves never unmount
+// the frontend; PTY listeners + scrollback survive.
+export function TerminalHost() {
+  const [, refreshWorkspaceSessions] = useReducer((version) => version + 1, 0);
+  const slotIds = useTerminalSlotsStore(useShallow((state) => Array.from(state.slots.keys())));
+  const activeSessionStoreIds = useTerminalStore(
+    useShallow((state) => Array.from(state.sessions.keys())),
+  );
+  const sessionStoreIds = workspaceRuntimeRegistry
+    .getExistingStores<TerminalStore>("terminal")
+    .flatMap((store) => [...store.getState().sessions.keys()]);
+
+  useEffect(
+    () => workspaceRuntimeRegistry.subscribeToStoreKey("terminal", refreshWorkspaceSessions),
+    [activeSessionStoreIds],
+  );
+
+  const knownRef = useRef<{ all: Set<string>; everInStore: Set<string> }>({
+    all: new Set(),
+    everInStore: new Set(),
+  });
+
+  for (const id of slotIds) knownRef.current.all.add(id);
+  for (const id of sessionStoreIds) {
+    knownRef.current.all.add(id);
+    knownRef.current.everInStore.add(id);
+  }
+
+  // Once a session has been registered in the terminal store (PTY connected),
+  // its disappearance from there means it was explicitly closed â€” drop it.
+  for (const id of Array.from(knownRef.current.all)) {
+    if (knownRef.current.everInStore.has(id) && !sessionStoreIds.includes(id)) {
+      knownRef.current.all.delete(id);
+      knownRef.current.everInStore.delete(id);
+    }
+  }
+
+  const liveIds = useMemo(
+    () => Array.from(knownRef.current.all),
+    // Recompute whenever either source changes.
+    [slotIds, sessionStoreIds],
+  );
+
+  return (
+    <>
+      {liveIds.map((sessionId) => (
+        <TerminalPortal key={sessionId} sessionId={sessionId} />
+      ))}
+    </>
+  );
+}
+
+function TerminalPortal({ sessionId }: { sessionId: string }) {
+  const slotEl = useTerminalSlotsStore((state) => state.slots.get(sessionId)?.el);
+  const slot = useTerminalSlotsStore((state) => state.slots.get(sessionId));
+
+  // Stable wrapper that hosts the terminal DOM for the lifetime of this session.
+  const [wrapper] = useState(() => {
+    if (typeof document === "undefined") return null;
+    const wrapper = document.createElement("div");
+    wrapper.style.flexDirection = "column";
+    wrapper.style.height = "100%";
+    wrapper.style.width = "100%";
+    wrapper.style.minHeight = "0";
+    wrapper.style.minWidth = "0";
+    wrapper.setAttribute("data-terminal-wrapper", sessionId);
+    return wrapper;
+  });
+
+  // Reparent the wrapper into the active slot whenever the slot changes, before the slot paints.
+  useLayoutEffect(() => {
+    if (!wrapper) return;
+
+    if (slotEl) {
+      wrapper.style.display = slot?.isVisible ? "flex" : "none";
+      slotEl.appendChild(wrapper);
+    } else {
+      let park = document.querySelector<HTMLDivElement>("[data-terminal-park]");
+      if (!park) {
+        park = document.createElement("div");
+        park.setAttribute("data-terminal-park", "");
+        park.style.display = "none";
+        document.body.appendChild(park);
+      }
+      wrapper.style.display = "none";
+      park.appendChild(wrapper);
+    }
+  }, [slot?.isVisible, slotEl, wrapper]);
+
+  // Tear down wrapper on session end.
+  useEffect(() => {
+    return () => {
+      if (wrapper?.parentNode) {
+        wrapper.parentNode.removeChild(wrapper);
+      }
+    };
+  }, [wrapper]);
+
+  // After slot swap, kick the frontend to refit + repaint â€” TUIs (CC etc.) need
+  // a SIGWINCH-like nudge to redraw at the new column count.
+  useEffect(() => {
+    if (!slotEl) return;
+    const id = requestAnimationFrame(() => {
+      window.dispatchEvent(new CustomEvent("blimy-terminal-refit", { detail: { sessionId } }));
+    });
+    return () => cancelAnimationFrame(id);
+  }, [slotEl, sessionId]);
+
+  if (!wrapper) return null;
+
+  return createPortal(
+    <TerminalEmulator
+      sessionId={sessionId}
+      isActive={slot?.isActive ?? false}
+      isVisible={slot?.isVisible ?? true}
+      shell={slot?.shell}
+      initialCommand={slot?.initialCommand}
+      environment={slot?.environment}
+      workingDirectory={slot?.workingDirectory}
+      remoteConnectionId={slot?.remoteConnectionId}
+      onTerminalExit={slot?.onTerminalExit}
+      onTerminalRef={slot?.onTerminalRef}
+      onReady={slot?.onReady}
+    />,
+    wrapper,
+  );
+}

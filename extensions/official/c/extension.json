@@ -1,0 +1,24 @@
+{
+  "$schema": "https://blimy.dev/schemas/extension.json",
+  "id": "blimy.c",
+  "name": "C",
+  "displayName": "C",
+  "version": "1.0.0",
+  "description": "C language support with LSP",
+  "publisher": "Blimy",
+  "categories": ["Language"],
+  "languages": [
+    {
+      "id": "c",
+      "extensions": [".c", ".h"],
+      "aliases": ["C"]
+    }
+  ],
+  "capabilities": {
+    "lsp": {
+      "name": "clangd",
+      "runtime": "binary",
+      "args": ["--background-index"]
+    }
+  }
+}

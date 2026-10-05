@@ -1,0 +1,203 @@
+import { beforeEach, describe, expect, it, vi } from "vite-plus/test";
+import { invoke } from "@tauri-apps/api/core";
+import { loadChatFromDb, saveChatToDb } from "@/features/ai/services/ai-chat-history-service";
+import type { Chat } from "@/features/ai/types/ai-chat.types";
+
+vi.mock("@tauri-apps/api/core", () => ({
+  invoke: vi.fn(),
+}));
+
+function createChat(id: string, content: string): Chat {
+  return {
+    id,
+    title: "Session",
+    messages: [
+      {
+        id: "assistant-1",
+        role: "assistant",
+        content,
+        timestamp: new Date(2),
+        isStreaming: true,
+      },
+    ],
+    createdAt: new Date(1),
+    lastMessageAt: new Date(2),
+    agentId: "codex",
+  };
+}
+
+describe("AI chat history service", () => {
+  it("round-trips image attachments through the persisted history payload", async () => {
+    const chat = createChat("image-chat", "");
+    chat.messages[0].role = "user";
+    chat.messages[0].isStreaming = false;
+    chat.messages[0].images = [{ mediaType: "image/png", data: "YWJj" }];
+    vi.mocked(invoke).mockResolvedValue(undefined);
+    await saveChatToDb(chat);
+    const saved = vi.mocked(invoke).mock.calls[0][1];
+    expect(saved).toMatchObject({
+      messages: [expect.objectContaining({ images: JSON.stringify(chat.messages[0].images) })],
+    });
+    vi.mocked(invoke).mockResolvedValue({ ...saved, tool_calls: [] });
+    const restored = await loadChatFromDb(chat.id);
+    expect(restored.messages[0].images).toEqual(chat.messages[0].images);
+  });
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it("keeps a turn's token usage across a restart", async () => {
+    const chat = createChat("usage-chat", "Done");
+    chat.messages[0].isStreaming = false;
+    chat.messages[0].turnUsage = { totalTokens: 30, inputTokens: 20, outputTokens: 10 };
+    vi.mocked(invoke).mockResolvedValue(undefined);
+    await saveChatToDb(chat);
+    const saved = vi.mocked(invoke).mock.calls[0][1] as Record<string, unknown>;
+    vi.mocked(invoke).mockResolvedValue({ ...saved, tool_calls: [] });
+
+    const restored = await loadChatFromDb(chat.id);
+
+    expect(restored.messages[0].turnUsage).toEqual(chat.messages[0].turnUsage);
+  });
+
+  it("keeps a tool call's terminal output across a restart", async () => {
+    const chat = createChat("terminal-chat", "Ran it");
+    chat.messages[0].isStreaming = false;
+    const terminals = {
+      t1: { output: "ok\n", truncated: false, exit: { exitCode: 0, signal: null } },
+    };
+    chat.messages[0].toolCalls = [
+      {
+        id: "call-1",
+        name: "ls",
+        input: {},
+        output: [{ type: "terminal", terminalId: "t1" }],
+        timestamp: new Date(2),
+        isComplete: true,
+        terminals,
+      },
+    ];
+    vi.mocked(invoke).mockResolvedValue(undefined);
+    await saveChatToDb(chat);
+    const saved = vi.mocked(invoke).mock.calls[0][1] as Record<string, unknown>;
+    vi.mocked(invoke).mockResolvedValue({ ...saved, tool_calls: saved.toolCalls });
+
+    const restored = await loadChatFromDb(chat.id);
+
+    expect(restored.messages[0].toolCalls?.[0].terminals).toEqual(terminals);
+  });
+
+  it("serializes and coalesces saves for the same chat", async () => {
+    let resolveFirstSave: (() => void) | undefined;
+    vi.mocked(invoke).mockImplementation(() => {
+      if (resolveFirstSave) return Promise.resolve();
+      return new Promise<void>((resolve) => {
+        resolveFirstSave = resolve;
+      });
+    });
+    const chat = createChat("serialized-chat", "first");
+
+    const firstSave = saveChatToDb(chat);
+    await Promise.resolve();
+    chat.messages[0].content = "latest";
+    chat.messages[0].isStreaming = false;
+    const latestSave = saveChatToDb(chat);
+
+    expect(invoke).toHaveBeenCalledTimes(1);
+    resolveFirstSave?.();
+    await firstSave;
+    await latestSave;
+
+    expect(invoke).toHaveBeenCalledTimes(2);
+    expect(vi.mocked(invoke).mock.calls[1]?.[1]).toMatchObject({
+      messages: [expect.objectContaining({ content: "latest", is_streaming: false })],
+    });
+  });
+
+  it("does not restore stale streaming state after an app restart", async () => {
+    vi.mocked(invoke).mockResolvedValue({
+      chat: {
+        id: "loaded-chat",
+        title: "Session",
+        created_at: 1,
+        last_message_at: 2,
+        agent_id: "codex",
+        acp_session_id: null,
+        workspace_path: null,
+        provider_id: null,
+        model_id: null,
+        branch: null,
+        is_pinned: false,
+        archived_at: null,
+      },
+      messages: [
+        {
+          id: "assistant-1",
+          chat_id: "loaded-chat",
+          role: "assistant",
+          content: "Interrupted response",
+          timestamp: 2,
+          is_streaming: true,
+          is_tool_use: false,
+          tool_name: null,
+        },
+      ],
+      tool_calls: [],
+    });
+
+    const chat = await loadChatFromDb("loaded-chat");
+
+    expect(chat.messages[0].isStreaming).toBe(false);
+  });
+
+  it("restores consecutive assistant segments as one response", async () => {
+    vi.mocked(invoke).mockResolvedValue({
+      chat: {
+        id: "loaded-chat",
+        title: "Session",
+        created_at: 1,
+        last_message_at: 3,
+        agent_id: "codex",
+        acp_session_id: null,
+        workspace_path: null,
+        provider_id: null,
+        model_id: null,
+        branch: null,
+        is_pinned: false,
+        archived_at: null,
+      },
+      messages: [
+        {
+          id: "assistant-1",
+          chat_id: "loaded-chat",
+          role: "assistant",
+          content: "First segment",
+          timestamp: 2,
+          is_streaming: false,
+          is_tool_use: false,
+          tool_name: null,
+        },
+        {
+          id: "assistant-2",
+          chat_id: "loaded-chat",
+          role: "assistant",
+          content: "Second segment",
+          timestamp: 3,
+          is_streaming: false,
+          is_tool_use: false,
+          tool_name: null,
+        },
+      ],
+      tool_calls: [],
+    });
+
+    const chat = await loadChatFromDb("loaded-chat");
+
+    expect(chat.messages).toHaveLength(1);
+    expect(chat.messages[0]).toMatchObject({
+      id: "assistant-1",
+      content: "First segment\n\nSecond segment",
+    });
+  });
+});

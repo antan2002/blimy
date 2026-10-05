@@ -1,0 +1,16 @@
+{
+  "websiteBaseUrl": "https://blimy.dev",
+  "apiBaseUrl": "https://blimy.dev",
+  "docsUrl": "https://blimy.dev/docs",
+  "telemetryDocsUrl": "https://blimy.dev/docs/telemetry",
+  "pricingUrl": "https://blimy.dev/pricing",
+  "dashboardUrl": "https://blimy.dev/dashboard",
+  "dashboardBillingUrl": "https://blimy.dev/dashboard/settings/billing",
+  "dashboardIntegrationsUrl": "https://blimy.dev/dashboard/settings/integrations",
+  "dashboardCollaborationUrl": "https://blimy.dev/dashboard/collaboration",
+  "extensionsCdnBaseUrl": "https://blimy.dev/extensions",
+  "stableUpdateUrl": "https://blimy.dev/api/update/stable",
+  "previewUpdateUrl": "https://blimy.dev/api/update/preview",
+  "githubReleasesBaseUrl": "https://github.com/blimydev/blimy/releases",
+  "githubReleasesApiBaseUrl": "https://api.github.com/repos/blimydev/blimy/releases"
+}

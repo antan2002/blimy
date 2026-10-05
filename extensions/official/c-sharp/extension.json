@@ -1,0 +1,24 @@
+{
+  "$schema": "https://blimy.dev/schemas/extension.json",
+  "id": "blimy.csharp",
+  "name": "CSharp",
+  "displayName": "C#",
+  "version": "1.0.0",
+  "description": "C# language support with LSP",
+  "publisher": "Blimy",
+  "categories": ["Language"],
+  "languages": [
+    {
+      "id": "csharp",
+      "extensions": [".cs"],
+      "aliases": ["C#", "CSharp", "csharp"]
+    }
+  ],
+  "capabilities": {
+    "lsp": {
+      "name": "omnisharp",
+      "runtime": "binary",
+      "args": ["--languageserver"]
+    }
+  }
+}

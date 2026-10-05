@@ -1,0 +1,6 @@
+Fix Windows execution of vite-plus build scripts
+
+Call the vite-plus executable explicitly through Bun instead of
+relying on the bare binary name. This prevents Node.js from throwing
+an unknown file extension error when executing the extensionless
+binary within a module package context on Windows.

@@ -1,0 +1,17 @@
+{
+  "$schema": "https://blimy.dev/schemas/extension.json",
+  "id": "blimy.tlaplus",
+  "name": "TLAPLUS",
+  "displayName": "TLA+",
+  "version": "1.0.0",
+  "description": "TLA+ language support",
+  "publisher": "Blimy",
+  "categories": ["Language"],
+  "languages": [
+    {
+      "id": "tlaplus",
+      "extensions": [".tla"],
+      "aliases": ["TLA+", "TLAPLUS", "tlaplus"]
+    }
+  ]
+}

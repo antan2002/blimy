@@ -1,0 +1,17 @@
+{
+  "$schema": "https://blimy.dev/schemas/extension.json",
+  "id": "blimy.ql",
+  "name": "QL",
+  "displayName": "QL",
+  "version": "1.0.0",
+  "description": "QL language support",
+  "publisher": "Blimy",
+  "categories": ["Language"],
+  "languages": [
+    {
+      "id": "ql",
+      "extensions": [".ql", ".qll"],
+      "aliases": ["QL", "CodeQL"]
+    }
+  ]
+}

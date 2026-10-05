@@ -1,0 +1,1007 @@
+import { invoke } from "@tauri-apps/api/core";
+import type { ISearchOptions } from "@xterm/addon-search";
+import { Terminal } from "@xterm/xterm";
+import {
+  useCallback,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+  useState,
+  type DragEvent,
+} from "react";
+import { connectionStore } from "@/features/remote/stores/remote-connection.store";
+import { parseRemotePath } from "@/features/remote/utils/remote-path";
+import { getWslShellId, parseWslPath } from "@/features/wsl/utils/wsl-path";
+import { useSettingsStore } from "@/features/settings/stores/settings.store";
+import { useZoomStore } from "@/features/window/stores/zoom.store";
+import { useProjectStore } from "@/features/window/stores/project.store";
+import { useFileSystemStore } from "@/features/file-system/stores/file-system.store";
+import { extractDroppedFilePaths } from "@/features/file-system/utils/file-system-dropped-paths";
+import {
+  TERMINAL_FILE_DROP_EVENT,
+  type TerminalFileDropDetail,
+} from "@/features/file-system/utils/file-system-drop-controller";
+import { showConfirmDialog } from "@/ui/dialog";
+import { showToast } from "@/features/layout/contexts/toast-context";
+import { readClipboardText, writeClipboardText } from "@/utils/clipboard";
+import { frontendTrace } from "@/utils/frontend-trace";
+import { currentPlatform } from "@/utils/platform";
+import {
+  createTerminalAddons,
+  createTerminalLinkHandler,
+  injectLinkStyles,
+  loadWebLinksAddon,
+  registerFileLinksProvider,
+  removeLinkStyles,
+  type TerminalAddons,
+} from "../hooks/use-terminal-addons";
+import { useTerminalConnection } from "../hooks/use-terminal-connection";
+import { TerminalLinkTooltip } from "../lib/terminal-link-tooltip";
+import { TerminalShellIntegration } from "../lib/terminal-shell-integration";
+import { useTerminalTheme, type TerminalTheme } from "../hooks/use-terminal-theme";
+import { useTerminalStore } from "../stores/terminal.store";
+import type {
+  TerminalCommandNavigationDirection,
+  TerminalCommandSummary,
+  TerminalEmulatorHandle,
+} from "../types/terminal.types";
+import { formatDroppedPathsForTerminal } from "../utils/terminal-file-drop";
+import { resolveTerminalFont } from "../utils/resolve-font";
+import { getTerminalKeyAction } from "../utils/terminal-keyboard";
+import { getTerminalCompatibilityOptions } from "../utils/terminal-options";
+import { createTerminalEventChannel, getTerminalSize } from "../utils/terminal-protocol";
+import {
+  ensureFrontendTerminalSession,
+  getFrontendTerminalSessionArgs,
+} from "../utils/frontend-terminal-session";
+import { TerminalSearch, type TerminalSearchOptions } from "./terminal-search";
+import "@xterm/xterm/css/xterm.css";
+import "../styles/terminal.css";
+import { getRequiredBlimyDefaultColor } from "@/extensions/themes/default-theme";
+
+const MULTILINE_PASTE_LINE_THRESHOLD = 5;
+const LARGE_PASTE_CHAR_THRESHOLD = 1000;
+
+interface TerminalEmulatorProps {
+  sessionId: string;
+  isActive: boolean;
+  isVisible?: boolean;
+  onReady?: () => void;
+  onTerminalRef?: (ref: TerminalEmulatorHandle) => void;
+  onTerminalExit?: (sessionId: string) => void;
+  shell?: string;
+  initialCommand?: string;
+  environment?: Record<string, string>;
+  workingDirectory?: string;
+  remoteConnectionId?: string;
+}
+
+export const TerminalEmulator = ({
+  sessionId,
+  isActive,
+  isVisible = true,
+  onReady,
+  onTerminalRef,
+  onTerminalExit,
+  shell,
+  initialCommand,
+  environment,
+  workingDirectory,
+  remoteConnectionId,
+}: TerminalEmulatorProps) => {
+  const terminalContainerRef = useRef<HTMLDivElement>(null);
+  const terminalRef = useRef<Terminal | null>(null);
+  const addonsRef = useRef<TerminalAddons | null>(null);
+  const shellIntegrationRef = useRef<TerminalShellIntegration | null>(null);
+  const linkTooltipRef = useRef<TerminalLinkTooltip | null>(null);
+  const [isInitialized, setIsInitialized] = useState(false);
+  const [isSearchVisible, setIsSearchVisible] = useState(false);
+  const [searchResults, setSearchResults] = useState({ current: 0, total: 0 });
+  const isInitializingRef = useRef(false);
+  const fitFrameRef = useRef<number | null>(null);
+
+  const updateSession = useTerminalStore((state) => state.actions.updateSession);
+  const getSession = useTerminalStore((state) => state.actions.getSession);
+  const session = useTerminalStore((state) => state.sessions.get(sessionId));
+  const connectionId = session?.connectionId;
+  const hadExistingConnectionOnMountRef = useRef(Boolean(session?.connectionId));
+  const terminalInputCleanupRef = useRef<() => void>(() => {});
+
+  const terminalThemeId = useSettingsStore((state) => state.settings.theme);
+  const terminalFontFamily = useSettingsStore((state) => state.settings.terminalFontFamily);
+  const terminalFontSize = useSettingsStore((state) => state.settings.terminalFontSize);
+  const terminalLineHeight = useSettingsStore((state) => state.settings.terminalLineHeight);
+  const terminalLetterSpacing = useSettingsStore((state) => state.settings.terminalLetterSpacing);
+  const terminalScrollback = useSettingsStore((state) => state.settings.terminalScrollback);
+  const terminalMinimumContrastRatio = useSettingsStore(
+    (state) => state.settings.terminalMinimumContrastRatio,
+  );
+  const terminalCursorStyle = useSettingsStore((state) => state.settings.terminalCursorStyle);
+  const terminalCursorBlink = useSettingsStore((state) => state.settings.terminalCursorBlink);
+  const terminalCursorWidth = useSettingsStore((state) => state.settings.terminalCursorWidth);
+  const terminalCursorInactiveStyle = useSettingsStore(
+    (state) => state.settings.terminalCursorInactiveStyle,
+  );
+  const terminalAltClickMovesCursor = useSettingsStore(
+    (state) => state.settings.terminalAltClickMovesCursor,
+  );
+  const terminalMacOptionIsMeta = useSettingsStore(
+    (state) => state.settings.terminalMacOptionIsMeta,
+  );
+  const terminalRightClickSelectsWord = useSettingsStore(
+    (state) => state.settings.terminalRightClickSelectsWord,
+  );
+  const terminalShellIntegration = useSettingsStore(
+    (state) => state.settings.terminalShellIntegration,
+  );
+  const zoomLevel = useZoomStore.use.terminalZoomLevel();
+  const rootFolderPath = useProjectStore((state) => state.rootFolderPath);
+  const workspaceRootRef = useRef(rootFolderPath);
+  const { getTerminalTheme } = useTerminalTheme();
+  const effectiveTerminalFontSize = Math.round(terminalFontSize * zoomLevel * 10) / 10;
+  const effectiveTerminalLetterSpacing = terminalLetterSpacing * zoomLevel;
+  const effectiveTerminalCursorWidth = Math.max(1, Math.round(terminalCursorWidth * zoomLevel));
+  const terminalIsRemote = Boolean(
+    remoteConnectionId ||
+    session?.remoteConnectionId ||
+    parseRemotePath(workingDirectory || session?.currentDirectory || rootFolderPath || ""),
+  );
+
+  useEffect(() => {
+    workspaceRootRef.current = rootFolderPath;
+  }, [rootFolderPath]);
+
+  const applyTerminalTheme = useCallback((theme: TerminalTheme) => {
+    const terminal = terminalRef.current;
+    if (!terminal) return;
+    terminal.options.theme = theme;
+  }, []);
+
+  const { currentConnectionIdRef, sendTerminalSize, writeBuffered } = useTerminalConnection({
+    applyTerminalTheme,
+    connectionId,
+    getTerminalTheme,
+    initialCommand,
+    isInitialized,
+    onTerminalExit,
+    remoteConnectionId,
+    reuseExistingConnection: hadExistingConnectionOnMountRef.current,
+    sessionId,
+    terminal: terminalRef.current,
+    updateSession,
+  });
+
+  const fitTerminal = useCallback(() => {
+    if (fitFrameRef.current !== null) cancelAnimationFrame(fitFrameRef.current);
+
+    fitFrameRef.current = requestAnimationFrame(() => {
+      fitFrameRef.current = null;
+      const container = terminalContainerRef.current;
+      const addons = addonsRef.current;
+      const terminal = terminalRef.current;
+      if (!container || !addons || !terminal) return;
+
+      const rect = container.getBoundingClientRect();
+      if (rect.width <= 0 || rect.height <= 0 || container.offsetParent === null) {
+        return;
+      }
+
+      addons.fitAddon.fit();
+      sendTerminalSize(terminal);
+      terminal.refresh(0, terminal.rows - 1);
+    });
+  }, [sendTerminalSize]);
+
+  const insertDroppedPaths = useCallback(
+    (paths: string[]) => {
+      const text = formatDroppedPathsForTerminal(paths);
+      if (!text) return false;
+
+      writeBuffered(text);
+      requestAnimationFrame(() => terminalRef.current?.focus());
+      return true;
+    },
+    [writeBuffered],
+  );
+
+  const handleTerminalFileDrop = useCallback(
+    (event: DragEvent<HTMLDivElement>) => {
+      if (!insertDroppedPaths(extractDroppedFilePaths(event.dataTransfer))) return;
+
+      event.preventDefault();
+      event.stopPropagation();
+    },
+    [insertDroppedPaths],
+  );
+
+  useEffect(() => {
+    const container = terminalContainerRef.current;
+    if (!container) return;
+
+    const handleNativeFileDrop = (event: Event) => {
+      const detail = (event as CustomEvent<TerminalFileDropDetail>).detail;
+      insertDroppedPaths(detail?.paths ?? []);
+    };
+
+    container.addEventListener(TERMINAL_FILE_DROP_EVENT, handleNativeFileDrop);
+    return () => container.removeEventListener(TERMINAL_FILE_DROP_EVENT, handleNativeFileDrop);
+  }, [insertDroppedPaths]);
+
+  const handleTerminalDragOver = useCallback((event: DragEvent<HTMLDivElement>) => {
+    if (!Array.from(event.dataTransfer.types).includes("Files")) return;
+    event.preventDefault();
+    event.stopPropagation();
+    event.dataTransfer.dropEffect = "copy";
+  }, []);
+
+  const copyLastCommandOutput = useCallback(() => {
+    const output = shellIntegrationRef.current?.getLastCommandOutput() ?? null;
+    if (output === null) {
+      showToast({
+        key: "terminal-copy-output",
+        type: "info",
+        message: "No command output to copy",
+        description: "Enable shell integration to track command output.",
+      });
+      return;
+    }
+    if (output === "") {
+      showToast({
+        key: "terminal-copy-output",
+        type: "info",
+        message: "The last command produced no output",
+      });
+      return;
+    }
+    void writeClipboardText(output)
+      .then(() =>
+        showToast({
+          key: "terminal-copy-output",
+          type: "success",
+          message: "Copied last command output",
+        }),
+      )
+      .catch((error) => console.error("Failed to copy command output:", error));
+  }, []);
+
+  const navigateCommand = useCallback((direction: TerminalCommandNavigationDirection) => {
+    const integration = shellIntegrationRef.current;
+    if (!integration) return;
+    if (direction === "previous") integration.scrollToPreviousCommand();
+    else integration.scrollToNextCommand();
+  }, []);
+
+  const createSessionHandle = useCallback(
+    (terminal: Terminal): TerminalEmulatorHandle => ({
+      focus: () => terminal.focus(),
+      showSearch: () => setIsSearchVisible(true),
+      navigateCommand,
+      clear: () => terminal.clear(),
+      selectAll: () => terminal.selectAll(),
+      copyLastCommandOutput,
+      terminal,
+    }),
+    [copyLastCommandOutput, navigateCommand],
+  );
+
+  const pasteIntoTerminal = useCallback(async (terminal: Terminal, text: string) => {
+    if (!text) return;
+
+    const lineCount = text.replace(/\r\n/g, "\n").split("\n").length;
+    const requiresConfirmation =
+      lineCount >= MULTILINE_PASTE_LINE_THRESHOLD || text.length >= LARGE_PASTE_CHAR_THRESHOLD;
+
+    if (
+      requiresConfirmation &&
+      !(await showConfirmDialog(
+        `Paste ${lineCount} lines into the terminal? This may execute multiple commands.`,
+        { title: "Paste Into Terminal", confirmLabel: "Paste" },
+      ))
+    ) {
+      return;
+    }
+
+    terminal.paste(text);
+  }, []);
+
+  const initializeTerminal = useCallback(async () => {
+    const container = terminalContainerRef.current;
+    if (!container || isInitialized || isInitializingRef.current) return;
+
+    const rect = container.getBoundingClientRect();
+    const isContainerVisible = container.offsetParent !== null;
+    if (rect.width <= 0 || rect.height <= 0 || !isContainerVisible) return;
+
+    isInitializingRef.current = true;
+    const initializationStartedAt = performance.now();
+    const resolved = await resolveTerminalFont(terminalFontFamily, effectiveTerminalFontSize);
+
+    if (!terminalContainerRef.current) {
+      isInitializingRef.current = false;
+      return;
+    }
+
+    try {
+      let linkTooltip: TerminalLinkTooltip | null = null;
+      const linkOptions = {
+        get tooltip() {
+          if (!linkTooltip) throw new Error("Terminal link tooltip is not ready.");
+          return linkTooltip;
+        },
+        getWorkspaceRoot: () => workspaceRootRef.current,
+        openFile: async (link: { path: string; line?: number; column?: number }) => {
+          await useFileSystemStore
+            .getState()
+            .handleFileSelect(link.path, false, link.line, link.column);
+        },
+      };
+      const terminal = new Terminal({
+        linkHandler: createTerminalLinkHandler(linkOptions),
+        fontFamily: resolved.fontFamily,
+        fontSize: effectiveTerminalFontSize,
+        lineHeight: terminalLineHeight,
+        letterSpacing: effectiveTerminalLetterSpacing,
+        cursorBlink: terminalCursorBlink,
+        cursorStyle: terminalCursorStyle,
+        cursorWidth: effectiveTerminalCursorWidth,
+        cursorInactiveStyle: terminalCursorInactiveStyle,
+        altClickMovesCursor: terminalAltClickMovesCursor,
+        allowProposedApi: true,
+        theme: getTerminalTheme(),
+        scrollback: terminalScrollback,
+        minimumContrastRatio: terminalMinimumContrastRatio,
+        convertEol: false,
+        macOptionIsMeta: terminalMacOptionIsMeta,
+        rightClickSelectsWord: terminalRightClickSelectsWord,
+        ...getTerminalCompatibilityOptions({ isRemote: terminalIsRemote }),
+      });
+
+      terminal.open(terminalContainerRef.current);
+      linkTooltip = new TerminalLinkTooltip(terminal);
+      linkTooltipRef.current?.dispose();
+      linkTooltipRef.current = linkTooltip;
+      const addons = createTerminalAddons(terminal, {
+        onRendererFallback: fitTerminal,
+      });
+
+      const handleCustomKeyEvent = (event: KeyboardEvent) => {
+        const action = getTerminalKeyAction(event, currentPlatform);
+        if (action.type === "switchTab") {
+          event.preventDefault();
+          window.dispatchEvent(
+            new CustomEvent("terminal-switch-tab", {
+              detail: action.direction,
+            }),
+          );
+          return false;
+        }
+
+        if (action.type === "write") {
+          event.preventDefault();
+          writeBuffered(action.data);
+          return false;
+        }
+
+        if (action.type === "copy") {
+          event.preventDefault();
+          const selection = terminal.getSelection();
+          if (selection) {
+            void writeClipboardText(selection).catch((error) =>
+              console.error("Failed to copy terminal selection:", error),
+            );
+          }
+          return false;
+        }
+
+        if (action.type === "paste") {
+          event.preventDefault();
+          void readClipboardText()
+            .then((text) => pasteIntoTerminal(terminal, text))
+            .catch((error) => console.error("Failed to paste into terminal:", error));
+          return false;
+        }
+
+        return action.type === "passthrough";
+      };
+      terminal.attachCustomKeyEventHandler(handleCustomKeyEvent);
+
+      const textarea = terminal.textarea;
+      if (textarea) {
+        const handleBeforeInput = (event: InputEvent) => {
+          if (event.inputType === "insertReplacementText" || event.inputType === "insertFromDrop") {
+            const text = event.dataTransfer?.getData("text/plain") ?? event.data;
+            if (!text || !currentConnectionIdRef.current) return;
+
+            event.preventDefault();
+            writeBuffered(text);
+          }
+        };
+
+        const handlePaste = (event: ClipboardEvent) => {
+          const text = event.clipboardData?.getData("text/plain");
+          if (!text || !currentConnectionIdRef.current) return;
+
+          event.preventDefault();
+          event.stopImmediatePropagation();
+          void pasteIntoTerminal(terminal, text);
+        };
+
+        textarea.spellcheck = false;
+        textarea.addEventListener("beforeinput", handleBeforeInput);
+        textarea.addEventListener("paste", handlePaste, true);
+        terminalInputCleanupRef.current = () => {
+          textarea.removeEventListener("beforeinput", handleBeforeInput);
+          textarea.removeEventListener("paste", handlePaste, true);
+        };
+      }
+
+      loadWebLinksAddon(terminal, linkOptions);
+      registerFileLinksProvider(terminal, linkOptions);
+      injectLinkStyles(sessionId, terminalContainerRef.current.id || `terminal-${sessionId}`);
+      shellIntegrationRef.current?.dispose();
+      shellIntegrationRef.current = terminalShellIntegration
+        ? new TerminalShellIntegration(terminal, {
+            onCommandFinished: (command) => {
+              if (command.startedAt === null || command.finishedAt === null) return;
+              if (command.status === "running") return;
+              const summary: TerminalCommandSummary = {
+                status: command.status,
+                exitCode: command.exitCode,
+                durationMs: command.finishedAt - command.startedAt,
+                finishedAt: command.finishedAt,
+              };
+              window.dispatchEvent(
+                new CustomEvent("terminal-command-finished", {
+                  detail: { terminalId: sessionId, command: summary },
+                }),
+              );
+            },
+          })
+        : null;
+
+      terminalRef.current = terminal;
+      addonsRef.current = addons;
+      addons.progressAddon.onChange((progress) => {
+        updateSession(sessionId, {
+          progress: progress.state === 0 ? undefined : progress,
+        });
+      });
+      frontendTrace("info", "bench:terminal-engine", "xterm:ready", {
+        durationMs: Math.round(performance.now() - initializationStartedAt),
+      });
+
+      // Fit synchronously after open so terminal.rows/cols reflect the actual container size
+      // before we create the PTY with those dimensions
+      addons.fitAddon.fit();
+
+      const existingSession = getSession(sessionId);
+
+      // If the session already has a live PTY connection (e.g., component
+      // remounted after a pane split or tab move), reuse the existing
+      // connection instead of killing the running process.
+      let activeConnectionId: string;
+      let activeRemoteConnectionId = remoteConnectionId || existingSession?.remoteConnectionId;
+      if (existingSession?.connectionId) {
+        activeConnectionId = existingSession.connectionId;
+      } else {
+        const targetDirectory =
+          workingDirectory || existingSession?.currentDirectory || rootFolderPath;
+        const remoteInfo = targetDirectory ? parseRemotePath(targetDirectory) : null;
+        const wslInfo = targetDirectory ? parseWslPath(targetDirectory) : null;
+        activeRemoteConnectionId = activeRemoteConnectionId || remoteInfo?.connectionId;
+        const size = getTerminalSize(terminal);
+        const events = createTerminalEventChannel();
+        const launch = existingSession?.launch;
+
+        await ensureFrontendTerminalSession();
+
+        activeConnectionId = activeRemoteConnectionId
+          ? await (async () => {
+              const connection = await connectionStore.getConnection(activeRemoteConnectionId);
+              if (!connection) {
+                throw new Error("Remote terminal connection not found.");
+              }
+
+              return invoke<string>("create_remote_terminal", {
+                host: connection.host,
+                port: connection.port,
+                username: connection.username,
+                password: connection.password || null,
+                keyPath: connection.keyPath || null,
+                workingDirectory: remoteInfo?.remotePath || "/",
+                size,
+                onEvent: events.channel,
+                ...getFrontendTerminalSessionArgs(),
+              });
+            })()
+          : await invoke<string>("create_terminal", {
+              config: {
+                workingDirectory: targetDirectory || undefined,
+                shell:
+                  shell ||
+                  existingSession?.shell ||
+                  (wslInfo ? getWslShellId(wslInfo.distro) : undefined),
+                wslDistribution: wslInfo?.distro,
+                wslWorkingDirectory: wslInfo?.linuxPath,
+                environment: launch?.environment
+                  ? { ...environment, ...launch.environment }
+                  : environment,
+                command: launch?.command,
+                args: launch?.args,
+                size,
+                shellIntegration: terminalShellIntegration,
+              },
+              onEvent: events.channel,
+              ...getFrontendTerminalSessionArgs(),
+            });
+
+        events.bind(activeConnectionId);
+
+        updateSession(sessionId, {
+          connectionId: activeConnectionId,
+          currentDirectory: targetDirectory,
+          remoteConnectionId: activeRemoteConnectionId,
+        });
+      }
+
+      // No snapshot replay: xterm is portaled and never remounts mid-session,
+      // so the live PTY redrawing via SIGWINCH is the source of truth.
+
+      setIsInitialized(true);
+      isInitializingRef.current = false;
+
+      // Re-fit after connection is established so onResize can notify the PTY
+      fitTerminal();
+
+      window.dispatchEvent(
+        new CustomEvent("terminal-ready", {
+          detail: {
+            terminalId: sessionId,
+            connectionId: activeConnectionId,
+            remoteConnectionId: activeRemoteConnectionId,
+          },
+        }),
+      );
+
+      onTerminalRef?.(createSessionHandle(terminal));
+      onReady?.();
+    } catch (error) {
+      console.error("Failed to initialize terminal:", error);
+      isInitializingRef.current = false;
+    }
+  }, [
+    currentConnectionIdRef,
+    environment,
+    fitTerminal,
+    getSession,
+    getTerminalTheme,
+    isInitialized,
+    onReady,
+    onTerminalRef,
+    pasteIntoTerminal,
+    rootFolderPath,
+    remoteConnectionId,
+    shell,
+    sessionId,
+    terminalCursorBlink,
+    terminalCursorInactiveStyle,
+    terminalCursorStyle,
+    terminalCursorWidth,
+    terminalAltClickMovesCursor,
+    terminalFontFamily,
+    effectiveTerminalCursorWidth,
+    effectiveTerminalFontSize,
+    effectiveTerminalLetterSpacing,
+    terminalLineHeight,
+    terminalMacOptionIsMeta,
+    terminalRightClickSelectsWord,
+    terminalScrollback,
+    terminalMinimumContrastRatio,
+    terminalShellIntegration,
+    terminalIsRemote,
+    updateSession,
+    workingDirectory,
+    writeBuffered,
+    navigateCommand,
+  ]);
+
+  useEffect(() => {
+    if (!terminalRef.current) return;
+    applyTerminalTheme(getTerminalTheme());
+    fitTerminal();
+  }, [applyTerminalTheme, terminalThemeId, getTerminalTheme, fitTerminal]);
+
+  useEffect(() => {
+    if (!terminalRef.current || !addonsRef.current) return;
+
+    let cancelled = false;
+
+    const applyFontChange = async () => {
+      const resolved = await resolveTerminalFont(terminalFontFamily, effectiveTerminalFontSize);
+      const terminal = terminalRef.current;
+      if (cancelled || !terminal || !addonsRef.current) return;
+
+      const options = terminal.options;
+      options.fontFamily = resolved.fontFamily;
+      options.fontSize = effectiveTerminalFontSize;
+      options.lineHeight = terminalLineHeight;
+      options.letterSpacing = effectiveTerminalLetterSpacing;
+      options.scrollback = terminalScrollback;
+      options.minimumContrastRatio = terminalMinimumContrastRatio;
+      options.cursorBlink = terminalCursorBlink;
+      options.cursorStyle = terminalCursorStyle;
+      options.cursorWidth = effectiveTerminalCursorWidth;
+      options.cursorInactiveStyle = terminalCursorInactiveStyle;
+      options.altClickMovesCursor = terminalAltClickMovesCursor;
+      options.macOptionIsMeta = terminalMacOptionIsMeta;
+      options.rightClickSelectsWord = terminalRightClickSelectsWord;
+
+      fitTerminal();
+    };
+
+    void applyFontChange();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [
+    terminalFontFamily,
+    effectiveTerminalCursorWidth,
+    effectiveTerminalFontSize,
+    effectiveTerminalLetterSpacing,
+    terminalLineHeight,
+    terminalScrollback,
+    terminalMinimumContrastRatio,
+    terminalCursorBlink,
+    terminalCursorInactiveStyle,
+    terminalCursorStyle,
+    terminalAltClickMovesCursor,
+    terminalMacOptionIsMeta,
+    terminalRightClickSelectsWord,
+    fitTerminal,
+  ]);
+
+  useEffect(() => () => removeLinkStyles(sessionId), [sessionId]);
+
+  useEffect(() => {
+    if (isInitialized || !isVisible || !terminalContainerRef.current) return;
+
+    let rafId: number | null = null;
+    const container = terminalContainerRef.current;
+
+    const attemptInitialize = () => {
+      if (isInitialized || isInitializingRef.current) return;
+
+      const rect = container.getBoundingClientRect();
+      const isContainerVisible = container.offsetParent !== null;
+      if (rect.width <= 0 || rect.height <= 0 || !isContainerVisible) {
+        rafId = requestAnimationFrame(attemptInitialize);
+        return;
+      }
+
+      void initializeTerminal();
+    };
+
+    rafId = requestAnimationFrame(attemptInitialize);
+
+    return () => {
+      if (rafId !== null) cancelAnimationFrame(rafId);
+    };
+  }, [initializeTerminal, isInitialized, isVisible]);
+
+  // Dispose only the terminal frontend on unmount. The PTY process is owned by
+  // the buffer store and killed in closeBufferForce when the user actually
+  // closes the tab â€” NOT here. This prevents pane splits, tab moves, and
+  // other layout changes from killing running terminal processes.
+  useEffect(() => {
+    return () => {
+      terminalInputCleanupRef.current();
+      terminalInputCleanupRef.current = () => {};
+      if (fitFrameRef.current !== null) {
+        cancelAnimationFrame(fitFrameRef.current);
+        fitFrameRef.current = null;
+      }
+      shellIntegrationRef.current?.dispose();
+      shellIntegrationRef.current = null;
+      linkTooltipRef.current?.dispose();
+      linkTooltipRef.current = null;
+      if (terminalRef.current) {
+        terminalRef.current.dispose();
+        terminalRef.current = null;
+        addonsRef.current = null;
+      }
+    };
+  }, []);
+
+  // The terminal frontend stays mounted while slots move between panes. When a new
+  // slot owner provides a fresh ref callback, hand the live terminal handle to
+  // it even though initialization does not re-run.
+  useEffect(() => {
+    const terminal = terminalRef.current;
+    if (!isInitialized || !terminal || !onTerminalRef) return;
+
+    onTerminalRef(createSessionHandle(terminal));
+  }, [createSessionHandle, isInitialized, onTerminalRef]);
+
+  // Listen for portal-target changes from TerminalHost; force a fit + repaint
+  // so PTY/frontend dims match the new slot before any TUI relies on them.
+  useEffect(() => {
+    if (!isInitialized) return;
+    const handler = (event: Event) => {
+      const detail = (event as CustomEvent<{ sessionId: string }>).detail;
+      if (!detail || detail.sessionId !== sessionId) return;
+      fitTerminal();
+    };
+    window.addEventListener("blimy-terminal-refit", handler);
+    return () => window.removeEventListener("blimy-terminal-refit", handler);
+  }, [fitTerminal, isInitialized, sessionId]);
+
+  useEffect(() => {
+    if (!addonsRef.current || !terminalContainerRef.current || !isInitialized) return;
+
+    const resizeObserver = new ResizeObserver(fitTerminal);
+    const visualViewport = window.visualViewport;
+
+    resizeObserver.observe(terminalContainerRef.current);
+    window.addEventListener("resize", fitTerminal);
+    visualViewport?.addEventListener("resize", fitTerminal);
+    document.fonts.addEventListener("loadingdone", fitTerminal);
+    void document.fonts.ready.then(fitTerminal);
+    fitTerminal();
+
+    return () => {
+      resizeObserver.disconnect();
+      window.removeEventListener("resize", fitTerminal);
+      visualViewport?.removeEventListener("resize", fitTerminal);
+      document.fonts.removeEventListener("loadingdone", fitTerminal);
+    };
+  }, [fitTerminal, isInitialized]);
+
+  useEffect(() => {
+    if (!isActive || !isVisible || !terminalRef.current || !isInitialized) return;
+
+    let cancelled = false;
+
+    // Fit the terminal first to recalculate dimensions after display:none â†’ display:flex
+    fitTerminal();
+
+    // Focus with verified retry â€” wait for layout to fully settle after tab switch
+    const ensureFocus = (attempt: number) => {
+      if (cancelled || !terminalRef.current || attempt >= 8) return;
+
+      terminalRef.current.focus();
+
+      requestAnimationFrame(() => {
+        if (cancelled || !terminalRef.current) return;
+        const textarea = terminalRef.current.textarea;
+        const terminalElement = terminalRef.current.element;
+        const activeElement = document.activeElement;
+        const hasTerminalFocus =
+          activeElement === textarea ||
+          activeElement === terminalElement ||
+          terminalElement?.contains(activeElement);
+
+        if (textarea && !hasTerminalFocus) {
+          ensureFocus(attempt + 1);
+        }
+      });
+    };
+
+    // Wait 2 frames for DOM layout to settle after display change, then focus
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        if (!cancelled) ensureFocus(0);
+      });
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [isActive, isInitialized, isVisible, fitTerminal]);
+
+  useEffect(() => {
+    if (!isInitialized || !addonsRef.current) return;
+
+    const disposable = addonsRef.current.searchAddon.onDidChangeResults(
+      ({ resultIndex, resultCount }) => {
+        setSearchResults({
+          current: resultCount > 0 && resultIndex >= 0 ? resultIndex + 1 : 0,
+          total: resultCount,
+        });
+      },
+    );
+
+    return () => disposable.dispose();
+  }, [isInitialized]);
+
+  const handleZoom = useCallback(
+    (delta: number) => {
+      const newSize = Math.min(Math.max(terminalFontSize + delta, 8), 32);
+      useSettingsStore.getState().actions.updateSetting("terminalFontSize", newSize);
+      if (terminalRef.current) {
+        terminalRef.current.options.fontSize = newSize;
+        fitTerminal();
+      }
+    },
+    [fitTerminal, terminalFontSize],
+  );
+
+  const handleZoomReset = useCallback(() => {
+    useSettingsStore.getState().actions.updateSetting("terminalFontSize", 14);
+    if (terminalRef.current) {
+      terminalRef.current.options.fontSize = 14;
+      fitTerminal();
+    }
+  }, [fitTerminal]);
+
+  const getSearchOptions = useCallback((options: TerminalSearchOptions): ISearchOptions => {
+    const root = document.documentElement;
+    const rootStyles = getComputedStyle(root);
+    const themeType = root.getAttribute("data-theme-type") === "light" ? "light" : "dark";
+    const themeColor = (name: string) =>
+      rootStyles.getPropertyValue(`--${name}`).trim() ||
+      getRequiredBlimyDefaultColor(themeType, name);
+    const selected = themeColor("selected");
+    const accent = themeColor("primary");
+    const border = themeColor("border");
+
+    return {
+      caseSensitive: options.caseSensitive,
+      wholeWord: options.wholeWord,
+      regex: options.regex,
+      decorations: {
+        matchBackground: selected,
+        matchBorder: border,
+        matchOverviewRuler: selected,
+        activeMatchBackground: accent,
+        activeMatchBorder: border,
+        activeMatchColorOverviewRuler: accent,
+      },
+    };
+  }, []);
+
+  const clearSearch = useCallback(() => {
+    addonsRef.current?.searchAddon.clearDecorations();
+    terminalRef.current?.clearSelection();
+    setSearchResults({ current: 0, total: 0 });
+  }, []);
+
+  useEffect(() => {
+    if (!isActive) return;
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      const isTerminalFocused =
+        (event.target instanceof Node && terminalContainerRef.current?.contains(event.target)) ||
+        (document.activeElement && terminalContainerRef.current?.contains(document.activeElement));
+      const key = event.key.toLowerCase();
+
+      if (
+        (event.ctrlKey || event.metaKey) &&
+        key === "f" &&
+        (isTerminalFocused || isSearchVisible)
+      ) {
+        event.preventDefault();
+        event.stopPropagation();
+        setIsSearchVisible(true);
+      }
+
+      if (event.key === "Escape" && isSearchVisible) {
+        event.preventDefault();
+        setIsSearchVisible(false);
+        clearSearch();
+        terminalRef.current?.focus();
+      }
+
+      if (isTerminalFocused && (event.ctrlKey || event.metaKey)) {
+        if (event.key === "+" || event.key === "=") {
+          event.preventDefault();
+          handleZoom(2);
+        } else if (event.key === "-") {
+          event.preventDefault();
+          handleZoom(-2);
+        } else if (event.key === "0") {
+          event.preventDefault();
+          handleZoomReset();
+        }
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown, true);
+    return () => window.removeEventListener("keydown", handleKeyDown, true);
+  }, [clearSearch, handleZoom, handleZoomReset, isActive, isSearchVisible]);
+
+  const handleSearch = useCallback(
+    (term: string, options: TerminalSearchOptions) => {
+      if (!term || !addonsRef.current) {
+        clearSearch();
+        return;
+      }
+
+      const found = addonsRef.current.searchAddon.findNext(term, {
+        ...getSearchOptions(options),
+        incremental: true,
+      });
+
+      if (!found) {
+        setSearchResults({ current: 0, total: 0 });
+      }
+    },
+    [clearSearch, getSearchOptions],
+  );
+
+  const handleSearchNext = useCallback(
+    (term: string, options: TerminalSearchOptions) => {
+      if (!term || !addonsRef.current) return;
+      addonsRef.current.searchAddon.findNext(term, getSearchOptions(options));
+    },
+    [getSearchOptions],
+  );
+
+  const handleSearchPrevious = useCallback(
+    (term: string, options: TerminalSearchOptions) => {
+      if (!term || !addonsRef.current) return;
+      addonsRef.current.searchAddon.findPrevious(term, getSearchOptions(options));
+    },
+    [getSearchOptions],
+  );
+
+  const handleSearchClose = useCallback(() => {
+    setIsSearchVisible(false);
+    clearSearch();
+    terminalRef.current?.focus();
+  }, [clearSearch]);
+
+  useImperativeHandle(
+    getSession(sessionId)?.ref,
+    () => ({
+      terminal: terminalRef.current,
+      searchAddon: addonsRef.current?.searchAddon,
+      focus: () => terminalRef.current?.focus(),
+      showSearch: () => setIsSearchVisible(true),
+      blur: () => terminalRef.current?.blur(),
+      clear: () => terminalRef.current?.clear(),
+      selectAll: () => terminalRef.current?.selectAll(),
+      clearSelection: () => terminalRef.current?.clearSelection(),
+      getSelection: () => terminalRef.current?.getSelection() || "",
+      paste: (text: string) => terminalRef.current?.paste(text),
+      scrollToTop: () => terminalRef.current?.scrollToTop(),
+      scrollToBottom: () => terminalRef.current?.scrollToBottom(),
+      findNext: (term: string) => addonsRef.current?.searchAddon.findNext(term),
+      findPrevious: (term: string) => addonsRef.current?.searchAddon.findPrevious(term),
+      scrollToPreviousCommand: () =>
+        shellIntegrationRef.current?.scrollToPreviousCommand() ?? false,
+      scrollToNextCommand: () => shellIntegrationRef.current?.scrollToNextCommand() ?? false,
+      serialize: () => (terminalRef.current ? addonsRef.current?.serializeAddon.serialize() : ""),
+      resize: () => fitTerminal(),
+    }),
+    [fitTerminal],
+  );
+
+  return (
+    <div className="relative flex size-full min-w-0 flex-col overflow-hidden bg-background">
+      <TerminalSearch
+        isVisible={isSearchVisible}
+        onSearch={handleSearch}
+        onNext={handleSearchNext}
+        onPrevious={handleSearchPrevious}
+        onClose={handleSearchClose}
+        currentMatch={searchResults.current}
+        totalMatches={searchResults.total}
+      />
+      <div className="flex min-h-0 min-w-0 flex-1 flex-col pl-4">
+        <div
+          ref={terminalContainerRef}
+          id={`terminal-${sessionId}`}
+          data-terminal-drop-target
+          data-terminal-session-id={sessionId}
+          className={`xterm-container flex h-full min-h-0 min-w-0 flex-1 text-foreground ${!isActive ? "opacity-60" : ""}`}
+          onDragOver={handleTerminalDragOver}
+          onDrop={handleTerminalFileDrop}
+          onMouseDown={() => {
+            requestAnimationFrame(() => terminalRef.current?.focus());
+          }}
+        />
+      </div>
+    </div>
+  );
+};

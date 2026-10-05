@@ -1,0 +1,129 @@
+import { DownloadIcon, FileCodeIcon, RowsIcon } from "@/ui/icons";
+import { useMemo, useState } from "react";
+import { useBufferStore } from "@/features/editor/stores/buffer.store";
+import { hasTextContent } from "@/features/panes/types/pane-content.types";
+import { Button } from "@/ui/button";
+import Select from "@/ui/select";
+import { parseCsv } from "../lib/csv-utils";
+import { CsvTableView } from "./csv-table-view";
+
+type Delim = "," | "\t" | ";" | "|";
+
+function autodetectDelimiter(text: string): Delim {
+  // Sample first ~50 lines to score delimiters
+  const lines = text.split("\n").slice(0, 50);
+  const candidates: Delim[] = [",", "\t", ";", "|"];
+  const scores = candidates.map((d) => {
+    const counts = lines.map((l) => (l.match(new RegExp(`\\${d}`, "g")) || []).length);
+    const mean = counts.reduce((a, b) => a + b, 0) / Math.max(1, counts.length);
+    const variance = counts.reduce((a, b) => a + (b - mean) ** 2, 0) / Math.max(1, counts.length);
+    return { d, mean, variance };
+  });
+  // Prefer higher mean (more columns) and lower variance (consistent)
+  scores.sort((a, b) => b.mean - a.mean || a.variance - b.variance);
+  return scores[0]?.d || ",";
+}
+
+export function CsvPreview() {
+  const sourceContent = useBufferStore((state) => {
+    const activeBuffer = state.activeBufferId
+      ? state.buffers.find((buffer) => buffer.id === state.activeBufferId)
+      : null;
+    const sourceFilePath =
+      activeBuffer?.type === "csvPreview" ? activeBuffer.sourceFilePath : undefined;
+    const sourceBuffer = sourceFilePath
+      ? state.buffers.find((buffer) => buffer.path === sourceFilePath)
+      : activeBuffer;
+    return sourceBuffer && hasTextContent(sourceBuffer) ? sourceBuffer.content : "";
+  });
+  const [delimiter, setDelimiter] = useState<Delim | "auto">("auto");
+  const [hasHeader, setHasHeader] = useState(true);
+
+  const { headers, rows } = useMemo(() => {
+    const delim = delimiter === "auto" ? autodetectDelimiter(sourceContent) : delimiter;
+    return parseCsv(sourceContent, delim, hasHeader);
+  }, [sourceContent, delimiter, hasHeader]);
+
+  const handleCopyCsv = async () => {
+    try {
+      const sep = delimiter === "\t" ? "\t" : delimiter;
+      const head = headers.join(sep);
+      const body = rows.map((r) => r.map((c) => String(c ?? "")).join(sep)).join("\n");
+      const text = hasHeader ? `${head}\n${body}` : body;
+      await navigator.clipboard.writeText(text);
+    } catch {
+      // no-op
+    }
+  };
+
+  const handleCopyJson = async () => {
+    try {
+      const arr = rows.map((r) => {
+        const obj: Record<string, string> = {};
+        headers.forEach((h, i) => {
+          obj[h || `Column ${i + 1}`] = String(r[i] ?? "");
+        });
+        return obj;
+      });
+      await navigator.clipboard.writeText(JSON.stringify(arr, null, 2));
+    } catch {
+      // no-op
+    }
+  };
+
+  return (
+    <div className="flex h-full flex-col overflow-hidden bg-background">
+      <CsvTableView
+        columns={headers}
+        rows={rows}
+        virtualize
+        rowHeight={28}
+        overscan={16}
+        actions={
+          <div className="flex items-center gap-1">
+            {/* Delimiter selector */}
+            <label
+              htmlFor="csv-delimiter"
+              className="font-sans mr-1 text-subtle-foreground ui-text-sm"
+            >
+              Delimiter
+            </label>
+            <Select
+              id="csv-delimiter"
+              value={delimiter}
+              onChange={(value) => setDelimiter(value as any)}
+              options={[
+                { value: "auto", label: "Auto" },
+                { value: ",", label: "Comma" },
+                { value: "\t", label: "Tab" },
+                { value: ";", label: "Semicolon" },
+                { value: "|", label: "Pipe" },
+              ]}
+              className="min-w-24 rounded border-border px-1"
+              title="Change delimiter"
+            />
+            {/* Header toggle */}
+            <Button
+              onClick={() => setHasHeader((v) => !v)}
+              variant="default"
+              size="sm"
+              tooltip="Toggle header row"
+            >
+              <RowsIcon /> {hasHeader ? "Header On" : "Header Off"}
+            </Button>
+            {/* Copy CSV */}
+            <Button onClick={handleCopyCsv} variant="default" size="sm" tooltip="Copy as CSV">
+              <DownloadIcon optical="md" /> CSV
+            </Button>
+            {/* Copy JSON */}
+            <Button onClick={handleCopyJson} variant="default" size="sm" tooltip="Copy as JSON">
+              <FileCodeIcon /> JSON
+            </Button>
+          </div>
+        }
+      />
+      {/* footer spacer or future actions */}
+      <div className="h-0" />
+    </div>
+  );
+}

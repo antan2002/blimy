@@ -1,0 +1,257 @@
+/**
+ * Unified keyboard handler hook
+ * Handles all keyboard shortcuts through the keymaps system
+ *
+ * This is the SINGLE source of truth for all keyboard handling.
+ */
+
+import { useEffect, useState } from "react";
+import { logger } from "@/features/editor/utils/logger";
+import { useSettingsStore } from "@/features/settings/stores/settings.store";
+import { resolveEscapeGuard } from "@/utils/keyboard/escape-guard";
+import { isNativeTextInputTarget } from "@/utils/keyboard/text-input-target";
+import { isTerminalAltTextInput } from "@/features/terminal/utils/terminal-keyboard";
+import { markCloseTabShortcutHandled } from "@/features/window/utils/close-request-suppression";
+import { useUIState } from "@/features/window/stores/ui-state.store";
+import { IS_LINUX } from "@/utils/platform";
+import { useKeymapStore } from "../stores/keymaps.store";
+import { getEffectiveKeybindings } from "../utils/effective-keymaps";
+import {
+  getMarkdownPreviewKeyboardTarget,
+  isEditorKeyboardTarget,
+} from "../utils/editor-keyboard-target";
+import { resolveEffectiveKeymapContexts } from "../utils/effective-contexts";
+import { evaluateWhenClause } from "../utils/context";
+import { eventToKey, keysMatch, matchKeybinding } from "../utils/matcher";
+import { isNativeMenuAccelerator } from "../utils/native-menu-accelerators";
+import { parseKeybinding } from "../utils/parser";
+import type { ParsedKey } from "../utils/parser";
+import { keymapRegistry } from "../utils/registry";
+import { isVimOwnedShortcut } from "../utils/vim-shortcuts";
+
+const CHORD_TIMEOUT = 1000; // 1 second to complete chord
+const closeTabShortcut = parseKeybinding("cmd+w").parts[0];
+const closeWindowShortcut = parseKeybinding("cmd+shift+w").parts[0];
+const INPUT_ALLOWED_COMMANDS = new Set(["file.quickOpen", "workbench.commandPalette"]);
+
+function isCloseTabShortcut(event: KeyboardEvent) {
+  return keysMatch(eventToKey(event), closeTabShortcut);
+}
+
+function isCloseWindowShortcut(event: KeyboardEvent) {
+  return keysMatch(eventToKey(event), closeWindowShortcut);
+}
+
+export function useKeymaps() {
+  const [chordState, setChordState] = useState<ParsedKey[]>([]);
+
+  useEffect(() => {
+    if (chordState.length === 0) return;
+
+    const chordTimeout = setTimeout(() => {
+      setChordState([]);
+      logger.debug("Keymaps", "Chord timeout - reset");
+    }, CHORD_TIMEOUT);
+
+    return () => clearTimeout(chordTimeout);
+  }, [chordState]);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Read at keydown rather than subscribing: contexts change on every focus move, and a
+      // subscription re-rendered the app root and re-attached this listener each time.
+      const contexts = useKeymapStore.getState().contexts;
+      // Skip all keybinding handling when recording a new keybinding
+      if (contexts.isRecordingKeybinding) {
+        return;
+      }
+
+      const target = e.target as HTMLElement | null;
+      const isMarkdownPreviewTarget = getMarkdownPreviewKeyboardTarget(target) !== null;
+      const isEditorTarget =
+        isMarkdownPreviewTarget ||
+        isEditorKeyboardTarget(target) ||
+        isEditorKeyboardTarget(document.activeElement as HTMLElement | null);
+      const isTerminalTarget =
+        target?.closest(".terminal-container") !== null ||
+        (document.activeElement as HTMLElement | null)?.closest(".terminal-container") !== null;
+      const effectiveContexts = resolveEffectiveKeymapContexts(contexts, {
+        isEditorTarget,
+        isTerminalTarget,
+      });
+
+      // Prevent modifier-shortcut floods when key is held down (e.g. Cmd+R auto-repeat)
+      if (e.repeat && (e.metaKey || e.ctrlKey || e.altKey)) {
+        return;
+      }
+
+      const { settings } = useSettingsStore.getState();
+      if (settings.vimMode && isEditorTarget && isVimOwnedShortcut(e)) {
+        return;
+      }
+
+      if (isCloseWindowShortcut(e)) {
+        e.preventDefault();
+        e.stopPropagation();
+        keymapRegistry.executeCommand("workbench.closeWindow");
+        return;
+      }
+
+      if (isCloseTabShortcut(e)) {
+        if (IS_LINUX) {
+          markCloseTabShortcutHandled();
+        }
+        e.preventDefault();
+        e.stopPropagation();
+        keymapRegistry.executeCommand(
+          effectiveContexts.terminalFocus ? "terminal.close" : "file.close",
+        );
+        return;
+      }
+
+      // When the native menu bar is active, let Tauri's menu accelerators be the only source
+      // of truth for overlapping shortcuts to avoid duplicate execution.
+      if (
+        useSettingsStore.getState().settings.nativeMenuBar &&
+        isNativeMenuAccelerator(e) &&
+        !isEditorTarget
+      ) {
+        return;
+      }
+
+      // Escape key - global modal closing
+      if (e.key === "Escape") {
+        const activeElement =
+          typeof document !== "undefined" ? (document.activeElement as HTMLElement | null) : null;
+        const { dismissTarget, blurTarget } = resolveEscapeGuard(e.target, activeElement);
+
+        if (dismissTarget || blurTarget) {
+          return;
+        }
+
+        const { hasOpenModal, closeTopModal } = useUIState.getState();
+        if (hasOpenModal()) {
+          e.preventDefault();
+          e.stopPropagation();
+          closeTopModal();
+          return;
+        }
+      }
+
+      // Vim mode bypass - let vim handle keys without modifiers
+      const hasModifiers = e.metaKey || e.ctrlKey || e.altKey;
+
+      if (settings.vimMode && !hasModifiers && !e.shiftKey) {
+        return;
+      }
+
+      // Get keybindings from registry (defaults and extensions)
+      const registryKeybindings = keymapRegistry.getAllKeybindings();
+
+      // Get preset and user keybindings
+      const userKeybindings = useKeymapStore.getState().keybindings;
+      const allKeybindings = getEffectiveKeybindings({
+        preset: settings.keybindingPreset,
+        registryKeybindings,
+        userKeybindings,
+      });
+
+      // Get current event key
+      const eventKey = eventToKey(e);
+
+      // Skip if target is an input (except our editor textarea or terminal)
+      const isEditorTextarea = isEditorTarget;
+      const isTerminalTextarea = target?.classList.contains("xterm-helper-textarea") ?? false;
+      if (isTerminalTextarea && isTerminalAltTextInput(e)) {
+        return;
+      }
+
+      const isNativeTextInput = isNativeTextInputTarget(e.target, document.activeElement);
+      if (isNativeTextInput && !isEditorTextarea && !isTerminalTextarea) {
+        for (const keybinding of allKeybindings) {
+          if (!INPUT_ALLOWED_COMMANDS.has(keybinding.command)) continue;
+          if (!keybinding.enabled && keybinding.enabled !== undefined) continue;
+          if (keybinding.when && !evaluateWhenClause(keybinding.when, effectiveContexts)) continue;
+
+          if (matchKeybinding(e, keybinding.key, chordState).matched) {
+            e.preventDefault();
+            e.stopPropagation();
+            keymapRegistry.executeCommand(keybinding.command, keybinding.args);
+            logger.debug(
+              "Keymaps",
+              `Executed from input: ${keybinding.key} -> ${keybinding.command}`,
+            );
+            return;
+          }
+        }
+        return;
+      }
+
+      // Try to match against registered keybindings
+      for (const keybinding of allKeybindings) {
+        if (!keybinding.enabled && keybinding.enabled !== undefined) {
+          continue;
+        }
+
+        if (
+          isMarkdownPreviewTarget &&
+          keybinding.command.startsWith("editor.") &&
+          keybinding.command !== "editor.selectAll" &&
+          keybinding.command !== "editor.copy"
+        ) {
+          continue;
+        }
+
+        // Evaluate when clause
+        if (keybinding.when && !evaluateWhenClause(keybinding.when, effectiveContexts)) {
+          continue;
+        }
+
+        // Try to match this keybinding
+        const matchResult = matchKeybinding(e, keybinding.key, chordState);
+
+        if (matchResult.matched) {
+          // Full match - execute command
+          e.preventDefault();
+          e.stopPropagation();
+
+          // Clear chord state
+          setChordState([]);
+
+          // Execute command
+          keymapRegistry.executeCommand(keybinding.command, keybinding.args);
+          logger.debug("Keymaps", `Executed: ${keybinding.key} -> ${keybinding.command}`);
+          return;
+        }
+
+        if (matchResult.partialMatch) {
+          // Partial chord match - wait for next key
+          e.preventDefault();
+          e.stopPropagation();
+
+          const newChordState = [...chordState, eventKey];
+          setChordState(newChordState);
+
+          logger.debug("Keymaps", `Chord partial match: ${keybinding.key} (waiting for next key)`);
+          return;
+        }
+      }
+
+      // No match - clear chord state if any
+      if (chordState.length > 0) {
+        setChordState([]);
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown, true); // Use capture phase
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown, true);
+    };
+  }, [chordState]);
+
+  return {
+    chordState,
+    isAwaitingChord: chordState.length > 0,
+  };
+}

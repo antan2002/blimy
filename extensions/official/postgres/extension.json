@@ -1,0 +1,33 @@
+{
+  "$schema": "https://blimy.dev/schemas/extension.json",
+  "id": "blimy.database.postgres",
+  "name": "PostgreSQL",
+  "displayName": "PostgreSQL Provider",
+  "version": "1.0.0",
+  "description": "PostgreSQL connection, schema, and query provider.",
+  "publisher": "Blimy",
+  "categories": ["Database"],
+  "activationEvents": ["onDatabase:postgres"],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/blimydev/blimy/tree/master/extensions/official/postgres"
+  },
+  "icon": "icon.svg",
+  "databases": [
+    {
+      "id": "postgres",
+      "label": "PostgreSQL",
+      "isFileBased": false,
+      "protocolVersion": 1,
+      "defaultPort": 5432,
+      "sidecar": {
+        "darwin-arm64": "bin/blimy-db-postgres",
+        "darwin-x64": "bin/blimy-db-postgres",
+        "linux-arm64": "bin/blimy-db-postgres",
+        "linux-x64": "bin/blimy-db-postgres",
+        "win32-x64": "bin/blimy-db-postgres.exe"
+      }
+    }
+  ]
+}

@@ -1,0 +1,4 @@
+#!/usr/bin/env sh
+
+bun ./node_modules/vite-plus/bin/vp staged
+bun scripts/hooks/pre-commit.ts

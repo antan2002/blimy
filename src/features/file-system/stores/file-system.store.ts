@@ -1,0 +1,2521 @@
+import { invoke } from "@tauri-apps/api/core";
+import { basename, dirname, extname } from "@tauri-apps/api/path";
+import { copyFile } from "@tauri-apps/plugin-fs";
+import { revealItemInDir } from "@tauri-apps/plugin-opener";
+import { immer } from "zustand/middleware/immer";
+import type { StoreApi } from "zustand";
+import { createStore } from "zustand/vanilla";
+import { useAIChatStore } from "@/features/ai/stores/ai-chat.store";
+import type { CodeEditorRef } from "@/features/editor/components/code-editor";
+import { restorePersistedEditorViewState } from "@/features/editor/stores/editor-session-state";
+import { clearQueuedWorkspaceSessionSave } from "@/features/editor/stores/buffer-session-persistence";
+import { useBufferStore } from "@/features/editor/stores/buffer.store";
+import { getBufferByPath } from "@/features/editor/utils/buffer-index";
+import { fileOpenBenchmark } from "@/features/editor/utils/file-open-benchmark";
+import { getLineSlice } from "@/features/editor/utils/large-file";
+import { getAncestorDirectoryPaths } from "@/features/file-explorer/utils/file-explorer-tree-utils";
+import { useFileTreeStore } from "@/features/file-explorer/stores/file-explorer-tree.store";
+import { getGitStatus } from "@/features/git/api/git-status-api";
+import { useGitBlameStore } from "@/features/git/stores/git-blame.store";
+import { useGitStore } from "@/features/git/stores/git.store";
+import { gitDiffCache } from "@/features/git/utils/git-diff-cache";
+import { ensureRemoteConnectionConnected } from "@/features/remote/services/remote-connection-client";
+import { buildRemoteRootPath, parseRemotePath } from "@/features/remote/utils/remote-path";
+import { useSettingsStore } from "@/features/settings/stores/settings.store";
+import { recordFrictionSignal } from "@/features/telemetry/services/telemetry";
+import { useSidebarStore } from "@/features/layout/stores/sidebar.store";
+import { useProjectStore } from "@/features/window/stores/project.store";
+import type { BufferSession } from "@/features/workspace/types/workspace-session.types";
+import {
+  getCurrentProjectUiState,
+  persistCurrentProjectUiState,
+  restoreProjectPaneState,
+  restoreProjectUiState,
+} from "@/features/window/stores/workspace-ui-session";
+import { useWorkspaceTabsStore } from "@/features/window/stores/workspace-tabs.store";
+import { createAppWindow } from "@/features/window/utils/create-app-window";
+import { serializeTerminals } from "@/features/terminal/lib/terminal-session-storage";
+import { useTerminalTabsStore } from "@/features/terminal/stores/terminal-tabs.store";
+import { useTerminalStore } from "@/features/terminal/stores/terminal.store";
+import { createTerminalEventChannel } from "@/features/terminal/utils/terminal-protocol";
+import {
+  ensureFrontendTerminalSession,
+  getFrontendTerminalSessionArgs,
+} from "@/features/terminal/utils/frontend-terminal-session";
+import { showAlertDialog, showPromptDialog } from "@/ui/dialog";
+import { workspaceRuntimeRegistry } from "@/features/workspace/runtime/workspace-runtime-registry";
+import { workspaceSessionRepository } from "@/features/workspace/persistence/workspace-session-repository";
+import { createWorkspaceSessionSaveQueue } from "@/features/workspace/persistence/workspace-session-save-queue";
+import {
+  buildWorkspaceBufferSnapshot,
+  isLocalFileInWorkspace,
+} from "@/features/workspace/persistence/workspace-session-codec";
+import { switchWorkspaceRuntime } from "@/features/workspace/services/workspace-lifecycle";
+import { scheduleWorkspacePrewarm } from "@/features/workspace/services/workspace-prewarm";
+import {
+  createWorkspaceScopedStore,
+  type WorkspaceScopedStore,
+} from "@/features/workspace/stores/create-workspace-scoped-store";
+import { toast } from "sonner";
+import { frontendTrace } from "@/utils/frontend-trace";
+import {
+  ensureTrailingPathSeparator,
+  getBaseName,
+  getDirName,
+  getFolderName,
+  joinPath,
+} from "@/utils/path-helpers";
+import type { FileEntry } from "../types/app.types";
+import type { FsActions, FsState } from "../types/interface.types";
+import { readDirectoryContents } from "../controllers/file-operations";
+import {
+  addFileToTree,
+  findFileInTree,
+  removeFileFromTree,
+  sortFileEntries,
+  updateFileInTree,
+} from "../controllers/file-tree-utils";
+import {
+  getDatabaseTypeFromPath,
+  getFilenameFromPath,
+  isBinaryFile,
+  isKnownTextFile,
+  isImageFile,
+  isPdfFile,
+} from "../controllers/file-utils";
+import { resolveFileOpenPath, shouldResolveFileOpenSymlink } from "../controllers/file-open-path";
+import { useFileWatcherStore } from "../stores/file-watcher.store";
+import { fffListFiles, fffTrackAccess } from "@/features/file-search/lib/file-search-api";
+import { canUseNativeFileSearch } from "@/features/file-search/utils/file-search-paths";
+import { ensureWorkspaceFileSearch } from "@/features/file-search/services/workspace-file-search";
+import {
+  createFileOpenResource,
+  inspectFileOpenResource,
+  readFileOpenText,
+} from "../services/file-open-resource";
+import { restoreWorkspaceSessionBuffer } from "../services/workspace-session-buffer-restore";
+import { restoreWorkspaceSessionFolders } from "../services/workspace-session-folder-restore";
+import { prepareWorkspaceClose } from "../services/workspace-close-guard";
+import { createWorkspaceBackgroundInitializer } from "../services/workspace-background-initializer";
+import { getWorkspaceEntryMutationProvider } from "../services/workspace-entry-mutation-provider";
+import { openLocalWorkspaceTransaction } from "../services/workspace-local-open";
+import { drainDeferredWorkspaceSessionBuffers } from "../services/workspace-deferred-session-restore";
+import { disposeWorkspaceResources } from "../services/workspace-disposal";
+import {
+  applyWorkspaceInitializationState,
+  type InitializedWorkspaceState,
+} from "../services/workspace-initialization-state";
+import {
+  initializeWorkspacePath,
+  resumeWorkspacePath,
+} from "../services/workspace-initialization-router";
+import { resetWorkspaceResources } from "../services/workspace-reset";
+import { readWorkspaceDirectoryEntries } from "../services/workspace-resource-provider";
+import { getSymlinkInfo, openFolder, readDirectory } from "../controllers/platform";
+import { useRecentFoldersStore } from "../stores/recent-folders.store";
+import { useRecentFilesStore } from "../stores/recent-files.store";
+import {
+  buildRemoteWorkspaceTree,
+  type RemoteDirectoryEntry,
+} from "../controllers/remote-workspace";
+import {
+  buildWslWorkspaceTree,
+  getWslProjectName,
+  type WslDirectoryEntry,
+} from "@/features/wsl/controllers/wsl-workspace";
+import { buildWslPath, parseWslPath } from "@/features/wsl/utils/wsl-path";
+import { shouldIgnore, updateDirectoryContents } from "../controllers/utils";
+import { prepareProjectTransitionWithUnsavedBuffers } from "../controllers/workspace-project-transition";
+import {
+  buildWorkspaceRestoreBatch,
+  buildWorkspaceRestorePlan,
+  isWorkspaceFolderPath,
+  normalizeWorkspaceFolders,
+} from "../controllers/workspace-session";
+import type { WorkspaceSessionBuffer } from "../controllers/workspace-session";
+
+const logWorkspaceOpenStep = (
+  phase: "start" | "end" | "error",
+  label: string,
+  path: string,
+  startedAt?: number,
+) => {
+  if (phase === "start") {
+    frontendTrace("info", "workspace-open", `${label}:start`, { path });
+    return;
+  }
+
+  const durationMs =
+    typeof startedAt === "number" ? Math.round((performance.now() - startedAt) * 100) / 100 : null;
+  const payload = { path, durationMs };
+
+  if (phase === "end") {
+    frontendTrace("info", "workspace-open", `${label}:end`, payload);
+    return;
+  }
+
+  frontendTrace("error", "workspace-open", `${label}:error`, payload);
+};
+
+function waitForWorkspaceIdle(): Promise<void> {
+  return new Promise((resolve) => {
+    const idleScheduler = window as Window & {
+      requestIdleCallback?: (callback: () => void, options?: { timeout: number }) => number;
+    };
+
+    if (idleScheduler.requestIdleCallback) {
+      idleScheduler.requestIdleCallback(() => resolve(), { timeout: 250 });
+      return;
+    }
+
+    globalThis.setTimeout(resolve, 50);
+  });
+}
+
+/**
+ * Wraps the file tree with a root folder entry
+ */
+const wrapWithRootFolder = (
+  files: FileEntry[],
+  rootPath: string,
+  rootName: string,
+): FileEntry[] => {
+  return [
+    {
+      name: rootName,
+      path: rootPath,
+      isDir: true,
+      children: files,
+    },
+  ];
+};
+
+const getWorkspaceFolderPaths = (get: FileSystemGet) =>
+  normalizeWorkspaceFolders(get().rootFolderPath, get().workspaceFolders).map(
+    (folder) => folder.path,
+  );
+
+const syncFffWorkspace = async (get: FileSystemGet): Promise<void> => {
+  try {
+    await ensureWorkspaceFileSearch(getWorkspaceFolderPaths(get));
+  } catch (error) {
+    console.error("[fff] workspace sync failed:", error);
+  }
+};
+
+const readWorkspaceRootEntry = async (path: string): Promise<FileEntry> => {
+  const projectName = getFolderName(path);
+  const entries = await readWorkspaceDirectoryEntries(path);
+  const fileTree = sortFileEntries(entries);
+  return wrapWithRootFolder(fileTree, path, projectName)[0];
+};
+
+const IMMEDIATE_SESSION_BUFFERS_TO_RESTORE = 1;
+type WorkspaceSessionSavePayload = Omit<
+  Parameters<typeof workspaceSessionRepository.save>[0],
+  "projectPath"
+>;
+const workspaceSessionWriteQueue = createWorkspaceSessionSaveQueue(
+  (projectPath: string, payload: WorkspaceSessionSavePayload) => {
+    workspaceSessionRepository.save({ projectPath, ...payload });
+  },
+  0,
+);
+
+const getErrorMessage = (error: unknown) =>
+  error instanceof Error ? error.message : String(error || "Unknown error");
+
+const readPersistedAiWorkspaceSession = () =>
+  useAIChatStore.getState().actions.getWorkspaceSessionSnapshot();
+
+const recordLocalFileAccess = (
+  path: string,
+  name: string,
+  workspaceRootPath: string | undefined,
+  workspaceFolderPaths: string[] = [],
+) => {
+  if (path.startsWith("remote://") || path.startsWith("wsl://") || path.startsWith("diff://")) {
+    return;
+  }
+
+  const idleScheduler = window as Window & {
+    requestIdleCallback?: (callback: () => void, options?: { timeout: number }) => number;
+  };
+  const recordAccess = () => {
+    useRecentFilesStore.getState().actions.addOrUpdateRecentFile(path, name, {
+      workspacePath: workspaceRootPath ?? null,
+      external: !isLocalFileInWorkspace(path, workspaceRootPath, workspaceFolderPaths),
+    });
+  };
+
+  if (idleScheduler.requestIdleCallback) {
+    idleScheduler.requestIdleCallback(recordAccess, { timeout: 500 });
+    return;
+  }
+
+  window.setTimeout(recordAccess, 50);
+};
+
+const restoreEditorSessionStateForPath = (
+  bufferSession: BufferSession | WorkspaceSessionBuffer,
+  workspaceId?: string,
+) => {
+  if (bufferSession.type !== "editor" || !bufferSession.editorState) {
+    return;
+  }
+
+  const bufferState = workspaceId
+    ? useBufferStore.getStore(workspaceId).getState()
+    : useBufferStore.getState();
+  const openedBuffer = getBufferByPath(bufferState.buffers, bufferSession.path);
+
+  if (openedBuffer?.type === "editor") {
+    restorePersistedEditorViewState(openedBuffer, bufferSession.editorState);
+  }
+};
+
+type FileSystemStoreState = FsState & FsActions;
+type FileSystemGet = () => FileSystemStoreState;
+
+interface OpenLocalWorkspaceOptions {
+  workspaceId: string;
+  path: string;
+  traceLabel: "handleOpenFolder" | "handleOpenFolderByPath";
+  treeState: "expand-root" | "collapse-all";
+  restoreUiState: boolean;
+  prewarm?: boolean;
+}
+
+interface WorkspaceInitializationActions {
+  deferActiveProjectSessionPersistence: () => void;
+  initializeLocalWorkspace: (options: OpenLocalWorkspaceOptions) => Promise<boolean>;
+  initializeRemoteWorkspace: (connectionId: string) => Promise<boolean>;
+  initializeWslWorkspace: (distro: string, linuxPath: string) => Promise<boolean>;
+  resumeWorkspaceSession: () => void;
+}
+
+type ScopedFileSystemStoreState = FileSystemStoreState & WorkspaceInitializationActions;
+type ScopedFileSystemSet = (updater: (state: ScopedFileSystemStoreState) => void) => void;
+type ScopedFileSystemGet = () => ScopedFileSystemStoreState;
+
+let scopedFileSystemStore: WorkspaceScopedStore<ScopedFileSystemStoreState>;
+const getScopedFileSystemStore = (workspaceId: string) =>
+  scopedFileSystemStore.getStore(workspaceId);
+
+const workspaceBackgroundInitializer = createWorkspaceBackgroundInitializer();
+
+const initializeLocalWorkspaceInBackground = (
+  workspaceId: string,
+  path: string,
+  get: FileSystemGet,
+  errorContext: string,
+  options: {
+    deferWatcher?: boolean;
+    preserveGitStatus?: boolean;
+    maxGitStatusAgeMs?: number;
+  } = {},
+) => {
+  const gitStore = useGitStore.getStore(workspaceId);
+  void workspaceBackgroundInitializer.start({
+    path,
+    deferWatcher: options.deferWatcher,
+    preserveGitStatus: options.preserveGitStatus,
+    maxGitStatusAgeMs: options.maxGitStatusAgeMs,
+    waitForIdle: waitForWorkspaceIdle,
+    canContinue: () =>
+      workspaceRuntimeRegistry.getActiveWorkspaceId() === workspaceId &&
+      get().rootFolderPath === path,
+    canCommitGitStatus: () => get().rootFolderPath === path,
+    shouldResetGitStatusAfterError: () => get().rootFolderPath === path,
+    resetGitStatus: () => gitStore.getState().actions.setWorkspaceGitStatus(null, path),
+    setProjectRoot: () =>
+      useFileWatcherStore.getStore(workspaceId).getState().actions.setProjectRoot(path),
+    startFileSearchSync: () => {
+      void syncFffWorkspace(get);
+    },
+    getGitStatusSnapshot: () => {
+      const gitState = gitStore.getState();
+      return {
+        repoPath: gitState.currentWorkspaceRepoPath,
+        updatedAt: gitState.workspaceGitStatusUpdatedAt,
+      };
+    },
+    readGitStatus: () => getGitStatus(path),
+    commitGitStatus: (gitStatus) =>
+      gitStore.getState().actions.setWorkspaceGitStatus(gitStatus, path),
+    trace: (phase, step, startedAt) => logWorkspaceOpenStep(phase, step, path, startedAt),
+    onError: (error) => console.error(errorContext, error),
+  });
+};
+
+const resumeWorkspaceRuntimeServices = (workspaceId: string, path: string): Promise<void> => {
+  const targetStore = getScopedFileSystemStore(workspaceId).getState();
+  resumeWorkspacePath(path, {
+    resumeSession: () => targetStore.resumeWorkspaceSession(),
+    resumeLocalServices: () =>
+      initializeLocalWorkspaceInBackground(
+        workspaceId,
+        path,
+        () => targetStore,
+        "Failed to resume workspace services:",
+        {
+          deferWatcher: true,
+          preserveGitStatus: true,
+        },
+      ),
+    stopLocalServices: () => {
+      workspaceBackgroundInitializer.invalidate();
+      void useFileWatcherStore.getStore(workspaceId).getState().actions.setProjectRoot("");
+    },
+  });
+  return Promise.resolve();
+};
+
+const applyNonLocalWorkspaceState = (
+  workspaceId: string,
+  workspace: InitializedWorkspaceState,
+  set: ScopedFileSystemSet,
+) =>
+  applyWorkspaceInitializationState(workspace, {
+    addProjectTab: (path, name) =>
+      useWorkspaceTabsStore.getState().actions.addProjectTab(path, name),
+    getActiveProjectTabId: () => useWorkspaceTabsStore.getState().actions.getActiveProjectTab()?.id,
+    expandRoot: (path) =>
+      useFileTreeStore
+        .getStore(workspaceId)
+        .getState()
+        .actions.setExpandedPaths(new Set([path])),
+    setProjectMetadata: (path, name, activeProjectId) => {
+      const projectActions = useProjectStore.getStore(workspaceId).getState().actions;
+      projectActions.setRootFolderPath(path);
+      projectActions.setProjectName(name);
+      projectActions.setActiveProjectId(activeProjectId);
+    },
+    restoreUiState: (path) => restoreProjectUiState(path, workspaceId),
+    commitFileSystemState: ({ path, name, files }) => {
+      set((state) => {
+        state.isFileTreeLoading = false;
+        state.files = files;
+        state.rootFolderPath = path;
+        state.workspaceFolders = [{ path, name, isPrimary: true }];
+        state.filesVersion++;
+        state.projectFilesCache = undefined;
+      });
+    },
+  });
+
+const openLocalWorkspace = async (
+  options: OpenLocalWorkspaceOptions,
+  set: ScopedFileSystemSet,
+  get: ScopedFileSystemGet,
+) => {
+  const { workspaceId, path, traceLabel, treeState, restoreUiState, prewarm = false } = options;
+  const openStartedAt = performance.now();
+  logWorkspaceOpenStep("start", traceLabel, path);
+  const bufferStore = useBufferStore.getStore(workspaceId);
+  const fileTreeStore = useFileTreeStore.getStore(workspaceId);
+  const projectStore = useProjectStore.getStore(workspaceId);
+  const currentRootPath = get().rootFolderPath;
+  const isReplacingCurrentWorkspace = !!currentRootPath && currentRootPath !== path;
+  const currentBufferIds = isReplacingCurrentWorkspace
+    ? bufferStore.getState().buffers.map((buffer) => buffer.id)
+    : [];
+  const result = await openLocalWorkspaceTransaction({
+    replacingCurrentWorkspace: isReplacingCurrentWorkspace,
+    currentBufferIds,
+    prepareTransition: async () => {
+      const currentBuffers = [...bufferStore.getState().buffers];
+      return await prepareProjectTransitionWithUnsavedBuffers("switching projects", currentBuffers);
+    },
+    persistCurrentSession: () => get().persistActiveProjectSession(),
+    closeCurrentBuffers: (bufferIds) =>
+      bufferStore.getState().actions.closeBuffersBatch(bufferIds, true),
+    persistCurrentUiState: () => persistCurrentProjectUiState(currentRootPath, workspaceId),
+    setLoading: (isLoading) => {
+      set((state) => {
+        state.isFileTreeLoading = isLoading;
+      });
+    },
+    loadWorkspace: async () => {
+      const projectName = getFolderName(path);
+      const readDirectoryStartedAt = performance.now();
+      logWorkspaceOpenStep("start", "readDirectoryContents", path);
+      const entries = await readDirectoryContents(path);
+      logWorkspaceOpenStep("end", "readDirectoryContents", path, readDirectoryStartedAt);
+
+      return {
+        projectName,
+        files: wrapWithRootFolder(sortFileEntries(entries), path, projectName),
+      };
+    },
+    applyWorkspace: ({ projectName, files }) => {
+      if (treeState === "expand-root") {
+        fileTreeStore.getState().actions.setExpandedPaths(new Set([path]));
+      } else {
+        fileTreeStore.getState().actions.collapseAll();
+      }
+
+      const { setRootFolderPath, setProjectName, setActiveProjectId } =
+        projectStore.getState().actions;
+      setRootFolderPath(path);
+      setProjectName(projectName);
+
+      if (restoreUiState) {
+        restoreProjectUiState(path, workspaceId);
+      }
+
+      const workspaceTab = useWorkspaceTabsStore
+        .getState()
+        .projectTabs.find((projectTab) => projectTab.id === workspaceId);
+      setActiveProjectId(workspaceId);
+      if (!prewarm) {
+        useRecentFoldersStore.getState().actions.addToRecents(path, {
+          activeProjectTabId: workspaceId,
+          customIcon: workspaceTab?.customIcon,
+          missing: false,
+        });
+        gitDiffCache.clear();
+      }
+
+      set((state) => {
+        state.isFileTreeLoading = false;
+        state.files = files;
+        state.rootFolderPath = path;
+        state.workspaceFolders = [{ path, name: projectName, isPrimary: true }];
+        state.filesVersion++;
+        state.projectFilesCache = undefined;
+      });
+    },
+    restoreSession: async () => {
+      const restoreStartedAt = performance.now();
+      logWorkspaceOpenStep("start", "restoreSession", path);
+      await get().restoreSession(path);
+      logWorkspaceOpenStep("end", "restoreSession", path, restoreStartedAt);
+    },
+    startBackgroundInitialization: () => {
+      if (prewarm) return;
+
+      initializeLocalWorkspaceInBackground(
+        workspaceId,
+        path,
+        get,
+        traceLabel === "handleOpenFolder"
+          ? "Failed to initialize workspace after opening folder:"
+          : "Failed to initialize workspace after opening folder by path:",
+      );
+    },
+    onOpenError: (error) => {
+      logWorkspaceOpenStep("error", traceLabel, path, openStartedAt);
+      console.error(`Failed to open folder: ${path}`, error);
+      toast.error(`Failed to open folder: ${path}`);
+    },
+    onRestoreError: (error) => {
+      logWorkspaceOpenStep("error", "restoreSession", path);
+      console.error("Failed to restore workspace session:", error);
+      toast.warning("Workspace opened, but saved tabs could not be restored.");
+    },
+  });
+
+  if (result !== "failed") {
+    logWorkspaceOpenStep("end", traceLabel, path, openStartedAt);
+  }
+  return result === "opened";
+};
+
+type NonLocalWorkspaceKind = "remote" | "wsl";
+
+const nonLocalWorkspaceSessionMessages = {
+  remote: {
+    traceLabel: "remoteWorkspace:restoreSession",
+    errorMessage: "Failed to restore remote workspace session:",
+    warningMessage: "Remote workspace opened, but saved tabs could not be restored.",
+  },
+  wsl: {
+    traceLabel: "wslWorkspace:restoreSession",
+    errorMessage: "Failed to restore WSL workspace session:",
+    warningMessage: "WSL workspace opened, but saved tabs could not be restored.",
+  },
+} as const;
+
+const initializeNonLocalWorkspaceSession = async (
+  kind: NonLocalWorkspaceKind,
+  workspaceId: string,
+  path: string,
+  get: FileSystemGet,
+) => {
+  const messages = nonLocalWorkspaceSessionMessages[kind];
+  await useFileWatcherStore.getStore(workspaceId).getState().actions.setProjectRoot("");
+  useGitStore.getStore(workspaceId).getState().actions.setWorkspaceGitStatus(null, null);
+
+  try {
+    const restoreStartedAt = performance.now();
+    logWorkspaceOpenStep("start", messages.traceLabel, path);
+    await get().restoreSession(path);
+    logWorkspaceOpenStep("end", messages.traceLabel, path, restoreStartedAt);
+  } catch (error) {
+    logWorkspaceOpenStep("error", messages.traceLabel, path);
+    console.error(messages.errorMessage, error);
+    toast.warning(messages.warningMessage);
+    frontendTrace("warn", "workspace-open", `${messages.traceLabel}:error`, {
+      path,
+      error: getErrorMessage(error),
+    });
+  }
+};
+
+const scheduleInactiveWorkspacePrewarm = () => {
+  void scheduleWorkspacePrewarm({
+    waitForIdle: waitForWorkspaceIdle,
+    isEligible: (tab) => !parseRemotePath(tab.path) && !parseWslPath(tab.path),
+    validate: async (tab) => {
+      try {
+        return (await getSymlinkInfo(tab.path)).is_dir;
+      } catch {
+        return false;
+      }
+    },
+    onInvalid: (tab) => {
+      useRecentFoldersStore.getState().actions.updateRecentFolder(tab.path, { missing: true });
+      useWorkspaceTabsStore.getState().actions.removeProjectTab(tab.id);
+      workspaceRuntimeRegistry.removeWorkspace(tab.id);
+      toast.warning(`Removed missing project "${tab.name}"`);
+    },
+    initialize: async (workspaceId, path) =>
+      await getScopedFileSystemStore(workspaceId).getState().initializeLocalWorkspace({
+        workspaceId,
+        path,
+        traceLabel: "handleOpenFolderByPath",
+        treeState: "collapse-all",
+        restoreUiState: true,
+        prewarm: true,
+      }),
+    onPrepared: (tab, prepared, durationMs) => {
+      frontendTrace("info", "bench:workspace-switch", "prewarm:end", {
+        workspaceId: tab.id,
+        path: tab.path,
+        prepared,
+        durationMs: Math.round(durationMs * 100) / 100,
+      });
+    },
+  });
+};
+
+const createFileSystemStore = (workspaceId: string): StoreApi<ScopedFileSystemStoreState> => {
+  let latestFileOpenRequestId = 0;
+  let latestTreeRevealRequestId = 0;
+  let pendingSessionBuffers: BufferSession[] = [];
+  let resumePendingSessionRestore: (() => void) | null = null;
+  let deferredAiSession: ReturnType<typeof readPersistedAiWorkspaceSession> | undefined;
+
+  return createStore<ScopedFileSystemStoreState>()(
+    immer((set, get) => ({
+      // State
+      files: [],
+      rootFolderPath: undefined,
+      workspaceFolders: [],
+      filesVersion: 0,
+      isFileTreeLoading: false,
+      isSwitchingProject: false,
+      projectFilesCache: undefined,
+
+      // Actions
+      handleOpenFolder: async (): Promise<boolean> => {
+        const selected = await openFolder();
+        if (!selected) return false;
+
+        const { settings } = useSettingsStore.getState();
+        const hasOpenWorkspace =
+          !!get().rootFolderPath || useWorkspaceTabsStore.getState().projectTabs.length > 0;
+
+        if (settings.openFoldersInNewWindow && hasOpenWorkspace) {
+          await createAppWindow({
+            path: selected,
+            isDirectory: true,
+          });
+          return true;
+        }
+
+        const { openWorkspaceRuntime } =
+          await import("@/features/workspace/services/workspace-lifecycle");
+        return await openWorkspaceRuntime({
+          descriptor: { path: selected, name: getFolderName(selected) },
+          persistCurrent: () => get().persistActiveProjectSession(),
+          initialize: (workspaceId): Promise<boolean> =>
+            getScopedFileSystemStore(workspaceId).getState().initializeLocalWorkspace({
+              workspaceId,
+              path: selected,
+              traceLabel: "handleOpenFolder",
+              treeState: "expand-root",
+              restoreUiState: false,
+            }),
+          resume: (workspaceId) => resumeWorkspaceRuntimeServices(workspaceId, selected),
+        });
+      },
+
+      initializeLocalWorkspace: (options: OpenLocalWorkspaceOptions) =>
+        openLocalWorkspace(options, set, get),
+
+      deferActiveProjectSessionPersistence: () => {
+        deferredAiSession = readPersistedAiWorkspaceSession();
+        globalThis.setTimeout(() => get().persistActiveProjectSession(), 0);
+      },
+
+      resumeWorkspaceSession: () => {
+        resumePendingSessionRestore?.();
+        const projectPath = get().rootFolderPath;
+        if (!projectPath) {
+          return;
+        }
+
+        const { session } = workspaceSessionRepository.load(projectPath);
+        useAIChatStore.getState().actions.restoreWorkspaceSession(session?.aiSession);
+      },
+
+      resetWorkspace: async () => {
+        const bufferStore = useBufferStore.getStore(workspaceId);
+        const { buffers, actions: bufferActions } = bufferStore.getState();
+        const projectActions = useProjectStore.getStore(workspaceId).getState().actions;
+
+        await resetWorkspaceResources({
+          bufferIds: buffers.map((buffer) => buffer.id),
+          resetFileSystemState: () => {
+            set((state) => {
+              state.files = [];
+              state.isFileTreeLoading = false;
+              state.filesVersion++;
+              state.rootFolderPath = undefined;
+              state.workspaceFolders = [];
+              state.projectFilesCache = undefined;
+            });
+          },
+          collapseFileTree: () =>
+            useFileTreeStore.getStore(workspaceId).getState().actions.collapseAll(),
+          resetProjectMetadata: () => {
+            projectActions.setRootFolderPath("");
+            projectActions.setProjectName("");
+          },
+          closeBuffer: bufferActions.closeBuffer,
+          stopFileWatcher: () =>
+            useFileWatcherStore.getStore(workspaceId).getState().actions.setProjectRoot(""),
+          resetGitState: () => useGitStore.getStore(workspaceId).getState().actions.reset(),
+          clearGitDiffCache: () => gitDiffCache.clear(),
+          clearGitBlame: () =>
+            useGitBlameStore.getStore(workspaceId).getState().actions.clearAllBlame(),
+        });
+      },
+
+      restoreSession: async (projectPath: string, skipBufferPath?: string) => {
+        const { session, terminals, terminalLayouts } =
+          workspaceSessionRepository.load(projectPath);
+        if (session?.workspaceFolders && session.workspaceFolders.length > 1) {
+          const currentRootPaths = new Set(
+            get()
+              .files.filter((file) => file.isDir)
+              .map((file) => file.path),
+          );
+          const restoredFolders = await restoreWorkspaceSessionFolders({
+            projectPath,
+            workspaceFolders: session.workspaceFolders,
+            currentRootPaths,
+            readRootEntry: readWorkspaceRootEntry,
+            onFolderError: (folder, error) => {
+              console.warn("Failed to restore workspace folder:", folder.path, error);
+              toast.warning(`Could not restore workspace folder "${folder.name}".`);
+            },
+          });
+
+          set((state) => {
+            if (restoredFolders.rootEntries.length > 0) {
+              state.files = [...state.files, ...restoredFolders.rootEntries];
+              state.filesVersion++;
+              state.projectFilesCache = undefined;
+            }
+            state.workspaceFolders = restoredFolders.workspaceFolders;
+          });
+          void syncFffWorkspace(get);
+        }
+
+        useTerminalTabsStore
+          .getStore(workspaceId)
+          .getState()
+          .actions.dispatch({
+            type: "RESTORE_TERMINALS",
+            payload: { terminals, layouts: terminalLayouts },
+          });
+
+        if (session) {
+          const bufferStore = useBufferStore.getStore(workspaceId);
+          const { actions: bufferActions } = bufferStore.getState();
+          const restorePlan = buildWorkspaceRestorePlan(session);
+
+          const candidateBuffersToRestore = [
+            restorePlan.initialBuffer,
+            ...restorePlan.remainingBuffers,
+          ].filter(
+            (buffer): buffer is NonNullable<typeof buffer> =>
+              !!buffer && buffer.path !== skipBufferPath,
+          );
+
+          const { buffersToRestore, deferredBuffers } = buildWorkspaceRestoreBatch(
+            candidateBuffersToRestore,
+            IMMEDIATE_SESSION_BUFFERS_TO_RESTORE,
+          );
+          pendingSessionBuffers = [...deferredBuffers];
+
+          const restoreBuffers = async (buffers: typeof buffersToRestore) => {
+            for (const buffer of buffers) {
+              if (buffer.type === "editor") {
+                frontendTrace("info", "workspace-open", "restoreSession:buffer:start", {
+                  projectPath,
+                  bufferPath: buffer.path,
+                });
+              }
+
+              await restoreWorkspaceSessionBuffer(buffer, {
+                openContent: bufferActions.openContent,
+                openFile: async (path, isPreview) => {
+                  await get().handleFileSelect(
+                    path,
+                    false,
+                    undefined,
+                    undefined,
+                    undefined,
+                    isPreview,
+                  );
+                },
+                findBufferIdByPath: (path) =>
+                  getBufferByPath(bufferStore.getState().buffers, path)?.id ?? null,
+                pinBuffer: bufferActions.handleTabPin,
+                restoreEditorState: (bufferSession) =>
+                  restoreEditorSessionStateForPath(bufferSession, workspaceId),
+              });
+
+              if (buffer.type === "editor") {
+                frontendTrace("info", "workspace-open", "restoreSession:buffer:end", {
+                  projectPath,
+                  bufferPath: buffer.path,
+                });
+              }
+            }
+          };
+
+          await restoreBuffers(buffersToRestore);
+
+          // Restore active buffer
+          if (restorePlan.activeBufferPath) {
+            const { buffers } = bufferStore.getState();
+            const activeBuffer = getBufferByPath(buffers, restorePlan.activeBufferPath);
+            if (activeBuffer) {
+              bufferStore.getState().actions.setActiveBuffer(activeBuffer.id);
+            }
+          }
+
+          if (deferredBuffers.length > 0) {
+            console.info("[workspace-open] restoreSession:deferred", {
+              projectPath,
+              totalBuffers: candidateBuffersToRestore.length,
+              restoredBuffers: buffersToRestore.length,
+              deferredBuffers: deferredBuffers.length,
+            });
+            frontendTrace("info", "workspace-open", "restoreSession:deferred", {
+              projectPath,
+              totalBuffers: candidateBuffersToRestore.length,
+              restoredBuffers: buffersToRestore.length,
+              deferredBuffers: deferredBuffers.length,
+            });
+
+            let isRestoringDeferredBuffers = false;
+            resumePendingSessionRestore = () => {
+              if (isRestoringDeferredBuffers || pendingSessionBuffers.length === 0) {
+                return;
+              }
+
+              isRestoringDeferredBuffers = true;
+              void (async () => {
+                const result = await drainDeferredWorkspaceSessionBuffers({
+                  pendingBuffers: pendingSessionBuffers,
+                  waitForIdle: waitForWorkspaceIdle,
+                  shouldContinue: () =>
+                    get().rootFolderPath === projectPath &&
+                    workspaceRuntimeRegistry.getActiveWorkspaceId() === workspaceId,
+                  restoreBuffer: async (buffer) => restoreBuffers([buffer]),
+                  onBufferError: (buffer, error) => {
+                    void recordFrictionSignal({ area: "layout", signal: "restore_failed" });
+                    console.warn(
+                      `[workspace-open] failed to restore deferred tab ${buffer.path}`,
+                      error,
+                    );
+                  },
+                  afterBufferRestored: () => {
+                    if (restorePlan.activeBufferPath) {
+                      const activeBuffer = getBufferByPath(
+                        bufferStore.getState().buffers,
+                        restorePlan.activeBufferPath,
+                      );
+                      if (activeBuffer) {
+                        bufferStore.getState().actions.setActiveBuffer(activeBuffer.id);
+                      }
+                    }
+                  },
+                });
+
+                if (result.completed) {
+                  resumePendingSessionRestore = null;
+                  restoreProjectPaneState(projectPath, workspaceId);
+                  frontendTrace("info", "workspace-open", "restoreSession:deferred:end", {
+                    projectPath,
+                    restoredBuffers: result.restoredBufferCount,
+                  });
+                }
+              })()
+                .catch((error) => {
+                  void recordFrictionSignal({ area: "layout", signal: "restore_failed" });
+                  console.warn("[workspace-open] failed to restore deferred saved tabs", error);
+                  frontendTrace("warn", "workspace-open", "restoreSession:deferred:error", {
+                    projectPath,
+                    error: getErrorMessage(error),
+                  });
+                })
+                .finally(() => {
+                  isRestoringDeferredBuffers = false;
+                });
+            };
+
+            window.setTimeout(() => resumePendingSessionRestore?.(), 250);
+          } else {
+            pendingSessionBuffers = [];
+            resumePendingSessionRestore = null;
+          }
+        }
+
+        restoreProjectPaneState(projectPath, workspaceId);
+
+        if (workspaceRuntimeRegistry.getActiveWorkspaceId() === workspaceId) {
+          useAIChatStore.getState().actions.restoreWorkspaceSession(session?.aiSession);
+        }
+      },
+
+      persistActiveProjectSession: () => {
+        const currentRootPath = get().rootFolderPath;
+        if (!currentRootPath) {
+          return;
+        }
+
+        const uiState = getCurrentProjectUiState(workspaceId);
+        const { buffers, activeBufferId } = useBufferStore.getStore(workspaceId).getState();
+        const workspaceFolders = normalizeWorkspaceFolders(currentRootPath, get().workspaceFolders);
+        const workspaceFolderPaths = workspaceFolders.map((folder) => folder.path);
+        const terminals = serializeTerminals(
+          useTerminalTabsStore.getStore(workspaceId).getState().terminals,
+        );
+        const aiSession =
+          deferredAiSession ??
+          (workspaceRuntimeRegistry.getActiveWorkspaceId() === workspaceId
+            ? readPersistedAiWorkspaceSession()
+            : undefined);
+        deferredAiSession = undefined;
+        const bufferSnapshot = buildWorkspaceBufferSnapshot({
+          buffers,
+          activeBufferId,
+          pendingBuffers: pendingSessionBuffers,
+          workspaceRootPath: currentRootPath,
+          workspaceFolderPaths,
+          includeEditorId: true,
+        });
+
+        clearQueuedWorkspaceSessionSave(currentRootPath);
+        workspaceSessionWriteQueue.schedule(currentRootPath, {
+          ...bufferSnapshot,
+          terminals,
+          aiSession,
+          workspaceFolders,
+          uiState,
+        });
+      },
+
+      closeFolder: async () => {
+        // Find the active project tab
+        const activeTab = useWorkspaceTabsStore.getState().actions.getActiveProjectTab();
+
+        if (activeTab) {
+          // If we have an active tab, close it properly via closeProject
+          // This will handle removing the tab and if it's the last one, it will clear the file system
+          return await get().closeProject(activeTab.id);
+        }
+
+        // Fallback: Reset all project-related state to return to welcome screen
+        await get().resetWorkspace();
+
+        return true;
+      },
+
+      handleOpenFolderByPath: async (path: string) => {
+        const wslInfo = parseWslPath(path);
+        if (wslInfo) {
+          return await get().handleOpenWslProject(wslInfo.distro, wslInfo.linuxPath);
+        }
+
+        const { openWorkspaceRuntime } =
+          await import("@/features/workspace/services/workspace-lifecycle");
+        return await openWorkspaceRuntime({
+          descriptor: { path, name: getFolderName(path) },
+          persistCurrent: () => get().persistActiveProjectSession(),
+          initialize: (workspaceId) =>
+            getScopedFileSystemStore(workspaceId).getState().initializeLocalWorkspace({
+              workspaceId,
+              path,
+              traceLabel: "handleOpenFolderByPath",
+              treeState: "collapse-all",
+              restoreUiState: true,
+            }),
+          resume: (workspaceId) => resumeWorkspaceRuntimeServices(workspaceId, path),
+        });
+      },
+
+      addFolderToWorkspace: async (path?: string) => {
+        const selectedPath = path ?? (await openFolder());
+        if (!selectedPath) return false;
+
+        const rootFolderPath = get().rootFolderPath;
+        if (!rootFolderPath) {
+          return await get().handleOpenFolderByPath(selectedPath);
+        }
+
+        if (selectedPath.startsWith("remote://") || selectedPath.startsWith("wsl://")) {
+          toast.warning("Add Folder to Workspace is only available for local folders.");
+          return false;
+        }
+
+        const workspaceFolders = normalizeWorkspaceFolders(rootFolderPath, get().workspaceFolders);
+        if (isWorkspaceFolderPath(selectedPath, rootFolderPath, workspaceFolders)) {
+          toast.info("Folder is already in this workspace.");
+          return true;
+        }
+
+        set((state) => {
+          state.isFileTreeLoading = true;
+        });
+
+        try {
+          const rootEntry = await readWorkspaceRootEntry(selectedPath);
+          const nextFolders = normalizeWorkspaceFolders(rootFolderPath, [
+            ...workspaceFolders,
+            { path: selectedPath, name: rootEntry.name },
+          ]);
+
+          set((state) => {
+            state.files = [...state.files, rootEntry];
+            state.workspaceFolders = nextFolders;
+            state.filesVersion++;
+            state.isFileTreeLoading = false;
+            state.projectFilesCache = undefined;
+          });
+          void syncFffWorkspace(get);
+
+          const fileTreeStore = useFileTreeStore.getStore(workspaceId);
+          const expandedPaths = new Set(fileTreeStore.getState().actions.getExpandedPaths());
+          expandedPaths.add(selectedPath);
+          fileTreeStore.getState().actions.setExpandedPaths(expandedPaths);
+          useRecentFoldersStore.getState().actions.addToRecents(selectedPath, {
+            missing: false,
+          });
+          get().persistActiveProjectSession();
+          toast.success(`Added "${rootEntry.name}" to workspace.`);
+          return true;
+        } catch (error) {
+          console.error("Failed to add folder to workspace:", error);
+          toast.error(`Failed to add folder to workspace: ${selectedPath}`);
+          set((state) => {
+            state.isFileTreeLoading = false;
+          });
+          return false;
+        }
+      },
+
+      removeFolderFromWorkspace: async (path: string) => {
+        const rootFolderPath = get().rootFolderPath;
+        if (!rootFolderPath) {
+          return false;
+        }
+
+        const workspaceFolders = normalizeWorkspaceFolders(rootFolderPath, get().workspaceFolders);
+        const folder = workspaceFolders.find((workspaceFolder) =>
+          isWorkspaceFolderPath(path, workspaceFolder.path, [workspaceFolder]),
+        );
+
+        if (!folder) {
+          return false;
+        }
+
+        if (folder.isPrimary || folder.path === rootFolderPath) {
+          toast.warning("Primary workspace folder cannot be removed.");
+          return false;
+        }
+
+        set((state) => {
+          state.files = state.files.filter((file) => file.path !== folder.path);
+          state.workspaceFolders = workspaceFolders.filter(
+            (workspaceFolder) => workspaceFolder.path !== folder.path,
+          );
+          state.filesVersion++;
+          state.projectFilesCache = undefined;
+        });
+        void syncFffWorkspace(get);
+
+        useFileTreeStore.getStore(workspaceId).getState().actions.collapsePath(folder.path);
+        get().persistActiveProjectSession();
+        toast.success(`Removed "${folder.name}" from workspace.`);
+        return true;
+      },
+
+      handleOpenRemoteProject: async (connectionId: string, connectionName: string) => {
+        const path = buildRemoteRootPath(connectionId);
+        const { openWorkspaceRuntime } =
+          await import("@/features/workspace/services/workspace-lifecycle");
+        return await openWorkspaceRuntime({
+          descriptor: { path, name: connectionName },
+          persistCurrent: () => get().persistActiveProjectSession(),
+          initialize: (workspaceId) =>
+            getScopedFileSystemStore(workspaceId)
+              .getState()
+              .initializeRemoteWorkspace(connectionId),
+          resume: (workspaceId) => resumeWorkspaceRuntimeServices(workspaceId, path),
+        });
+      },
+
+      initializeRemoteWorkspace: async (connectionId: string) => {
+        persistCurrentProjectUiState(get().rootFolderPath);
+
+        set((state) => {
+          state.isFileTreeLoading = true;
+        });
+
+        try {
+          const connection = await ensureRemoteConnectionConnected(connectionId);
+
+          // Read remote root directory
+          const entries = await invoke<RemoteDirectoryEntry[]>("ssh_read_directory", {
+            connectionId,
+            path: "/",
+          });
+
+          const { remotePath, wrappedFileTree } = buildRemoteWorkspaceTree(
+            connectionId,
+            connection.name,
+            entries,
+          );
+          applyNonLocalWorkspaceState(
+            workspaceId,
+            {
+              path: remotePath,
+              name: connection.name,
+              files: wrappedFileTree,
+            },
+            set,
+          );
+
+          await initializeNonLocalWorkspaceSession("remote", workspaceId, remotePath, get);
+
+          return true;
+        } catch (error) {
+          console.error("Failed to open remote project:", error);
+          toast.error(error instanceof Error ? error.message : "Failed to open remote project.");
+          set((state) => {
+            state.isFileTreeLoading = false;
+          });
+          return false;
+        }
+      },
+
+      handleOpenWslProject: async (distro: string, linuxPath: string) => {
+        const normalizedLinuxPath = linuxPath || "/";
+        const path = buildWslPath(distro, normalizedLinuxPath);
+        const name = getWslProjectName(distro, normalizedLinuxPath);
+        const { openWorkspaceRuntime } =
+          await import("@/features/workspace/services/workspace-lifecycle");
+        return await openWorkspaceRuntime({
+          descriptor: { path, name },
+          persistCurrent: () => get().persistActiveProjectSession(),
+          initialize: (workspaceId) =>
+            getScopedFileSystemStore(workspaceId)
+              .getState()
+              .initializeWslWorkspace(distro, normalizedLinuxPath),
+          resume: (workspaceId) => resumeWorkspaceRuntimeServices(workspaceId, path),
+        });
+      },
+
+      initializeWslWorkspace: async (distro: string, linuxPath: string) => {
+        persistCurrentProjectUiState(get().rootFolderPath, workspaceId);
+
+        set((state) => {
+          state.isFileTreeLoading = true;
+        });
+
+        try {
+          const normalizedLinuxPath = linuxPath || "/";
+          const entries = await invoke<WslDirectoryEntry[]>("wsl_read_directory", {
+            distro,
+            path: normalizedLinuxPath,
+          });
+          const { wslPath, wrappedFileTree } = buildWslWorkspaceTree(
+            distro,
+            normalizedLinuxPath,
+            entries,
+          );
+          const projectName = getWslProjectName(distro, normalizedLinuxPath);
+          const activeProjectId = applyNonLocalWorkspaceState(
+            workspaceId,
+            { path: wslPath, name: projectName, files: wrappedFileTree },
+            set,
+          );
+
+          useRecentFoldersStore.getState().actions.addToRecents(wslPath, {
+            activeProjectTabId: activeProjectId,
+            missing: false,
+          });
+
+          await initializeNonLocalWorkspaceSession("wsl", workspaceId, wslPath, get);
+
+          return true;
+        } catch (error) {
+          console.error("Failed to open WSL project:", error);
+          toast.error(error instanceof Error ? error.message : "Failed to open WSL project.");
+          set((state) => {
+            state.isFileTreeLoading = false;
+          });
+          return false;
+        }
+      },
+
+      handleFileSelect: async (
+        path: string,
+        isDir: boolean,
+        line?: number,
+        column?: number,
+        codeEditorRef?: React.RefObject<CodeEditorRef | null>,
+        isPreview = false,
+      ) => {
+        if (isDir) {
+          await get().toggleFolder(path);
+          return;
+        }
+
+        const selectedWslInfo = parseWslPath(path);
+
+        if (!isPreview && !selectedWslInfo) {
+          fffTrackAccess(path).catch((error) => {
+            console.error("[fff] track_access failed:", error);
+          });
+        }
+
+        fileOpenBenchmark.ensureStarted(path, isPreview ? "preview" : "definite");
+        fileOpenBenchmark.mark(path, "file-select-handler");
+
+        const {
+          buffers,
+          activeBufferId,
+          actions: { convertPreviewToDefinite, setActiveBuffer },
+        } = useBufferStore.getStore(workspaceId).getState();
+        const workspaceRootPath = get().rootFolderPath;
+        const fileName = getFilenameFromPath(path);
+        const existingBuffer = getBufferByPath(buffers, path);
+        if (existingBuffer) {
+          const wasAlreadyActive = existingBuffer.id === activeBufferId;
+          setActiveBuffer(existingBuffer.id);
+          recordLocalFileAccess(path, fileName, workspaceRootPath, getWorkspaceFolderPaths(get));
+
+          if (existingBuffer.isPreview && !isPreview) {
+            convertPreviewToDefinite(existingBuffer.id);
+          }
+          if (wasAlreadyActive || existingBuffer.type !== "editor") {
+            fileOpenBenchmark.finish(path, "existing-buffer");
+          } else {
+            fileOpenBenchmark.mark(path, "existing-buffer-activated");
+          }
+
+          if (line) {
+            setTimeout(() => {
+              window.dispatchEvent(
+                new CustomEvent("menu-go-to-line", {
+                  detail: { line, column, path },
+                }),
+              );
+            }, 0);
+          }
+
+          return;
+        }
+
+        const requestId = ++latestFileOpenRequestId;
+        const isStaleRequest = () => {
+          const stale = requestId !== latestFileOpenRequestId;
+          if (stale) {
+            fileOpenBenchmark.cancel(path, "stale-request");
+          }
+          return stale;
+        };
+
+        let resolvedPath = path;
+
+        const isKnownTextPath = isKnownTextFile(path);
+        if (isKnownTextPath) {
+          void import("@/features/editor/engines/monaco/prepare-language")
+            .then(({ prepareMonacoLanguageForPath }) => prepareMonacoLanguageForPath(path))
+            .catch((error) => {
+              console.error(`Failed to prepare Monaco language for ${path}:`, error);
+            });
+        }
+        const selectedFileEntry = findFileInTree(get().files, path);
+        const shouldResolveSymlink = shouldResolveFileOpenSymlink(path, selectedFileEntry);
+        if (shouldResolveSymlink) {
+          try {
+            resolvedPath = await resolveFileOpenPath(path, selectedFileEntry, get().rootFolderPath);
+          } catch (error) {
+            console.error("Failed to resolve symlink:", error);
+          }
+        }
+        fileOpenBenchmark.mark(path, shouldResolveSymlink ? "symlink-resolved" : "symlink-skipped");
+
+        if (isStaleRequest()) return;
+        const { openBuffer } = useBufferStore.getStore(workspaceId).getState().actions;
+
+        // Handle virtual diff files
+        if (path.startsWith("diff://")) {
+          if (isStaleRequest()) return;
+
+          const match = path.match(/^diff:\/\/(staged|unstaged)\/(.+)$/);
+          let displayName = getFilenameFromPath(path);
+          if (match) {
+            const [, diffType, encodedPath] = match;
+            const decodedPath = decodeURIComponent(encodedPath);
+            displayName = `${getFilenameFromPath(decodedPath)} (${diffType})`;
+          }
+
+          const diffContent = localStorage.getItem(`diff-content-${path}`);
+          if (diffContent) {
+            openBuffer(path, displayName, diffContent, false, undefined, true, true);
+          } else {
+            openBuffer(
+              path,
+              displayName,
+              "No diff content available",
+              false,
+              undefined,
+              true,
+              true,
+            );
+          }
+          fileOpenBenchmark.finish(path, "diff-buffer-opened");
+          return;
+        }
+
+        // Handle special file types
+        const dbType = getDatabaseTypeFromPath(resolvedPath);
+        if (dbType) {
+          if (isStaleRequest()) return;
+          openBuffer(path, fileName, "", false, dbType, false, false);
+          fileOpenBenchmark.finish(path, "database-buffer-opened");
+        } else if (isImageFile(resolvedPath)) {
+          if (isStaleRequest()) return;
+          openBuffer(path, fileName, "", true, undefined, false, false);
+          fileOpenBenchmark.finish(path, "image-buffer-opened");
+        } else if (isPdfFile(resolvedPath)) {
+          if (isStaleRequest()) return;
+          openBuffer(
+            path,
+            fileName,
+            "",
+            false,
+            undefined,
+            false,
+            false,
+            undefined,
+            false,
+            false,
+            false,
+            undefined,
+            isPreview,
+            true,
+          );
+          fileOpenBenchmark.finish(path, "pdf-buffer-opened");
+        } else if (isBinaryFile(resolvedPath)) {
+          if (isStaleRequest()) return;
+          openBuffer(
+            path,
+            fileName,
+            "",
+            false,
+            undefined,
+            false,
+            false,
+            undefined,
+            false,
+            false,
+            false,
+            undefined,
+            false,
+            false,
+            true,
+          );
+          fileOpenBenchmark.finish(path, "binary-buffer-opened");
+        } else {
+          let preloadedText: string | null = null;
+
+          const fileOpenResource = createFileOpenResource(path, resolvedPath);
+
+          if (fileOpenResource.shouldInspectBytes) {
+            try {
+              const inspection = await inspectFileOpenResource(fileOpenResource);
+
+              if (isStaleRequest()) return;
+
+              if (inspection.isBinary) {
+                openBuffer(
+                  path,
+                  fileName,
+                  "",
+                  false,
+                  undefined,
+                  false,
+                  false,
+                  undefined,
+                  false,
+                  false,
+                  false,
+                  undefined,
+                  false,
+                  false,
+                  true,
+                );
+                recordLocalFileAccess(
+                  path,
+                  fileName,
+                  workspaceRootPath,
+                  getWorkspaceFolderPaths(get),
+                );
+                fileOpenBenchmark.finish(path, "binary-sniff-buffer-opened");
+                return;
+              }
+
+              preloadedText = inspection.preloadedText;
+            } catch (error) {
+              console.error(
+                fileOpenResource.provider.kind === "wsl"
+                  ? "Failed to inspect WSL file bytes before opening:"
+                  : "Failed to inspect file bytes before opening:",
+                error,
+              );
+            }
+          }
+
+          // Check if external editor is enabled for text files
+          const { settings } = useSettingsStore.getState();
+          const { openExternalEditorBuffer } = useBufferStore
+            .getStore(workspaceId)
+            .getState().actions;
+          const hasExternalEditorCommand =
+            settings.externalEditor !== "custom" || settings.customEditorCommand.trim().length > 0;
+
+          if (settings.externalEditor !== "none" && hasExternalEditorCommand && !selectedWslInfo) {
+            if (isStaleRequest()) return;
+            try {
+              const { rootFolderPath } = get();
+              const events = createTerminalEventChannel();
+              // Create terminal connection for external editor
+              await ensureFrontendTerminalSession();
+              const connectionId = await invoke<string>("create_terminal", {
+                config: {
+                  workingDirectory: rootFolderPath || undefined,
+                  size: { rows: 24, cols: 80, pixelWidth: 0, pixelHeight: 0 },
+                },
+                onEvent: events.channel,
+                ...getFrontendTerminalSessionArgs(),
+              });
+              events.bind(connectionId);
+
+              if (isStaleRequest()) return;
+
+              // Open external editor buffer
+              openExternalEditorBuffer(resolvedPath, fileName, connectionId);
+              recordLocalFileAccess(
+                path,
+                fileName,
+                workspaceRootPath,
+                getWorkspaceFolderPaths(get),
+              );
+              fileOpenBenchmark.finish(path, "external-editor-buffer-opened");
+              return;
+            } catch (error) {
+              console.error("Failed to create external editor terminal:", error);
+            }
+          }
+
+          let content: string;
+          try {
+            content = await readFileOpenText(fileOpenResource, preloadedText);
+          } catch (error) {
+            fileOpenBenchmark.finish(path, "file-read-failed");
+            if (isStaleRequest()) return;
+            // Most callers open files fire-and-forget, so report the failure here
+            // instead of leaving the rejection unhandled.
+            console.error(`Failed to open ${path}:`, error);
+            toast.error(`Could not open ${fileName}`, {
+              description: error instanceof Error ? error.message : String(error),
+            });
+            return;
+          }
+          fileOpenBenchmark.mark(path, "file-read", `${content.length} chars`);
+
+          if (isStaleRequest()) return;
+
+          openBuffer(
+            path,
+            fileName,
+            content,
+            false,
+            undefined,
+            false,
+            false,
+            undefined,
+            undefined,
+            false,
+            false,
+            undefined,
+            isPreview,
+          );
+          fileOpenBenchmark.mark(path, "buffer-opened");
+
+          // Handle navigation to specific line/column
+          if (line && column && codeEditorRef?.current?.textarea) {
+            requestAnimationFrame(() => {
+              if (codeEditorRef.current?.textarea) {
+                const textarea = codeEditorRef.current.textarea;
+                const targetLine = Math.max(0, (line ?? 1) - 1);
+                const targetLineSlice = getLineSlice(content, targetLine);
+                const targetPosition =
+                  targetLineSlice.offset +
+                  (column ? Math.min(column - 1, targetLineSlice.line.length) : 0);
+
+                textarea.focus();
+                if (
+                  "setSelectionRange" in textarea &&
+                  typeof textarea.setSelectionRange === "function"
+                ) {
+                  (textarea as unknown as HTMLTextAreaElement).setSelectionRange(
+                    targetPosition,
+                    targetPosition,
+                  );
+                }
+
+                const lineHeight = 20;
+                const scrollTop = line
+                  ? Math.max(0, (line - 1) * lineHeight - textarea.clientHeight / 2)
+                  : 0;
+                textarea.scrollTop = scrollTop;
+              }
+            });
+          }
+        }
+
+        recordLocalFileAccess(path, fileName, workspaceRootPath, getWorkspaceFolderPaths(get));
+
+        // Dispatch go-to-line event to center the line in viewport
+        if (line) {
+          setTimeout(() => {
+            window.dispatchEvent(
+              new CustomEvent("menu-go-to-line", {
+                detail: { line, column, path },
+              }),
+            );
+          }, 100);
+        }
+      },
+
+      // Open file in definite mode (not preview) - for double-click
+      handleFileOpen: async (path: string, isDir: boolean) => {
+        await get().handleFileSelect(path, isDir, undefined, undefined, undefined, false);
+      },
+
+      toggleFolder: async (path: string) => {
+        const folder = findFileInTree(get().files, path);
+        if (!folder || !folder.isDir) return;
+
+        const uiActions = useFileTreeStore.getStore(workspaceId).getState().actions;
+        const isCurrentlyExpanded = uiActions.isExpanded(path);
+
+        if (!isCurrentlyExpanded) {
+          // Expand: load children if not present
+          if (!folder.children || folder.children.length === 0) {
+            let childEntries: FileEntry[];
+            try {
+              childEntries = await readWorkspaceDirectoryEntries(
+                folder.path,
+                get().rootFolderPath ?? folder.path,
+              );
+            } catch (error) {
+              // Folder rows expand fire-and-forget, so report a folder that was deleted
+              // or is not readable here instead of leaving the rejection unhandled.
+              console.error(`Failed to expand ${path}:`, error);
+              toast.error(`Could not open folder ${folder.name}`, {
+                description: error instanceof Error ? error.message : String(error),
+              });
+              return;
+            }
+
+            const updatedFiles = updateFileInTree(get().files, path, (item) => ({
+              ...item,
+              children: childEntries,
+            }));
+
+            set((state) => {
+              state.files = updatedFiles;
+              state.filesVersion++;
+            });
+          }
+          uiActions.toggleFolder(path);
+          // Preload deeper children in background for snappier navigation
+          get()
+            .preloadSubtree(path, 2, 80)
+            .catch(() => {});
+        } else {
+          // Collapse: only toggle UI state; keep children cached
+          uiActions.toggleFolder(path);
+        }
+      },
+
+      revealPathInTree: async (targetPath: string) => {
+        const revealRequestId = ++latestTreeRevealRequestId;
+        const { rootFolderPath } = get();
+        const ancestorPaths = getAncestorDirectoryPaths(targetPath, rootFolderPath);
+        const fileTreeActions = useFileTreeStore.getStore(workspaceId).getState().actions;
+        const expandedPaths = new Set(fileTreeActions.getExpandedPaths());
+        const loadedChildren = new Map<string, FileEntry[]>();
+        let nextFiles = get().files;
+        let expandedPathsChanged = false;
+
+        for (const ancestorPath of ancestorPaths) {
+          const node = findFileInTree(nextFiles, ancestorPath);
+          if (!node || !node.isDir) continue;
+
+          if (!expandedPaths.has(ancestorPath)) {
+            expandedPaths.add(ancestorPath);
+            expandedPathsChanged = true;
+          }
+
+          if (!node.children || node.children.length === 0) {
+            const childEntries = await readWorkspaceDirectoryEntries(
+              ancestorPath,
+              get().rootFolderPath ?? ancestorPath,
+            );
+            if (revealRequestId !== latestTreeRevealRequestId) {
+              return;
+            }
+
+            loadedChildren.set(ancestorPath, childEntries);
+            nextFiles = updateFileInTree(nextFiles, ancestorPath, (item) => ({
+              ...item,
+              children: childEntries,
+            }));
+          }
+        }
+
+        if (loadedChildren.size > 0) {
+          set((state) => {
+            let updatedFiles = state.files;
+            for (const [ancestorPath, childEntries] of loadedChildren) {
+              updatedFiles = updateFileInTree(updatedFiles, ancestorPath, (item) => ({
+                ...item,
+                children: childEntries,
+              }));
+            }
+            if (updatedFiles !== state.files) {
+              state.files = updatedFiles;
+              state.filesVersion++;
+            }
+          });
+        }
+
+        if (expandedPathsChanged) {
+          fileTreeActions.setExpandedPaths(expandedPaths);
+        }
+      },
+
+      // Preload subtree children up to a depth and directory budget
+      preloadSubtree: async (rootPath: string, maxDepth = 2, maxDirs = 80) => {
+        const visited = new Set<string>();
+        type QueueItem = {
+          path: string;
+          depth: number;
+        };
+        const q: QueueItem[] = [];
+
+        q.push({
+          path: rootPath,
+          depth: 0,
+        });
+        let processed = 0;
+
+        while (q.length && processed < maxDirs) {
+          const batch = q.splice(0, 8);
+          await Promise.all(
+            batch.map(async (item) => {
+              if (visited.has(item.path) || item.depth >= maxDepth) return;
+              visited.add(item.path);
+              processed++;
+
+              try {
+                // Skip if children already present
+                const node = findFileInTree(get().files, item.path);
+                if (!node || !node.isDir) return;
+                if (node.children && node.children.length > 0) {
+                  // Still enqueue subdirs to continue traversal
+                  node.children
+                    ?.filter((c) => c.isDir)
+                    .forEach((c) =>
+                      q.push({
+                        path: c.path,
+                        depth: item.depth + 1,
+                      }),
+                    );
+                  return;
+                }
+
+                const children = await readWorkspaceDirectoryEntries(
+                  item.path,
+                  get().rootFolderPath ?? item.path,
+                );
+
+                set((state) => {
+                  state.files = updateFileInTree(state.files, item.path, (it) => ({
+                    ...it,
+                    children,
+                  }));
+                  state.filesVersion++;
+                });
+
+                // Enqueue subdirs
+                children
+                  .filter((c) => c.isDir)
+                  .forEach((c) =>
+                    q.push({
+                      path: c.path,
+                      depth: item.depth + 1,
+                    }),
+                  );
+              } catch {}
+            }),
+          );
+
+          // Yield to UI
+          await new Promise((r) => setTimeout(r, 0));
+        }
+      },
+
+      handleCreateNewFile: async () => {
+        const { rootFolderPath } = get();
+        const { activePath } = useSidebarStore.getStore(workspaceId).getState();
+
+        if (!rootFolderPath) {
+          const bufferStore = useBufferStore.getStore(workspaceId);
+          const buffers = bufferStore.getState().buffers;
+          const untitledCount = buffers.filter((b) => b.path.startsWith("untitled:")).length;
+          const name = untitledCount === 0 ? "Untitled" : `Untitled-${untitledCount + 1}`;
+          const path = `untitled:${name}`;
+          bufferStore.getState().actions.openBuffer(path, name, "", false, undefined, false, true);
+          return;
+        }
+
+        let effectiveRootPath = activePath || rootFolderPath;
+
+        // Active path maybe is a file
+        if (activePath) {
+          try {
+            await extname(activePath);
+            effectiveRootPath = await dirname(activePath);
+          } catch {}
+        }
+
+        if (!effectiveRootPath) {
+          await showAlertDialog("Unable to determine root folder path", "New File");
+          return;
+        }
+
+        // Create a temporary new file item for inline editing
+        const newItem: FileEntry = {
+          name: "",
+          path: ensureTrailingPathSeparator(effectiveRootPath),
+          isDir: false,
+          isEditing: true,
+          isNewItem: true,
+        };
+
+        // Add the new item to the root level of the file tree
+        set((state) => {
+          state.files = addFileToTree(state.files, effectiveRootPath, newItem);
+          state.filesVersion++;
+        });
+      },
+
+      handleCreateNewFileInDirectory: async (dirPath: string, fileName?: string) => {
+        if (!fileName) {
+          fileName =
+            (await showPromptDialog("Enter the name for the new file:", {
+              title: "New File",
+              placeholder: "File name",
+            })) ?? undefined;
+          if (!fileName) return;
+        }
+        // Split the input path into parts
+        const parts = fileName.split("/").filter(Boolean);
+        // Validate input
+        if (parts.length === 0) {
+          await showAlertDialog("Invalid file name", "New File");
+          return;
+        }
+
+        const finalFileName = parts.pop()!;
+
+        // Block path traversal and illegal separators
+        const hasIllegalCharacters = (segment: string) =>
+          segment === ".." || segment === "." || segment.includes("\\") || segment.includes("/");
+
+        // Check all directory parts AND the final filename
+        if (parts.some(hasIllegalCharacters) || hasIllegalCharacters(finalFileName)) {
+          await showAlertDialog(
+            "Invalid file name: path traversal and special characters are not allowed",
+            "New File",
+          );
+          return;
+        }
+
+        let currentPath = dirPath;
+        // Create intermediate folders if they don't exist
+        try {
+          for (const folder of parts) {
+            const potentialPath = joinPath(currentPath, folder);
+            // Check if directory already exists in the file tree
+            const existingFolder = findFileInTree(get().files, potentialPath);
+
+            if (existingFolder?.isDir) {
+              // Directory already exists, just use its path
+              currentPath = potentialPath;
+            } else {
+              // Create the directory if it doesn't exist
+              currentPath = await get().createDirectory(currentPath, folder);
+            }
+          }
+          // Finally create the file inside the deepest folder
+          return await get().createFile(currentPath, finalFileName);
+        } catch (error) {
+          console.error("Failed to create nested file:", error);
+          await showAlertDialog(
+            `Failed to create file: ${error instanceof Error ? error.message : "Unknown error"}`,
+            "New File",
+          );
+          return;
+        }
+      },
+
+      handleCreateNewFolder: async () => {
+        const { rootFolderPath } = get();
+        const { activePath } = useSidebarStore.getStore(workspaceId).getState();
+
+        if (!rootFolderPath) {
+          await showAlertDialog("Please open a folder first", "New Folder");
+          return;
+        }
+
+        let effectiveRootPath = activePath || rootFolderPath;
+
+        // Active path maybe is a file
+        if (activePath) {
+          try {
+            await extname(activePath);
+            effectiveRootPath = await dirname(activePath);
+          } catch {}
+        }
+
+        if (!effectiveRootPath) {
+          await showAlertDialog("Unable to determine root folder path", "New Folder");
+          return;
+        }
+
+        const newFolder: FileEntry = {
+          name: "",
+          path: ensureTrailingPathSeparator(effectiveRootPath),
+          isDir: true,
+          isEditing: true,
+          isNewItem: true,
+        };
+
+        set((state) => {
+          state.files = addFileToTree(state.files, effectiveRootPath, newFolder);
+          state.filesVersion++;
+        });
+      },
+
+      handleCreateNewFolderInDirectory: async (dirPath: string, folderName?: string) => {
+        if (!folderName) {
+          folderName =
+            (await showPromptDialog("Enter the name for the new folder:", {
+              title: "New Folder",
+              placeholder: "Folder name",
+            })) ?? undefined;
+          if (!folderName) return;
+        }
+
+        return get().createDirectory(dirPath, folderName);
+      },
+
+      handleDeletePath: async (targetPath: string, _isDirectory: boolean) => {
+        return get().deleteFile(targetPath);
+      },
+
+      refreshDirectory: async (directoryPath: string, options?: { force?: boolean }) => {
+        const dirNode = findFileInTree(get().files, directoryPath);
+
+        if (!dirNode || !dirNode.isDir) {
+          return;
+        }
+
+        // Check if directory is expanded using the file tree store
+        // Root folder is always considered expanded since it's always visible
+        const isRoot = directoryPath === get().rootFolderPath;
+        const isExpanded =
+          isRoot ||
+          useFileTreeStore.getStore(workspaceId).getState().actions.isExpanded(directoryPath);
+
+        if (!isExpanded && !options?.force) {
+          return;
+        }
+
+        const entries = (
+          await readWorkspaceDirectoryEntries(directoryPath, get().rootFolderPath ?? directoryPath)
+        ).map((entry) => ({
+          name: entry.name,
+          path: entry.path,
+          is_dir: entry.isDir,
+          is_symlink: entry.isSymlink,
+          target: entry.symlinkTarget,
+        }));
+
+        set((state) => {
+          const result = updateDirectoryContents(state.files, directoryPath, entries as any[]);
+
+          if (result === "changed") {
+            state.filesVersion++;
+          }
+        });
+      },
+
+      handleCollapseAllFolders: async () => {
+        // Only collapse UI, do not mutate file data
+        useFileTreeStore.getStore(workspaceId).getState().actions.collapseAll();
+      },
+
+      handleFileMove: async (oldPath: string, newPath: string) => {
+        const movedFile = findFileInTree(get().files, oldPath);
+        if (!movedFile) {
+          return;
+        }
+
+        await getWorkspaceEntryMutationProvider(oldPath).movePath(oldPath, newPath);
+
+        // Remove from old location
+        let updatedFiles = removeFileFromTree(get().files, oldPath);
+
+        // Update the file's path and name
+        const updatedMovedFile = {
+          ...movedFile,
+          path: newPath,
+          name: getBaseName(newPath, movedFile.name),
+        };
+
+        // Determine target directory from the new path
+        const targetDir = getDirName(newPath) || get().rootFolderPath || "/";
+
+        // Add to new location
+        updatedFiles = addFileToTree(updatedFiles, targetDir, updatedMovedFile);
+
+        set((state) => {
+          state.files = updatedFiles;
+          state.filesVersion = state.filesVersion + 1;
+          state.projectFilesCache = undefined;
+        });
+
+        // Update open buffers
+        const bufferStore = useBufferStore.getStore(workspaceId);
+        const { buffers } = bufferStore.getState();
+        const { updateBuffer } = bufferStore.getState().actions;
+        const buffer = getBufferByPath(buffers, oldPath);
+        if (buffer) {
+          const fileName = getBaseName(newPath, buffer.name);
+          updateBuffer({
+            ...buffer,
+            path: newPath,
+            name: fileName,
+          });
+        }
+
+        // Invalidate git diff cache for moved files
+        const { rootFolderPath } = get();
+        if (rootFolderPath) {
+          gitDiffCache.invalidate(rootFolderPath, oldPath);
+          gitDiffCache.invalidate(rootFolderPath, newPath);
+        }
+      },
+
+      getAllProjectFiles: async (): Promise<FileEntry[]> => {
+        const { rootFolderPath, projectFilesCache } = get();
+        if (!rootFolderPath) return [];
+        const workspaceFolderPaths = getWorkspaceFolderPaths(get);
+        const cachePath = workspaceFolderPaths.join("\n");
+        const scanStartedAt = performance.now();
+        frontendTrace("info", "project-files", "getAllProjectFiles:start", {
+          rootFolderPath,
+          workspaceFolders: workspaceFolderPaths,
+        });
+
+        if (canUseNativeFileSearch(rootFolderPath)) {
+          const nativeRootPaths = await ensureWorkspaceFileSearch(workspaceFolderPaths);
+          const indexedFiles = await fffListFiles(nativeRootPaths);
+          const files = indexedFiles.map<FileEntry>((file) => ({
+            name: file.name,
+            path: file.path,
+            isDir: false,
+          }));
+          frontendTrace("info", "project-files", "getAllProjectFiles:end", {
+            rootFolderPath,
+            workspaceFolders: workspaceFolderPaths,
+            files: files.length,
+            source: "fff",
+            durationMs: Math.round((performance.now() - scanStartedAt) * 100) / 100,
+          });
+          return files;
+        }
+
+        // Check cache first (cache for 5 minutes for better UX)
+        const now = Date.now();
+        if (
+          projectFilesCache &&
+          projectFilesCache.path === cachePath &&
+          now - projectFilesCache.timestamp < 300000 // 5 minutes
+        ) {
+          frontendTrace("info", "project-files", "getAllProjectFiles:cache-hit", {
+            rootFolderPath,
+            workspaceFolders: workspaceFolderPaths,
+            files: projectFilesCache.files.length,
+            durationMs: Math.round((performance.now() - scanStartedAt) * 100) / 100,
+          });
+          return projectFilesCache.files;
+        }
+
+        // If we have cached files for this path (even if old), return them and update in background
+        const hasCachedFiles = projectFilesCache?.files && projectFilesCache.files.length > 0;
+
+        const scanFiles = async () => {
+          try {
+            const allFiles: FileEntry[] = [];
+            let processedFiles = 0;
+            const visitedDirectories = new Set<string>();
+
+            const yieldToBrowser = () =>
+              new Promise((resolve) => {
+                if ("requestIdleCallback" in window) {
+                  requestIdleCallback(resolve, { timeout: 4 });
+                } else {
+                  setTimeout(resolve, 1);
+                }
+              });
+
+            const scanDirectory = async (directoryPath: string): Promise<void> => {
+              if (visitedDirectories.has(directoryPath)) {
+                return;
+              }
+              visitedDirectories.add(directoryPath);
+
+              try {
+                const entries = await readDirectory(directoryPath);
+
+                for (const entry of entries as any[]) {
+                  const name = entry.name || "Unknown";
+                  const isDir = entry.is_dir || false;
+
+                  if (shouldIgnore(name, isDir)) {
+                    continue;
+                  }
+
+                  processedFiles++;
+
+                  const fileEntry: FileEntry = {
+                    name,
+                    path: entry.path,
+                    isDir,
+                    children: undefined,
+                  };
+
+                  if (!fileEntry.isDir) {
+                    allFiles.push(fileEntry);
+                  } else {
+                    await scanDirectory(fileEntry.path);
+                  }
+
+                  if (processedFiles % 100 === 0) {
+                    await yieldToBrowser();
+                  }
+                }
+              } catch (error) {
+                console.warn(`Failed to scan directory ${directoryPath}:`, error);
+              }
+            };
+
+            for (const workspaceFolderPath of workspaceFolderPaths) {
+              await scanDirectory(workspaceFolderPath);
+            }
+
+            // Update cache with new results
+            set((state) => {
+              state.projectFilesCache = {
+                path: cachePath,
+                files: allFiles,
+                timestamp: now,
+              };
+            });
+            frontendTrace("info", "project-files", "getAllProjectFiles:end", {
+              rootFolderPath,
+              workspaceFolders: workspaceFolderPaths,
+              files: allFiles.length,
+              processedFiles,
+              durationMs: Math.round((performance.now() - scanStartedAt) * 100) / 100,
+            });
+          } catch (error) {
+            console.error("Failed to index project files:", error);
+            frontendTrace("error", "project-files", "getAllProjectFiles:error", {
+              rootFolderPath,
+              workspaceFolders: workspaceFolderPaths,
+              durationMs: Math.round((performance.now() - scanStartedAt) * 100) / 100,
+            });
+          }
+        };
+
+        // If we don't have cached files, wait for the scan to complete
+        if (!hasCachedFiles) {
+          await scanFiles();
+          return get().projectFilesCache?.files || [];
+        }
+
+        // Otherwise, return cached files and update in background
+        setTimeout(scanFiles, 0);
+        return projectFilesCache?.files || [];
+      },
+
+      createFile: async (directoryPath: string, fileName: string) => {
+        const filePath = await getWorkspaceEntryMutationProvider(directoryPath).createFile(
+          directoryPath,
+          fileName,
+        );
+
+        const newFile: FileEntry = {
+          name: fileName,
+          path: filePath,
+          isDir: false,
+        };
+
+        set((state) => {
+          state.files = addFileToTree(state.files, directoryPath, newFile);
+          state.filesVersion++;
+        });
+
+        await get().handleFileSelect(filePath, false);
+
+        return filePath;
+      },
+
+      createDirectory: async (parentPath: string, folderName: string) => {
+        const folderPath = await getWorkspaceEntryMutationProvider(parentPath).createDirectory(
+          parentPath,
+          folderName,
+        );
+
+        const newFolder: FileEntry = {
+          name: folderName,
+          path: folderPath,
+          isDir: true,
+          children: [],
+        };
+
+        set((state) => {
+          state.files = addFileToTree(state.files, parentPath, newFolder);
+          state.filesVersion++;
+        });
+
+        return folderPath;
+      },
+
+      deleteFile: async (path: string) => {
+        const entry = findFileInTree(get().files, path);
+        await getWorkspaceEntryMutationProvider(path).deletePath(path, !!entry?.isDir);
+
+        const { buffers, actions } = useBufferStore.getStore(workspaceId).getState();
+        buffers
+          .filter((buffer) => buffer.path === path)
+          .forEach((buffer) => actions.closeBuffer(buffer.id));
+
+        // Invalidate git diff cache for deleted file
+        const { rootFolderPath } = get();
+        if (rootFolderPath) {
+          gitDiffCache.invalidate(rootFolderPath, path);
+        }
+
+        set((state) => {
+          state.files = removeFileFromTree(state.files, path);
+          state.filesVersion++;
+        });
+      },
+
+      handleRevealInFolder: async (path: string) => {
+        if (parseRemotePath(path)) {
+          toast.info("Reveal in folder is only available for local workspaces.");
+          return;
+        }
+
+        const wslInfo = parseWslPath(path);
+        if (wslInfo) {
+          const windowsPath = await invoke<string>("wsl_resolve_windows_path", { path });
+          await revealItemInDir(windowsPath);
+          return;
+        }
+
+        await revealItemInDir(path);
+      },
+
+      handleDuplicatePath: async (path: string) => {
+        const remoteInfo = parseRemotePath(path);
+        if (remoteInfo) {
+          const fileEntry = findFileInTree(get().files, path);
+          if (!fileEntry) return;
+
+          const remotePath = remoteInfo.remotePath;
+          const pathParts = remotePath.split("/");
+          const base = pathParts.pop() || "";
+          const dir = pathParts.join("/") || "/";
+          const extMatch = base.match(/(\.[^.]*)$/);
+          const ext = extMatch?.[1] ?? "";
+          const nameWithoutExt = ext ? base.slice(0, -ext.length) : base;
+
+          let counter = 0;
+          let finalName = "";
+          let finalPath = "";
+
+          do {
+            finalName =
+              counter === 0
+                ? `${nameWithoutExt}_copy${ext}`
+                : `${nameWithoutExt}_copy_${counter}${ext}`;
+            finalPath = dir === "/" ? `/${finalName}` : `${dir}/${finalName}`;
+            counter++;
+          } while (findFileInTree(get().files, `remote://${remoteInfo.connectionId}${finalPath}`));
+
+          await invoke("ssh_copy_path", {
+            connectionId: remoteInfo.connectionId,
+            sourcePath: remoteInfo.remotePath,
+            targetPath: finalPath,
+            isDirectory: fileEntry.isDir,
+          });
+
+          const newEntry: FileEntry = {
+            name: finalName,
+            path: `remote://${remoteInfo.connectionId}${finalPath}`,
+            isDir: fileEntry.isDir,
+            children: fileEntry.isDir ? [] : undefined,
+          };
+
+          set((state) => {
+            state.files = addFileToTree(
+              state.files,
+              `remote://${remoteInfo.connectionId}${dir === "/" ? "/" : dir}`,
+              newEntry,
+            );
+            state.filesVersion++;
+          });
+          return;
+        }
+
+        const wslInfo = parseWslPath(path);
+        if (wslInfo) {
+          const fileEntry = findFileInTree(get().files, path);
+          if (!fileEntry) return;
+
+          const pathParts = wslInfo.linuxPath.split("/");
+          const base = pathParts.pop() || "";
+          const dir = pathParts.join("/") || "/";
+          const extMatch = base.match(/(\.[^.]*)$/);
+          const ext = extMatch?.[1] ?? "";
+          const nameWithoutExt = ext ? base.slice(0, -ext.length) : base;
+
+          let counter = 0;
+          let finalName = "";
+          let finalLinuxPath = "";
+          let finalPath = "";
+
+          do {
+            finalName =
+              counter === 0
+                ? `${nameWithoutExt}_copy${ext}`
+                : `${nameWithoutExt}_copy_${counter}${ext}`;
+            finalLinuxPath = dir === "/" ? `/${finalName}` : `${dir}/${finalName}`;
+            finalPath = buildWslPath(wslInfo.distro, finalLinuxPath);
+            counter++;
+          } while (findFileInTree(get().files, finalPath));
+
+          await invoke("wsl_copy_path", {
+            distro: wslInfo.distro,
+            sourcePath: wslInfo.linuxPath,
+            targetPath: finalLinuxPath,
+            isDirectory: fileEntry.isDir,
+          });
+
+          const newEntry: FileEntry = {
+            name: finalName,
+            path: finalPath,
+            isDir: fileEntry.isDir,
+            children: fileEntry.isDir ? [] : undefined,
+            isSymlink: fileEntry.isSymlink,
+            symlinkTarget: fileEntry.symlinkTarget,
+          };
+
+          set((state) => {
+            state.files = addFileToTree(state.files, buildWslPath(wslInfo.distro, dir), newEntry);
+            state.filesVersion++;
+          });
+          return;
+        }
+
+        const dir = await dirname(path);
+        const base = await basename(path);
+        const ext = await extname(path);
+
+        const originalFile = findFileInTree(get().files, path);
+        if (!originalFile) return;
+
+        const nameWithoutExt = base.slice(0, base.length - ext.length);
+        let counter = 0;
+        let finalName = "";
+        let finalPath = "";
+
+        const generateCopyName = () => {
+          if (counter === 0) {
+            return `${nameWithoutExt}_copy.${ext}`;
+          }
+          return `${nameWithoutExt}_copy_${counter}.${ext}`;
+        };
+
+        do {
+          finalName = generateCopyName();
+          finalPath = joinPath(dir, finalName);
+          counter++;
+        } while (findFileInTree(get().files, finalPath));
+
+        await copyFile(path, finalPath);
+
+        const newFile: FileEntry = {
+          name: finalName,
+          path: finalPath,
+          isDir: false,
+        };
+
+        set((state) => {
+          state.files = addFileToTree(state.files, dir, newFile);
+          state.filesVersion++;
+        });
+      },
+
+      handleRenamePath: async (path: string, newName?: string) => {
+        if (newName) {
+          try {
+            const targetPath = await getWorkspaceEntryMutationProvider(path).renamePath(
+              path,
+              newName,
+            );
+
+            set((state) => {
+              state.files = updateFileInTree(state.files, path, (item) => ({
+                ...item,
+                name: newName,
+                path: targetPath,
+                isRenaming: false,
+              }));
+              state.filesVersion++;
+            });
+
+            const { buffers, actions } = useBufferStore.getStore(workspaceId).getState();
+            const buffer = getBufferByPath(buffers, path);
+            if (buffer) {
+              actions.updateBuffer({
+                ...buffer,
+                path: targetPath,
+                name: newName,
+              });
+            }
+          } catch (error) {
+            console.error("Failed to rename file:", error);
+            set((state) => {
+              state.files = updateFileInTree(state.files, path, (item) => ({
+                ...item,
+                isRenaming: false,
+              }));
+              state.filesVersion++;
+            });
+          }
+        } else {
+          set((state) => {
+            state.files = updateFileInTree(state.files, path, (item) => ({
+              ...item,
+              isRenaming: !item.isRenaming,
+            }));
+            state.filesVersion++;
+          });
+        }
+      },
+
+      // Setter methods
+      setFiles: (newFiles: FileEntry[]) => {
+        set((state) => {
+          state.files = newFiles;
+          state.filesVersion++;
+        });
+      },
+
+      setIsSwitchingProject: (value: boolean) => {
+        set((state) => {
+          state.isSwitchingProject = value;
+        });
+      },
+
+      switchToProject: async (projectId: string) => {
+        const switchStartedAt = performance.now();
+        const wasReady = workspaceRuntimeRegistry.isWorkspaceReady(projectId);
+        frontendTrace("info", "bench:workspace-switch", "switch:start", {
+          workspaceId: projectId,
+          wasReady,
+        });
+        const currentStore = get();
+        const previousTheme = useSettingsStore.getState().settings.theme;
+        const targetProject = useWorkspaceTabsStore
+          .getState()
+          .projectTabs.find((projectTab) => projectTab.id === projectId);
+        if (!wasReady) {
+          currentStore.setIsSwitchingProject(true);
+        }
+        const switched = await switchWorkspaceRuntime(projectId, {
+          persistCurrent: () => currentStore.deferActiveProjectSessionPersistence(),
+          onActivate: () => {
+            const settingsStore = useSettingsStore.getState();
+            const projectTheme = targetProject?.theme ?? previousTheme;
+
+            if (targetProject && !targetProject.theme) {
+              useWorkspaceTabsStore
+                .getState()
+                .actions.setProjectTheme(targetProject.id, projectTheme);
+            }
+            if (settingsStore.settings.theme !== projectTheme) {
+              void settingsStore.actions.updateSetting("theme", projectTheme);
+            }
+          },
+          initialize: (workspaceId, path) => {
+            const targetStore = getScopedFileSystemStore(workspaceId).getState();
+            targetStore.setIsSwitchingProject(true);
+            return initializeWorkspacePath(path, {
+              initializeLocal: (localPath) =>
+                targetStore.initializeLocalWorkspace({
+                  workspaceId,
+                  path: localPath,
+                  traceLabel: "handleOpenFolderByPath",
+                  treeState: "collapse-all",
+                  restoreUiState: true,
+                }),
+              initializeRemote: (connectionId) =>
+                targetStore.initializeRemoteWorkspace(connectionId),
+              initializeWsl: (distro, linuxPath) =>
+                targetStore.initializeWslWorkspace(distro, linuxPath),
+            }).finally(() => targetStore.setIsSwitchingProject(false));
+          },
+          resume: async (workspaceId, path) => {
+            const projectStore = useProjectStore.getStore(workspaceId).getState();
+            projectStore.actions.setActiveProjectId(workspaceId);
+            await resumeWorkspaceRuntimeServices(workspaceId, path);
+          },
+        });
+
+        if (!wasReady) {
+          currentStore.setIsSwitchingProject(false);
+        }
+        frontendTrace("info", "bench:workspace-switch", "switch:end", {
+          workspaceId: projectId,
+          switched,
+          wasReady,
+          durationMs: Math.round((performance.now() - switchStartedAt) * 100) / 100,
+        });
+        if (!switched) {
+          const settingsStore = useSettingsStore.getState();
+          if (settingsStore.settings.theme !== previousTheme) {
+            await settingsStore.actions.updateSetting("theme", previousTheme);
+          }
+          toast.error("Failed to switch project.");
+          return switched;
+        }
+
+        scheduleInactiveWorkspacePrewarm();
+        return switched;
+      },
+      closeProject: async (projectId: string) => {
+        const tab = useWorkspaceTabsStore
+          .getState()
+          .projectTabs.find((projectTab) => projectTab.id === projectId);
+        if (!tab) {
+          return false;
+        }
+
+        const canClose = await prepareWorkspaceClose({
+          workspaceId: projectId,
+          getActiveWorkspaceId: workspaceRuntimeRegistry.getActiveWorkspaceId,
+          getBuffers: () => useBufferStore.getStore(projectId).getState().buffers,
+          switchToWorkspace: (workspaceId) => get().switchToProject(workspaceId),
+          confirmUnsavedBuffers: (buffers) =>
+            prepareProjectTransitionWithUnsavedBuffers("closing this project", buffers),
+        });
+        if (!canClose) return false;
+
+        const { closeWorkspaceRuntime } =
+          await import("@/features/workspace/services/workspace-lifecycle");
+        return await closeWorkspaceRuntime(projectId, {
+          persist: () =>
+            getScopedFileSystemStore(projectId).getState().persistActiveProjectSession(),
+          dispose: (path) =>
+            disposeWorkspaceResources({
+              workspaceId: projectId,
+              path,
+              terminalConnections: useTerminalStore
+                .getStore(projectId)
+                .getState()
+                .sessions.values(),
+            }),
+          switchTo: (nextWorkspaceId) => get().switchToProject(nextWorkspaceId),
+          showWelcome: async () => {
+            await useFileWatcherStore.getStore(workspaceId).getState().actions.setProjectRoot("");
+            useProjectStore.getStore(workspaceId).getState().actions.setRootFolderPath(undefined);
+            useProjectStore.getStore(workspaceId).getState().actions.setProjectName("Files");
+            restoreProjectUiState(undefined, workspaceId);
+          },
+        });
+      },
+    })),
+  );
+};
+
+scopedFileSystemStore = createWorkspaceScopedStore<ScopedFileSystemStoreState>(
+  "file-system",
+  createFileSystemStore,
+);
+
+export const useFileSystemStore = scopedFileSystemStore;

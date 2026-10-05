@@ -1,0 +1,33 @@
+{
+  "$schema": "https://blimy.dev/schemas/extension.json",
+  "id": "blimy.database.mysql",
+  "name": "MySQL",
+  "displayName": "MySQL Provider",
+  "version": "1.0.0",
+  "description": "MySQL connection, schema, and query provider.",
+  "publisher": "Blimy",
+  "categories": ["Database"],
+  "activationEvents": ["onDatabase:mysql"],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/blimydev/blimy/tree/master/extensions/official/mysql"
+  },
+  "icon": "icon.svg",
+  "databases": [
+    {
+      "id": "mysql",
+      "label": "MySQL",
+      "isFileBased": false,
+      "protocolVersion": 1,
+      "defaultPort": 3306,
+      "sidecar": {
+        "darwin-arm64": "bin/blimy-db-mysql",
+        "darwin-x64": "bin/blimy-db-mysql",
+        "linux-arm64": "bin/blimy-db-mysql",
+        "linux-x64": "bin/blimy-db-mysql",
+        "win32-x64": "bin/blimy-db-mysql.exe"
+      }
+    }
+  ]
+}
