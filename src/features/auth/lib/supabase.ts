@@ -10,7 +10,15 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
     flowType: "pkce",
     storage: {
       getItem: async (key: string) => {
-        return await getAuthToken(key);
+        const token = await getAuthToken(key);
+        if (!token) return null;
+        // Supabase expects a JSON object for the main session token. Legacy tokens are JWTs (e.g., 'ey...').
+        // Hide legacy tokens from Supabase to prevent gotrue-js from failing to parse
+        // them as JSON and subsequently deleting them from secure storage.
+        if (key === "blimy_auth_token" && !token.startsWith("{")) {
+          return null;
+        }
+        return token;
       },
       setItem: async (key: string, value: string) => {
         await storeAuthToken(value, key);

@@ -4,16 +4,6 @@
   <p>A lightweight, cross-platform code editor, built with <a href="https://tauri.app/" title="Tauri">Tauri</a> (Rust and React) with Git support, AI agents, vim keybindings.</p>
   <p><em>*Originally forked from and inspired by Athas.*</em></p>
   <img src="public/screenshot.png" alt="blimy screenshot" width="800">
-  <br><br>
-  <div>
-    <img src="extensions/official/claude-code/icon.svg" width="48" alt="Claude"> &nbsp;&nbsp;&nbsp;&nbsp;
-    <img src="extensions/official/gemini-cli/icon.svg" width="48" alt="Gemini"> &nbsp;&nbsp;&nbsp;&nbsp;
-    <img src="extensions/official/github-copilot/icon.svg" width="48" alt="GitHub Copilot"> &nbsp;&nbsp;&nbsp;&nbsp;
-    <img src="extensions/official/antigravity/icon.svg" width="48" alt="Google Antigravity"> &nbsp;&nbsp;&nbsp;&nbsp;
-    <img src="extensions/official/kimi-cli/icon.svg" width="48" alt="Kimi"> &nbsp;&nbsp;&nbsp;&nbsp;
-    <img src="extensions/official/opencode/icon.svg" width="48" alt="OpenCode"> &nbsp;&nbsp;&nbsp;&nbsp;
-    <img src="extensions/official/qwen-code/icon.svg" width="48" alt="Qwen">
-  </div>
 </div>
 
 ## Features

@@ -36,16 +36,62 @@ struct ActiveLoopback {
    shutdown: Arc<AtomicBool>,
 }
 
-/// The single loopback listener an app instance may hold at once. Several windows can
-/// share it, so signing in from a second window reuses the port already in flight.
-#[derive(Default)]
-pub struct AuthLoopbackListener(Mutex<Option<ActiveLoopback>>);
+/// The reserved port, shared with the listener thread so the thread can hand the slot back
+/// when it stops. Cloning shares the one slot rather than copying it.
+#[derive(Clone, Default)]
+struct SharedLoopback(Arc<Mutex<Option<ActiveLoopback>>>);
 
-impl AuthLoopbackListener {
+impl SharedLoopback {
    fn active(&self) -> Option<ActiveLoopback> {
       self.0.lock().ok().and_then(|guard| guard.clone())
    }
+
+   /// Take the slot for a new listener, or report the port already reserved by one.
+   ///
+   /// Check and claim happen under one lock so two windows starting a sign-in at the same
+   /// moment cannot both conclude the port is free. The loser is told which port to reuse
+   /// instead of binding a socket that could not win.
+   fn claim(&self, port: u16, shutdown: &Arc<AtomicBool>) -> Result<Option<u16>, String> {
+      let mut guard = self
+         .0
+         .lock()
+         .map_err(|_| "loopback state lock poisoned".to_string())?;
+      match guard.as_ref() {
+         Some(active) => Ok(Some(active.port)),
+         None => {
+            *guard = Some(ActiveLoopback {
+               port,
+               shutdown: Arc::clone(shutdown),
+            });
+            Ok(None)
+         }
+      }
+   }
+
+   /// Clear the slot, but only when it still holds this listener's own entry. Identity is
+   /// compared on the shutdown flag because it is unique per listener, so a late thread
+   /// that loses the race to a newer listener cannot evict the newer one.
+   fn release(&self, shutdown: &Arc<AtomicBool>) {
+      let Ok(mut guard) = self.0.lock() else {
+         return;
+      };
+      let is_ours = guard
+         .as_ref()
+         .is_some_and(|active| Arc::ptr_eq(&active.shutdown, shutdown));
+      if is_ours {
+         *guard = None;
+      }
+   }
+
+   fn take(&self) -> Option<ActiveLoopback> {
+      self.0.lock().ok().and_then(|mut guard| guard.take())
+   }
 }
+
+/// The single loopback listener an app instance may hold at once. Several windows can
+/// share it, so signing in from a second window reuses the port already in flight.
+#[derive(Default)]
+pub struct AuthLoopbackListener(SharedLoopback);
 
 /// Start listening for the OAuth return leg and report the redirect URL to hand to the
 /// provider. Resolves immediately; the callback arrives later as `AUTH_LOOPBACK_EVENT`.
@@ -54,7 +100,7 @@ pub fn start_auth_loopback(
    app: AppHandle<BlimyRuntime>,
    state: tauri::State<'_, AuthLoopbackListener>,
 ) -> Result<String, String> {
-   if let Some(active) = state.active() {
+   if let Some(active) = state.0.active() {
       return Ok(callback_url(active.port));
    }
 
@@ -76,18 +122,25 @@ pub fn start_auth_loopback(
       .map_err(|error| error.to_string())?;
 
    let shutdown = Arc::new(AtomicBool::new(false));
-   *state
-      .0
-      .lock()
-      .map_err(|_| "loopback state lock poisoned".to_string())? = Some(ActiveLoopback {
-      port,
-      shutdown: Arc::clone(&shutdown),
-   });
+   let shared = state.0.clone();
+
+   let claimed_by_other = shared.claim(port, &shutdown)?;
+
+   if let Some(claimed_port) = claimed_by_other {
+      // Another listener owns the port and is already serving. This socket is dropped here,
+      // which closes it, and both callers share the one fixed redirect URL.
+      return Ok(callback_url(claimed_port));
+   }
 
    let deadline = Instant::now() + LISTEN_WINDOW;
    std::thread::spawn(move || {
       serve_once(&listener, &app, port, &shutdown, deadline);
-      log::info!("Loopback OAuth listener on 127.0.0.1:{port} finished");
+      // The port stops accepting the moment serve_once returns, so the cached redirect has
+      // to go with it. Leaving the entry behind would make the next sign-in attempt hand
+      // back a URL for a dead port, and the browser would be refused with
+      // ERR_CONNECTION_REFUSED instead of being able to sign in.
+      shared.release(&shutdown);
+      log::info!("Loopback OAuth listener on 127.0.0.1:{port} finished; port released");
    });
 
    Ok(callback_url(port))
@@ -96,10 +149,8 @@ pub fn start_auth_loopback(
 /// Release the port. Safe to call when nothing is listening.
 #[command]
 pub fn stop_auth_loopback(state: tauri::State<'_, AuthLoopbackListener>) {
-   if let Ok(mut guard) = state.0.lock() {
-      if let Some(active) = guard.take() {
-         active.shutdown.store(true, Ordering::Relaxed);
-      }
+   if let Some(active) = state.0.take() {
+      active.shutdown.store(true, Ordering::Relaxed);
    }
 }
 
@@ -342,5 +393,104 @@ mod tests {
    #[test]
    fn builds_the_redirect_url_from_the_bound_port() {
       assert_eq!(callback_url(38217), "http://127.0.0.1:38217/callback");
+   }
+
+   #[test]
+   fn a_finished_listener_releases_the_port_so_the_next_attempt_rebinds() {
+      // Regression: the slot used to outlive the thread, so a retry was handed the URL of
+      // a closed port and the browser got ERR_CONNECTION_REFUSED.
+      let shared = SharedLoopback::default();
+      let shutdown = Arc::new(AtomicBool::new(false));
+      assert_eq!(
+         shared
+            .claim(LOOPBACK_PORT, &shutdown)
+            .expect("a free slot is claimable"),
+         None,
+         "nothing reserved the port yet"
+      );
+
+      assert!(
+         shared.active().is_some(),
+         "the port is reserved while serving"
+      );
+
+      shared.release(&shutdown);
+
+      assert!(
+         shared.active().is_none(),
+         "a listener that finished must not leave its port advertised"
+      );
+   }
+
+   #[test]
+   fn a_late_listener_cannot_evict_the_newer_one() {
+      let shared = SharedLoopback::default();
+      let older = Arc::new(AtomicBool::new(false));
+      let newer = Arc::new(AtomicBool::new(false));
+
+      shared
+         .claim(LOOPBACK_PORT, &newer)
+         .expect("a free slot is claimable");
+
+      // The superseded listener finally reports in; it must not clear the live entry.
+      shared.release(&older);
+
+      assert_eq!(
+         shared.active().map(|active| active.port),
+         Some(LOOPBACK_PORT),
+         "the newer listener still owns the port"
+      );
+   }
+
+   #[test]
+   fn a_second_claim_reuses_the_reserved_port_instead_of_taking_it() {
+      // Two windows signing in at once: the second must join the first rather than bind
+      // a socket that cannot win, which used to fail with "address in use".
+      let shared = SharedLoopback::default();
+      let first = Arc::new(AtomicBool::new(false));
+      let second = Arc::new(AtomicBool::new(false));
+
+      assert_eq!(
+         shared
+            .claim(LOOPBACK_PORT, &first)
+            .expect("the slot is free"),
+         None
+      );
+      assert_eq!(
+         shared
+            .claim(LOOPBACK_PORT, &second)
+            .expect("the slot is taken"),
+         Some(LOOPBACK_PORT),
+         "the late caller is pointed at the running listener"
+      );
+
+      let owner = shared
+         .active()
+         .expect("the first listener still owns the port");
+      assert!(
+         Arc::ptr_eq(&owner.shutdown, &first),
+         "the second caller did not take ownership"
+      );
+   }
+
+   #[test]
+   fn stopping_takes_the_slot_without_touching_another_listener() {
+      let shared = SharedLoopback::default();
+      assert!(shared.take().is_none(), "stopping when idle is a no-op");
+
+      let shutdown = Arc::new(AtomicBool::new(false));
+      shared
+         .claim(LOOPBACK_PORT, &shutdown)
+         .expect("a free slot is claimable");
+
+      let taken = shared.take().expect("the reserved listener is returned");
+      assert!(
+         !taken.shutdown.swap(true, Ordering::Relaxed),
+         "the running listener is told to stop"
+      );
+      assert!(
+         shared.active().is_none(),
+         "the slot is free for the next attempt"
+      );
    }
 }
