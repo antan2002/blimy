@@ -1,0 +1,24 @@
+{
+  "productName": "Blimy Dev",
+  "identifier": "com.code.Blimy.dev",
+  "bundle": {
+    "createUpdaterArtifacts": false,
+    "icon": [
+      "icons/dev/32x32.png",
+      "icons/dev/128x128.png",
+      "icons/dev/128x128@2x.png",
+      "icons/dev/icon.icns",
+      "icons/dev/icon.ico"
+    ]
+  },
+  "plugins": {
+    "deep-link": {
+      "desktop": {
+        "schemes": ["Blimy-dev"]
+      }
+    },
+    "updater": {
+      "active": false
+    }
+  }
+}

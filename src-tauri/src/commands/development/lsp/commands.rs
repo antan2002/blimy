@@ -1,0 +1,910 @@
+use super::{
+   convert::{
+      convert_diagnostic_context_to_lsp, flatten_document_symbols, flatten_inlay_hint,
+      flatten_workspace_symbol_response, symbol_kind_label,
+   },
+   types::{
+      FlatCodeLens, FlatInlayHint, FlatSemanticToken, FlatSymbol, FlatTextEdit,
+      FlatTextEditPosition, FlatTextEditRange, FlatWorkspaceSymbol, LspApplyCodeActionResult,
+      LspCodeActionContext, LspCodeActionItem, LspSemanticTokensResponse,
+   },
+};
+use crate::app_runtime::AppHandle;
+use blimy_lsp::{LspError, LspManager, LspResult};
+use blimy_tooling::{LanguageToolConfigSet, ToolInstaller, ToolRegistry, ToolType};
+use lsp_types::{
+   CallHierarchyIncomingCall, CallHierarchyItem, CallHierarchyOutgoingCall, CodeActionOrCommand,
+   CompletionItem, DocumentHighlight, DocumentSymbolResponse, FoldingRange, GotoDefinitionResponse,
+   Hover, Location, Position, PrepareRenameResponse, SelectionRange, SemanticTokensResult,
+   SignatureHelp, TextEdit, TypeHierarchyItem, WorkspaceEdit,
+};
+use serde_json::Value;
+use std::{collections::HashMap, path::PathBuf};
+use tauri::State;
+
+type LspLaunchRequest = (
+   Option<String>,
+   Option<Vec<String>>,
+   Option<HashMap<String, String>>,
+);
+
+async fn resolve_lsp_launch_request(
+   app_handle: &AppHandle,
+   language_id: Option<String>,
+   server_path: Option<String>,
+   server_args: Option<Vec<String>>,
+   tools: Option<LanguageToolConfigSet>,
+) -> Result<LspLaunchRequest, String> {
+   let Some(language_id) = language_id else {
+      return Ok((server_path, server_args, None));
+   };
+   let Some(tools) = tools else {
+      return Ok((server_path, server_args, None));
+   };
+   let Some(config) = ToolRegistry::get_tool(&language_id, ToolType::Lsp, Some(tools)) else {
+      return Ok((server_path, server_args, None));
+   };
+
+   let resolved_path =
+      ToolInstaller::get_lsp_launch_path(app_handle, &config).map_err(|e| e.to_string())?;
+   let mut resolved_args = match server_args {
+      Some(args) if !args.is_empty() => Some(args),
+      _ if !config.args.is_empty() => Some(config.args.clone()),
+      args => args,
+   };
+   if config.name == "jdtls" {
+      let args = resolved_args.get_or_insert_default();
+      if !args
+         .iter()
+         .any(|arg| arg == "--java-executable" || arg.starts_with("--java-executable="))
+      {
+         let java = ToolInstaller::get_or_install_java_executable(app_handle)
+            .await
+            .map_err(|e| e.to_string())?;
+         args.splice(
+            0..0,
+            [
+               "--java-executable".to_string(),
+               java.to_string_lossy().to_string(),
+            ],
+         );
+      }
+   }
+   let resolved_env = if config.env.is_empty() {
+      None
+   } else {
+      Some(config.env.clone())
+   };
+
+   Ok((
+      Some(resolved_path.to_string_lossy().to_string()),
+      resolved_args,
+      resolved_env,
+   ))
+}
+
+fn locations_from_goto_response(response: Option<GotoDefinitionResponse>) -> Option<Vec<Location>> {
+   match response {
+      Some(GotoDefinitionResponse::Scalar(loc)) => Some(vec![loc]),
+      Some(GotoDefinitionResponse::Array(locs)) => Some(locs),
+      Some(GotoDefinitionResponse::Link(links)) => Some(
+         links
+            .into_iter()
+            .map(|link| Location {
+               uri: link.target_uri,
+               range: link.target_selection_range,
+            })
+            .collect(),
+      ),
+      None => None,
+   }
+}
+
+#[tauri::command]
+pub async fn lsp_start(
+   app_handle: AppHandle,
+   lsp_manager: State<'_, LspManager>,
+   workspace_path: String,
+   server_path: Option<String>,
+   server_args: Option<Vec<String>>,
+   language_id: Option<String>,
+   tools: Option<LanguageToolConfigSet>,
+   initialization_options: Option<Value>,
+) -> LspResult<()> {
+   log::info!("lsp_start command called with path: {}", workspace_path);
+   let (server_path, server_args, server_env) =
+      resolve_lsp_launch_request(&app_handle, language_id, server_path, server_args, tools)
+         .await
+         .map_err(|e| LspError::from(anyhow::anyhow!(e)))?;
+   lsp_manager
+      .start_lsp_for_workspace(
+         PathBuf::from(workspace_path),
+         server_path,
+         server_args,
+         server_env,
+         initialization_options,
+      )
+      .await
+      .map_err(|e| {
+         log::error!("Failed to start LSP: {}", e);
+         e.into()
+      })
+}
+
+#[tauri::command]
+pub fn lsp_stop(lsp_manager: State<'_, LspManager>, workspace_path: String) -> LspResult<()> {
+   log::info!("lsp_stop command called with path: {}", workspace_path);
+   lsp_manager
+      .shutdown_workspace(&PathBuf::from(workspace_path))
+      .map_err(|e| {
+         log::error!("Failed to stop LSP: {}", e);
+         e.into()
+      })
+}
+
+#[tauri::command]
+pub async fn lsp_start_for_file(
+   app_handle: AppHandle,
+   lsp_manager: State<'_, LspManager>,
+   file_path: String,
+   workspace_path: String,
+   server_path: Option<String>,
+   server_args: Option<Vec<String>>,
+   language_id: Option<String>,
+   tools: Option<LanguageToolConfigSet>,
+   initialization_options: Option<Value>,
+) -> LspResult<()> {
+   log::info!("lsp_start_for_file command called for file: {}", file_path);
+   let (server_path, server_args, server_env) =
+      resolve_lsp_launch_request(&app_handle, language_id, server_path, server_args, tools)
+         .await
+         .map_err(|e| LspError::from(anyhow::anyhow!(e)))?;
+   lsp_manager
+      .start_lsp_for_file(
+         PathBuf::from(file_path),
+         PathBuf::from(workspace_path),
+         server_path,
+         server_args,
+         server_env,
+         initialization_options,
+      )
+      .await
+      .map_err(|e| {
+         log::error!("Failed to start LSP for file: {}", e);
+         e.into()
+      })
+}
+
+#[tauri::command]
+pub fn lsp_stop_for_file(lsp_manager: State<'_, LspManager>, file_path: String) -> LspResult<()> {
+   log::info!("lsp_stop_for_file command called for file: {}", file_path);
+   lsp_manager
+      .stop_lsp_for_file(&PathBuf::from(file_path))
+      .map_err(|e| {
+         log::error!("Failed to stop LSP for file: {}", e);
+         e.into()
+      })
+}
+
+#[tauri::command]
+pub async fn lsp_get_completions(
+   lsp_manager: State<'_, LspManager>,
+   file_path: String,
+   line: u32,
+   character: u32,
+   trigger_kind: Option<u8>,
+   trigger_character: Option<String>,
+) -> LspResult<Vec<CompletionItem>> {
+   log::info!(
+      "lsp_get_completions called for {}:{}:{}",
+      file_path,
+      line,
+      character
+   );
+   let result = lsp_manager
+      .get_completions(&file_path, line, character, trigger_kind, trigger_character)
+      .await
+      .map_err(|e| {
+         log::error!("Failed to get completions: {}", e);
+         e.into()
+      });
+   if let Ok(ref completions) = result {
+      log::info!("Got {} completions", completions.len());
+   }
+   result
+}
+
+#[tauri::command]
+pub async fn lsp_resolve_completion_item(
+   lsp_manager: State<'_, LspManager>,
+   file_path: String,
+   item: CompletionItem,
+) -> LspResult<CompletionItem> {
+   lsp_manager
+      .resolve_completion_item(&file_path, item)
+      .await
+      .map_err(Into::into)
+}
+
+#[tauri::command]
+pub async fn lsp_get_hover(
+   lsp_manager: State<'_, LspManager>,
+   file_path: String,
+   line: u32,
+   character: u32,
+) -> LspResult<Option<Hover>> {
+   lsp_manager
+      .get_hover(&file_path, line, character)
+      .await
+      .map_err(Into::into)
+}
+
+#[tauri::command]
+pub async fn lsp_get_definition(
+   lsp_manager: State<'_, LspManager>,
+   file_path: String,
+   line: u32,
+   character: u32,
+) -> LspResult<Option<Vec<Location>>> {
+   let response = lsp_manager
+      .get_definition(&file_path, line, character)
+      .await;
+
+   match response {
+      Ok(response) => Ok(locations_from_goto_response(response)),
+      Err(e) => Err(e.into()),
+   }
+}
+
+#[tauri::command]
+pub async fn lsp_get_implementation(
+   lsp_manager: State<'_, LspManager>,
+   file_path: String,
+   line: u32,
+   character: u32,
+) -> LspResult<Option<Vec<Location>>> {
+   let response = lsp_manager
+      .get_implementation(&file_path, line, character)
+      .await;
+
+   match response {
+      Ok(response) => Ok(locations_from_goto_response(response)),
+      Err(e) => Err(e.into()),
+   }
+}
+
+#[tauri::command]
+pub async fn lsp_get_type_definition(
+   lsp_manager: State<'_, LspManager>,
+   file_path: String,
+   line: u32,
+   character: u32,
+) -> LspResult<Option<Vec<Location>>> {
+   let response = lsp_manager
+      .get_type_definition(&file_path, line, character)
+      .await;
+
+   match response {
+      Ok(response) => Ok(locations_from_goto_response(response)),
+      Err(e) => Err(e.into()),
+   }
+}
+
+#[tauri::command]
+pub async fn lsp_get_code_actions(
+   lsp_manager: State<'_, LspManager>,
+   file_path: String,
+   context: LspCodeActionContext,
+) -> LspResult<Vec<LspCodeActionItem>> {
+   let range = lsp_types::Range {
+      start: lsp_types::Position {
+         line: context.start_line,
+         character: context.start_column,
+      },
+      end: lsp_types::Position {
+         line: context.end_line,
+         character: context.end_column,
+      },
+   };
+   let actions = lsp_manager
+      .get_code_actions(
+         &file_path,
+         range,
+         context
+            .diagnostics
+            .into_iter()
+            .map(convert_diagnostic_context_to_lsp)
+            .collect(),
+      )
+      .await
+      .map_err(|e| {
+         log::error!("Failed to get code actions: {}", e);
+         LspError::from(e)
+      })?;
+
+   Ok(actions
+      .into_iter()
+      .enumerate()
+      .map(|(index, action)| {
+         let payload = serde_json::to_value(&action).unwrap_or(Value::Null);
+         match &action {
+            CodeActionOrCommand::Command(command) => LspCodeActionItem {
+               id: format!("command-{}", index),
+               title: command.title.clone(),
+               kind: None,
+               is_preferred: false,
+               disabled_reason: None,
+               has_command: true,
+               has_edit: false,
+               payload,
+            },
+            CodeActionOrCommand::CodeAction(code_action) => LspCodeActionItem {
+               id: format!("code-action-{}", index),
+               title: code_action.title.clone(),
+               kind: code_action
+                  .kind
+                  .as_ref()
+                  .map(|kind| kind.as_str().to_string()),
+               is_preferred: code_action.is_preferred.unwrap_or(false),
+               disabled_reason: code_action
+                  .disabled
+                  .as_ref()
+                  .map(|disabled| disabled.reason.clone()),
+               has_command: code_action.command.is_some(),
+               has_edit: code_action.edit.is_some(),
+               payload,
+            },
+         }
+      })
+      .collect())
+}
+
+#[tauri::command]
+pub async fn lsp_apply_code_action(
+   lsp_manager: State<'_, LspManager>,
+   file_path: String,
+   action_payload: Value,
+) -> LspResult<LspApplyCodeActionResult> {
+   let action = serde_json::from_value::<CodeActionOrCommand>(action_payload).map_err(|e| {
+      log::error!("Invalid code action payload: {}", e);
+      LspError::new("Invalid code action payload")
+   })?;
+
+   let (applied, reason) = lsp_manager
+      .apply_code_action(&file_path, action)
+      .await
+      .map_err(|e| {
+         log::error!("Failed to apply code action: {}", e);
+         LspError::from(e)
+      })?;
+
+   Ok(LspApplyCodeActionResult { applied, reason })
+}
+
+#[tauri::command]
+pub async fn lsp_execute_command(
+   lsp_manager: State<'_, LspManager>,
+   file_path: String,
+   command: String,
+   arguments: Option<Vec<Value>>,
+) -> LspResult<Option<Value>> {
+   lsp_manager
+      .execute_command(&file_path, command, arguments.unwrap_or_default())
+      .await
+      .map_err(LspError::from)
+}
+
+#[tauri::command]
+pub fn lsp_respond_workspace_edit(
+   lsp_manager: State<'_, LspManager>,
+   client_id: String,
+   request_id: Value,
+   applied: bool,
+   failure_reason: Option<String>,
+) -> LspResult<()> {
+   lsp_manager
+      .respond_workspace_edit(&client_id, request_id, applied, failure_reason)
+      .map_err(LspError::from)
+}
+
+#[tauri::command]
+pub async fn lsp_get_java_class_file_contents(
+   lsp_manager: State<'_, LspManager>,
+   file_path: String,
+   uri: String,
+) -> LspResult<String> {
+   let uri = uri
+      .parse()
+      .map_err(|error| LspError::new(format!("Invalid Java class file URI: {error}")))?;
+   lsp_manager
+      .get_java_class_file_contents(&file_path, uri)
+      .await
+      .map_err(LspError::from)
+}
+
+#[tauri::command]
+pub async fn lsp_get_semantic_tokens(
+   lsp_manager: State<'_, LspManager>,
+   file_path: String,
+) -> LspResult<LspSemanticTokensResponse> {
+   let response = lsp_manager
+      .get_semantic_tokens(&file_path)
+      .await
+      .map_err(|e| {
+         log::error!("Failed to get semantic tokens: {}", e);
+         LspError::from(e)
+      })?;
+
+   let data = match response {
+      Some(SemanticTokensResult::Tokens(tokens)) => tokens.data,
+      Some(SemanticTokensResult::Partial(partial)) => partial.data,
+      None => {
+         return Ok(LspSemanticTokensResponse {
+            tokens: Vec::new(),
+            token_types: Vec::new(),
+            token_modifiers: Vec::new(),
+         });
+      }
+   };
+   let (token_types, token_modifiers) = lsp_manager.semantic_token_legend(&file_path);
+
+   let mut tokens = Vec::with_capacity(data.len());
+   let mut current_line: u32 = 0;
+   let mut current_char: u32 = 0;
+
+   for token in &data {
+      if token.delta_line > 0 {
+         current_line += token.delta_line;
+         current_char = token.delta_start;
+      } else {
+         current_char += token.delta_start;
+      }
+
+      tokens.push(FlatSemanticToken {
+         line: current_line,
+         start_char: current_char,
+         length: token.length,
+         token_type: token.token_type,
+         token_modifiers: token.token_modifiers_bitset,
+      });
+   }
+
+   Ok(LspSemanticTokensResponse {
+      tokens,
+      token_types,
+      token_modifiers,
+   })
+}
+
+#[tauri::command]
+pub async fn lsp_get_code_lens(
+   lsp_manager: State<'_, LspManager>,
+   file_path: String,
+) -> LspResult<Vec<FlatCodeLens>> {
+   let response = lsp_manager.get_code_lens(&file_path).await.map_err(|e| {
+      log::error!("Failed to get code lens: {}", e);
+      LspError::from(e)
+   })?;
+
+   Ok(response
+      .unwrap_or_default()
+      .into_iter()
+      .filter_map(|lens| {
+         let cmd = lens.command?;
+         Some(FlatCodeLens {
+            line: lens.range.start.line,
+            title: cmd.title,
+            command: Some(cmd.command),
+            arguments: cmd.arguments,
+         })
+      })
+      .collect())
+}
+
+#[tauri::command]
+pub async fn lsp_format_document(
+   lsp_manager: State<'_, LspManager>,
+   file_path: String,
+) -> LspResult<Vec<FlatTextEdit>> {
+   let response = lsp_manager.format_document(&file_path).await.map_err(|e| {
+      log::error!("Failed to format document with LSP: {}", e);
+      LspError::from(e)
+   })?;
+
+   Ok(response
+      .unwrap_or_default()
+      .into_iter()
+      .map(|edit| FlatTextEdit {
+         range: FlatTextEditRange {
+            start: FlatTextEditPosition {
+               line: edit.range.start.line,
+               character: edit.range.start.character,
+            },
+            end: FlatTextEditPosition {
+               line: edit.range.end.line,
+               character: edit.range.end.character,
+            },
+         },
+         new_text: edit.new_text,
+      })
+      .collect())
+}
+
+#[tauri::command]
+pub async fn lsp_format_range(
+   lsp_manager: State<'_, LspManager>,
+   file_path: String,
+   start_line: u32,
+   start_character: u32,
+   end_line: u32,
+   end_character: u32,
+) -> LspResult<Vec<FlatTextEdit>> {
+   let response = lsp_manager
+      .format_range(
+         &file_path,
+         start_line,
+         start_character,
+         end_line,
+         end_character,
+      )
+      .await
+      .map_err(|e| {
+         log::error!("Failed to format range with LSP: {}", e);
+         LspError::from(e)
+      })?;
+
+   Ok(response
+      .unwrap_or_default()
+      .into_iter()
+      .map(|edit| FlatTextEdit {
+         range: FlatTextEditRange {
+            start: FlatTextEditPosition {
+               line: edit.range.start.line,
+               character: edit.range.start.character,
+            },
+            end: FlatTextEditPosition {
+               line: edit.range.end.line,
+               character: edit.range.end.character,
+            },
+         },
+         new_text: edit.new_text,
+      })
+      .collect())
+}
+
+#[tauri::command]
+pub async fn lsp_get_folding_ranges(
+   lsp_manager: State<'_, LspManager>,
+   file_path: String,
+) -> LspResult<Vec<FoldingRange>> {
+   lsp_manager
+      .get_folding_ranges(&file_path)
+      .await
+      .map_err(LspError::from)
+}
+
+#[tauri::command]
+pub async fn lsp_get_selection_ranges(
+   lsp_manager: State<'_, LspManager>,
+   file_path: String,
+   positions: Vec<Position>,
+) -> LspResult<Vec<SelectionRange>> {
+   lsp_manager
+      .get_selection_ranges(&file_path, positions)
+      .await
+      .map_err(LspError::from)
+}
+
+#[tauri::command]
+pub async fn lsp_get_document_highlights(
+   lsp_manager: State<'_, LspManager>,
+   file_path: String,
+   line: u32,
+   character: u32,
+) -> LspResult<Vec<DocumentHighlight>> {
+   lsp_manager
+      .get_document_highlights(&file_path, line, character)
+      .await
+      .map_err(LspError::from)
+}
+
+#[tauri::command]
+pub async fn lsp_prepare_call_hierarchy(
+   lsp_manager: State<'_, LspManager>,
+   file_path: String,
+   line: u32,
+   character: u32,
+) -> LspResult<Vec<CallHierarchyItem>> {
+   lsp_manager
+      .prepare_call_hierarchy(&file_path, line, character)
+      .await
+      .map_err(LspError::from)
+}
+
+#[tauri::command]
+pub async fn lsp_get_incoming_calls(
+   lsp_manager: State<'_, LspManager>,
+   file_path: String,
+   item: CallHierarchyItem,
+) -> LspResult<Vec<CallHierarchyIncomingCall>> {
+   lsp_manager
+      .get_incoming_calls(&file_path, item)
+      .await
+      .map_err(LspError::from)
+}
+
+#[tauri::command]
+pub async fn lsp_get_outgoing_calls(
+   lsp_manager: State<'_, LspManager>,
+   file_path: String,
+   item: CallHierarchyItem,
+) -> LspResult<Vec<CallHierarchyOutgoingCall>> {
+   lsp_manager
+      .get_outgoing_calls(&file_path, item)
+      .await
+      .map_err(LspError::from)
+}
+
+#[tauri::command]
+pub async fn lsp_prepare_type_hierarchy(
+   lsp_manager: State<'_, LspManager>,
+   file_path: String,
+   line: u32,
+   character: u32,
+) -> LspResult<Vec<TypeHierarchyItem>> {
+   lsp_manager
+      .prepare_type_hierarchy(&file_path, line, character)
+      .await
+      .map_err(LspError::from)
+}
+
+#[tauri::command]
+pub async fn lsp_get_supertypes(
+   lsp_manager: State<'_, LspManager>,
+   file_path: String,
+   item: TypeHierarchyItem,
+) -> LspResult<Vec<TypeHierarchyItem>> {
+   lsp_manager
+      .get_supertypes(&file_path, item)
+      .await
+      .map_err(LspError::from)
+}
+
+#[tauri::command]
+pub async fn lsp_get_subtypes(
+   lsp_manager: State<'_, LspManager>,
+   file_path: String,
+   item: TypeHierarchyItem,
+) -> LspResult<Vec<TypeHierarchyItem>> {
+   lsp_manager
+      .get_subtypes(&file_path, item)
+      .await
+      .map_err(LspError::from)
+}
+
+#[tauri::command]
+pub async fn lsp_format_on_type(
+   lsp_manager: State<'_, LspManager>,
+   file_path: String,
+   line: u32,
+   character: u32,
+   trigger_character: String,
+   tab_size: u32,
+   insert_spaces: bool,
+) -> LspResult<Vec<TextEdit>> {
+   lsp_manager
+      .format_on_type(
+         &file_path,
+         line,
+         character,
+         trigger_character,
+         tab_size,
+         insert_spaces,
+      )
+      .await
+      .map_err(LspError::from)
+}
+
+#[tauri::command]
+pub fn lsp_get_on_type_formatting_trigger_characters(
+   lsp_manager: State<'_, LspManager>,
+   file_path: String,
+) -> Vec<String> {
+   lsp_manager.get_on_type_formatting_trigger_characters(&file_path)
+}
+
+#[tauri::command]
+pub async fn lsp_get_inlay_hints(
+   lsp_manager: State<'_, LspManager>,
+   file_path: String,
+   start_line: u32,
+   end_line: u32,
+) -> LspResult<Vec<FlatInlayHint>> {
+   let response = lsp_manager
+      .get_inlay_hints(&file_path, start_line, end_line)
+      .await
+      .map_err(|e| {
+         log::error!("Failed to get inlay hints: {}", e);
+         LspError::from(e)
+      })?;
+
+   Ok(response
+      .unwrap_or_default()
+      .iter()
+      .map(flatten_inlay_hint)
+      .collect())
+}
+
+#[tauri::command]
+pub async fn lsp_get_document_symbols(
+   lsp_manager: State<'_, LspManager>,
+   file_path: String,
+) -> LspResult<Vec<FlatSymbol>> {
+   let response = lsp_manager
+      .get_document_symbols(&file_path)
+      .await
+      .map_err(|e| {
+         log::error!("Failed to get document symbols: {}", e);
+         LspError::from(e)
+      })?;
+
+   let symbols = match response {
+      Some(DocumentSymbolResponse::Flat(infos)) => infos
+         .into_iter()
+         .map(|info| FlatSymbol {
+            name: info.name,
+            kind: symbol_kind_label(info.kind),
+            detail: None,
+            line: info.location.range.start.line,
+            character: info.location.range.start.character,
+            end_line: info.location.range.end.line,
+            end_character: info.location.range.end.character,
+            container_name: info.container_name,
+            hierarchy_path: Vec::new(),
+         })
+         .collect(),
+      Some(DocumentSymbolResponse::Nested(doc_symbols)) => {
+         flatten_document_symbols(&doc_symbols, None)
+      }
+      None => vec![],
+   };
+
+   Ok(symbols)
+}
+
+#[tauri::command]
+pub async fn lsp_get_workspace_symbols(
+   lsp_manager: State<'_, LspManager>,
+   workspace_path: String,
+   query: String,
+) -> LspResult<Vec<FlatWorkspaceSymbol>> {
+   let responses = lsp_manager
+      .get_workspace_symbols(std::path::Path::new(&workspace_path), &query)
+      .await
+      .map_err(|e| {
+         log::error!("Failed to get workspace symbols: {}", e);
+         LspError::from(e)
+      })?;
+
+   Ok(flatten_workspace_symbol_response(responses))
+}
+
+#[tauri::command]
+pub async fn lsp_get_signature_help(
+   lsp_manager: State<'_, LspManager>,
+   file_path: String,
+   line: u32,
+   character: u32,
+) -> LspResult<Option<SignatureHelp>> {
+   lsp_manager
+      .get_signature_help(&file_path, line, character)
+      .await
+      .map_err(|e| {
+         log::error!("Failed to get signature help: {}", e);
+         e.into()
+      })
+}
+
+#[tauri::command]
+pub fn lsp_get_signature_trigger_characters(
+   lsp_manager: State<'_, LspManager>,
+   file_path: String,
+) -> Vec<String> {
+   lsp_manager.get_signature_help_trigger_characters(&file_path)
+}
+
+#[tauri::command]
+pub async fn lsp_get_references(
+   lsp_manager: State<'_, LspManager>,
+   file_path: String,
+   line: u32,
+   character: u32,
+) -> LspResult<Option<Vec<Location>>> {
+   lsp_manager
+      .get_references(&file_path, line, character)
+      .await
+      .map_err(|e| {
+         log::error!("Failed to get references: {}", e);
+         e.into()
+      })
+}
+
+#[tauri::command]
+pub async fn lsp_rename(
+   lsp_manager: State<'_, LspManager>,
+   file_path: String,
+   line: u32,
+   character: u32,
+   new_name: String,
+) -> LspResult<Option<WorkspaceEdit>> {
+   lsp_manager
+      .rename(&file_path, line, character, new_name)
+      .await
+      .map_err(|e| {
+         log::error!("Failed to rename: {}", e);
+         e.into()
+      })
+}
+
+#[tauri::command]
+pub async fn lsp_prepare_rename(
+   lsp_manager: State<'_, LspManager>,
+   file_path: String,
+   line: u32,
+   character: u32,
+) -> LspResult<Option<PrepareRenameResponse>> {
+   lsp_manager
+      .prepare_rename(&file_path, line, character)
+      .await
+      .map_err(|e| {
+         log::error!("Failed to prepare rename: {}", e);
+         e.into()
+      })
+}
+
+#[tauri::command]
+pub fn lsp_document_open(
+   lsp_manager: State<'_, LspManager>,
+   file_path: String,
+   content: String,
+   language_id: Option<String>,
+) -> LspResult<()> {
+   lsp_manager
+      .notify_document_open(&file_path, content, language_id)
+      .map_err(Into::into)
+}
+
+#[tauri::command]
+pub fn lsp_document_change(
+   lsp_manager: State<'_, LspManager>,
+   file_path: String,
+   content: String,
+   version: i32,
+) -> LspResult<()> {
+   lsp_manager
+      .notify_document_change(&file_path, content, version)
+      .map_err(Into::into)
+}
+
+#[tauri::command]
+pub fn lsp_document_save(
+   lsp_manager: State<'_, LspManager>,
+   file_path: String,
+   content: Option<String>,
+) -> LspResult<()> {
+   lsp_manager
+      .notify_document_save(&file_path, content)
+      .map_err(Into::into)
+}
+
+#[tauri::command]
+pub fn lsp_document_close(lsp_manager: State<'_, LspManager>, file_path: String) -> LspResult<()> {
+   lsp_manager
+      .notify_document_close(&file_path)
+      .map_err(Into::into)
+}
+
+#[tauri::command]
+pub fn lsp_is_language_supported(lsp_manager: State<'_, LspManager>, file_path: String) -> bool {
+   lsp_manager.get_client_for_file(&file_path).is_some()
+}

@@ -1,0 +1,137 @@
+[package]
+name = "blimy"
+version = "0.15.1"
+description = "Blimy code editor"
+authors = ["you"]
+edition = "2024"
+
+[features]
+default = ["tauri-wry"]
+tauri-wry = [
+  "blimy-ai/tauri-wry",
+  "blimy-debugger/tauri-wry",
+  "blimy-extensions/tauri-wry",
+  "blimy-lsp/tauri-wry",
+  "blimy-remote/tauri-wry",
+  "blimy-terminal/tauri-wry",
+  "blimy-tooling/tauri-wry",
+  "tauri/wry",
+  "tauri/x11",
+]
+linux = [
+  "blimy-ai/linux",
+  "blimy-debugger/linux",
+  "blimy-extensions/linux",
+  "blimy-lsp/linux",
+  "blimy-remote/linux",
+  "blimy-terminal/linux",
+  "blimy-tooling/linux",
+  "dep:tauri-runtime-cef",
+  "tauri/cef",
+]
+
+[lints]
+workspace = true
+
+[lib]
+name = "blimy_text_lib"
+crate-type = ["rlib"]
+
+[build-dependencies]
+tauri-build = { git = "https://github.com/tauri-apps/tauri", rev = "d3a685323977d5618cdc8fe1ad9b8f3c80c6c26c", features = [
+] }
+
+[dependencies]
+anyhow = "1.0"
+base64 = "0.21"
+chrono = { version = "0.4.41", features = ["serde"] }
+colored = "3.0.0"
+crossbeam-channel = "0.5"
+dirs = "5.0"
+ec4rs = "1.2"
+env_logger = "0.11.8"
+futures-util = "0.3"
+git2 = { version = "0.20", features = ["vendored-libgit2", "vendored-openssl"] }
+blimy-runtime = { path = "../crates/runtime" }
+blimy-tooling = { path = "../crates/tooling", default-features = false }
+blimy-lsp = { path = "../crates/lsp", default-features = false }
+blimy-remote = { path = "../crates/remote", default-features = false }
+blimy-wsl = { path = "../crates/wsl" }
+blimy-project = { path = "../crates/project" }
+blimy-version-control = { path = "../crates/version-control" }
+blimy-extensions = { path = "../crates/extensions", default-features = false }
+blimy-terminal = { path = "../crates/terminal", default-features = false }
+blimy-ai = { path = "../crates/ai", default-features = false }
+blimy-github = { path = "../crates/github" }
+blimy-fff-search = { path = "../crates/fff-search" }
+blimy-debugger = { path = "../crates/debugger", default-features = false }
+blimy-database = { path = "../crates/database", default-features = false, features = ["sqlite"] }
+mimalloc = { version = "0.1", default-features = false }
+log = "0.4.27"
+percent-encoding = "2"
+lsp-types = { version = "0.95", features = ["proposed"] }
+portable-pty = "0.9"
+regex = "1.10"
+reqwest = "0.12"
+rustls = { version = "0.23", default-features = false, features = ["ring", "std"] }
+roxmltree = "0.20"
+rusqlite = { version = "0.29.0", features = ["bundled"] }
+sha256 = "1.5"
+tar = "0.4"
+flate2 = "1.0"
+serde = { version = "1.0", features = ["derive"] }
+sha2 = "0.10"
+serde_json = "1.0"
+keyring = { version = "3.6.3", features = ["apple-native", "crypto-rust", "sync-secret-service", "windows-native"] }
+tauri = { version = "2", default-features = false, features = [
+  "compression",
+  "common-controls-v6",
+  "dynamic-acl",
+  "macos-private-api",
+  "protocol-asset",
+  "test",
+  "unstable",
+] }
+tauri-plugin-dialog = { version = "2", default-features = false, features = ["xdg-portal"] }
+tauri-plugin-fs = "2"
+tauri-plugin-http = "2"
+tauri-plugin-notification = "2.3.3"
+tauri-plugin-log = "2"
+tauri-plugin-opener = "2"
+tauri-plugin-os = "2"
+tauri-plugin-process = "2"
+tauri-plugin-shell = "2"
+tauri-plugin-single-instance = "2"
+tauri-plugin-store = "2"
+tauri-plugin-updater = "2"
+tokio = { version = "1.0", features = ["full"] }
+tokio-tungstenite = "0.24"
+unicode-width = "0.2.1"
+url = "2.5"
+uuid = { version = "1.0", features = ["v4", "serde"] }
+vt100 = "0.15"
+walkdir = "2.5.0"
+which = "7.0"
+zip = "2.2"
+window-vibrancy = "0.6.0"
+tempfile = "3.20.0"
+fontdb = "0.23.0"
+ttf-parser = "0.25.1"
+nucleo = "0.5.0"
+nucleo-matcher = "0.3.1"
+toml = "0.8"
+tauri-plugin-clipboard-manager = "2"
+tauri-plugin-deep-link = "2"
+tauri-plugin-drag = "2.1.1"
+async-trait = "0.1"
+tokio-util = { version = "0.7", features = ["compat"] }
+
+
+[target.'cfg(not(any(target_os = "android", target_os = "ios")))'.dependencies]
+tauri-plugin-window-state = "2"
+
+[target.'cfg(target_os = "linux")'.dependencies]
+tauri-runtime-cef = { git = "https://github.com/tauri-apps/tauri", rev = "d3a685323977d5618cdc8fe1ad9b8f3c80c6c26c", optional = true }
+
+[target.'cfg(target_os = "macos")'.dependencies]
+objc = "0.2"

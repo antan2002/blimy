@@ -1,0 +1,7 @@
+blimy_ZDOTDIR="$ZDOTDIR"
+ZDOTDIR="$blimy_USER_ZDOTDIR"
+if [[ -f "$ZDOTDIR/.zlogin" ]]; then
+  builtin source "$ZDOTDIR/.zlogin"
+fi
+# Leave the user's ZDOTDIR in place for subshells now that startup is done.
+unset blimy_ZDOTDIR

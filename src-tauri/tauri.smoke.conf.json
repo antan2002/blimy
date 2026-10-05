@@ -1,0 +1,21 @@
+{
+  "productName": "Blimy Smoke",
+  "identifier": "com.code.Blimy.smoke",
+  "bundle": {
+    "createUpdaterArtifacts": false,
+    "resources": null,
+    "macOS": {
+      "signingIdentity": null
+    }
+  },
+  "plugins": {
+    "deep-link": {
+      "desktop": {
+        "schemes": ["Blimy-smoke"]
+      }
+    },
+    "updater": {
+      "active": false
+    }
+  }
+}

@@ -1,0 +1,64 @@
+[package]
+name = "blimy-database"
+version = "0.1.0"
+edition = "2024"
+
+[lib]
+name = "blimy_database"
+path = "src/lib.rs"
+
+[[bin]]
+name = "blimy-db-sqlite"
+path = "src/bin/blimy-db-sqlite.rs"
+required-features = ["sqlite"]
+
+[[bin]]
+name = "blimy-db-duckdb"
+path = "src/bin/blimy-db-duckdb.rs"
+required-features = ["duckdb"]
+
+[[bin]]
+name = "blimy-db-postgres"
+path = "src/bin/blimy-db-postgres.rs"
+required-features = ["postgres"]
+
+[[bin]]
+name = "blimy-db-mysql"
+path = "src/bin/blimy-db-mysql.rs"
+required-features = ["mysql"]
+
+[[bin]]
+name = "blimy-db-mongodb"
+path = "src/bin/blimy-db-mongodb.rs"
+required-features = ["mongodb"]
+
+[[bin]]
+name = "blimy-db-redis"
+path = "src/bin/blimy-db-redis.rs"
+required-features = ["redis"]
+
+[features]
+default = ["sqlite"]
+all-providers = ["duckdb", "mongodb", "mysql", "postgres", "redis", "sqlite"]
+duckdb = ["dep:duckdb"]
+mongodb = ["dep:mongodb"]
+mysql = ["dep:sqlx"]
+postgres = ["dep:sqlx"]
+redis = ["dep:redis"]
+sqlite = ["dep:rusqlite"]
+
+[dependencies]
+duckdb = { version = "1.4.4", features = ["bundled"], optional = true }
+futures-util = "0.3"
+mongodb = { version = "3.5.1", optional = true }
+redis = { version = "0.27", features = ["tokio-comp", "connection-manager"], optional = true }
+rusqlite = { version = "0.29.0", features = ["bundled"], optional = true }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+sqlx = { version = "0.8.6", default-features = false, features = [
+  "runtime-tokio",
+  "tls-rustls",
+  "postgres",
+  "mysql",
+], optional = true }
+tokio = { version = "1.0", features = ["full"] }

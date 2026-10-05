@@ -1,0 +1,15 @@
+# blimy shell integration bootstrap for zsh.
+# ZDOTDIR points here so the login files below run first; each one hands
+# control back to the user's own dotfiles before adding blimy hooks.
+if [[ -z "${blimy_USER_ZDOTDIR-}" ]]; then
+  blimy_USER_ZDOTDIR="$HOME"
+fi
+blimy_ZDOTDIR="$ZDOTDIR"
+ZDOTDIR="$blimy_USER_ZDOTDIR"
+if [[ -f "$ZDOTDIR/.zshenv" ]]; then
+  builtin source "$ZDOTDIR/.zshenv"
+fi
+if [[ "$ZDOTDIR" != "$blimy_USER_ZDOTDIR" ]]; then
+  blimy_USER_ZDOTDIR="$ZDOTDIR"
+fi
+ZDOTDIR="$blimy_ZDOTDIR"

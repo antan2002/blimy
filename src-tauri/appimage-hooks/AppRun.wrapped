@@ -1,0 +1,7 @@
+#!/bin/bash
+cd "$(dirname "$0")"
+
+if [ -x ./usr/bin/blimy ]; then
+  exec ./usr/bin/blimy "$@"
+fi
+exec ./usr/bin/blimy-code "$@"
