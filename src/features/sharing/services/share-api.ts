@@ -1,5 +1,9 @@
-import { authenticatedFetch } from "@/features/window/services/auth-api";
+import { getEdgeFunctionsBase } from "@/utils/api-base";
+import { getSupabaseAccessToken } from "@/utils/supabase-access-token";
+import { tauriFetch } from "@/utils/tauri-fetch";
 import type { ShareInput, ShareOptions } from "../types/share.types";
+
+const CLOUD_SESSIONS_FUNCTION = "cloud-sessions";
 
 export class ShareRequestError extends Error {
   status: number;
@@ -16,16 +20,37 @@ export function isRejectedShareRequest(error: unknown) {
   return error instanceof ShareRequestError && (error.status === 400 || error.status === 413);
 }
 
+/**
+ * Calls the `cloud-sessions` edge function. The caller's `path` keeps the old first-party host
+ * routes (`/api/shares`, `/api/cloud-sessions`) so every call site reads the same as before;
+ * only the base and the bearer token changed, and the token is the live Supabase session.
+ */
 export async function shareRequest<T>(
   path: string,
   options?: RequestInit,
   token?: string,
 ): Promise<T> {
-  const response = await authenticatedFetch(path, options, token);
-  const body = await response.json();
+  const bearer = token ?? (await getSupabaseAccessToken());
+  if (!bearer) throw new ShareRequestError("Not signed in.", 401);
+  // `/api/cloud-sessions` is the function's own root; `/api/shares...` become subpaths of it.
+  const subpath = path.replace(/^\/api/, "");
+  const route = subpath === "/cloud-sessions" ? "" : subpath;
+  const response = await tauriFetch(
+    `${getEdgeFunctionsBase()}/${CLOUD_SESSIONS_FUNCTION}${route}`,
+    {
+      ...options,
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${bearer}`,
+        ...options?.headers,
+      },
+      signal: AbortSignal.timeout(10000),
+    },
+  );
+  const body = (await response.json()) as { error?: string } | null;
   if (!response.ok)
     throw new ShareRequestError(
-      body.error || "Could not reach blimy sharing. Try again.",
+      body?.error || "Could not reach blimy sharing. Try again.",
       response.status,
     );
   return body as T;
