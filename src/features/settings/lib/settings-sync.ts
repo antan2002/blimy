@@ -10,7 +10,7 @@ import {
   isAuthInvalidError,
   pushSettingsSyncSnapshot,
   type CloudSettingsSyncSnapshot,
-} from "@/features/window/services/auth-api";
+} from "@/features/settings/services/settings-sync-api";
 
 const SETTINGS_SYNC_META_KEY = "blimy.settingsSync.meta";
 const SETTINGS_SYNC_PUSH_DEBOUNCE_MS = 1500;
