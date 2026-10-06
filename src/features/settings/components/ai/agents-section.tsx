@@ -14,7 +14,7 @@ function AgentStatus({ agent }: { agent: AgentOption }) {
 function getAgentIconUrl(agent: AgentOption) {
   const name = agent.name.toLowerCase();
   const id = agent.id.toLowerCase();
-  
+
   let iconName = `${id}-color.jpg`;
   if (name.includes("codex") || name.includes("openai") || name.includes("gpt")) iconName = "openai-color.jpg";
   else if (name.includes("claude") || name.includes("anthropic")) iconName = "anthropic-color.jpg";
@@ -22,7 +22,7 @@ function getAgentIconUrl(agent: AgentOption) {
   else if (name.includes("meta") || name.includes("llama")) iconName = "meta-color.jpg";
   else if (name.includes("mistral")) iconName = "mistral-color.jpg";
   else if (name.includes("cohere")) iconName = "cohere-color.jpg";
-  
+
   return `https://raw.githubusercontent.com/TypingMind/model-icons/main/icons/${iconName}`;
 }
 
@@ -45,7 +45,7 @@ const SCATTERED_LOGOS = Array.from({ length: 24 }).map((_, i) => {
   const rotate = (i % 5) * 6 - 12; // -12deg to 12deg
   const scale = 0.85 + (i % 3) * 0.1;
   const logo = AGENT_LOGOS[i % AGENT_LOGOS.length];
-  
+
   return { id: i, x, y, rotate, scale, logo };
 });
 
@@ -72,7 +72,7 @@ export function AgentsSection() {
       <div className="relative mb-6 h-40 w-full overflow-hidden rounded-xl border border-overlay-border shadow-sm">
         <img src="/agent-banner.jpg" alt="Available AI Agents Banner" className="block h-full w-full object-cover object-bottom" />
         <div className="absolute inset-0 bg-black/5 backdrop-blur-[1px]" />
-        
+
         {/* Scattered Logos */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           {SCATTERED_LOGOS.map((item, i) => (
@@ -98,7 +98,7 @@ export function AgentsSection() {
       {agents.map((agent) => {
         const action = agent.action;
         const isCodex = agent.id === "codex";
-        
+
         return (
           <SettingRow
             key={agent.id}
