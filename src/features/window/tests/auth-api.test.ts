@@ -137,6 +137,8 @@ describe("auth-api desktop auth parsers", () => {
       cloudWorkspaces: true,
       collaboration: false,
       enterprisePolicy: true,
+      // Only free is restricted to Blimy's own models; a paid account opts out of the limit.
+      ownModelsOnly: false,
     });
   });
 
