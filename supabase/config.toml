@@ -386,6 +386,16 @@ deno_version = 2
 # [edge_runtime.secrets]
 # secret_key = "env(SECRET_VALUE)"
 
+[functions.ai-proxy]
+# The function re-verifies the caller's token with auth.getUser() before it reaches the upstream
+# provider, so the gateway check here is defence in depth rather than the only boundary.
+verify_jwt = true
+
+[functions.ai-settings]
+# AI model preferences. Reads its own user from the JWT with auth.getUser(), so an unverified
+# request is rejected before it touches the table.
+verify_jwt = true
+
 [analytics]
 enabled = true
 port = 54327

@@ -34,12 +34,12 @@ function describeDefault(params: {
  */
 export function DefaultModelSection() {
   const state = useAIModelSettings();
-  const { defaultConnection, hasIntelligence, isAuthenticated, locked, error, loading, actions } =
+  const { defaultConnection, hasHostedAi, isAuthenticated, locked, error, loading, actions } =
     state;
   const updateSetting = useSettingsStore((store) => store.actions.updateSetting);
   const provider = useProviderById(defaultConnection.providerId);
   const keyProviders = useConnectedModelProviders().filter((item) => item.requiresApiKey);
-  const available = isConnectionAvailable(defaultConnection, hasIntelligence);
+  const available = isConnectionAvailable(defaultConnection, hasHostedAi);
   const openModelsPage = (section?: string) =>
     useUIState.getState().openSettings("ai-models", section);
 

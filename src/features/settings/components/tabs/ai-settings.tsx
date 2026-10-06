@@ -19,6 +19,7 @@ import { BlimyPlanSection } from "../ai/blimy-plan-section";
 import { CustomEndpointSection } from "../ai/custom-endpoint-section";
 import { DefaultModelSection } from "../ai/default-model-section";
 import { FeatureModelsSection } from "../ai/feature-models-section";
+import { HostedModelUsageSection } from "../ai/hosted-model-usage-section";
 import { OllamaSection } from "../ai/ollama-section";
 import { ProviderKeysSection } from "../ai/provider-keys-section";
 import { TabCompletionSection } from "../ai/tab-completion-section";
@@ -31,6 +32,7 @@ export function AIOverviewSettings() {
       <BlimyPlanSection />
       <DefaultModelSection />
       <FeatureModelsSection />
+      <HostedModelUsageSection />
     </SettingsView>
   );
 }

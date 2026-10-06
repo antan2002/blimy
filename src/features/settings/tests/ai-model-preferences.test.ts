@@ -21,7 +21,7 @@ describe("AI model preferences", () => {
     expect(
       getEffectiveDefaultConnection({
         preferences,
-        hasIntelligence: true,
+        hasHostedAi: true,
         personalConnection: openai,
         personalConnectionIsLocal: false,
       }),
@@ -29,7 +29,7 @@ describe("AI model preferences", () => {
     expect(
       getEffectiveDefaultConnection({
         preferences,
-        hasIntelligence: false,
+        hasHostedAi: false,
         personalConnection: openai,
         personalConnectionIsLocal: false,
       }),
@@ -37,7 +37,7 @@ describe("AI model preferences", () => {
     expect(
       getEffectiveDefaultConnection({
         preferences,
-        hasIntelligence: true,
+        hasHostedAi: true,
         personalConnection: ollama,
         personalConnectionIsLocal: true,
       }),
@@ -60,7 +60,7 @@ describe("AI model preferences", () => {
     expect(
       getEffectiveDefaultConnection({
         preferences,
-        hasIntelligence: true,
+        hasHostedAi: true,
         personalConnection: openai,
         personalConnectionIsLocal: false,
       }),

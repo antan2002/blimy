@@ -12,7 +12,7 @@ import { useProFeature } from "@/features/window/hooks/use-pro-feature";
  */
 export function useAIModelSettings() {
   const store = useIntelligenceSettingsStore();
-  const { hasIntelligence, isAuthenticated } = useProFeature();
+  const { hasHostedAi, isAuthenticated } = useProFeature();
   const settings = useSettingsStore(
     useShallow((state) => ({
       aiProviderId: state.settings.aiProviderId,
@@ -32,7 +32,7 @@ export function useAIModelSettings() {
   const isLocalProvider = (providerId: string) => isLocalAiProvider(providerId, settings);
   const context = {
     preferences: store.preferences,
-    hasIntelligence,
+    hasHostedAi,
     personalConnection: { providerId: settings.aiProviderId, modelId: settings.aiModelId },
     personalConnectionIsLocal: isLocalProvider(settings.aiProviderId),
   };
@@ -41,7 +41,7 @@ export function useAIModelSettings() {
     ...store,
     editable,
     locked: loading || !editable,
-    hasIntelligence,
+    hasHostedAi,
     isAuthenticated,
     context,
     isLocalProvider,

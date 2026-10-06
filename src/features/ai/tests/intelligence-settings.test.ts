@@ -52,15 +52,15 @@ describe("Intelligence connection choices", () => {
     const params = {
       task: "commit-message" as const,
       preferences: defaultIntelligencePreferences(),
-      hasIntelligence: false,
+      hasHostedAi: false,
       personalConnection: { providerId: "anthropic", modelId: "personal-model" },
     };
     expect(resolveIntelligenceConnection(params)).toEqual(params.personalConnection);
-    expect(resolveIntelligenceConnection({ ...params, hasIntelligence: true }).providerId).toBe(
+    expect(resolveIntelligenceConnection({ ...params, hasHostedAi: true }).providerId).toBe(
       "blimy",
     );
     params.preferences.tasks["commit-message"] = { providerId: "vercel", modelId: "user/model" };
-    expect(resolveIntelligenceConnection({ ...params, hasIntelligence: true })).toEqual({
+    expect(resolveIntelligenceConnection({ ...params, hasHostedAi: true })).toEqual({
       providerId: "vercel",
       modelId: "user/model",
     });
@@ -73,7 +73,7 @@ describe("Intelligence connection choices", () => {
       resolveIntelligenceConnection({
         task: "agent",
         preferences,
-        hasIntelligence: true,
+        hasHostedAi: true,
         personalConnection: { providerId: "anthropic", modelId: "personal-model" },
       }),
     ).toEqual({ providerId: "blimy", modelId: "auto" });

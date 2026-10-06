@@ -1,7 +1,7 @@
 import { tauriFetch } from "@/utils/tauri-fetch";
-import { getAuthToken } from "@/features/window/services/auth-api";
+import { getSupabaseAccessToken } from "@/utils/supabase-access-token";
 import { useAuthStore } from "@/features/window/stores/auth.store";
-import { getApiBase } from "@/utils/api-base";
+import { getEdgeFunctionsBase } from "@/utils/api-base";
 import { parseIntelligencePreferences } from "../lib/intelligence-preferences";
 import type { IntelligencePreferences, IntelligenceSnapshot } from "../types/intelligence.types";
 
@@ -22,13 +22,15 @@ export async function fetchIntelligenceSettings(
   },
   expectedUserId?: number,
 ): Promise<IntelligenceSnapshot> {
-  const token = await getAuthToken();
+  const token = await getSupabaseAccessToken();
   if (expectedUserId !== undefined && useAuthStore.getState().user?.id !== expectedUserId) {
     throw new IntelligenceSettingsError("The active account changed. Try again.", 409);
   }
   if (!token) throw new IntelligenceSettingsError("Sign in to sync your AI settings.", 401);
+  // Supabase edge function, not the first-party host: this path was the one user-visible
+  // symptom of that host going dark, and it is self-contained enough to move on its own.
   const response = await tauriFetch(
-    `${getApiBase()}/api/account/intelligence?scope=${encodeURIComponent(scope)}`,
+    `${getEdgeFunctionsBase()}/ai-settings?scope=${encodeURIComponent(scope)}`,
     {
       method: update ? "PUT" : "GET",
       signal: AbortSignal.timeout(10000),
@@ -48,7 +50,7 @@ export async function fetchIntelligenceSettings(
     !Number.isSafeInteger(data.revision) ||
     data.revision < 0
   ) {
-    throw new IntelligenceSettingsError("blimy returned invalid AI settings.", 502);
+    throw new IntelligenceSettingsError("The server returned invalid AI settings.", 502);
   }
   return { ...data, preferences: parseIntelligencePreferences(data.preferences) };
 }

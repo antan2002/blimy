@@ -28,26 +28,26 @@ export const AI_FEATURE_MODEL_OVERRIDES: ReadonlyArray<{ task: IntelligenceTask;
  */
 export function getEffectiveDefaultConnection(params: {
   preferences: IntelligencePreferences;
-  hasIntelligence: boolean;
+  hasHostedAi: boolean;
   personalConnection: IntelligenceConnection;
   personalConnectionIsLocal: boolean;
 }): IntelligenceConnection {
   return resolveIntelligenceConnection({
     task: "agent",
     preferences: { ...params.preferences, tasks: {} },
-    hasIntelligence: params.hasIntelligence,
+    hasHostedAi: params.hasHostedAi,
     personalConnection: params.personalConnection,
     personalConnectionIsLocal: params.personalConnectionIsLocal,
   });
 }
 
-/** Whether a connection can run for this account: blimy models need a plan that includes them. */
+/** Whether a connection can run for this account: blimy models need hosted access. */
 export function isConnectionAvailable(
   connection: IntelligenceConnection,
-  hasIntelligence: boolean,
+  hasHostedAi: boolean,
 ): boolean {
   if (connection.providerId === "auto") return false;
-  return connection.providerId !== "blimy" || hasIntelligence;
+  return connection.providerId !== "blimy" || hasHostedAi;
 }
 
 export function withDefaultConnection(
