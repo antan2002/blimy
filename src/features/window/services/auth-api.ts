@@ -649,9 +649,18 @@ export async function authenticatedFetch(
   options: AuthenticatedFetchOptions = {},
   tokenOverride?: string,
 ): Promise<Response> {
-  const token = tokenOverride ?? (await getAuthToken());
+  let token = tokenOverride ?? (await getAuthToken());
   if (!token) {
     throw new Error("Not authenticated");
+  }
+
+  if (token.startsWith("{")) {
+    try {
+      const parsed = JSON.parse(token);
+      token = parsed.access_token || token;
+    } catch {
+      // Ignored
+    }
   }
 
   const { timeoutMs, signal, ...requestOptions } = options;
