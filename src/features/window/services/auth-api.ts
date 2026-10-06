@@ -618,6 +618,10 @@ export const removeAuthToken = async (key: string = "blimy_auth_token"): Promise
   await invoke("remove_auth_token", { key });
 };
 
+export const clearAuthTokenCache = (key: string = "blimy_auth_token"): void => {
+  delete authTokenCache[key];
+};
+
 const DEFAULT_AUTHENTICATED_FETCH_TIMEOUT_MS = 10_000;
 
 export interface AuthenticatedFetchOptions extends RequestInit {
@@ -663,98 +667,95 @@ export async function authenticatedFetch(
 }
 
 export async function fetchCurrentUser(tokenOverride?: string): Promise<AuthUser> {
-  try {
-    const { supabase } = await import("@/features/auth/lib/supabase");
-    const { data: sessionData } = await supabase.auth.getSession();
-    
-    if (sessionData.session) {
-      const user = sessionData.session.user;
-      return {
-        // Create a deterministic numeric ID from the UUID for backward compatibility
-        id: parseInt(user.id.replace(/-/g, '').slice(0, 8), 16),
-        email: user.email || "",
-        name: user.user_metadata?.full_name || null,
-        avatar_url: user.user_metadata?.avatar_url || null,
-        provider: user.app_metadata?.provider || null,
-        github_username: user.user_metadata?.user_name || null,
-        subscription_status: "free",
-        created_at: user.created_at,
-      };
-    }
-  } catch {
-    // Supabase not configured, fall through to legacy
+  const { supabase } = await import("@/features/auth/lib/supabase");
+  const { data: sessionData, error } = await supabase.auth.getSession();
+
+  if (error || !sessionData.session) {
+    // The caller turns this into "signed out". There is deliberately no fallback request here:
+    // the old one went to a first-party host that does not answer, and its failure could reach
+    // the session check as a rejected token and wipe a perfectly valid session.
+    throw new AuthApiError("Your session is no longer available. Sign in again.", 401);
   }
 
-  // Fallback to legacy behavior if Supabase is not configured yet
-  const response = await authenticatedFetch("/api/auth/me", {}, tokenOverride);
-  if (!response.ok) {
-    throw await authApiError(`Failed to fetch user: ${response.status}`, response);
-  }
-  const data = await response.json();
-  if (!data.user) {
-    throw new AuthApiError("Authentication token did not resolve to a user.", 401);
-  }
-  return data.user;
+  const user = sessionData.session.user;
+  return {
+    // Create a deterministic numeric ID from the UUID for backward compatibility
+    id: parseInt(user.id.replace(/-/g, "").slice(0, 8), 16),
+    email: user.email || "",
+    name: user.user_metadata?.full_name || null,
+    avatar_url: user.user_metadata?.avatar_url || null,
+    provider: user.app_metadata?.provider || null,
+    github_username: user.user_metadata?.user_name || null,
+    subscription_status: "free",
+    created_at: user.created_at,
+  };
 }
 
+/**
+ * Capabilities for an account with no subscription row yet.
+ *
+ * Must match the free row in the plans table. `hostedAi` is true because free accounts reach
+ * Blimy-hosted models; `intelligence` is false because it marks a paid tier and is what keeps
+ * cloud workspaces and collaboration closed.
+ */
+const FREE_TIER_CAPABILITIES: ProductCapabilities = {
+  intelligence: false,
+  hostedAi: true,
+  settingsSync: true,
+  cloudWorkspaces: false,
+  collaboration: false,
+  enterprisePolicy: false,
+  ownModelsOnly: true,
+};
+
 export async function fetchSubscriptionStatus(tokenOverride?: string): Promise<SubscriptionInfo> {
-  try {
-    const { supabase } = await import("@/features/auth/lib/supabase");
-    const { data: sessionData } = await supabase.auth.getSession();
-    
-    if (sessionData.session) {
-      const { data, error } = await supabase
-        .from("subscriptions")
-        .select("*")
-        .eq("user_id", sessionData.session.user.id)
-        .single();
-        
-      if (!error && data) {
-        return {
-          status: data.status,
-          capabilities: data.capabilities,
-          subscription: {
-            plan: data.plan,
-            renews_at: data.renews_at,
-            ends_at: data.ends_at,
-          },
-          enterprise: {
-            has_access: false,
-            is_admin: false,
-            policy: null,
-          }
-        };
-      } else if (error && error.code === "PGRST116") {
-        return {
-          status: "free",
-          capabilities: { intelligence: false, hostedAi: false, settingsSync: true, cloudWorkspaces: false, collaboration: false, enterprisePolicy: false },
-          subscription: {
-            plan: "free",
-            renews_at: null,
-            ends_at: null,
-          },
-          enterprise: {
-            has_access: false,
-            is_admin: false,
-            policy: null,
-          }
-        };
-      }
-    }
-  } catch {
-    // Supabase not configured, fall through to legacy
+  const { supabase } = await import("@/features/auth/lib/supabase");
+  const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+
+  if (sessionError || !sessionData.session) {
+    throw new AuthApiError("Your session is no longer available. Sign in again.", 401);
   }
 
-  // Fallback to legacy behavior
-  const response = await authenticatedFetch("/api/auth/subscription", {}, tokenOverride);
-  if (!response.ok) {
-    throw await authApiError(`Failed to fetch subscription: ${response.status}`, response);
+  const { data, error } = await supabase
+    .from("subscriptions")
+    .select("*")
+    .eq("user_id", sessionData.session.user.id)
+    .single();
+
+  // No row yet means the signup trigger or the backstop has not run. Treating that as a free
+  // account is right, but only if the capabilities match the free plan rather than an older,
+  // stricter shape that would hide Blimy models from a signed-in user.
+  if (error && error.code === "PGRST116") {
+    return {
+      status: "free",
+      capabilities: FREE_TIER_CAPABILITIES,
+      subscription: { plan: "free", renews_at: null, ends_at: null },
+      enterprise: { has_access: false, is_admin: false, policy: null },
+    };
   }
-  const parsed = parseSubscriptionInfoResponse(await response.json());
-  if (!parsed) {
-    throw new AuthApiError("Subscription response was malformed.", response.status);
+
+  if (error) {
+    throw new AuthApiError("Could not read your plan. Try again in a moment.", 503);
   }
-  return parsed;
+
+  if (!data) {
+    throw new AuthApiError("Could not read your plan. Try again in a moment.", 503);
+  }
+
+  return {
+    status: data.status,
+    capabilities: data.capabilities,
+    subscription: {
+      plan: data.plan,
+      renews_at: data.renews_at,
+      ends_at: data.ends_at,
+    },
+    enterprise: {
+      has_access: false,
+      is_admin: false,
+      policy: null,
+    },
+  };
 }
 
 export async function updateEnterprisePolicy(

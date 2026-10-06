@@ -183,7 +183,12 @@ export function AuthListener() {
  */
 async function applySessionChange() {
   const { useAuthStore } = await import("@/features/window/stores/auth.store");
-  await removeAuthToken().catch(() => {});
+  const { clearAuthTokenCache } = await import("@/features/window/services/auth-api");
+  
+  // Clear the in-memory cache so `initialize` re-reads from secure storage.
+  // Do NOT call removeAuthToken(), as that deletes the new token from the OS keychain!
+  clearAuthTokenCache();
+  
   await useAuthStore.getState().actions.initialize();
 }
 
