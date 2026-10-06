@@ -1,7 +1,7 @@
 import { useIntelligenceSettingsStore } from "@/features/ai/intelligence/stores/intelligence-settings.store";
 import { useAuthStore } from "@/features/window/stores/auth.store";
-import { getApiBase } from "@/utils/api-base";
-import { getAuthToken } from "@/features/window/services/auth-api";
+import { getIntelligenceApiBase } from "@/utils/api-base";
+import { getSupabaseAccessToken } from "@/utils/supabase-access-token";
 import { tauriFetch } from "@/utils/tauri-fetch";
 import {
   AIProvider,
@@ -31,7 +31,7 @@ export class BlimyProvider extends AIProvider {
   async buildHeaders(): Promise<ProviderHeaders> {
     const userId = useAuthStore.getState().user?.id;
     const scope = useIntelligenceSettingsStore.getState().scope;
-    const token = await getAuthToken();
+    const token = await getSupabaseAccessToken();
     if (
       useAuthStore.getState().user?.id !== userId ||
       useIntelligenceSettingsStore.getState().scope !== scope
@@ -63,7 +63,9 @@ export class BlimyProvider extends AIProvider {
   }
 
   buildUrl(): string {
-    return `${getApiBase()}/api/ai/chat`;
+    // The edge function routes on its own path, and the catalogue lives at /models on the same
+    // base, so one base URL serves both requests.
+    return `${getIntelligenceApiBase()}/models`;
   }
 
   override async getModels(): Promise<ProviderModel[]> {
@@ -75,7 +77,7 @@ export class BlimyProvider extends AIProvider {
       });
     } catch (error) {
       // The HTTP plugin rejects with a bare string, which the menu would reduce to a generic line.
-      const host = new URL(getApiBase()).host;
+      const host = new URL(getIntelligenceApiBase()).host;
       throw new Error(
         error instanceof DOMException && error.name === "TimeoutError"
           ? `Blimy at ${host} took too long to answer.`
@@ -88,15 +90,14 @@ export class BlimyProvider extends AIProvider {
     if (!response.ok) throw new Error(`Could not connect to Blimy (${response.status}).`);
     const result = (await response.json()) as { enabled: boolean; data: ProviderModel[] };
     if (!result.enabled) {
-      // A Pro account is entitled; then the server itself has hosted models turned off.
-      if (useAuthStore.getState().subscription?.status === "pro")
-        throw new Error("Hosted models are not available on this Blimy server.");
-      throw new HostedEntitlementError();
+      // Every signed-in tier reaches hosted models, so reaching this branch means the server
+      // itself has them switched off rather than the account lacking entitlement.
+      throw new Error("Hosted models are not available on this server right now.");
     }
     return result.data;
   }
 
   async validateApiKey(): Promise<boolean> {
-    return Boolean(await getAuthToken());
+    return Boolean(await getSupabaseAccessToken());
   }
 }

@@ -1,11 +1,17 @@
 import type { SubscriptionInfo } from "@/features/window/services/auth-api";
 import { hasProductCapability } from "@/features/window/lib/product-capabilities";
 
-export function canUseIntelligenceProvider(
+/**
+ * Whether this account may run blimy-hosted models.
+ *
+ * Reads the `hostedAi` capability, which every tier including free has. `intelligence` means
+ * "paid tier" and would exclude free users from the models they are entitled to.
+ */
+export function canUseHostedProvider(
   providerId: string,
   subscription: SubscriptionInfo | null,
 ): boolean {
-  return providerId === "blimy" && hasProductCapability(subscription, "intelligence");
+  return providerId === "blimy" && hasProductCapability(subscription, "hostedAi");
 }
 
 export function canUseProviderWithoutApiKey(params: {

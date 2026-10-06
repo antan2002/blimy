@@ -41,7 +41,7 @@ export async function getIntelligenceConnection(task: IntelligenceTask) {
   const settings = useSettingsStore.getState().settings;
   const context = {
     preferences: useIntelligenceSettingsStore.getState().preferences,
-    hasIntelligence: hasProductCapability(auth.subscription, "intelligence"),
+    hasHostedAi: hasProductCapability(auth.subscription, "hostedAi"),
     personalConnection: { providerId: settings.aiProviderId, modelId: settings.aiModelId },
     personalConnectionIsLocal: isLocalAiProvider(settings.aiProviderId, settings),
   };

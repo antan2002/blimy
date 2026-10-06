@@ -11,8 +11,8 @@ import {
 } from "@/features/ai/lib/custom-provider-config";
 import { useSettingsStore } from "@/features/settings/stores/settings.store";
 import { normalizeOllamaBaseUrl } from "@/features/ai/lib/ollama-endpoint";
-import { getApiBase } from "@/utils/api-base";
-import { invoke } from "@tauri-apps/api/core";
+import { getIntelligenceApiBase } from "@/utils/api-base";
+import { getSupabaseAccessToken } from "@/utils/supabase-access-token";
 import { createIntelligenceModelFetch } from "./intelligence-model-fetch";
 
 export interface IntelligenceSdkModelOptions {
@@ -50,8 +50,10 @@ export async function getIntelligenceSdkModel(
     fetch: tauriFetch as typeof fetch,
     // The blimy token and team scope are read again for every request, not once per run.
     headers: blimy ? async () => provider.buildHeaders(undefined) : undefined,
-    refreshToken: blimy ? () => invoke<string | null>("get_auth_token") : undefined,
     idempotencyKey: blimy ? (index) => `${runId}-${index}` : undefined,
+    // The live session token is read again on each retry, so a refresh mid-run is picked up
+    // instead of the retry loop re-sending the stale header it already failed with.
+    refreshToken: blimy ? async () => getSupabaseAccessToken() : undefined,
     onCost: options.onCost,
   });
   if (providerId === "anthropic") return createAnthropic({ apiKey, fetch: retryingFetch })(modelId);
@@ -60,7 +62,7 @@ export async function getIntelligenceSdkModel(
   let baseURL = provider.apiUrl.replace(/\/chat\/completions\/?$/, "");
   if (providerId === "ollama")
     baseURL = `${normalizeOllamaBaseUrl(useSettingsStore.getState().settings.ollamaBaseUrl)}/v1`;
-  if (blimy) baseURL = `${getApiBase()}/api/ai`;
+  if (blimy) baseURL = getIntelligenceApiBase();
   if (providerId === "custom")
     baseURL = (legacyAutocomplete || resolveCustomProviderBaseUrl(settings))
       .replace(/\/chat\/completions\/?$/, "")

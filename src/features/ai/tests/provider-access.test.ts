@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vite-plus/test";
 import {
-  canUseIntelligenceProvider,
+  canUseHostedProvider,
   canUseProviderWithoutApiKey,
 } from "@/features/ai/lib/provider-access";
 import type { SubscriptionInfo } from "@/features/window/services/auth-api";
@@ -44,9 +44,40 @@ describe("provider access", () => {
   });
 
   it("keeps managed Intelligence separate from personal provider keys", () => {
-    expect(canUseIntelligenceProvider("blimy", subscription)).toBe(true);
-    expect(canUseIntelligenceProvider("openrouter", subscription)).toBe(false);
-    expect(canUseIntelligenceProvider("anthropic", subscription)).toBe(false);
+    expect(canUseHostedProvider("blimy", subscription)).toBe(true);
+    expect(canUseHostedProvider("openrouter", subscription)).toBe(false);
+    expect(canUseHostedProvider("anthropic", subscription)).toBe(false);
+  });
+
+  it("gives a free account hosted models without unlocking paid-tier features", () => {
+    const free = {
+      ...subscription,
+      status: "free" as const,
+      capabilities: {
+        ...subscription.capabilities!,
+        intelligence: false,
+        hostedAi: true,
+        cloudWorkspaces: false,
+        collaboration: false,
+      },
+    };
+
+    expect(
+      canUseHostedProvider("blimy", free),
+      "free reaches Blimy models",
+    ).toBe(true);
+    expect(
+      free.capabilities!.cloudWorkspaces,
+      "cloud workspaces stay behind a paid tier",
+    ).toBe(false);
+    expect(
+      free.capabilities!.collaboration,
+      "collaboration stays behind a paid tier",
+    ).toBe(false);
+  });
+
+  it("withholds hosted models from an account with no subscription", () => {
+    expect(canUseHostedProvider("blimy", null)).toBe(false);
   });
 
   it("does not treat Pro as a provider credential for Blimy Agent", () => {

@@ -1,5 +1,5 @@
 import { BlimyProvider } from "./blimy-provider";
-import { getApiBase } from "@/utils/api-base";
+import { getIntelligenceApiBase } from "@/utils/api-base";
 import { AnthropicProvider } from "./anthropic-provider";
 import { GeminiProvider } from "./gemini-provider";
 import { GrokProvider } from "./grok-provider";
@@ -38,7 +38,7 @@ function initializeProviders(): void {
     new BlimyProvider({
       id: "blimy",
       name: "blimy",
-      apiUrl: `${getApiBase()}/api/ai/chat`,
+      apiUrl: getIntelligenceApiBase(),
       requiresApiKey: false,
       maxTokens: 4096,
     }),

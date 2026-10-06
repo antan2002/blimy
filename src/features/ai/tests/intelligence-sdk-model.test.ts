@@ -32,7 +32,10 @@ vi.mock("@/features/ai/services/providers/ai-provider-registry", () => ({
     buildHeaders: async () => ({ Authorization: "Bearer local-test-key" }),
   }),
 }));
-vi.mock("@/utils/api-base", () => ({ getApiBase: () => "https://blimy.test" }));
+vi.mock("@/utils/api-base", () => ({
+  getIntelligenceApiBase: () => "https://blimy.test",
+  getApiBase: () => "https://blimy.test",
+}));
 
 beforeEach(() => {
   vi.clearAllMocks();
@@ -67,11 +70,13 @@ describe("Intelligence SDK connections", () => {
     );
     await getIntelligenceSdkModel("blimy", "auto");
     const connection = mocks.compatible.mock.calls[0][0];
-    expect(connection.baseURL).toBe("https://blimy.test/api/ai");
-    await connection.fetch("https://blimy.test/api/ai/chat/completions", {
+// Hosted models live on the Supabase edge function now, so the base is the function URL and the
+// SDK appends /chat/completions to reach the route the function serves.
+  expect(connection.baseURL).toBe("https://blimy.test");
+  await connection.fetch("https://blimy.test/chat/completions", {
       body: JSON.stringify({ model: "auto" }),
     });
-    await connection.fetch("https://blimy.test/api/ai/chat/completions", {
+    await connection.fetch("https://blimy.test/chat/completions", {
       body: JSON.stringify({ model: "auto" }),
     });
     expect(JSON.parse(mocks.fetch.mock.calls[1][1].body).model).toBe("routed-model");

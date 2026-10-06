@@ -172,6 +172,9 @@ async function sendInlineEditRequest(
   );
   options.signal.throwIfAborted();
   const response = await tauriFetch(
+    // Hosted text features are not yet served by the edge function, which today routes only
+    // chat. They keep the existing blimy.dev path until that is added, so Tab completion and
+    // inline edit behave exactly as they did before this change.
     `${API_BASE}/api/ai/${autocomplete ? "autocomplete" : "inline-edit"}`,
     {
       signal: options.signal,

@@ -82,7 +82,7 @@ describe("Local AI connections", () => {
         resolveIntelligenceConnection({
           task,
           preferences: defaultIntelligencePreferences(),
-          hasIntelligence: true,
+          hasHostedAi: true,
           personalConnection,
           personalConnectionIsLocal: true,
         }),
@@ -91,7 +91,7 @@ describe("Local AI connections", () => {
     expect(
       resolveAutocompleteConnection({
         preferences: defaultIntelligencePreferences(),
-        hasIntelligence: true,
+        hasHostedAi: true,
         personalConnection,
         personalConnectionIsLocal: true,
       }),
@@ -110,7 +110,7 @@ describe("Tab completion connection", () => {
     expect(
       resolveAutocompleteConnection({
         preferences,
-        hasIntelligence: true,
+        hasHostedAi: true,
         personalConnection: openai,
         isLocalProvider,
       }),
@@ -123,7 +123,7 @@ describe("Tab completion connection", () => {
     expect(
       resolveAutocompleteConnection({
         preferences,
-        hasIntelligence: true,
+        hasHostedAi: true,
         personalConnection: openai,
         isLocalProvider,
       }),
@@ -133,7 +133,7 @@ describe("Tab completion connection", () => {
     expect(
       resolveAutocompleteConnection({
         preferences,
-        hasIntelligence: true,
+        hasHostedAi: true,
         personalConnection: openai,
         isLocalProvider,
       }),
@@ -147,7 +147,7 @@ describe("Tab completion connection", () => {
     expect(
       resolveAutocompleteConnection({
         preferences,
-        hasIntelligence: true,
+        hasHostedAi: true,
         personalConnection: ollama,
         isLocalProvider,
       }),
@@ -158,7 +158,7 @@ describe("Tab completion connection", () => {
     expect(
       resolveAutocompleteConnection({
         preferences: defaultIntelligencePreferences(),
-        hasIntelligence: false,
+        hasHostedAi: false,
         personalConnection: openai,
         isLocalProvider,
       }),
@@ -169,7 +169,7 @@ describe("Tab completion connection", () => {
     expect(
       resolveAutocompleteConnection({
         preferences: defaultIntelligencePreferences(),
-        hasIntelligence: false,
+        hasHostedAi: false,
         personalConnection: { providerId: "blimy", modelId: "auto" },
         isLocalProvider,
       }),
@@ -183,7 +183,7 @@ describe("Tab completion connection", () => {
     expect(
       resolveAutocompleteConnection({
         preferences,
-        hasIntelligence: false,
+        hasHostedAi: false,
         personalConnection: ollama,
         isLocalProvider,
       }),
@@ -193,7 +193,7 @@ describe("Tab completion connection", () => {
     expect(
       resolveAutocompleteConnection({
         preferences,
-        hasIntelligence: true,
+        hasHostedAi: true,
         personalConnection: ollama,
         isLocalProvider,
       }),

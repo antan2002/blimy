@@ -6,7 +6,12 @@ import type {
 
 interface ConnectionContext {
   preferences: IntelligencePreferences;
-  hasIntelligence: boolean;
+  /**
+   * Whether this account may use blimy-hosted models. Free accounts can, so this reads
+   * the `hostedAi` capability rather than `intelligence`, which means "paid tier" and is
+   * reserved for the features free must not reach (cloud workspaces, collaboration).
+   */
+  hasHostedAi: boolean;
   personalConnection: IntelligenceConnection;
   /**
    * Whether the personal connection runs on this machine or the local network. "Auto" then keeps
@@ -35,16 +40,16 @@ export function resolveIntelligenceConnection(
   );
   if (connection.providerId !== "auto") return connection;
   if (params.personalConnectionIsLocal) return params.personalConnection;
-  if (params.hasIntelligence) return BLIMY_AUTOMATIC;
+  if (params.hasHostedAi) return BLIMY_AUTOMATIC;
   return params.personalConnection;
 }
 
 /**
  * Tab completion's connection. An explicit choice always wins. On Automatic it uses blimy's Tab
- * model when the account has access, unless the default model runs locally: then Tab uses that
- * local model, so code typed in the editor never leaves the machine. Without blimy access it falls
- * back to the default model the user already set up with their own key. Null when there is
- * nothing to run on, and Tab stays off until the user picks a model.
+ * model when the account has hosted access, unless the default model runs locally: then Tab uses
+ * that local model, so code typed in the editor never leaves the machine. Without hosted access
+ * it falls back to the default model the user already set up with their own key. Null when there
+ * is nothing to run on, and Tab stays off until the user picks a model.
  */
 export function resolveAutocompleteConnection(
   params: ConnectionContext & {
@@ -66,7 +71,7 @@ export function resolveAutocompleteConnection(
     : Boolean(params.personalConnectionIsLocal) &&
       chatDefault.providerId === params.personalConnection.providerId;
   if (defaultIsLocal) return chatDefault.modelId.trim() ? chatDefault : null;
-  if (params.hasIntelligence) return BLIMY_AUTOMATIC;
+  if (params.hasHostedAi) return BLIMY_AUTOMATIC;
   if (chatDefault.providerId !== "blimy" && chatDefault.modelId.trim()) return chatDefault;
   return null;
 }

@@ -1,4 +1,4 @@
-import { getApiBase } from "@/utils/api-base";
+import { getIntelligenceApiBase } from "@/utils/api-base";
 export interface ModelProvider {
   id: string;
   name: string;
@@ -32,7 +32,7 @@ const AI_PROVIDERS: ModelProvider[] = [
   {
     id: "blimy",
     name: "blimy",
-    apiUrl: `${getApiBase()}/api/ai/chat`,
+    apiUrl: getIntelligenceApiBase(),
     requiresApiKey: false,
     requiresAuth: true,
     models: [

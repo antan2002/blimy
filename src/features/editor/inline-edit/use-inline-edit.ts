@@ -9,7 +9,7 @@ import {
 } from "react";
 import { isLocalAiProvider } from "@/features/ai/lib/local-ai-connection";
 import {
-  canUseIntelligenceProvider,
+  canUseHostedProvider,
   canUseProviderWithoutApiKey,
 } from "@/features/ai/lib/provider-access";
 import { useAIChatStore } from "@/features/ai/stores/ai-chat.store";
@@ -215,7 +215,7 @@ export function useInlineEdit({
   const connection = resolveIntelligenceConnection({
     task: "inline-edit",
     preferences: intelligencePreferences,
-    hasIntelligence: hasProductCapability(subscription, "intelligence"),
+    hasHostedAi: hasProductCapability(subscription, "hostedAi"),
     personalConnection: { providerId: personalProviderId, modelId: personalModelId },
     personalConnectionIsLocal,
   });
@@ -582,7 +582,7 @@ export function useInlineEdit({
       const hasStoredProviderKey =
         useAIChatStore.getState().providerApiKeys.get(aiProviderId) || false;
       const canUseProvider =
-        canUseIntelligenceProvider(aiProviderId, subscription) ||
+        canUseHostedProvider(aiProviderId, subscription) ||
         canUseProviderWithoutApiKey({
           providerId: aiProviderId,
           subscription,
@@ -604,7 +604,7 @@ export function useInlineEdit({
       }
 
       const hasProviderKey = useAIChatStore.getState().providerApiKeys.get(aiProviderId) || false;
-      const useHosted = !hasProviderKey && canUseIntelligenceProvider(aiProviderId, subscription);
+      const useHosted = !hasProviderKey && canUseHostedProvider(aiProviderId, subscription);
 
       if (useHosted && !isAuthenticated) {
         setInlineEditError("Sign in to use blimy AI.");

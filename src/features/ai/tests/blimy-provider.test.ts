@@ -7,8 +7,10 @@ const state = vi.hoisted(() => ({
   plan: "free" as "pro" | "free",
 }));
 vi.mock("@/utils/tauri-fetch", () => ({ tauriFetch: state.fetch }));
-vi.mock("@/features/window/services/auth-api", () => ({ getAuthToken: async () => "token" }));
-vi.mock("@/utils/api-base", () => ({ getApiBase: () => "https://api.test" }));
+vi.mock("@/utils/supabase-access-token", () => ({
+  getSupabaseAccessToken: async () => "token",
+}));
+vi.mock("@/utils/api-base", () => ({ getIntelligenceApiBase: () => "https://api.test" }));
 vi.mock("@/features/window/stores/auth.store", () => ({
   useAuthStore: { getState: () => ({ user: { id: 1 }, subscription: { status: state.plan } }) },
 }));
@@ -31,19 +33,21 @@ beforeEach(() => {
 });
 
 describe("Blimy hosted models", () => {
-  it("asks a user without Pro or balance to upgrade or top up", async () => {
+  it("reports a server-side switch-off rather than an upgrade prompt", async () => {
+    // Every signed-in tier reaches hosted models, so an empty catalogue is never an entitlement
+    // problem and must not be reported as one.
     state.fetch.mockResolvedValue(Response.json({ enabled: false, data: [] }));
-    const error = await provider()
-      .getModels()
-      .catch((caught: unknown) => caught);
-    expect(String(error)).toContain("Upgrade or add credit");
-    expect(getApiErrorCode(error as Error)).toBe("402");
+    await expect(provider().getModels()).rejects.toThrow("not available on this server");
   });
 
-  it("says the server is off when a Pro account still gets no models", async () => {
-    state.plan = "pro";
-    state.fetch.mockResolvedValue(Response.json({ enabled: false, data: [] }));
-    await expect(provider().getModels()).rejects.toThrow("not available on this Blimy server");
+  it("returns the catalogue the server sends", async () => {
+    state.fetch.mockResolvedValue(
+      Response.json({ enabled: true, data: [{ id: "auto", provider: "blimy", name: "Blimy Auto" }] }),
+    );
+    const models = await provider().getModels();
+    expect(models).toHaveLength(1);
+    expect(models[0].id).toBe("auto");
+    expect(getApiErrorCode(new Error("unrelated"))).not.toBe("402");
   });
 
   it("asks for the model's own output limit instead of a fixed 4096", () => {

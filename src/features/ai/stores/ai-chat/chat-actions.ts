@@ -58,7 +58,7 @@ function getNewChatMetadata(agentId: AgentType) {
   const connection = resolveIntelligenceConnection({
     task: "agent",
     preferences: useIntelligenceSettingsStore.getState().preferences,
-    hasIntelligence: hasProductCapability(useAuthStore.getState().subscription, "intelligence"),
+    hasHostedAi: hasProductCapability(useAuthStore.getState().subscription, "hostedAi"),
     personalConnection: { providerId: settings.aiProviderId, modelId: settings.aiModelId },
     personalConnectionIsLocal: isLocalAiProvider(settings.aiProviderId, settings),
   });
