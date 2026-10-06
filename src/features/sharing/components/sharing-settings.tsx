@@ -8,6 +8,9 @@ import { EmptyState } from "@/ui/empty";
 import Switch from "@/ui/switch";
 import Section, { SettingsView, SettingRow } from "@/features/settings/components/settings-section";
 import { writeClipboardText } from "@/utils/clipboard";
+import { useAIChatStore } from "@/features/ai/stores/ai-chat.store";
+import { useAuthStore } from "@/features/window/stores/auth.store";
+import { restoreCloudSessionsIntoDb } from "../services/cloud-session-restore";
 import { fetchShareOptions, revokeShare, setSessionSync, updateShare } from "../services/share-api";
 import { ShareAccessDialog } from "./share-access-dialog";
 import type { SharedItem, ShareOptions } from "../types/share.types";
@@ -74,6 +77,20 @@ export function SharingSettings() {
       });
     }
   };
+  const restore = async () => {
+    if (!useAuthStore.getState().isAuthenticated) {
+      throw new Error("Sign in to restore sessions from the cloud.");
+    }
+    const result = await restoreCloudSessionsIntoDb();
+    await useAIChatStore.getState().actions.loadChatsFromDatabase();
+    showToast({
+      message:
+        result.restored > 0
+          ? `Restored ${result.restored} session${result.restored === 1 ? "" : "s"} from the cloud`
+          : "Nothing new to restore",
+      type: result.restored > 0 ? "success" : "info",
+    });
+  };
   const base = getServiceUrls().websiteBaseUrl;
   return (
     <SettingsView>
@@ -93,6 +110,15 @@ export function SharingSettings() {
             disabled={busy || !options}
             onChange={(enabled) => void run(() => setSessionSync(enabled))}
           />
+        </SettingRow>
+        <SettingRow
+          label="Restore from cloud"
+          description="Pulls agent sessions missing on this device into chat history"
+          activateOnClick={false}
+        >
+          <Button variant="outline" disabled={busy} onClick={() => void run(restore)}>
+            Restore sessions
+          </Button>
         </SettingRow>
         <SettingRow label="Web Library">
           <Button onClick={() => void openUrl(`${base}/dashboard/settings/sharing`)}>
@@ -159,7 +185,7 @@ export function SharingSettings() {
       {((error && options) || syncError) && (
         <Alert tone="error">
           <AlertDescription className="flex flex-wrap items-center justify-between gap-2">
-            <span>{error || syncError}</span>
+            <span>{syncError || error}</span>
             {error && (
               <Button disabled={busy} onClick={() => void run()}>
                 Retry
