@@ -102,7 +102,7 @@ describe("Blimy theme contrast", () => {
 
     for (const foreground of ["foreground", "muted-foreground", "subtle-foreground", "primary"]) {
       expect(
-        contrastRatio(theme.colors[foreground as keyof typeof theme.colors], theme.colors.selected),
+        contrastRatio(theme.colors[foreground as keyof typeof theme.colors]!, theme.colors.selected!),
         `${foreground} on selected`,
       ).toBeGreaterThanOrEqual(4.5);
     }

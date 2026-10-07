@@ -40,7 +40,6 @@ function FileExplorerPaneComponent() {
   return (
     <SidebarPanel className="relative p-0 flex flex-col h-full">
       <Accordion
-        type="multiple"
         defaultValue={["folders", "outline"]}
         className="flex-1 overflow-hidden flex flex-col h-full"
       >

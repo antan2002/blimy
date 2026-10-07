@@ -53,7 +53,7 @@ export function TabHistoryNavigation() {
         aria-label="Go back to previous location"
         iconOnly
         size="sm"
-        className={canGoBack ? "text-foreground" : ""}
+        tone={canGoBack ? "neutral" : undefined}
       >
         <ArrowLeftIcon />
       </Button>
@@ -67,7 +67,7 @@ export function TabHistoryNavigation() {
         aria-label="Go forward to next location"
         iconOnly
         size="sm"
-        className={canGoForward ? "text-foreground" : ""}
+        tone={canGoForward ? "neutral" : undefined}
       >
         <ArrowRightIcon />
       </Button>

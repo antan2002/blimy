@@ -44,3 +44,11 @@ export async function getSupabaseAccessToken(): Promise<string | null> {
   if (error || !refreshed.session?.access_token) return getFallbackToken();
   return refreshed.session.access_token;
 }
+
+export async function refreshSupabaseSession(): Promise<string | null> {
+  const { supabase } = await import("@/features/auth/lib/supabase");
+  const { data: refreshed, error } = await supabase.auth.refreshSession();
+  if (error || !refreshed.session?.access_token) return null;
+  return refreshed.session.access_token;
+}
+

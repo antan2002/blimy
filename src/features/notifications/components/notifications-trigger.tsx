@@ -10,6 +10,7 @@ import { useNotificationsStore } from "@/features/notifications/stores/notificat
 import type { NotificationCategoryFilter } from "@/features/notifications/types/notifications.types";
 import { Button } from "@/ui/button";
 import { BellIcon } from "@/ui/icons";
+import { cn } from "@/utils/cn";
 
 import type { ButtonProps } from "@/ui/button";
 
@@ -51,13 +52,12 @@ export const NotificationsTrigger = ({
 
   return (
     <>
-      <span className="inline-flex min-w-0 relative">
+      <span className={cn("inline-flex min-w-0 relative", className)}>
         <Button
           type="button"
           variant="ghost"
           iconOnly
           size={size}
-          className={className}
           onClick={() => {
             setInitialCategory("all");
             setIsCommandVisible(true);

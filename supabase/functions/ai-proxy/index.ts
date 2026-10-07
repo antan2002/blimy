@@ -1,8 +1,12 @@
 // Hosted model access for every signed-in account, including free.
 //
-// Requests are counted for display only: `record_model_usage` never blocks, so a runaway loop
-// cannot drain the shared upstream key. Quota enforcement, if it is ever wanted, is a separate
-// decision rather than a side effect of showing a usage number.
+// Three things happen here, in this order on the chat route: the model's plan tier is checked
+// against the caller's subscription, quota is consumed through the safety RPCs, and the request
+// is proxied to the upstream key. A turn that never reached the provider gives its quota back,
+// so a failed request does not count against the user.
+//
+// Requests are counted for display only on the usage read: `record_model_usage` never blocks,
+// so a runaway loop cannot drain the shared upstream key.
 
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.39.3";
@@ -20,7 +24,7 @@ const CHAT_PATH = "/chat/completions";
 function routeOf(req: Request): string {
   const path = new URL(req.url).pathname;
   const mount = "/functions/v1/ai-proxy";
-  const stripped = path.startsWith(mount) ? path.slice(mount.length) : path;
+  const stripped = path.startsWith(mount) ? path.slice(mount.length) : "";
   return stripped === "" ? "/" : stripped.replace(/\/+$/, "");
 }
 
@@ -37,6 +41,101 @@ const UPSTREAM_TIMEOUT_MS = 120_000;
 /** The model actually used, echoed back so the client can pin it for the rest of the run. */
 const RESOLVED_MODEL_HEADER = "x-blimy-model";
 
+/** The plan tier a model requires. Mirrors `ModelTier` on the client. */
+type ModelTier = "free" | "plus" | "pro";
+
+const TIER_RANK: Record<ModelTier, number> = { free: 0, plus: 1, pro: 2 };
+
+/** A catalog row: what the client is told about one hosted model. */
+interface CatalogEntry {
+  id: string;
+  name: string;
+  tier: ModelTier;
+  provider: "blimy";
+  maxOutputTokens?: number;
+  supportsImages?: boolean;
+}
+
+/**
+ * The lineup this function serves when no override is configured. The split is the product
+ * decision: Automatic is free, Claude/GPT/Gemini are pro, Kimi/GLM/DeepSeek are plus.
+ */
+const BUILT_IN_CATALOG: Omit<CatalogEntry, "provider">[] = [
+  { id: "auto", name: "Automatic", tier: "free", maxOutputTokens: 32000, supportsImages: true },
+  { id: "anthropic/claude-opus-5.5", name: "Claude Opus 5.5", tier: "pro", maxOutputTokens: 32000, supportsImages: true },
+  { id: "anthropic/claude-sonnet-5", name: "Claude Sonnet 5", tier: "pro", maxOutputTokens: 32000, supportsImages: true },
+  { id: "openai/gpt-5.6-sol", name: "GPT 5.6 Sol", tier: "pro", maxOutputTokens: 32000, supportsImages: true },
+  { id: "openai/gpt-5.3-codex", name: "GPT 5.3 Codex", tier: "pro", maxOutputTokens: 32000, supportsImages: true },
+  { id: "google/gemini-3.1-pro-preview", name: "Gemini 3.1 Pro Preview", tier: "pro", maxOutputTokens: 32000, supportsImages: true },
+  { id: "moonshotai/kimi-k2.7-code", name: "Kimi K2.7 Code", tier: "plus", maxOutputTokens: 32000, supportsImages: true },
+  { id: "zai/glm-5.3", name: "GLM 5.3", tier: "plus", maxOutputTokens: 32000, supportsImages: false },
+  { id: "deepseek/deepseek-v4-pro", name: "DeepSeek V4 Pro", tier: "plus", maxOutputTokens: 32000, supportsImages: false },
+  { id: "deepseek/deepseek-v4-flash", name: "DeepSeek V4 Flash", tier: "plus", maxOutputTokens: 32000, supportsImages: false },
+];
+
+function isModelTier(value: unknown): value is ModelTier {
+  return value === "free" || value === "plus" || value === "pro";
+}
+
+/**
+ * The served lineup: the `BLIMY_MODEL_CATALOG` secret when it parses as an array, otherwise
+ * the built-in list. A bad secret falls back instead of emptying the menu, because an
+ * unparsable override is a configuration mistake, not a reason to hide every model.
+ */
+function modelCatalog(): CatalogEntry[] {
+  const raw = Deno.env.get("BLIMY_MODEL_CATALOG");
+  if (raw) {
+    try {
+      const parsed: unknown = JSON.parse(raw);
+      if (Array.isArray(parsed)) {
+        const rows = parsed
+          .filter((row): row is Record<string, unknown> => typeof row === "object" && row !== null)
+          .filter((row) => typeof row.id === "string" && row.id.length > 0)
+          .map((row) => ({
+            id: row.id as string,
+            name: typeof row.name === "string" && row.name ? row.name : (row.id as string),
+            tier: isModelTier(row.tier) ? row.tier : "free",
+            provider: "blimy" as const,
+            ...(typeof row.maxOutputTokens === "number" ? { maxOutputTokens: row.maxOutputTokens } : {}),
+            ...(typeof row.supportsImages === "boolean" ? { supportsImages: row.supportsImages } : {}),
+          }));
+        if (rows.length > 0) return rows;
+      }
+    } catch {
+      // Fall through to the built-in lineup.
+    }
+  }
+  return BUILT_IN_CATALOG.map((row) => ({ ...row, provider: "blimy" as const }));
+}
+
+/**
+ * The tier a request needs. `auto` and an empty model are free, an id equal to the configured
+ * default is free (the client pins that id for the rest of the run after `auto` resolves), a
+ * catalog id takes its own tier, and an id the server does not know is treated as pro so a
+ * hand-crafted request cannot slip past the split.
+ */
+function tierOfModel(requested: string, catalog: CatalogEntry[]): ModelTier {
+  if (!requested || requested === "auto") return "free";
+  const defaultModel = (Deno.env.get("BLIMY_DEFAULT_MODEL") ?? "").trim();
+  if (defaultModel && requested === defaultModel) return "free";
+  const entry = catalog.find((row) => row.id === requested);
+  return entry ? entry.tier : "pro";
+}
+
+/**
+ * The tier the caller's subscription grants. An unknown or missing status is free, so a
+ * half-loaded account can never appear to own a paid tier.
+ */
+async function planTier(supabase: ReturnType<typeof clientFor>, userId: string): Promise<ModelTier> {
+  const { data } = await supabase
+    .from("subscriptions")
+    .select("status")
+    .eq("user_id", userId)
+    .maybeSingle();
+  const status = typeof data?.status === "string" ? data.status : "";
+  return status === "plus" || status === "pro" ? status : "free";
+}
+
 function json(body: unknown, status: number, headers: Record<string, string> = {}): Response {
   return new Response(JSON.stringify(body), {
     status,
@@ -45,9 +144,11 @@ function json(body: unknown, status: number, headers: Record<string, string> = {
 }
 
 function clientFor(req: Request) {
-  return createClient(Deno.env.get("SUPABASE_URL") ?? "", Deno.env.get("SUPABASE_ANON_KEY") ?? "", {
-    global: { headers: { Authorization: req.headers.get("Authorization") ?? "" } },
-  });
+  return createClient(
+    Deno.env.get("SUPABASE_URL") ?? "",
+    Deno.env.get("SUPABASE_ANON_KEY") ?? "",
+    { global: { headers: { Authorization: req.headers.get("Authorization") ?? "" } } },
+  );
 }
 
 /**
@@ -63,7 +164,7 @@ function upstream(): { url: string; key: string } | null {
 
 /**
  * Clamps the requested output length. A client asking for more gets the cap silently rather than
- * an error, because that is the common case when a caller forwards a model's advertised limit.
+ * an error, because the common case is a caller forwarding a model's advertised limit.
  */
 function clampOutputTokens(requested: unknown): number {
   const value = typeof requested === "number" && Number.isFinite(requested) ? requested : 0;
@@ -75,6 +176,36 @@ function clampOutputTokens(requested: unknown): number {
 function requestedModel(body: Record<string, unknown>): string {
   const model = body.model;
   return typeof model === "string" && model.trim() ? model.trim() : "auto";
+}
+
+/**
+ * Turns a denial from `consume_request()` into the response the client can act on: quota
+ * denials are 429 (retry later), a missing subscription is 402 (upgrade), and no sign-in is 401.
+ * The reason travels in `reason`, which is the field the client maps to its messages.
+ */
+function consumeDenied(result: Record<string, unknown>, headers: Record<string, string>): Response {
+  const reason = typeof result.reason === "string" ? result.reason : "quota";
+  if (reason === "not_signed_in") return json({ error: "Unauthorized" }, 401, headers);
+  if (reason === "no_subscription") {
+    return json({ error: "This account has no active plan.", reason: "entitlement_required" }, 402, headers);
+  }
+  const message =
+    reason === "minute_limit"
+      ? "That is too many requests for one minute. Try again in a moment."
+      : reason === "site_daily_limit"
+        ? "Blimy hosted models are at today's shared limit. Try again later."
+        : "This plan's request limit has been reached. It resets at the start of the next period.";
+  return json(
+    {
+      error: message,
+      reason,
+      ...(typeof result.limit === "number" ? { limit: result.limit } : {}),
+      ...(typeof result.used === "number" ? { used: result.used } : {}),
+      ...(result.resets_at !== undefined ? { resets_at: result.resets_at } : {}),
+    },
+    429,
+    headers,
+  );
 }
 
 serve(async (req: Request) => {
@@ -99,6 +230,8 @@ serve(async (req: Request) => {
     } = await supabase.auth.getUser();
     if (userError || !user) return json({ error: "Unauthorized" }, 401, headers);
 
+    const catalog = modelCatalog();
+
     if (path === "/models" && req.method === "GET") {
       const { data, error } = await supabase
         .from("usage_by_model")
@@ -108,12 +241,13 @@ serve(async (req: Request) => {
         .limit(200);
       if (error) return json({ error: "Could not load models." }, 500, headers);
 
-      // A single shared model until more are configured. Reporting it as available keeps the
-      // client from treating the catalog as empty and hiding the provider.
+      // The full lineup, tier included: every row is listed even when the caller's plan cannot
+      // reach it, because the menu shows locked rows with an upgrade hint rather than hiding
+      // models the user could upgrade into.
       return json(
         {
           enabled: true,
-          data: [{ id: "auto", provider: "blimy", name: "Blimy Auto" }],
+          data: catalog,
           usage: data ?? [],
         },
         200,
@@ -122,12 +256,6 @@ serve(async (req: Request) => {
     }
 
     if (path === CHAT_PATH && req.method === "POST") {
-      const provider = upstream();
-      if (!provider) {
-        // Configuration, not an entitlement problem, so 500 and no user-facing retry.
-        return json({ error: "Hosted models are not configured on this server." }, 500, headers);
-      }
-
       const raw = await req.text();
       let body: Record<string, unknown>;
       try {
@@ -137,9 +265,42 @@ serve(async (req: Request) => {
       }
 
       const model = requestedModel(body);
+
+      // The tier gate runs before quota: a locked model must not cost the caller a request
+      // from their allowance while being refused.
+      const requiredTier = tierOfModel(model, catalog);
+      const plan = await planTier(supabase, user.id);
+      if (TIER_RANK[requiredTier] > TIER_RANK[plan]) {
+        return json(
+          {
+            error: "This model needs a higher plan. Upgrade to use it.",
+            reason: "model_locked",
+            requiredTier,
+          },
+          402,
+          headers,
+        );
+      }
+
+      const { data: consumed, error: consumeError } = await supabase.rpc("consume_request");
+      if (consumeError || typeof consumed !== "object" || consumed === null) {
+        return json({ error: "Could not verify the request allowance." }, 500, headers);
+      }
+      const decision = consumed as Record<string, unknown>;
+      if (decision.allowed !== true) return consumeDenied(decision, headers);
+
+      const provider = upstream();
+      if (!provider) {
+        // Configuration, not an entitlement problem, so 500 and no user-facing retry.
+        void supabase.rpc("refund_request");
+        return json({ error: "Hosted models are not configured on this server." }, 500, headers);
+      }
+
+      const resolvedModel =
+        model === "auto" ? (Deno.env.get("BLIMY_DEFAULT_MODEL")?.trim() || "auto") : model;
       const payload = {
         ...body,
-        model,
+        model: resolvedModel,
         max_completion_tokens: clampOutputTokens(body.max_completion_tokens ?? body.max_tokens),
       };
 
@@ -155,6 +316,8 @@ serve(async (req: Request) => {
           signal: AbortSignal.timeout(UPSTREAM_TIMEOUT_MS),
         });
       } catch (error) {
+        // The provider never answered, so the reserved request is given back before answering.
+        await supabase.rpc("refund_request");
         // A timeout is not the user's fault and a retry is reasonable, so it says so plainly.
         if (error instanceof DOMException && error.name === "TimeoutError") {
           return json(
@@ -170,6 +333,7 @@ serve(async (req: Request) => {
       }
 
       if (!providerResponse.ok) {
+        await supabase.rpc("refund_request");
         // The provider's own message is not forwarded: it can quote the request back and says
         // nothing useful to the user here.
         console.warn(`ai-proxy: upstream responded ${providerResponse.status}`);
@@ -185,14 +349,16 @@ serve(async (req: Request) => {
 
       // Counted only once the provider accepted the request, so a failure never shows up as
       // usage. Best-effort: a counter that fails to write must not fail the turn.
-      const resolved = providerResponse.headers.get(RESOLVED_MODEL_HEADER) ?? model;
+      const resolved =
+        providerResponse.headers.get(RESOLVED_MODEL_HEADER) ?? resolvedModel;
       void supabase.rpc("record_model_usage", { target_model: resolved });
 
       return new Response(providerResponse.body, {
         status: 200,
         headers: {
           ...headers,
-          "content-type": providerResponse.headers.get("content-type") ?? "text/event-stream",
+          "content-type":
+            providerResponse.headers.get("content-type") ?? "text/event-stream",
           [RESOLVED_MODEL_HEADER]: resolved,
         },
       });
