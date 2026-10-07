@@ -62,18 +62,11 @@ describe("provider access", () => {
       },
     };
 
-    expect(
-      canUseHostedProvider("blimy", free),
-      "free reaches Blimy models",
-    ).toBe(true);
-    expect(
-      free.capabilities!.cloudWorkspaces,
-      "cloud workspaces stay behind a paid tier",
-    ).toBe(false);
-    expect(
-      free.capabilities!.collaboration,
-      "collaboration stays behind a paid tier",
-    ).toBe(false);
+    expect(canUseHostedProvider("blimy", free), "free reaches Blimy models").toBe(true);
+    expect(free.capabilities!.cloudWorkspaces, "cloud workspaces stay behind a paid tier").toBe(
+      false,
+    );
+    expect(free.capabilities!.collaboration, "collaboration stays behind a paid tier").toBe(false);
   });
 
   it("withholds hosted models from an account with no subscription", () => {

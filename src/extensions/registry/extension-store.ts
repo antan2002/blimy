@@ -427,10 +427,7 @@ const useExtensionStoreBase = create<ExtensionStoreState>()(
           }
 
           for (const installed of indexedDBInstalled) {
-            const extensionId = resolveInstalledExtensionId(
-              installed,
-              get().availableExtensions,
-            );
+            const extensionId = resolveInstalledExtensionId(installed, get().availableExtensions);
             if (!installedVersions.has(extensionId)) {
               installedVersions.set(extensionId, installed.version);
             }

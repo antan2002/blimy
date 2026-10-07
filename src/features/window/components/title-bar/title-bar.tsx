@@ -32,7 +32,7 @@ export default function TitleBar({
   const [titleControlsWidth, setTitleControlsWidth] = useState(0);
   const [currentWindow, setCurrentWindow] = useState<TauriWindow | null>(null);
   const [isMaximized, setIsMaximized] = useState(false);
-  
+
   const openProjectPicker = useUIState((state) => state.openProjectPicker);
   const projectTabs = useWorkspaceTabsStore.use.projectTabs();
   const activeProject = projectTabs.find((project) => project.isActive);
@@ -143,4 +143,3 @@ export default function TitleBar({
     </ChromeBar>
   );
 }
-

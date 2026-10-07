@@ -42,7 +42,10 @@ describe("Blimy hosted models", () => {
 
   it("returns the catalogue the server sends", async () => {
     state.fetch.mockResolvedValue(
-      Response.json({ enabled: true, data: [{ id: "auto", provider: "blimy", name: "Blimy Auto" }] }),
+      Response.json({
+        enabled: true,
+        data: [{ id: "auto", provider: "blimy", name: "Blimy Auto" }],
+      }),
     );
     const models = await provider().getModels();
     expect(models).toHaveLength(1);

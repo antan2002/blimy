@@ -32,7 +32,7 @@ export const MODEL_PRICES: Record<string, ModelPrice> = {
   "gpt-4.1-mini": { input: 0.4, output: 1.6 },
   "gpt-4o": { input: 2.5, output: 10 },
   "gpt-4o-mini": { input: 0.15, output: 0.6 },
-  "o3": { input: 2, output: 8 },
+  o3: { input: 2, output: 8 },
   "o4-mini": { input: 1.1, output: 4.4 },
   // Google
   "gemini-2.5-pro": { input: 1.25, output: 10 },

@@ -28,7 +28,11 @@ import {
   useTimelineEntryHandlers,
   useTimelineSelection,
 } from "../hooks/use-timeline-entry-handlers";
-import { describeTimelineEntry, groupTimelineByDay, type TimelineEntry } from "../utils/timeline-entries";
+import {
+  describeTimelineEntry,
+  groupTimelineByDay,
+  type TimelineEntry,
+} from "../utils/timeline-entries";
 
 function TimelineEntryMenu({
   entry,
@@ -106,8 +110,15 @@ function TimelineEntryMenu({
 export function TimelineSidebar({ isActive = true }: { isActive?: boolean }) {
   const { filePath, repoPath, entries, isLoading, hasRepo } = useFileTimeline(isActive);
   const handlers = useTimelineEntryHandlers(repoPath, filePath, entries);
-  const { selectedId, setSelectedId, renamingId, renameValue, setRenameValue, startRename, cancelRename } =
-    useTimelineSelection();
+  const {
+    selectedId,
+    setSelectedId,
+    renamingId,
+    renameValue,
+    setRenameValue,
+    startRename,
+    cancelRename,
+  } = useTimelineSelection();
 
   const groups = useMemo(() => groupTimelineByDay(entries), [entries]);
 

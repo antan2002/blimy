@@ -1,6 +1,10 @@
 import { describe, expect, it } from "vite-plus/test";
 import { calculateCost, resolveModelPrice } from "@/features/ai/cost/calculate-cost";
-import { BudgetTracker, TurnBudget, formatBudgetStopMessage } from "@/features/ai/cost/budget-tracker";
+import {
+  BudgetTracker,
+  TurnBudget,
+  formatBudgetStopMessage,
+} from "@/features/ai/cost/budget-tracker";
 import { DEFAULT_MODEL_PRICE, findModelPrice } from "@/features/ai/cost/model-prices";
 import { normalizeAgentBudgetUsd } from "@/features/ai/lib/agent-budget";
 

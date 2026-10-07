@@ -1,6 +1,9 @@
 import { create } from "zustand";
 import { createSelectors } from "@/utils/zustand-selectors";
-import { EMPTY_EDITOR_VIEW_STATUS, type EditorViewStatus } from "@/features/layout/components/status-bar/editor-view-status";
+import {
+  EMPTY_EDITOR_VIEW_STATUS,
+  type EditorViewStatus,
+} from "@/features/layout/components/status-bar/editor-view-status";
 
 /**
  * The status bar reads editor facts it cannot derive itself: line endings,

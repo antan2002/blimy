@@ -5,17 +5,17 @@ provider.
 
 ## The three tiers
 
-| Tier | Own AI models | Quota | Resets | Cloud | Collaboration |
-|---|---|---|---|---|---|
-| `free` | yes | 500 requests | first of the month | no | no |
-| `plus` | yes | 200 requests | midnight UTC, daily | yes | no |
-| `pro` | yes, plus everything else | unlimited | never | yes | yes |
+| Tier   | Own AI models             | Quota        | Resets              | Cloud | Collaboration |
+| ------ | ------------------------- | ------------ | ------------------- | ----- | ------------- |
+| `free` | yes                       | 500 requests | first of the month  | no    | no            |
+| `plus` | yes                       | 200 requests | midnight UTC, daily | yes   | no            |
+| `pro`  | yes, plus everything else | unlimited    | never               | yes   | yes           |
 
 A new signup lands on `free` automatically. The `on_auth_user_created` trigger creates the
 subscription row and `ensure_free_subscription()` is the idempotent backstop the app calls
 on the first authenticated request.
 
-`plus` is the odd one out on purpose: it is the only tier with a *daily* ceiling. That suits
+`plus` is the odd one out on purpose: it is the only tier with a _daily_ ceiling. That suits
 heavy daily use without locking someone out for a whole month, and it makes the limit
 visible within one session, which a monthly cap never is.
 
@@ -33,11 +33,11 @@ the two from drifting into a state where a user is `pro` but the client has been
 
 Two counters per user, in `usage_counters`:
 
-| `scope` | `period` | Applies to |
-|---|---|---|
-| `month` | first of the month | `free` (500) |
-| `day` | today, UTC | `plus` (200) |
-| — | — | `pro` writes no rows at all |
+| `scope` | `period`           | Applies to                  |
+| ------- | ------------------ | --------------------------- |
+| `month` | first of the month | `free` (500)                |
+| `day`   | today, UTC         | `plus` (200)                |
+| —       | —                  | `pro` writes no rows at all |
 
 `consume_request()` checks and increments in one transaction, so two concurrent requests
 cannot both read a pre-increment value and slip past the cap. Periods come from server-side
@@ -47,8 +47,7 @@ When a cap is hit it returns the reason, the limit, current usage, and the reset
 the app can show something more useful than "error":
 
 ```json
-{ "allowed": false, "reason": "daily_limit", "limit": 200, "used": 200,
-  "resets_at": "2026-10-06" }
+{ "allowed": false, "reason": "daily_limit", "limit": 200, "used": 200, "resets_at": "2026-10-06" }
 ```
 
 `my_entitlement()` returns the same numbers without consuming anything — use it for a usage

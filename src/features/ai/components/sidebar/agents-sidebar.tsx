@@ -299,15 +299,17 @@ export function AgentsSidebar() {
                   <DotsIcon />
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
-                  <DropdownMenuItem onClick={() => useAIChatStore.getState().actions.deleteChat(currentChat.id)}>
+                  <DropdownMenuItem
+                    onClick={() => useAIChatStore.getState().actions.deleteChat(currentChat.id)}
+                  >
                     <TrashIcon />
                     Delete Chat
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             )}
-            <SidebarIconButton 
-              tooltip="Close Sidebar" 
+            <SidebarIconButton
+              tooltip="Close Sidebar"
               onClick={() => useUIState.getState().setIsRightSidebarVisible(false)}
             >
               <Close />
@@ -349,10 +351,14 @@ export function AgentsSidebar() {
                 <DownloadIcon />
               </SidebarIconButton>
             ) : null}
-            <SidebarIconButton tooltip="New Agent" aria-label="New Agent" onClick={() => {
-              handleNewAgent();
-              setIsViewingHistory(false);
-            }}>
+            <SidebarIconButton
+              tooltip="New Agent"
+              aria-label="New Agent"
+              onClick={() => {
+                handleNewAgent();
+                setIsViewingHistory(false);
+              }}
+            >
               <PlusIcon />
             </SidebarIconButton>
           </>

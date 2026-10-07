@@ -23,9 +23,7 @@ import { formatSnapshotDate, getEntryTitle } from "../utils/local-history-format
 async function getCurrentContent(targetPath: string): Promise<string> {
   const buffer = useBufferStore
     .getState()
-    .buffers.find(
-      (candidate) => candidate.type === "editor" && candidate.path === targetPath,
-    );
+    .buffers.find((candidate) => candidate.type === "editor" && candidate.path === targetPath);
   if (buffer?.type === "editor") return buffer.content;
 
   return readFile(targetPath);

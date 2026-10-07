@@ -164,14 +164,14 @@ export interface Settings {
   githubTokenSource: "auto" | "blimy" | "pat" | "gh";
   // Keyboard
   keybindingPreset:
-  | "none"
-  | "vscode"
-  | "jetbrains"
-  | "sublime"
-  | "xcode"
-  | "atom"
-  | "emacs"
-  | "zed";
+    | "none"
+    | "vscode"
+    | "jetbrains"
+    | "sublime"
+    | "xcode"
+    | "atom"
+    | "emacs"
+    | "zed";
   vimMode: boolean;
   vimRelativeLineNumbers: boolean;
   // Language
@@ -194,17 +194,17 @@ export interface Settings {
   // Other
   lastSettingsTab: SettingsSection;
   extensionsActiveTab:
-  | "all"
-  | "core"
-  | "language"
-  | "theme"
-  | "icon-theme"
-  | "snippet"
-  | "database"
-  | "ai"
-  | "integration"
-  | "skill"
-  | "agent";
+    | "all"
+    | "core"
+    | "language"
+    | "theme"
+    | "icon-theme"
+    | "snippet"
+    | "database"
+    | "ai"
+    | "integration"
+    | "skill"
+    | "agent";
   maxOpenTabs: number;
   horizontalTabScroll: boolean;
   //// File tree

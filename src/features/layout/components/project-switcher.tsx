@@ -302,11 +302,21 @@ export function ProjectSwitcher({
             ) : null}
           </DropdownMenuViewport>
           <DropdownMenuFooter>
-            <DropdownMenuItem onClick={() => { setIsOpen(false); void handleOpenFolder(); }}>
+            <DropdownMenuItem
+              onClick={() => {
+                setIsOpen(false);
+                void handleOpenFolder();
+              }}
+            >
               <FolderOpenIcon />
               Open project...
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => { setIsOpen(false); onAddRemote(); }}>
+            <DropdownMenuItem
+              onClick={() => {
+                setIsOpen(false);
+                onAddRemote();
+              }}
+            >
               <RemoteIcon />
               Add remote...
             </DropdownMenuItem>

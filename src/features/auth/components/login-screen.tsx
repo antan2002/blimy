@@ -28,12 +28,11 @@ export function LoginScreen() {
       </div>
 
       <div className="relative z-10 flex h-full max-h-[800px] w-full max-w-[1200px] flex-row gap-0 rounded-3xl overflow-hidden bg-[#050505] shadow-2xl ring-1 ring-white/10">
-        
         {/* Left Side: Image Pane */}
         <div className="relative hidden w-1/2 md:block">
           {/* Image */}
-          <div 
-            className="absolute inset-0 bg-cover bg-center bg-no-repeat" 
+          <div
+            className="absolute inset-0 bg-cover bg-center bg-no-repeat"
             style={{ backgroundImage: `url('/login-bg.jpg')` }}
           />
           {/* Top Left Logo */}
@@ -101,11 +100,18 @@ export function LoginScreen() {
 
             <p className="mt-12 text-xs font-medium leading-relaxed text-white/30 max-w-[320px]">
               By signing in, you agree to blimy AI's{" "}
-              <a href="#" className="underline decoration-white/20 hover:text-white/60">Terms of Service</a>
+              <a href="#" className="underline decoration-white/20 hover:text-white/60">
+                Terms of Service
+              </a>
               ,{" "}
-              <a href="#" className="underline decoration-white/20 hover:text-white/60">Privacy Policy</a>{" "}
+              <a href="#" className="underline decoration-white/20 hover:text-white/60">
+                Privacy Policy
+              </a>{" "}
               and{" "}
-              <a href="#" className="underline decoration-white/20 hover:text-white/60">Data Usage Properties</a>.
+              <a href="#" className="underline decoration-white/20 hover:text-white/60">
+                Data Usage Properties
+              </a>
+              .
             </p>
 
             {isSigningIn && (
@@ -123,14 +129,14 @@ export function LoginScreen() {
 // Simple right arrow SVG
 function ArrowRightSvg() {
   return (
-    <svg 
-      xmlns="http://www.w3.org/2000/svg" 
-      viewBox="0 0 24 24" 
-      fill="none" 
-      stroke="currentColor" 
-      strokeWidth="2" 
-      strokeLinecap="round" 
-      strokeLinejoin="round" 
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
       className="size-4 opacity-80 group-hover:opacity-100 transition-opacity"
     >
       <path d="M5 12h14" />

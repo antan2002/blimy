@@ -62,7 +62,6 @@ export function NewTabMenu({ paneId }: { paneId: string }) {
             New Terminal Window
           </DropdownMenuItem>
         )}
-
       </DropdownMenuContent>
     </DropdownMenu>
   );

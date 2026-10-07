@@ -70,10 +70,10 @@ describe("Intelligence SDK connections", () => {
     );
     await getIntelligenceSdkModel("blimy", "auto");
     const connection = mocks.compatible.mock.calls[0][0];
-// Hosted models live on the Supabase edge function now, so the base is the function URL and the
-// SDK appends /chat/completions to reach the route the function serves.
-  expect(connection.baseURL).toBe("https://blimy.test");
-  await connection.fetch("https://blimy.test/chat/completions", {
+    // Hosted models live on the Supabase edge function now, so the base is the function URL and the
+    // SDK appends /chat/completions to reach the route the function serves.
+    expect(connection.baseURL).toBe("https://blimy.test");
+    await connection.fetch("https://blimy.test/chat/completions", {
       body: JSON.stringify({ model: "auto" }),
     });
     await connection.fetch("https://blimy.test/chat/completions", {

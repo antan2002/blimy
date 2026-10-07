@@ -45,11 +45,9 @@ function json(body: unknown, status: number, headers: Record<string, string> = {
 }
 
 function clientFor(req: Request) {
-  return createClient(
-    Deno.env.get("SUPABASE_URL") ?? "",
-    Deno.env.get("SUPABASE_ANON_KEY") ?? "",
-    { global: { headers: { Authorization: req.headers.get("Authorization") ?? "" } } },
-  );
+  return createClient(Deno.env.get("SUPABASE_URL") ?? "", Deno.env.get("SUPABASE_ANON_KEY") ?? "", {
+    global: { headers: { Authorization: req.headers.get("Authorization") ?? "" } },
+  });
 }
 
 /**
@@ -194,8 +192,7 @@ serve(async (req: Request) => {
         status: 200,
         headers: {
           ...headers,
-          "content-type":
-            providerResponse.headers.get("content-type") ?? "text/event-stream",
+          "content-type": providerResponse.headers.get("content-type") ?? "text/event-stream",
           [RESOLVED_MODEL_HEADER]: resolved,
         },
       });

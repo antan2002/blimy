@@ -34,7 +34,7 @@ import {
   TerminalWindowIcon,
   SidebarRightIcon,
   SearchIcon,
-  SettingsIcon
+  SettingsIcon,
 } from "@/ui/icons";
 // import removed
 import TitleBarWithSettings from "../../window/components/title-bar/title-bar";
@@ -133,9 +133,9 @@ export function MainLayout() {
       openFolder: handleOpenFolderByPath,
       openFile: handleFileOpen
         ? async (path) => {
-          await handleFileOpen(path, false);
-          return true;
-        }
+            await handleFileOpen(path, false);
+            return true;
+          }
         : undefined,
       onError: (path, error) => {
         console.error("Failed to open dropped path:", path, error);
@@ -327,11 +327,11 @@ export function MainLayout() {
                 className={cn(
                   "blimy-glass-island relative min-h-0 flex-1 overflow-hidden border-border border-y border-r bg-background",
                   roundMainContentLeftEdge &&
-                  (isEditorBottomPaneVisible
-                    ? "rounded-tl-xl border-l"
-                    : "rounded-l-xl border-l"),
+                    (isEditorBottomPaneVisible
+                      ? "rounded-tl-xl border-l"
+                      : "rounded-l-xl border-l"),
                   roundMainContentRightEdge &&
-                  (isEditorBottomPaneVisible ? "rounded-tr-xl" : "rounded-r-xl"),
+                    (isEditorBottomPaneVisible ? "rounded-tr-xl" : "rounded-r-xl"),
                 )}
               >
                 <CachedWorkspaceSplitViews />
@@ -383,7 +383,7 @@ export function MainLayout() {
               <button
                 className={cn(
                   "flex h-full items-center justify-center px-1.5 transition-colors hover:bg-muted hover:text-foreground",
-                  renderedSidebarVisible ? "text-foreground" : "text-muted-foreground"
+                  renderedSidebarVisible ? "text-foreground" : "text-muted-foreground",
                 )}
                 onClick={() => {
                   const state = useUIState.getState();
@@ -396,7 +396,9 @@ export function MainLayout() {
               <button
                 className={cn(
                   "flex h-full items-center justify-center px-1.5 transition-colors hover:bg-muted hover:text-foreground",
-                  isEditorBottomPaneVisible || (terminalWidthMode === "full" && isBottomPaneVisible) ? "text-foreground" : "text-muted-foreground"
+                  isEditorBottomPaneVisible || (terminalWidthMode === "full" && isBottomPaneVisible)
+                    ? "text-foreground"
+                    : "text-muted-foreground",
                 )}
                 onClick={() => {
                   const state = useUIState.getState();
@@ -409,7 +411,7 @@ export function MainLayout() {
               <button
                 className={cn(
                   "flex h-full items-center justify-center px-1.5 transition-colors hover:bg-muted hover:text-foreground",
-                  renderedRightSidebarVisible ? "text-foreground" : "text-muted-foreground"
+                  renderedRightSidebarVisible ? "text-foreground" : "text-muted-foreground",
                 )}
                 onClick={() => {
                   const state = useUIState.getState();

@@ -16,19 +16,19 @@ uncommitted. This document explains what changed, which files, and why.
 
 ## 1. Snapshot
 
-| Metric | Value |
-|---|---|
-| Modified tracked files | 451 |
-| Deleted tracked files | 2 |
-| Untracked new files | 26 |
-| **Total working-tree entries** | **479** |
-| Text files changed | 244 |
-| Binary files changed (icons/images) | 201 |
-| Lines inserted (tracked text) | +2,201 |
-| Lines deleted (tracked text) | −1,390 |
-| Files whose only change is the brand name | 128 |
-| Files with real logic changes | 317 |
-| Remaining `athas`/`Athas` references | **0** |
+| Metric                                    | Value   |
+| ----------------------------------------- | ------- |
+| Modified tracked files                    | 451     |
+| Deleted tracked files                     | 2       |
+| Untracked new files                       | 26      |
+| **Total working-tree entries**            | **479** |
+| Text files changed                        | 244     |
+| Binary files changed (icons/images)       | 201     |
+| Lines inserted (tracked text)             | +2,201  |
+| Lines deleted (tracked text)              | −1,390  |
+| Files whose only change is the brand name | 128     |
+| Files with real logic changes             | 317     |
+| Remaining `athas`/`Athas` references      | **0**   |
 
 Measured with `git status --porcelain --untracked-files=all`, `git diff --numstat`, and a
 line-level classification of `git diff -U0` that separated changes mentioning `blimy` from
@@ -41,14 +41,14 @@ changes that do not (808 lines mention the name, 2,783 do not).
 The 479 entries are **not** one feature. They are six unrelated bodies of work that accumulated in a
 single uncommitted working tree:
 
-| # | Body of work | Files | Status |
-|---|---|---|---|
-| A | Brand rename `Athas` → `Blimy` | 128 name-only + many mixed | Complete, 0 leftovers |
-| B | New editor features (timeline, status bar, snippets, ext settings) | ~20 new + ~30 modified | Complete, tested |
-| C | Supabase backend (new, untracked) | 8 new | Uncommitted, not deployed |
-| D | Agents-in-sidebar refactor | ~24 modified | Complete |
-| E | Hosted-AI restore (agent work, this session) | ~19 modified | Complete, 55/55 tests |
-| F | Startup/window-visibility fix (agent work, this session) | 3 modified | Complete, needs your visual confirmation |
+| #   | Body of work                                                       | Files                      | Status                                   |
+| --- | ------------------------------------------------------------------ | -------------------------- | ---------------------------------------- |
+| A   | Brand rename `Athas` → `Blimy`                                     | 128 name-only + many mixed | Complete, 0 leftovers                    |
+| B   | New editor features (timeline, status bar, snippets, ext settings) | ~20 new + ~30 modified     | Complete, tested                         |
+| C   | Supabase backend (new, untracked)                                  | 8 new                      | Uncommitted, not deployed                |
+| D   | Agents-in-sidebar refactor                                         | ~24 modified               | Complete                                 |
+| E   | Hosted-AI restore (agent work, this session)                       | ~19 modified               | Complete, 55/55 tests                    |
+| F   | Startup/window-visibility fix (agent work, this session)           | 3 modified                 | Complete, needs your visual confirmation |
 
 ---
 
@@ -60,15 +60,15 @@ is finished: a full-text scan of all modified files returns **0** remaining `ath
 
 ### A1. URLs replaced with `blimy.dev` — **verified**
 
-| File | Change |
-|---|---|
-`src/config/services.json` | `websiteBaseUrl`, `apiBaseUrl`, `docsUrl`, `telemetryDocsUrl`, `pricingUrl`, `dashboardUrl`, `dashboardBillingUrl`, `dashboardCollaborationUrl`, `dashboardIntegrationsUrl`, `extensionsCdnBaseUrl`, `stableUpdateUrl`, `previewUpdateUrl` → `https://blimy.dev/...`; GitHub org → `blimydev/blimy` |
-`.env.example` | Added commented staging vars: `VITE_WEBSITE_URL`, `VITE_EXTENSIONS_CDN_BASE_URL`, `VITE_SKILLS_REGISTRY_URL`, `VITE_UPDATE_BASE_URL` → `https://staging.blimy.dev` |
-`README.md` | Install commands rewritten to `blimy.dev/install.sh`, `blimy.dev/install.ps1`, `blimy.dev/docs`, `blimydev/blimy` |
-`CONTRIBUTING.md` | Setup guide links → `blimy.dev/docs/contributing` |
-`src-tauri/tauri.conf.json` | Updater endpoint → `https://blimy.dev/api/update/stable`; deep-link scheme → `blimy` |
-`.github/workflows/*.yml` (7 files) | Repo/org references → `blimydev/blimy` |
-`nix/*.nix`, `flake.nix`, `.cargo/audit.toml` | Package/repo references |
+| File                                          | Change                                                                                                                                                                                                                                                                                              |
+| --------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `src/config/services.json`                    | `websiteBaseUrl`, `apiBaseUrl`, `docsUrl`, `telemetryDocsUrl`, `pricingUrl`, `dashboardUrl`, `dashboardBillingUrl`, `dashboardCollaborationUrl`, `dashboardIntegrationsUrl`, `extensionsCdnBaseUrl`, `stableUpdateUrl`, `previewUpdateUrl` → `https://blimy.dev/...`; GitHub org → `blimydev/blimy` |
+| `.env.example`                                | Added commented staging vars: `VITE_WEBSITE_URL`, `VITE_EXTENSIONS_CDN_BASE_URL`, `VITE_SKILLS_REGISTRY_URL`, `VITE_UPDATE_BASE_URL` → `https://staging.blimy.dev`                                                                                                                                  |
+| `README.md`                                   | Install commands rewritten to `blimy.dev/install.sh`, `blimy.dev/install.ps1`, `blimy.dev/docs`, `blimydev/blimy`                                                                                                                                                                                   |
+| `CONTRIBUTING.md`                             | Setup guide links → `blimy.dev/docs/contributing`                                                                                                                                                                                                                                                   |
+| `src-tauri/tauri.conf.json`                   | Updater endpoint → `https://blimy.dev/api/update/stable`; deep-link scheme → `blimy`                                                                                                                                                                                                                |
+| `.github/workflows/*.yml` (7 files)           | Repo/org references → `blimydev/blimy`                                                                                                                                                                                                                                                              |
+| `nix/*.nix`, `flake.nix`, `.cargo/audit.toml` | Package/repo references                                                                                                                                                                                                                                                                             |
 
 ### A2. Package, crate and product identity — **verified**
 
@@ -100,107 +100,107 @@ Non-legal Athas URLs were cleaned, but attribution text remains.
 
 Per-file history combining Git commits and local snapshots into one timeline.
 
-| File | Purpose |
-|---|---|
-`src/features/timeline/utils/timeline-entries.ts` | *(new)* Normalizes `GitCommit` and `LocalHistoryEntry` into a discriminated `TimelineEntry` union (`kind: "commit" \| "snapshot"`), because the two sources have different shapes and precision |
-`src/features/timeline/components/timeline-sidebar.tsx` | *(new)* Sidebar UI |
-`src/features/timeline/hooks/use-file-timeline.ts` | *(new)* Data hook |
-`src/features/timeline/hooks/use-timeline-entry-handlers.ts` | *(new)* Entry actions (restore, etc.) |
-`src/features/timeline/tests/timeline-entries.test.ts` | *(new)* Tests — 30 Rust tests + TS tests pass |
-`crates/version-control/src/git/commit.rs` | **+351 lines** — new `git_log_for_path()` / `_git_log_for_path()`: commits touching one file. Uses `Repo::open`, translates absolute path → repo-relative, and sorts `TOPOLOGICAL \| TIME` so a parent can follow a child when timestamps tie |
-`src-tauri/src/commands/version_control/git.rs` | +9 — registered the new command |
-`src-tauri/src/main.rs` | Registered `git_log_for_path` in the invoke handler |
-`crates/version-control/Cargo.toml` | +2 |
-`src/features/git/api/git-commits-api.ts` | +30 — frontend API binding |
-`src/features/git/stores/git.store.ts`, `src/features/editor/components/monaco-editor.tsx` | Integration |
+| File                                                                                       | Purpose                                                                                                                                                                                                                                       |
+| ------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `src/features/timeline/utils/timeline-entries.ts`                                          | _(new)_ Normalizes `GitCommit` and `LocalHistoryEntry` into a discriminated `TimelineEntry` union (`kind: "commit" \| "snapshot"`), because the two sources have different shapes and precision                                               |
+| `src/features/timeline/components/timeline-sidebar.tsx`                                    | _(new)_ Sidebar UI                                                                                                                                                                                                                            |
+| `src/features/timeline/hooks/use-file-timeline.ts`                                         | _(new)_ Data hook                                                                                                                                                                                                                             |
+| `src/features/timeline/hooks/use-timeline-entry-handlers.ts`                               | _(new)_ Entry actions (restore, etc.)                                                                                                                                                                                                         |
+| `src/features/timeline/tests/timeline-entries.test.ts`                                     | _(new)_ Tests — 30 Rust tests + TS tests pass                                                                                                                                                                                                 |
+| `crates/version-control/src/git/commit.rs`                                                 | **+351 lines** — new `git_log_for_path()` / `_git_log_for_path()`: commits touching one file. Uses `Repo::open`, translates absolute path → repo-relative, and sorts `TOPOLOGICAL \| TIME` so a parent can follow a child when timestamps tie |
+| `src-tauri/src/commands/version_control/git.rs`                                            | +9 — registered the new command                                                                                                                                                                                                               |
+| `src-tauri/src/main.rs`                                                                    | Registered `git_log_for_path` in the invoke handler                                                                                                                                                                                           |
+| `crates/version-control/Cargo.toml`                                                        | +2                                                                                                                                                                                                                                            |
+| `src/features/git/api/git-commits-api.ts`                                                  | +30 — frontend API binding                                                                                                                                                                                                                    |
+| `src/features/git/stores/git.store.ts`, `src/features/editor/components/monaco-editor.tsx` | Integration                                                                                                                                                                                                                                   |
 
-The doc comment explains the topological sort choice: *"Time alone lets a child sort ahead of its
-parent when two commits share a timestamp, and this walk reports a chain of edits to one file."*
+The doc comment explains the topological sort choice: _"Time alone lets a child sort ahead of its
+parent when two commits share a timestamp, and this walk reports a chain of edits to one file."_
 
 ### B2. Status bar — **verified**
 
-| File | Purpose |
-|---|---|
-`src/features/layout/components/status-bar/status-bar.tsx` | *(new)* Reads git branch, diagnostics counts, active buffer, editor view status; renders `NotificationsTrigger` |
-`src/features/layout/components/status-bar/editor-view-status.ts` | *(new)* Formatting helpers: indentation, language label, line ending, selection extent |
-`src/features/editor/stores/view-status.store.ts` | *(new)* Zustand store + `createSelectors`. Doc comment: *"The status bar reads editor facts it cannot derive itself... The editor surface reports them here because only it holds the live model."* |
-`src/features/layout/tests/status-bar-view-status.test.ts` | *(new)* Tests |
-`src/features/layout/components/main-layout.tsx` | +88 — hosts the bar |
-`src/features/notifications/components/notifications-trigger.tsx` | +12 — moved into the bar |
-`src/features/tabs/components/tab-history-navigation.tsx` | +2 |
-`src/features/tabs/components/tab-bar.tsx` | +8 |
+| File                                                              | Purpose                                                                                                                                                                                             |
+| ----------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `src/features/layout/components/status-bar/status-bar.tsx`        | _(new)_ Reads git branch, diagnostics counts, active buffer, editor view status; renders `NotificationsTrigger`                                                                                     |
+| `src/features/layout/components/status-bar/editor-view-status.ts` | _(new)_ Formatting helpers: indentation, language label, line ending, selection extent                                                                                                              |
+| `src/features/editor/stores/view-status.store.ts`                 | _(new)_ Zustand store + `createSelectors`. Doc comment: _"The status bar reads editor facts it cannot derive itself... The editor surface reports them here because only it holds the live model."_ |
+| `src/features/layout/tests/status-bar-view-status.test.ts`        | _(new)_ Tests                                                                                                                                                                                       |
+| `src/features/layout/components/main-layout.tsx`                  | +88 — hosts the bar                                                                                                                                                                                 |
+| `src/features/notifications/components/notifications-trigger.tsx` | +12 — moved into the bar                                                                                                                                                                            |
+| `src/features/tabs/components/tab-history-navigation.tsx`         | +2                                                                                                                                                                                                  |
+| `src/features/tabs/components/tab-bar.tsx`                        | +8                                                                                                                                                                                                  |
 
 ### B3. Local history actions — **verified**
 
-| File | Purpose |
-|---|---|
-`src/features/local-history/actions/local-history-entry-actions.ts` | *(new, 212 lines)* Record/rename/delete/restore entries; uses `showPromptDialog`, `sonner` toasts, emits `gitChanged` |
-`src/features/local-history/utils/local-history-format.ts` | *(new)* `formatSnapshotDate`, `getEntryTitle` |
-`src/features/editor/stores/buffer.store.ts` | +45 |
+| File                                                                | Purpose                                                                                                               |
+| ------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| `src/features/local-history/actions/local-history-entry-actions.ts` | _(new, 212 lines)_ Record/rename/delete/restore entries; uses `showPromptDialog`, `sonner` toasts, emits `gitChanged` |
+| `src/features/local-history/utils/local-history-format.ts`          | _(new)_ `formatSnapshotDate`, `getEntryTitle`                                                                         |
+| `src/features/editor/stores/buffer.store.ts`                        | +45                                                                                                                   |
 
 ### B4. Declarative extension contributions — **verified**
 
 Lets extensions declare commands and keybindings in their manifest instead of shipping JS.
 
-| File | Purpose |
-|---|---|
-`src/extensions/runtime/declarative-contributions.ts` | *(new)* Builds React command/keybinding contributions from manifests via `keymapRegistry` |
-`src/extensions/types/extension-contributions.ts` | *(new, +89)* `CommandContribution`, `KeybindingContribution` types |
-`src/extensions/types/extension-manifest.ts` | +46 — manifest schema additions |
-`src/extensions/runtime/extension-contribution-runtime.ts` | +21 |
-`extensions/schema/extension.schema.json` | +66 |
-`src/features/keymaps/commands/command-registry.ts`, `keybinding-presets.ts` | Registration |
-`src/extensions/tests/extension-contributions.test.ts` | *(new, +112)* |
-`src/extensions/tests/extension-contribution-runtime.test.ts` | *(new, +112)* |
+| File                                                                         | Purpose                                                                                   |
+| ---------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| `src/extensions/runtime/declarative-contributions.ts`                        | _(new)_ Builds React command/keybinding contributions from manifests via `keymapRegistry` |
+| `src/extensions/types/extension-contributions.ts`                            | _(new, +89)_ `CommandContribution`, `KeybindingContribution` types                        |
+| `src/extensions/types/extension-manifest.ts`                                 | +46 — manifest schema additions                                                           |
+| `src/extensions/runtime/extension-contribution-runtime.ts`                   | +21                                                                                       |
+| `extensions/schema/extension.schema.json`                                    | +66                                                                                       |
+| `src/features/keymaps/commands/command-registry.ts`, `keybinding-presets.ts` | Registration                                                                              |
+| `src/extensions/tests/extension-contributions.test.ts`                       | _(new, +112)_                                                                             |
+| `src/extensions/tests/extension-contribution-runtime.test.ts`                | _(new, +112)_                                                                             |
 
 ### B5. Extension settings store — **verified**
 
-| File | Purpose |
-|---|---|
-`src/extensions/settings/extension-settings-store.ts` | *(new)* Doc comment: *"blimy's own `Settings` type is closed, so extension settings are not merged into it. They live here instead, keyed by a qualified `<extensionId>.<key>` name... The manifest `default` seeds the value once, so extensions never see `undefined`."* |
-`src/extensions/tests/extension-settings-store.test.ts` | *(new)* |
-`src/extensions/registry/extension-store.ts` | +45 |
+| File                                                    | Purpose                                                                                                                                                                                                                                                                    |
+| ------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `src/extensions/settings/extension-settings-store.ts`   | _(new)_ Doc comment: _"blimy's own `Settings` type is closed, so extension settings are not merged into it. They live here instead, keyed by a qualified `<extensionId>.<key>` name... The manifest `default` seeds the value once, so extensions never see `undefined`."_ |
+| `src/extensions/tests/extension-settings-store.test.ts` | _(new)_                                                                                                                                                                                                                                                                    |
+| `src/extensions/registry/extension-store.ts`            | +45                                                                                                                                                                                                                                                                        |
 
 ### B6. Monaco snippet provider — **verified**
 
-| File | Purpose |
-|---|---|
-`src/features/editor/engines/monaco/snippet-provider.ts` | *(new)* Registers Monaco snippet completions from extension manifests; resolves the file path from a `blimy://` model URI |
+| File                                                     | Purpose                                                                                                                   |
+| -------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| `src/features/editor/engines/monaco/snippet-provider.ts` | _(new)_ Registers Monaco snippet completions from extension manifests; resolves the file path from a `blimy://` model URI |
 
 ### B7. Other feature edits — **verified**
 
-| File | Change |
-|---|---|
-`src/features/quick-open/components/quick-open.tsx` | +74 — new provider/action results |
-`src/features/quick-open/hooks/use-quick-open.ts` | +44 |
-`src/features/file-explorer/components/file-explorer-pane.tsx` | +97 — outline folded into the sidebar accordion alongside Folders |
-`src/features/layout/components/sidebar/activity-chrome.tsx` | **−91** — removed, replaced by status bar / new chrome |
-`src/features/layout/components/sidebar/sidebar-pane.tsx` | +15 |
-`src/features/layout/config/item-order.ts` | +10 |
-`src/features/window/components/title-bar/title-leading.tsx` | −54 |
-`src/features/window/components/title-bar/title-bar.tsx` | +33 |
-`src/features/terminal/components/terminal-container.tsx` | +22 |
-`src/features/terminal/utils/frontend-terminal-session.ts` | +24 |
-`src/features/bootstrap/bootstrap-sync.ts` | +3 |
+| File                                                           | Change                                                            |
+| -------------------------------------------------------------- | ----------------------------------------------------------------- |
+| `src/features/quick-open/components/quick-open.tsx`            | +74 — new provider/action results                                 |
+| `src/features/quick-open/hooks/use-quick-open.ts`              | +44                                                               |
+| `src/features/file-explorer/components/file-explorer-pane.tsx` | +97 — outline folded into the sidebar accordion alongside Folders |
+| `src/features/layout/components/sidebar/activity-chrome.tsx`   | **−91** — removed, replaced by status bar / new chrome            |
+| `src/features/layout/components/sidebar/sidebar-pane.tsx`      | +15                                                               |
+| `src/features/layout/config/item-order.ts`                     | +10                                                               |
+| `src/features/window/components/title-bar/title-leading.tsx`   | −54                                                               |
+| `src/features/window/components/title-bar/title-bar.tsx`       | +33                                                               |
+| `src/features/terminal/components/terminal-container.tsx`      | +22                                                               |
+| `src/features/terminal/utils/frontend-terminal-session.ts`     | +24                                                               |
+| `src/features/bootstrap/bootstrap-sync.ts`                     | +3                                                                |
 
 ---
 
 ## 5. C. Supabase backend — all untracked, none deployed
 
-**verified.** This answers the earlier question "is my backend ready?" — backend *code* exists but is
+**verified.** This answers the earlier question "is my backend ready?" — backend _code_ exists but is
 entirely uncommitted, and the domain does not resolve.
 
-| File | Purpose |
-|---|---|
-`supabase/functions/ai-proxy/index.ts` | *(new)* Deno edge function — the hosted AI proxy (`/api/ai/*` equivalent) |
-`supabase/functions/stripe-webhook/index.ts` | *(new)* Deno edge function — Stripe signature verification (`STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, stripe@14.14.0) |
-`supabase-schema.sql` | *(new)* `profiles` table (maps to `AuthUser`), `subscriptions` table (maps to `SubscriptionInfo`) |
-`supabase/config.toml` | *(new)* Supabase project config |
-`supabase/.gitignore` | *(new)* |
-`src/lib/supabase.ts` | *(new)* Frontend client. Falls back to `https://placeholder.supabase.co` / `"placeholder"` when env vars are absent, so it never throws at import |
-`.env` | `VITE_SUPABASE_URL` + `VITE_SUPABASE_ANON_KEY` (untracked, real values — **do not commit**) |
-`src/features/window/services/auth-api.ts` | +56 — Supabase session path **alongside** the existing `/api/auth/*` calls. Reads `supabase.auth.getSession()`, converts the UUID to a numeric ID (`parseInt(user.id.replace(/-/g,'').slice(0,8), 16)`) for backward compatibility, then falls back to legacy `/api/auth/subscription` |
-`src-tauri/capabilities/main.json` | CSP `connect-src` gained `https://*.supabase.co`; dependency `@supabase/supabase-js ^2.117.2` in `package.json` |
+| File                                         | Purpose                                                                                                                                                                                                                                                                                |
+| -------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `supabase/functions/ai-proxy/index.ts`       | _(new)_ Deno edge function — the hosted AI proxy (`/api/ai/*` equivalent)                                                                                                                                                                                                              |
+| `supabase/functions/stripe-webhook/index.ts` | _(new)_ Deno edge function — Stripe signature verification (`STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, stripe@14.14.0)                                                                                                                                                              |
+| `supabase-schema.sql`                        | _(new)_ `profiles` table (maps to `AuthUser`), `subscriptions` table (maps to `SubscriptionInfo`)                                                                                                                                                                                      |
+| `supabase/config.toml`                       | _(new)_ Supabase project config                                                                                                                                                                                                                                                        |
+| `supabase/.gitignore`                        | _(new)_                                                                                                                                                                                                                                                                                |
+| `src/lib/supabase.ts`                        | _(new)_ Frontend client. Falls back to `https://placeholder.supabase.co` / `"placeholder"` when env vars are absent, so it never throws at import                                                                                                                                      |
+| `.env`                                       | `VITE_SUPABASE_URL` + `VITE_SUPABASE_ANON_KEY` (untracked, real values — **do not commit**)                                                                                                                                                                                            |
+| `src/features/window/services/auth-api.ts`   | +56 — Supabase session path **alongside** the existing `/api/auth/*` calls. Reads `supabase.auth.getSession()`, converts the UUID to a numeric ID (`parseInt(user.id.replace(/-/g,'').slice(0,8), 16)`) for backward compatibility, then falls back to legacy `/api/auth/subscription` |
+| `src-tauri/capabilities/main.json`           | CSP `connect-src` gained `https://*.supabase.co`; dependency `@supabase/supabase-js ^2.117.2` in `package.json`                                                                                                                                                                        |
 
 Verified state: the Supabase host **responds** (401 to a dummy key, as expected). `blimy.dev` **does
 not resolve** — so every URL in `services.json` and the updater endpoint is currently dead.
@@ -214,16 +214,16 @@ not resolve** — so every URL in `services.json` and the updater endpoint is cu
 **verified.** Opening an agent chat no longer opens a separate editor buffer; it switches the right
 sidebar to the Agents view. That is a real behaviour change, not a rename.
 
-| File | Change |
-|---|---|
-`src/features/ai/lib/open-agent-history.ts` | +13 — dropped `useBufferStore.openAgentBuffer`; now `switchToChat` + `setActiveRightSidebarView("agents")` + `setIsRightSidebarVisible(true)` |
-`src/features/ai/lib/open-codex-thread.ts` | +8 — same pattern |
-`src/features/ai/lib/open-new-agent-chat.ts` | +13 — same pattern |
-`src/features/ai/lib/add-selection-to-agent-chat.ts` | +11 |
-`src/features/ai/components/sidebar/agents-sidebar.tsx` | +70 |
-`src/features/ai/components/agent-launch-input.tsx`, `agent-start-view.tsx`, `chat-header.tsx`, `chat-input-bar.tsx` | Refactor follow-through |
-`src/features/ai/continuous-agents/{runner,runtime,resource}` | Continuous-agent UI follows the sidebar |
-`src/features/ai/detached/agent-window-service.ts` | +5 |
+| File                                                                                                                 | Change                                                                                                                                        |
+| -------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| `src/features/ai/lib/open-agent-history.ts`                                                                          | +13 — dropped `useBufferStore.openAgentBuffer`; now `switchToChat` + `setActiveRightSidebarView("agents")` + `setIsRightSidebarVisible(true)` |
+| `src/features/ai/lib/open-codex-thread.ts`                                                                           | +8 — same pattern                                                                                                                             |
+| `src/features/ai/lib/open-new-agent-chat.ts`                                                                         | +13 — same pattern                                                                                                                            |
+| `src/features/ai/lib/add-selection-to-agent-chat.ts`                                                                 | +11                                                                                                                                           |
+| `src/features/ai/components/sidebar/agents-sidebar.tsx`                                                              | +70                                                                                                                                           |
+| `src/features/ai/components/agent-launch-input.tsx`, `agent-start-view.tsx`, `chat-header.tsx`, `chat-input-bar.tsx` | Refactor follow-through                                                                                                                       |
+| `src/features/ai/continuous-agents/{runner,runtime,resource}`                                                        | Continuous-agent UI follows the sidebar                                                                                                       |
+| `src/features/ai/detached/agent-window-service.ts`                                                                   | +5                                                                                                                                            |
 
 ---
 
@@ -289,11 +289,11 @@ you got a black screen with no diagnostics.
 
 ### Changes made (net effect vs HEAD: **+1 line**)
 
-| File | Change |
-|---|---|
-`src-tauri/tauri.conf.json` | Removed `"visible": false` → restored to HEAD default |
-`src-tauri/src/commands/ui/window.rs` | Un-commented `window.show()` + `set_focus()` → **now zero diff vs HEAD** |
-`src-tauri/capabilities/main.json` | **Added** `core:window:allow-show` (the one new line) |
+| File                                  | Change                                                                   |
+| ------------------------------------- | ------------------------------------------------------------------------ |
+| `src-tauri/tauri.conf.json`           | Removed `"visible": false` → restored to HEAD default                    |
+| `src-tauri/src/commands/ui/window.rs` | Un-commented `window.show()` + `set_focus()` → **now zero diff vs HEAD** |
+| `src-tauri/capabilities/main.json`    | **Added** `core:window:allow-show` (the one new line)                    |
 
 Also still in place from before: `src/App.tsx` +23/−? adds `getCurrentWindow().show()` and a
 `Skeleton` in the initial shell; `src/main.tsx` +19/−? removed the `use(terminalSessionReady)` gate
@@ -309,14 +309,16 @@ This is a real, separate, first-run-only problem:
 
 - `vite.config.ts:167-168` → `port: 1420, strictPort: true`
 - Tauri launches the window as soon as the port **accepts a TCP connection**
-- But Vite binds the port *before* `[optimizer] bundling dependencies` finishes
+- But Vite binds the port _before_ `[optimizer] bundling dependencies` finishes
 - During that window, `/src/main.tsx` hangs — I reproduced a >60s timeout, then 0.2s once warm
 - Tauri's window opens onto a server that cannot serve modules → blank page → black screen
 
 Observed in your log:
+
 ```
 [vite+] (client) [optimizer] bundling dependencies... do not run anything this is showing for a while
 ```
+
 Editing `tauri.conf.json` invalidates the optimizer cache, so this recurs whenever that file changes.
 
 ---
@@ -325,13 +327,13 @@ Editing `tauri.conf.json` invalidates the optimizer cache, so this recurs whenev
 
 **verified.** All icon sets were regenerated for the new brand. Every one is a size reduction.
 
-| Set | Files | Example |
-|---|---|---|
-`src-tauri/icons/prod/` | 50 | `icon.icns` 527,926 → 401,476 bytes |
-`src-tauri/icons/preview/` | 50 | `icon.icns` 1,161,214 → 401,476 bytes |
-`src-tauri/icons/dev/` | 50 | `icon.icns` 1,161,214 → 401,476 bytes |
-`src-tauri/icons/` (root, iOS, Android) | 51 | `icon.icns` 965,773 → 401,476 bytes |
-`public/logo.png` | 1 | 244,838 → 22,428 bytes |
+| Set                                     | Files | Example                               |
+| --------------------------------------- | ----- | ------------------------------------- |
+| `src-tauri/icons/prod/`                 | 50    | `icon.icns` 527,926 → 401,476 bytes   |
+| `src-tauri/icons/preview/`              | 50    | `icon.icns` 1,161,214 → 401,476 bytes |
+| `src-tauri/icons/dev/`                  | 50    | `icon.icns` 1,161,214 → 401,476 bytes |
+| `src-tauri/icons/` (root, iOS, Android) | 51    | `icon.icns` 965,773 → 401,476 bytes   |
+| `public/logo.png`                       | 1     | 244,838 → 22,428 bytes                |
 
 `public/logo.svg` was **deleted** and `index.html` now references `/logo.png`.
 `public/chrome.svg` deleted; `chrome.svg` + `src/assets/chrome.svg` added.
@@ -341,11 +343,11 @@ Editing `tauri.conf.json` invalidates the optimizer cache, so this recurs whenev
 
 ## 10. Deleted / renamed files
 
-| Change | From | To |
-|---|---|---|
-Deleted | `public/logo.svg` | replaced by `logo.png` |
-Deleted | `src-tauri/linux/athas.desktop` | → `src-tauri/linux/blimy.desktop` *(new, untracked)* |
-Renamed temp scripts | `.tmp-rename-*.ps1`, `.tmp-rename-crates.ps1` | still present, edited (4–40 lines each) |
+| Change               | From                                          | To                                                   |
+| -------------------- | --------------------------------------------- | ---------------------------------------------------- |
+| Deleted              | `public/logo.svg`                             | replaced by `logo.png`                               |
+| Deleted              | `src-tauri/linux/athas.desktop`               | → `src-tauri/linux/blimy.desktop` _(new, untracked)_ |
+| Renamed temp scripts | `.tmp-rename-*.ps1`, `.tmp-rename-crates.ps1` | still present, edited (4–40 lines each)              |
 
 `src-tauri/tauri.preview.conf.json` was **not** updated by the rename and still contains three
 Athas-era values — see below.
@@ -360,11 +362,11 @@ Athas-era values — see below.
 
 The preview config is used by `bun dev` (`scripts/dev.ts:47`) and was missed by the rename:
 
-| Line | Current | Should match |
-|---|---|---|
-`identifier` | `com.code.Blimy.preview` | `com.code.blimy.preview` (per `scripts/dev.ts:55`) |
-`updater.endpoints` | `https://Blimy.dev/api/update/preview` | `https://blimy.dev/...` |
-`deep-link.desktop.schemes` | `Blimy-preview` | `blimy-preview` (main config uses `blimy`) |
+| Line                        | Current                                | Should match                                       |
+| --------------------------- | -------------------------------------- | -------------------------------------------------- |
+| `identifier`                | `com.code.Blimy.preview`               | `com.code.blimy.preview` (per `scripts/dev.ts:55`) |
+| `updater.endpoints`         | `https://Blimy.dev/api/update/preview` | `https://blimy.dev/...`                            |
+| `deep-link.desktop.schemes` | `Blimy-preview`                        | `blimy-preview` (main config uses `blimy`)         |
 
 ### 11.2 Capital-B host blocks all API calls
 
@@ -395,7 +397,7 @@ All three trigger `non_upper_case_globals` warnings. Cosmetic only.
 ### 11.5 Mojibake in restored UI
 
 `src/features/settings/components/ai/blimy-plan-section.tsx` contains pre-existing broken encoding:
-`Signing inâ€¦`, ` Â· `. Reverted along with the rest of that file.
+`Signing inâ€¦`, `Â·`. Reverted along with the rest of that file.
 
 ### 11.6 5 pre-existing TypeScript errors
 

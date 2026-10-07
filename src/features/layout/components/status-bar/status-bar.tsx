@@ -74,7 +74,9 @@ export function StatusBar() {
     <div className="ui-text-sm flex h-6 w-full shrink-0 items-center justify-between border-t border-border bg-accent font-medium text-foreground">
       <div className="flex h-full items-center">
         {branch && (
-          <StatusItem title={`Git branch ${branch}${hasChanges ? " with uncommitted changes" : ""}`}>
+          <StatusItem
+            title={`Git branch ${branch}${hasChanges ? " with uncommitted changes" : ""}`}
+          >
             <GitBranchIcon className="size-3.5" />
             <span>
               {branch}
@@ -135,4 +137,3 @@ export function StatusBar() {
     </div>
   );
 }
-

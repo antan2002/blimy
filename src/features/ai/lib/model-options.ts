@@ -23,6 +23,9 @@ export function resolveModelOptions({
       id: model.id,
       name: model.name,
       ...(existingModel?.proOnly === undefined ? {} : { proOnly: existingModel.proOnly }),
+      ...((model.tier ?? existingModel?.tier) === undefined
+        ? {}
+        : { tier: model.tier ?? existingModel?.tier }),
       ...((model.contextWindow ?? existingModel?.contextWindow) === undefined
         ? {}
         : { contextWindow: model.contextWindow ?? existingModel?.contextWindow }),

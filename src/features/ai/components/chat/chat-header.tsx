@@ -196,8 +196,6 @@ export function ChatHeader({
                 <UploadIcon />
               </Button>
 
-
-
               {!standalone && (
                 <ChatHistoryDropdown
                   chats={workspaceChats}

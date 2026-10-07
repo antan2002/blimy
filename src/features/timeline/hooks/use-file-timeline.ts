@@ -3,10 +3,7 @@ import { useShallow } from "zustand/react/shallow";
 import { useBufferStore } from "@/features/editor/stores/buffer.store";
 import { getBufferById } from "@/features/editor/utils/buffer-index";
 import { useFileSystemStore } from "@/features/file-system/stores/file-system.store";
-import {
-  isGitChangeRelevant,
-  subscribeToGitChanges,
-} from "@/features/git/events/git-events";
+import { isGitChangeRelevant, subscribeToGitChanges } from "@/features/git/events/git-events";
 import { getGitLogForPath } from "@/features/git/api/git-commits-api";
 import { useGitStore } from "@/features/git/stores/git.store";
 import type { GitCommit } from "@/features/git/types/git.types";

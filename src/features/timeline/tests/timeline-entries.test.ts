@@ -51,11 +51,7 @@ describe("timeline entry ordering", () => {
       [snapshot("snap", Date.parse("2026-01-02T10:00:00"))],
     );
 
-    expect(entries.map((entry) => entry.id)).toEqual([
-      "commit:bbb",
-      "snapshot:snap",
-      "commit:aaa",
-    ]);
+    expect(entries.map((entry) => entry.id)).toEqual(["commit:bbb", "snapshot:snap", "commit:aaa"]);
   });
 
   it("sorts a day-only commit above an earlier snapshot from that day", () => {
@@ -63,7 +59,10 @@ describe("timeline entry ordering", () => {
     // day. A morning snapshot is therefore older, which is the convention the
     // rest of the timeline reads by.
     const morning = Date.parse("2026-01-02T08:00:00");
-    const entries = mergeTimelineEntries([commit("day", "2026-01-02")], [snapshot("morning", morning)]);
+    const entries = mergeTimelineEntries(
+      [commit("day", "2026-01-02")],
+      [snapshot("morning", morning)],
+    );
 
     expect(entries.map((entry) => entry.id)).toEqual(["commit:day", "snapshot:morning"]);
   });
@@ -83,14 +82,20 @@ describe("timeline entry ordering", () => {
     // taken at 23:30 sorts below the commit. That is the cost of not knowing a
     // commit's time, and it is the same trade VS Code makes.
     const lateEvening = Date.parse("2026-01-02T23:30:00");
-    const entries = mergeTimelineEntries([commit("day", "2026-01-02")], [snapshot("late", lateEvening)]);
+    const entries = mergeTimelineEntries(
+      [commit("day", "2026-01-02")],
+      [snapshot("late", lateEvening)],
+    );
 
     expect(entries.map((entry) => entry.id)).toEqual(["commit:day", "snapshot:late"]);
   });
 
   it("orders a next-day snapshot above a same-day commit", () => {
     const nextMorning = Date.parse("2026-01-03T00:30:00");
-    const entries = mergeTimelineEntries([commit("day", "2026-01-02")], [snapshot("next", nextMorning)]);
+    const entries = mergeTimelineEntries(
+      [commit("day", "2026-01-02")],
+      [snapshot("next", nextMorning)],
+    );
 
     expect(entries.map((entry) => entry.id)).toEqual(["snapshot:next", "commit:day"]);
   });

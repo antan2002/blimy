@@ -346,15 +346,15 @@ function parseSubscriptionInfoResponse(payload: unknown): SubscriptionInfo | nul
             ? capabilities.intelligence
             : hasPaidAccess,
       settingsSync:
-        typeof capabilities.settingsSync === "boolean"
-          ? capabilities.settingsSync
-          : hasPaidAccess,
+        typeof capabilities.settingsSync === "boolean" ? capabilities.settingsSync : hasPaidAccess,
       cloudWorkspaces:
         typeof capabilities.cloudWorkspaces === "boolean"
           ? capabilities.cloudWorkspaces
           : hasPaidAccess,
       ownModelsOnly:
-        typeof capabilities.ownModelsOnly === "boolean" ? capabilities.ownModelsOnly : !hasPaidAccess,
+        typeof capabilities.ownModelsOnly === "boolean"
+          ? capabilities.ownModelsOnly
+          : !hasPaidAccess,
       collaboration:
         typeof capabilities.collaboration === "boolean"
           ? capabilities.collaboration
@@ -608,7 +608,10 @@ export const getAuthToken = async (key: string = "blimy_auth_token"): Promise<st
   }
 };
 
-export const storeAuthToken = async (token: string, key: string = "blimy_auth_token"): Promise<void> => {
+export const storeAuthToken = async (
+  token: string,
+  key: string = "blimy_auth_token",
+): Promise<void> => {
   await invoke("store_auth_token", { token, key });
   authTokenCache[key] = token;
 };

@@ -88,14 +88,15 @@ export function AgentStartView({ children, showQuickActions = false }: AgentStar
   ];
 
   const startView = (
-    <Empty className="mx-auto justify-end mb-0 max-w-2xl gap-5 px-2 pt-4 pb-2" data-slot="agent-start-view">
+    <Empty
+      className="mx-auto justify-end mb-0 max-w-2xl gap-5 px-2 pt-4 pb-2"
+      data-slot="agent-start-view"
+    >
       <EmptyHeader className="max-w-md">
         <EmptyTitle className="ui-text-lg">Where should we begin?</EmptyTitle>
       </EmptyHeader>
 
       {children}
-
-
     </Empty>
   );
 

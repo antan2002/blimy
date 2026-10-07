@@ -32,11 +32,9 @@ function json(body: unknown, status: number): Response {
 }
 
 function anonClient(req: Request) {
-  return createClient(
-    Deno.env.get("SUPABASE_URL") ?? "",
-    Deno.env.get("SUPABASE_ANON_KEY") ?? "",
-    { global: { headers: { Authorization: req.headers.get("Authorization") ?? "" } } },
-  );
+  return createClient(Deno.env.get("SUPABASE_URL") ?? "", Deno.env.get("SUPABASE_ANON_KEY") ?? "", {
+    global: { headers: { Authorization: req.headers.get("Authorization") ?? "" } },
+  });
 }
 
 function serviceClient() {
@@ -135,7 +133,8 @@ serve(async (req) => {
   if (row && revision! < row.revision) {
     return json(
       {
-        error: "Settings changed on another device. Reload saved settings to discard this device's draft.",
+        error:
+          "Settings changed on another device. Reload saved settings to discard this device's draft.",
         revision: row.revision,
       },
       409,
@@ -143,18 +142,16 @@ serve(async (req) => {
   }
 
   const nextRevision = (row?.revision ?? 0) + 1;
-  const { error: writeError } = await db
-    .from("ai_settings")
-    .upsert(
-      {
-        user_id: user.id,
-        scope,
-        revision: nextRevision,
-        preferences,
-        updated_at: new Date().toISOString(),
-      },
-      { onConflict: "user_id,scope" },
-    );
+  const { error: writeError } = await db.from("ai_settings").upsert(
+    {
+      user_id: user.id,
+      scope,
+      revision: nextRevision,
+      preferences,
+      updated_at: new Date().toISOString(),
+    },
+    { onConflict: "user_id,scope" },
+  );
 
   if (writeError) return json({ error: "Could not save AI settings." }, 502);
 

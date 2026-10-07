@@ -198,7 +198,7 @@ const GitRemoteManager = ({ query, repoPath, onRefresh }: GitRemoteManagerProps)
                       <ComboboxList>
                         {githubRepos
                           .filter((repo) =>
-                            repo.fullName.toLowerCase().includes(newRemoteUrl.toLowerCase())
+                            repo.fullName.toLowerCase().includes(newRemoteUrl.toLowerCase()),
                           )
                           .map((repo) => (
                             <ComboboxItem key={repo.id} value={repo.cloneUrl}>
@@ -206,7 +206,7 @@ const GitRemoteManager = ({ query, repoPath, onRefresh }: GitRemoteManagerProps)
                             </ComboboxItem>
                           ))}
                         {githubRepos.filter((repo) =>
-                          repo.fullName.toLowerCase().includes(newRemoteUrl.toLowerCase())
+                          repo.fullName.toLowerCase().includes(newRemoteUrl.toLowerCase()),
                         ).length === 0 && <ComboboxEmpty>No repositories found</ComboboxEmpty>}
                       </ComboboxList>
                     </ComboboxContent>

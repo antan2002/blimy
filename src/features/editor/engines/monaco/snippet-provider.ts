@@ -22,36 +22,38 @@ export function registerMonacoSnippetProvider(): void {
   if (providerRegistered) return;
   providerRegistered = true;
 
-  languages.registerCompletionItemProvider({ scheme: "blimy", pattern: "**/*" }, {
-    triggerCharacters: [],
-    provideCompletionItems(model, position) {
-      const filePath = filePathFromModel(model);
-      const languageId = extensionRegistry.getLanguageId(filePath);
-      if (!languageId) return { suggestions: [] };
+  languages.registerCompletionItemProvider(
+    { scheme: "blimy", pattern: "**/*" },
+    {
+      triggerCharacters: [],
+      provideCompletionItems(model, position) {
+        const filePath = filePathFromModel(model);
+        const languageId = extensionRegistry.getLanguageId(filePath);
+        if (!languageId) return { suggestions: [] };
 
-      const snippets = extensionRegistry.getSnippetsForLanguage(languageId);
-      if (snippets.length === 0) return { suggestions: [] };
+        const snippets = extensionRegistry.getSnippetsForLanguage(languageId);
+        if (snippets.length === 0) return { suggestions: [] };
 
-      const word = model.getWordUntilPosition(position);
-      const range = new MonacoRange(
-        position.lineNumber,
-        word.startColumn,
-        position.lineNumber,
-        word.endColumn,
-      );
+        const word = model.getWordUntilPosition(position);
+        const range = new MonacoRange(
+          position.lineNumber,
+          word.startColumn,
+          position.lineNumber,
+          word.endColumn,
+        );
 
-      return {
-        suggestions: snippets.map((snippet) => ({
-          label: snippet.prefix,
-          kind: Monaco.languages.CompletionItemKind.Snippet,
-          insertText: toSnippetBody(snippet),
-          insertTextRules:
-            Monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
-          documentation: snippet.description,
-          detail: `snippet: ${snippet.prefix}`,
-          range,
-        })),
-      };
+        return {
+          suggestions: snippets.map((snippet) => ({
+            label: snippet.prefix,
+            kind: Monaco.languages.CompletionItemKind.Snippet,
+            insertText: toSnippetBody(snippet),
+            insertTextRules: Monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+            documentation: snippet.description,
+            detail: `snippet: ${snippet.prefix}`,
+            range,
+          })),
+        };
+      },
     },
-  });
+  );
 }

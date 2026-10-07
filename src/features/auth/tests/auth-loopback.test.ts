@@ -51,8 +51,7 @@ describe("auth loopback callback", () => {
   });
 
   it("reports no code when the provider reports an error instead", () => {
-    const url =
-      "http://127.0.0.1:38217/callback?error=access_denied&error_description=User+denied";
+    const url = "http://127.0.0.1:38217/callback?error=access_denied&error_description=User+denied";
 
     expect(isAuthCallback(url)).toBe(true);
     expect(new URL(url).searchParams.get("error_description")).toBe("User denied");

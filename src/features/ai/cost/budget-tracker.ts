@@ -22,7 +22,12 @@ export class BudgetTracker {
   private steps = 0;
 
   /** Records what one model request cost, and returns the new running total. */
-  addUsage(modelId: string, inputTokens: number, outputTokens: number, providerId?: string): number {
+  addUsage(
+    modelId: string,
+    inputTokens: number,
+    outputTokens: number,
+    providerId?: string,
+  ): number {
     this.inputTokens += Number.isFinite(inputTokens) && inputTokens > 0 ? inputTokens : 0;
     this.outputTokens += Number.isFinite(outputTokens) && outputTokens > 0 ? outputTokens : 0;
     this.costUsd += calculateCost(modelId, inputTokens, outputTokens, providerId);
@@ -100,7 +105,9 @@ export class TurnBudget {
 
 /** The message a task ends with when its budget stops it. */
 export function formatBudgetStopMessage(stop: BudgetStop): string {
-  return `Stopped: this task reached its budget of $${stop.limitUsd.toFixed(2)} ` +
+  return (
+    `Stopped: this task reached its budget of $${stop.limitUsd.toFixed(2)} ` +
     `after spending $${stop.costUsd.toFixed(2)}. ` +
-    "Raise the limit in AI settings to let it keep going.";
+    "Raise the limit in AI settings to let it keep going."
+  );
 }

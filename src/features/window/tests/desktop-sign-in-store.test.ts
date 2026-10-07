@@ -67,9 +67,7 @@ describe("shared desktop sign-in", () => {
   it("signs in with google when asked", async () => {
     const { store } = setup();
     await store.getState().actions.signIn("google");
-    expect(signInWithOAuth).toHaveBeenCalledWith(
-      expect.objectContaining({ provider: "google" }),
-    );
+    expect(signInWithOAuth).toHaveBeenCalledWith(expect.objectContaining({ provider: "google" }));
   });
 
   it("opens the same pending session again without asking the provider twice", async () => {

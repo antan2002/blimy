@@ -1,8 +1,5 @@
 import { supabase } from "@/features/auth/lib/supabase";
-import {
-  loadAllChatsFromDb,
-  saveChatToDb,
-} from "@/features/ai/services/ai-chat-history-service";
+import { loadAllChatsFromDb, saveChatToDb } from "@/features/ai/services/ai-chat-history-service";
 import { useAuthStore } from "@/features/window/stores/auth.store";
 import type { Chat, Message } from "@/features/ai/types/ai-chat.types";
 
@@ -34,10 +31,7 @@ export interface CloudSessionRestoreDeps {
 /** Cloud messages lose per-message timestamps, so earlier turns are spread before the anchor. */
 const RESTORE_STEP_MS = 1000;
 
-function toMessage(
-  entry: { role?: unknown; content?: unknown },
-  timestamp: Date,
-): Message | null {
+function toMessage(entry: { role?: unknown; content?: unknown }, timestamp: Date): Message | null {
   const role = entry?.role === "user" || entry?.role === "assistant" ? entry.role : null;
   const content = typeof entry?.content === "string" ? entry.content : "";
   if (!role || !content.trim()) return null;
@@ -58,7 +52,9 @@ export function cloudSessionToChat(record: CloudSessionRecord): Chat | null {
       timestamp: new Date(anchor.getTime() - (entries.length - 1 - index) * RESTORE_STEP_MS),
       entry,
     }))
-    .map(({ entry, timestamp }) => toMessage(entry as { role?: unknown; content?: unknown }, timestamp))
+    .map(({ entry, timestamp }) =>
+      toMessage(entry as { role?: unknown; content?: unknown }, timestamp),
+    )
     .filter((message): message is Message => message !== null);
   if (messages.length === 0 && record.content.trim()) {
     messages.push({

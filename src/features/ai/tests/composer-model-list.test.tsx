@@ -127,7 +127,9 @@ async function open() {
 }
 async function search(value: string) {
   await act(async () => {
-    const input = document.querySelector<HTMLInputElement>('input[placeholder="Select a model..."]')!;
+    const input = document.querySelector<HTMLInputElement>(
+      'input[placeholder="Select a model..."]',
+    )!;
     Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value")!.set!.call(input, value);
     input.dispatchEvent(new Event("input", { bubbles: true }));
   });

@@ -70,9 +70,7 @@ export function useTimelineEntryHandlers(
       const previousSnapshot =
         index < 0
           ? undefined
-          : entries
-              .slice(index + 1)
-              .find((candidate) => candidate.kind === "snapshot")?.snapshot;
+          : entries.slice(index + 1).find((candidate) => candidate.kind === "snapshot")?.snapshot;
       void compareLocalHistoryWithPrevious(filePath, entry.snapshot, previousSnapshot, fileName);
     },
     [entries, fileName, filePath],
@@ -121,5 +119,13 @@ export function useTimelineSelection() {
     setRenameValue("");
   }, []);
 
-  return { selectedId, setSelectedId, renamingId, renameValue, setRenameValue, startRename, cancelRename };
+  return {
+    selectedId,
+    setSelectedId,
+    renamingId,
+    renameValue,
+    setRenameValue,
+    startRename,
+    cancelRename,
+  };
 }

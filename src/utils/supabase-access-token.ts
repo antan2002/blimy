@@ -18,7 +18,7 @@ export async function getSupabaseAccessToken(): Promise<string | null> {
   const { supabase } = await import("@/features/auth/lib/supabase");
   const { data } = await supabase.auth.getSession();
   const session = data.session;
-  
+
   const getFallbackToken = async () => {
     const { getAuthToken } = await import("@/features/window/services/auth-api");
     const raw = await getAuthToken();
@@ -37,8 +37,7 @@ export async function getSupabaseAccessToken(): Promise<string | null> {
   if (!session?.access_token) return getFallbackToken();
 
   const expiresAtSeconds = session.expires_at;
-  const isExpired =
-    expiresAtSeconds == null || expiresAtSeconds * 1000 - Date.now() <= 30_000;
+  const isExpired = expiresAtSeconds == null || expiresAtSeconds * 1000 - Date.now() <= 30_000;
   if (!isExpired) return session.access_token;
 
   const { data: refreshed, error } = await supabase.auth.refreshSession();

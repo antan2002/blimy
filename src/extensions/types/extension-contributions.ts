@@ -215,7 +215,10 @@ export interface RegisteredConfigurationProperty extends ConfigurationProperty {
 export function getManifestConfigurationProperties(
   manifest: ExtensionManifest,
 ): RegisteredConfigurationProperty[] {
-  const properties = [...(manifest.configuration || []), ...(manifest.contributes?.configuration || [])];
+  const properties = [
+    ...(manifest.configuration || []),
+    ...(manifest.contributes?.configuration || []),
+  ];
   const seen = new Set<string>();
   const result: RegisteredConfigurationProperty[] = [];
 

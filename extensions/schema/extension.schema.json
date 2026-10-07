@@ -329,15 +329,7 @@
           "pattern": "^[A-Za-z0-9_.-]+$"
         },
         "type": {
-          "enum": [
-            "boolean",
-            "number",
-            "integer",
-            "string",
-            "array",
-            "object",
-            "enum"
-          ]
+          "enum": ["boolean", "number", "integer", "string", "array", "object", "enum"]
         },
         "default": {},
         "description": {

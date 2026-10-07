@@ -18,7 +18,7 @@ serve(async (req: Request) => {
 
   const body = await req.text();
   let event;
-  
+
   try {
     event = stripe.webhooks.constructEvent(body, signature, endpointSecret);
   } catch (err) {
@@ -28,21 +28,27 @@ serve(async (req: Request) => {
 
   const supabaseClient = createClient(
     Deno.env.get("SUPABASE_URL") ?? "",
-    Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
+    Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
   );
 
-  if (event.type === "customer.subscription.created" || event.type === "customer.subscription.updated") {
+  if (
+    event.type === "customer.subscription.created" ||
+    event.type === "customer.subscription.updated"
+  ) {
     const subscription = event.data.object;
     // You should store Stripe Customer ID on user metadata and look it up here
     // For now we map via metadata on the subscription
-    const userId = subscription.metadata.user_id; 
-    
+    const userId = subscription.metadata.user_id;
+
     if (userId) {
-      await supabaseClient.from("subscriptions").update({
-        status: subscription.status === "active" ? "pro" : "free",
-        plan: "pro", // derive plan from product id in a real app
-        renews_at: new Date(subscription.current_period_end * 1000).toISOString(),
-      }).eq("user_id", userId);
+      await supabaseClient
+        .from("subscriptions")
+        .update({
+          status: subscription.status === "active" ? "pro" : "free",
+          plan: "pro", // derive plan from product id in a real app
+          renews_at: new Date(subscription.current_period_end * 1000).toISOString(),
+        })
+        .eq("user_id", userId);
     }
   }
 

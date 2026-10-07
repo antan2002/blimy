@@ -1,4 +1,5 @@
 import type { AIMessage } from "@/features/ai/types/messages.types";
+import type { ModelTier } from "@/features/ai/lib/model-tier";
 
 export interface ProviderConfig {
   id: string;
@@ -35,6 +36,8 @@ export interface ProviderModel {
   cachedInput?: number;
   /** Whether the model reads images, when the catalog reports it (blimy). */
   supportsImages?: boolean;
+  /** The plan tier this hosted model requires; sent per model by the server catalog. */
+  tier?: ModelTier;
 }
 
 export abstract class AIProvider {

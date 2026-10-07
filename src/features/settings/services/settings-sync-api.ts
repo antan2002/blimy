@@ -37,9 +37,10 @@ async function request<T>(init?: RequestInit): Promise<T> {
     },
     signal: AbortSignal.timeout(10000),
   });
-  const body = (await response.json().catch(() => null)) as
-    | { snapshot?: CloudSettingsSyncSnapshot | null; error?: string }
-    | null;
+  const body = (await response.json().catch(() => null)) as {
+    snapshot?: CloudSettingsSyncSnapshot | null;
+    error?: string;
+  } | null;
   if (!response.ok)
     throw new SettingsSyncApiError(
       body?.error || `Settings sync failed (${response.status}).`,

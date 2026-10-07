@@ -16,7 +16,8 @@ function getAgentIconUrl(agent: AgentOption) {
   const id = agent.id.toLowerCase();
 
   let iconName = `${id}-color.jpg`;
-  if (name.includes("codex") || name.includes("openai") || name.includes("gpt")) iconName = "openai-color.jpg";
+  if (name.includes("codex") || name.includes("openai") || name.includes("gpt"))
+    iconName = "openai-color.jpg";
   else if (name.includes("claude") || name.includes("anthropic")) iconName = "anthropic-color.jpg";
   else if (name.includes("gemini") || name.includes("google")) iconName = "google-color.jpg";
   else if (name.includes("meta") || name.includes("llama")) iconName = "meta-color.jpg";
@@ -70,7 +71,11 @@ export function AgentsSection() {
         }
       `}</style>
       <div className="relative mb-6 h-40 w-full overflow-hidden rounded-xl border border-overlay-border shadow-sm">
-        <img src="/agent-banner.jpg" alt="Available AI Agents Banner" className="block h-full w-full object-cover object-bottom" />
+        <img
+          src="/agent-banner.jpg"
+          alt="Available AI Agents Banner"
+          className="block h-full w-full object-cover object-bottom"
+        />
         <div className="absolute inset-0 bg-black/5 backdrop-blur-[1px]" />
 
         {/* Scattered Logos */}
@@ -79,17 +84,23 @@ export function AgentsSection() {
             <div
               key={item.id}
               className="absolute animate-float-agent"
-              style={{
-                left: `${item.x}%`,
-                top: `${item.y}%`,
-                '--rot': `${item.rotate}deg`,
-                '--scale': item.scale,
-                '--delay': `${(i % 7) * -1.2}s`,
-                pointerEvents: 'auto',
-              } as React.CSSProperties}
+              style={
+                {
+                  left: `${item.x}%`,
+                  top: `${item.y}%`,
+                  "--rot": `${item.rotate}deg`,
+                  "--scale": item.scale,
+                  "--delay": `${(i % 7) * -1.2}s`,
+                  pointerEvents: "auto",
+                } as React.CSSProperties
+              }
             >
               <div className="flex size-9 items-center justify-center overflow-hidden rounded-[10px] border border-white/20 bg-white shadow-lg backdrop-blur-md transition-transform duration-500 hover:scale-125 hover:z-10 cursor-default">
-                <img src={item.logo} alt="Agent Logo" className="size-full object-contain p-[3px]" />
+                <img
+                  src={item.logo}
+                  alt="Agent Logo"
+                  className="size-full object-contain p-[3px]"
+                />
               </div>
             </div>
           ))}
@@ -116,7 +127,9 @@ export function AgentsSection() {
             ) : agent.needsSetup || isCodex ? (
               <Button
                 onClick={() => {
-                  document.querySelector('[data-settings-section="Codex"]')?.scrollIntoView({ behavior: 'smooth' });
+                  document
+                    .querySelector('[data-settings-section="Codex"]')
+                    ?.scrollIntoView({ behavior: "smooth" });
                 }}
               >
                 {agent.isInstalled ? "Settings" : "Setup"}

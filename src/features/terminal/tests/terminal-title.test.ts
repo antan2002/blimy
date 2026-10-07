@@ -20,7 +20,9 @@ describe("normalizeTerminalTitle", () => {
   });
 
   it("rejects leaked ANSI fragments when their introducer became an unknown glyph", () => {
-    const title = "â–¡[0mâ–¡[27mâ–¡[24mâ–¡[Jâ–¡[01;32mâžœ â–¡[36mblimyâ–¡[00m " + "â–¡[?2004hlsâ–¡[?2004lâ–¡]2;ls";
+    const title =
+      "â–¡[0mâ–¡[27mâ–¡[24mâ–¡[Jâ–¡[01;32mâžœ â–¡[36mblimyâ–¡[00m " +
+      "â–¡[?2004hlsâ–¡[?2004lâ–¡]2;ls";
 
     expect(normalizeTerminalTitle(title)).toBeNull();
   });

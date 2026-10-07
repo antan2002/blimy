@@ -99,14 +99,14 @@ export function forgetExtensionConfiguration(extensionId: string): void {
   }
 }
 
-export function getExtensionConfigurationSettings(): Map<
-  string,
-  RegisteredConfigurationProperty
-> {
+export function getExtensionConfigurationSettings(): Map<string, RegisteredConfigurationProperty> {
   return new Map(properties);
 }
 
-export function getExtensionSetting<T = unknown>(qualifiedKey: string, fallback?: T): T | undefined {
+export function getExtensionSetting<T = unknown>(
+  qualifiedKey: string,
+  fallback?: T,
+): T | undefined {
   // A stored value only counts while its extension is registered, so a disabled
   // extension stops answering reads even though its value is still on disk.
   const property = properties.get(qualifiedKey);

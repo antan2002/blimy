@@ -18,7 +18,10 @@ interface NotificationsTriggerProps {
   size?: ButtonProps["size"];
 }
 
-export const NotificationsTrigger = ({ className, size = "lg" }: NotificationsTriggerProps = {}) => {
+export const NotificationsTrigger = ({
+  className,
+  size = "lg",
+}: NotificationsTriggerProps = {}) => {
   const notifications = useNotificationsStore.use.notifications();
   const github = useGitHubNotifications();
   const [isCommandVisible, setIsCommandVisible] = useState(false);

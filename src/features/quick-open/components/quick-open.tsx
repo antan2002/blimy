@@ -52,7 +52,11 @@ const QuickOpen = () => {
 
   const hasResults =
     openBufferFiles.length > 0 || recentFilesInResults.length > 0 || otherFiles.length > 0;
-  const totalResults = (showHelp ? HELP_ITEMS.length : 0) + openBufferFiles.length + recentFilesInResults.length + otherFiles.length;
+  const totalResults =
+    (showHelp ? HELP_ITEMS.length : 0) +
+    openBufferFiles.length +
+    recentFilesInResults.length +
+    otherFiles.length;
   const resultCount = isSymbolMode
     ? symbols.length
     : isWorkspaceSymbolMode
@@ -220,7 +224,8 @@ const QuickOpen = () => {
                   </div>
                 )}
                 {recentFilesInResults.map((file, index) => {
-                  const globalIndex = (showHelp ? HELP_ITEMS.length : 0) + openBufferFiles.length + index;
+                  const globalIndex =
+                    (showHelp ? HELP_ITEMS.length : 0) + openBufferFiles.length + index;
                   return (
                     <FileListItem
                       key={`recent-${file.path}`}
@@ -241,7 +246,11 @@ const QuickOpen = () => {
             {otherFiles.length > 0 && (
               <div className="p-0">
                 {otherFiles.map((file, index) => {
-                  const globalIndex = (showHelp ? HELP_ITEMS.length : 0) + openBufferFiles.length + recentFilesInResults.length + index;
+                  const globalIndex =
+                    (showHelp ? HELP_ITEMS.length : 0) +
+                    openBufferFiles.length +
+                    recentFilesInResults.length +
+                    index;
                   return (
                     <FileListItem
                       key={`other-${file.path}`}

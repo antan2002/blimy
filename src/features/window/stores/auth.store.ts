@@ -142,7 +142,7 @@ export function createAuthStore(
             state.isLoading = true;
             state.error = null;
           });
-          
+
           try {
             const token = await dependencies.getAuthToken();
             if (revision !== sessionRevision) return;

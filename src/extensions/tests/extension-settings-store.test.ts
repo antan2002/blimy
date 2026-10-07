@@ -135,10 +135,7 @@ describe("extension contributed settings", () => {
 
   it("restores persisted values on the next launch", () => {
     const persisted = new Map<string, string>();
-    persisted.set(
-      "blimy.extension-settings.v1",
-      JSON.stringify({ "blimy.eta.timeout": 42 }),
-    );
+    persisted.set("blimy.extension-settings.v1", JSON.stringify({ "blimy.eta.timeout": 42 }));
     Object.defineProperty(globalThis, "localStorage", {
       configurable: true,
       value: {

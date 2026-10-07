@@ -617,10 +617,7 @@ function TaskContent({
         </CardHeader>
         <CardContent>
           {task.lastChatId ? (
-            <Button
-              type="button"
-              onClick={() => openAgentSidebar(task.lastChatId!)}
-            >
+            <Button type="button" onClick={() => openAgentSidebar(task.lastChatId!)}>
               Open latest session
             </Button>
           ) : (

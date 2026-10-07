@@ -41,9 +41,8 @@ export function AuthListener() {
       const { useAuthStore } = await import("@/features/window/stores/auth.store");
       await useAuthStore.getState().actions.initialize();
 
-      const { useDesktopSignInStore } = await import(
-        "@/features/window/stores/desktop-sign-in.store"
-      );
+      const { useDesktopSignInStore } =
+        await import("@/features/window/stores/desktop-sign-in.store");
       useDesktopSignInStore.getState().actions.cancel();
 
       // Other windows keep their own Supabase client and secret cache, so signing in
@@ -66,8 +65,7 @@ export function AuthListener() {
           const parsed = new URL(url);
           code = parsed.searchParams.get("code");
           errorDescription =
-            parsed.searchParams.get("error_description") ??
-            parsed.searchParams.get("error");
+            parsed.searchParams.get("error_description") ?? parsed.searchParams.get("error");
         } catch (parseError) {
           console.error("[auth] Could not parse the callback URL:", parseError);
           handledCallbacks.delete(url);
@@ -76,9 +74,8 @@ export function AuthListener() {
 
         if (errorDescription) {
           console.error("[auth] The provider rejected sign-in:", errorDescription);
-          const { useDesktopSignInStore } = await import(
-            "@/features/window/stores/desktop-sign-in.store"
-          );
+          const { useDesktopSignInStore } =
+            await import("@/features/window/stores/desktop-sign-in.store");
           useDesktopSignInStore.setState({ isSigningIn: false, loginUrl: null });
           void stopAuthLoopback();
           continue;
@@ -93,9 +90,8 @@ export function AuthListener() {
               "Authentication > URL Configuration in the Supabase project. " +
               `Callback was: ${url}`,
           );
-          const { useDesktopSignInStore } = await import(
-            "@/features/window/stores/desktop-sign-in.store"
-          );
+          const { useDesktopSignInStore } =
+            await import("@/features/window/stores/desktop-sign-in.store");
           useDesktopSignInStore.setState({ isSigningIn: false, loginUrl: null });
           void stopAuthLoopback();
           continue;
@@ -106,9 +102,8 @@ export function AuthListener() {
           .then(async ({ error }) => {
             if (error) {
               console.error("[auth] Failed to exchange the code for a session:", error);
-              const { useDesktopSignInStore } = await import(
-                "@/features/window/stores/desktop-sign-in.store"
-              );
+              const { useDesktopSignInStore } =
+                await import("@/features/window/stores/desktop-sign-in.store");
               useDesktopSignInStore.setState({ isSigningIn: false, loginUrl: null });
               void stopAuthLoopback();
               return;
@@ -184,11 +179,11 @@ export function AuthListener() {
 async function applySessionChange() {
   const { useAuthStore } = await import("@/features/window/stores/auth.store");
   const { clearAuthTokenCache } = await import("@/features/window/services/auth-api");
-  
+
   // Clear the in-memory cache so `initialize` re-reads from secure storage.
   // Do NOT call removeAuthToken(), as that deletes the new token from the OS keychain!
   clearAuthTokenCache();
-  
+
   await useAuthStore.getState().actions.initialize();
 }
 

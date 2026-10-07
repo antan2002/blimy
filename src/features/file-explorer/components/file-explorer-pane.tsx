@@ -39,8 +39,15 @@ function FileExplorerPaneComponent() {
 
   return (
     <SidebarPanel className="relative p-0 flex flex-col h-full">
-      <Accordion type="multiple" defaultValue={["folders", "outline"]} className="flex-1 overflow-hidden flex flex-col h-full">
-        <AccordionItem value="folders" className="flex flex-col min-h-0 shrink-0 has-[[aria-expanded=true]]:flex-1 [&>[data-slot=accordion-content]]:flex-1 [&>[data-slot=accordion-content]]:flex [&>[data-slot=accordion-content]]:flex-col [&>[data-slot=accordion-content]]:min-h-0">
+      <Accordion
+        type="multiple"
+        defaultValue={["folders", "outline"]}
+        className="flex-1 overflow-hidden flex flex-col h-full"
+      >
+        <AccordionItem
+          value="folders"
+          className="flex flex-col min-h-0 shrink-0 has-[[aria-expanded=true]]:flex-1 [&>[data-slot=accordion-content]]:flex-1 [&>[data-slot=accordion-content]]:flex [&>[data-slot=accordion-content]]:flex-col [&>[data-slot=accordion-content]]:min-h-0"
+        >
           <AccordionTrigger className="uppercase text-xs font-semibold">Folders</AccordionTrigger>
           <AccordionContent className="flex-1 flex flex-col min-h-0 h-full overflow-hidden relative">
             {(!isFileTreeLoading || isSwitchingProject) && (
@@ -72,7 +79,10 @@ function FileExplorerPaneComponent() {
           </AccordionContent>
         </AccordionItem>
 
-        <AccordionItem value="outline" className="flex flex-col min-h-0 shrink-0 has-[[aria-expanded=true]]:flex-1 border-t border-border [&>[data-slot=accordion-content]]:flex-1 [&>[data-slot=accordion-content]]:flex [&>[data-slot=accordion-content]]:flex-col [&>[data-slot=accordion-content]]:min-h-0">
+        <AccordionItem
+          value="outline"
+          className="flex flex-col min-h-0 shrink-0 has-[[aria-expanded=true]]:flex-1 border-t border-border [&>[data-slot=accordion-content]]:flex-1 [&>[data-slot=accordion-content]]:flex [&>[data-slot=accordion-content]]:flex-col [&>[data-slot=accordion-content]]:min-h-0"
+        >
           <AccordionTrigger
             className="uppercase text-xs font-semibold"
             disabled={!activeBufferId || !showOutline}
@@ -90,7 +100,10 @@ function FileExplorerPaneComponent() {
           </AccordionContent>
         </AccordionItem>
 
-        <AccordionItem value="timeline" className="flex flex-col min-h-0 shrink-0 has-[[aria-expanded=true]]:flex-1 border-t border-border [&>[data-slot=accordion-content]]:flex-1 [&>[data-slot=accordion-content]]:flex [&>[data-slot=accordion-content]]:flex-col [&>[data-slot=accordion-content]]:min-h-0">
+        <AccordionItem
+          value="timeline"
+          className="flex flex-col min-h-0 shrink-0 has-[[aria-expanded=true]]:flex-1 border-t border-border [&>[data-slot=accordion-content]]:flex-1 [&>[data-slot=accordion-content]]:flex [&>[data-slot=accordion-content]]:flex-col [&>[data-slot=accordion-content]]:min-h-0"
+        >
           <AccordionTrigger className="uppercase text-xs font-semibold" disabled={!activeBufferId}>
             Timeline
           </AccordionTrigger>

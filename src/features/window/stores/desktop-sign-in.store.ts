@@ -42,13 +42,13 @@ export function createDesktopSignInStore(dependencies: Dependencies) {
                 skipBrowserRedirect: true, // We want to handle the URL opening
               },
             });
-            
+
             attempt.signal.throwIfAborted();
-            
+
             if (error || !data?.url) {
               throw new Error(error?.message || "Failed to get Supabase OAuth URL.");
             }
-            
+
             set({ loginUrl: data.url });
             await dependencies.open(data.url);
             // The browser returns the code to AuthListener via the deep link, which

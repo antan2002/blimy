@@ -560,11 +560,11 @@ export function MonacoEditor({
       line: position ? position.lineNumber : 1,
       column: position ? position.column : 1,
       lineCount: model.getLineCount(),
-      selectedCharacters: selection
-        ? model.getValueLengthInRange(selection) ?? 0
-        : 0,
+      selectedCharacters: selection ? (model.getValueLengthInRange(selection) ?? 0) : 0,
       selectedLines:
-        selection && !selection.isEmpty() ? selection.endLineNumber - selection.startLineNumber + 1 : 0,
+        selection && !selection.isEmpty()
+          ? selection.endLineNumber - selection.startLineNumber + 1
+          : 0,
       wordWrap,
       lspActive: extensionRegistry.isLspSupported(filePath),
     });

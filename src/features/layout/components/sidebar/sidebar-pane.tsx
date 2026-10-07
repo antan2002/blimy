@@ -19,7 +19,6 @@ import { useExtensionViews } from "@/extensions/ui/hooks/use-extension-views";
 
 // Loaded on demand so the layout does not pull the AI stores into its import graph.
 
-
 const WorkspaceSidebar = lazy(() =>
   import("@/features/workspace/team/components/workspace-sidebar").then((module) => ({
     default: module.WorkspaceSidebar,

@@ -47,9 +47,7 @@ export async function stopAuthLoopback(): Promise<void> {
 }
 
 /** Subscribe to the callback the listener captures. */
-export async function onAuthLoopbackCallback(
-  handler: (url: string) => void,
-): Promise<UnlistenFn> {
+export async function onAuthLoopbackCallback(handler: (url: string) => void): Promise<UnlistenFn> {
   return listen<string>(AUTH_LOOPBACK_EVENT, (event) => {
     handler(event.payload);
   });

@@ -27,8 +27,10 @@ export function resolveProFeatureAccess(
   // `hostedAi` means this account may run blimy-hosted models. Free has it. `intelligence`
   // means paid tier and stays reserved for the features free must not reach.
   const hasHostedAi = hasPaidStatusSnapshot || hasProductCapability(subscription, "hostedAi");
-  const hasIntelligence = hasPaidStatusSnapshot || hasProductCapability(subscription, "intelligence");
-  const hasSettingsSync = hasPaidStatusSnapshot || hasProductCapability(subscription, "settingsSync");
+  const hasIntelligence =
+    hasPaidStatusSnapshot || hasProductCapability(subscription, "intelligence");
+  const hasSettingsSync =
+    hasPaidStatusSnapshot || hasProductCapability(subscription, "settingsSync");
   const hasCloudWorkspaces =
     hasPaidStatusSnapshot || hasProductCapability(subscription, "cloudWorkspaces");
 
