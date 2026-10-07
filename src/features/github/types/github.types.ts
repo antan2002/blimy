@@ -232,3 +232,12 @@ export interface WorkflowListItem {
 export type PRFilter = "all" | "my-prs" | "review-requests";
 export type IssueFilter = "open" | "closed" | "all";
 export type WorkflowRunFilter = "all" | "in-progress" | "successful" | "failed";
+
+export interface RepositoryInfo {
+  id: number;
+  name: string;
+  fullName: string;
+  private: boolean;
+  htmlUrl: string;
+  cloneUrl: string;
+}

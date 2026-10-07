@@ -2188,6 +2188,13 @@ pub fn github_get_workflow_job_logs(
    )
 }
 
+pub fn github_list_user_repos(
+   github_token: Option<String>,
+) -> Result<Vec<crate::models::RepositoryInfo>, String> {
+   let api = GitHubApi::new_authenticated(github_token)?;
+   api.get_all_pages_json("/user/repos")
+}
+
 #[cfg(test)]
 mod api_tests {
    use super::{

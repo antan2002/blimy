@@ -183,6 +183,7 @@ fn main() {
          github_check_auth,
          github_list_notifications,
          github_resolve_notification_workflow_run,
+         github_list_user_repos,
          github_list_prs,
          github_list_issues,
          github_upload_release_asset,

@@ -38,6 +38,14 @@ pub async fn github_check_auth(
 }
 
 #[tauri::command]
+pub async fn github_list_user_repos(
+   app: crate::app_runtime::AppHandle,
+) -> Result<Vec<blimy_github::RepositoryInfo>, String> {
+   let github_token = resolve_github_token_async(&app).await;
+   run_blocking(move || blimy_github::github_list_user_repos(github_token)).await
+}
+
+#[tauri::command]
 pub async fn github_list_prs(
    app: crate::app_runtime::AppHandle,
    repo_path: String,

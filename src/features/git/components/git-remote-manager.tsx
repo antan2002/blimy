@@ -1,3 +1,5 @@
+import { invoke } from "@tauri-apps/api/core";
+import type { RepositoryInfo } from "../../github/types/github.types";
 import { CopyIcon, GlobeIcon, PlusIcon, TrashIcon } from "@/ui/icons";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Button } from "@/ui/button";
@@ -12,6 +14,14 @@ import { writeClipboardText } from "@/utils/clipboard";
 import { matchesSearchQuery } from "@/utils/search-match";
 import { addRemote, getRemotes, removeRemote } from "../api/git-remotes-api";
 import type { GitRemote } from "../types/git.types";
+import {
+  Combobox,
+  ComboboxInput,
+  ComboboxContent,
+  ComboboxList,
+  ComboboxItem,
+  ComboboxEmpty,
+} from "@/ui/combobox";
 
 interface GitRemoteManagerProps {
   query: string;
@@ -21,6 +31,7 @@ interface GitRemoteManagerProps {
 
 const GitRemoteManager = ({ query, repoPath, onRefresh }: GitRemoteManagerProps) => {
   const [remotes, setRemotes] = useState<GitRemote[]>([]);
+  const [githubRepos, setGithubRepos] = useState<RepositoryInfo[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isAdding, setIsAdding] = useState(false);
   const [isCreateOpen, setIsCreateOpen] = useState(false);
@@ -35,6 +46,21 @@ const GitRemoteManager = ({ query, repoPath, onRefresh }: GitRemoteManagerProps)
       loadRequestIdRef.current += 1;
     };
   }, [repoPath]);
+
+  useEffect(() => {
+    if (isCreateOpen) {
+      void loadGithubRepos();
+    }
+  }, [isCreateOpen]);
+
+  const loadGithubRepos = async () => {
+    try {
+      const repos = await invoke<RepositoryInfo[]>("github_list_user_repos");
+      setGithubRepos(repos);
+    } catch (e) {
+      console.error("Failed to load github repos", e);
+    }
+  };
 
   const filteredRemotes = useMemo(() => {
     if (!query.trim()) return remotes;
@@ -141,13 +167,51 @@ const GitRemoteManager = ({ query, repoPath, onRefresh }: GitRemoteManagerProps)
               </Field>
               <Field>
                 <FieldLabel htmlFor="git-remote-url">URL</FieldLabel>
-                <Input
-                  id="git-remote-url"
-                  type="text"
-                  placeholder="https://github.com/owner/repository.git"
-                  value={newRemoteUrl}
-                  onChange={(event) => setNewRemoteUrl(event.target.value)}
-                />
+                <Combobox
+                  open={githubRepos.length > 0 ? undefined : false}
+                  onValueChange={(val: string | null) => {
+                    if (val) {
+                      setNewRemoteUrl(val);
+                      // Auto-fill name if not set
+                      if (!newRemoteName.trim() && val.includes("/")) {
+                        const parts = val.split("/");
+                        let name = parts[parts.length - 1];
+                        if (name.endsWith(".git")) {
+                          name = name.slice(0, -4);
+                        }
+                        if (name) {
+                          setNewRemoteName(name);
+                        }
+                      }
+                    }
+                  }}
+                >
+                  <ComboboxInput
+                    id="git-remote-url"
+                    type="text"
+                    placeholder="https://github.com/owner/repository.git"
+                    value={newRemoteUrl}
+                    onChange={(event) => setNewRemoteUrl(event.target.value)}
+                  />
+                  {githubRepos.length > 0 && (
+                    <ComboboxContent>
+                      <ComboboxList>
+                        {githubRepos
+                          .filter((repo) =>
+                            repo.fullName.toLowerCase().includes(newRemoteUrl.toLowerCase())
+                          )
+                          .map((repo) => (
+                            <ComboboxItem key={repo.id} value={repo.cloneUrl}>
+                              {repo.fullName}
+                            </ComboboxItem>
+                          ))}
+                        {githubRepos.filter((repo) =>
+                          repo.fullName.toLowerCase().includes(newRemoteUrl.toLowerCase())
+                        ).length === 0 && <ComboboxEmpty>No repositories found</ComboboxEmpty>}
+                      </ComboboxList>
+                    </ComboboxContent>
+                  )}
+                </Combobox>
               </Field>
             </FieldGroup>
           </SidebarForm>
