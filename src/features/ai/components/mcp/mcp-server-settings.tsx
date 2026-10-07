@@ -18,8 +18,9 @@ import { useSettingsStore } from "@/features/settings/stores/settings.store";
 import { Button } from "@/ui/button";
 import { EmptyState } from "@/ui/empty";
 import { showConfirmDialog } from "@/ui/dialog";
-import { PencilIcon, PlusIcon, TrashIcon } from "@/ui/icons";
+import { PencilIcon, PlusIcon, TrashIcon, CheckIcon, DownloadIcon } from "@/ui/icons";
 import Switch from "@/ui/switch";
+import { marketplaceMcpServers } from "@/features/ai/components/mcp/mcp-marketplace-data";
 
 export function McpServerSettings() {
   const servers = useSettingsStore((state) => state.settings.mcpServers);
@@ -132,6 +133,49 @@ export function McpServerSettings() {
             </div>
           </SettingRow>
         ))}
+      </Section>
+      <div className="mt-8" />
+      <Section title="Marketplace">
+        {marketplaceMcpServers.map((marketServer) => {
+          const isInstalled = servers.some(
+            (s) =>
+              s.command === marketServer.settings.command &&
+              s.args.join(" ") === marketServer.settings.args.join(" ")
+          );
+
+          return (
+            <SettingRow
+              key={marketServer.id}
+              label={marketServer.name}
+              description={marketServer.description}
+            >
+              {isInstalled ? (
+                <Button type="button" variant="ghost" disabled>
+                  <CheckIcon />
+                  <span>Installed</span>
+                </Button>
+              ) : (
+                <Button
+                  type="button"
+                  variant="accent"
+                  onClick={() => {
+                    void saveServers([
+                      ...servers,
+                      { ...marketServer.settings, enabled: true, id: crypto.randomUUID() },
+                    ]);
+                    showToast({
+                      message: `${marketServer.name} connected successfully`,
+                      type: "success",
+                    });
+                  }}
+                >
+                  <DownloadIcon optical="md" />
+                  <span>Connect</span>
+                </Button>
+              )}
+            </SettingRow>
+          );
+        })}
       </Section>
       {draft ? (
         <McpServerDialog
