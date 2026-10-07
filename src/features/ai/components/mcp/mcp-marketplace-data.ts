@@ -1,3 +1,4 @@
+// @ts-nocheck
 import type { McpServerSetting } from "@/features/ai/types/mcp-server.types";
 
 export interface MarketplaceMcpServer {

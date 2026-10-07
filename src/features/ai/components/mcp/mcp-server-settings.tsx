@@ -161,14 +161,11 @@ function McpMarketplaceList({
       </div>
 
       {visibleCount < filtered.length && (
-        <Button
-          type="button"
-          variant="outline"
-          className="self-center"
-          onClick={() => setVisibleCount((v) => v + 20)}
-        >
-          Load More
-        </Button>
+        <div className="flex justify-center mt-2">
+          <Button type="button" variant="outline" onClick={() => setVisibleCount((v) => v + 20)}>
+            Load More
+          </Button>
+        </div>
       )}
     </div>
   );
