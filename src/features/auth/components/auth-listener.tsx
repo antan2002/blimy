@@ -99,7 +99,7 @@ export function AuthListener() {
 
         void supabase.auth
           .exchangeCodeForSession(code)
-          .then(async ({ error }) => {
+          .then(async ({ data, error }) => {
             if (error) {
               console.error("[auth] Failed to exchange the code for a session:", error);
               const { useDesktopSignInStore } =
@@ -108,6 +108,20 @@ export function AuthListener() {
               void stopAuthLoopback();
               return;
             }
+
+            if (data?.session) {
+              const provider = data.session.user?.app_metadata?.provider;
+              const providers = data.session.user?.app_metadata?.providers || [];
+              const isGitHub = provider === "github" || providers.includes("github");
+              
+              if (isGitHub && data.session.provider_token) {
+                const { storeGitHubToken } = await import("@/features/github/services/github-token-service");
+                await storeGitHubToken(data.session.provider_token).catch((err) => {
+                  console.error("[auth] Failed to store GitHub token locally:", err);
+                });
+              }
+            }
+
             await completeSignIn();
           })
           .catch((exchangeError: unknown) => {

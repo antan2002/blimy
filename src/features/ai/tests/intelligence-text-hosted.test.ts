@@ -3,6 +3,7 @@ import { beforeEach, describe, expect, it, vi } from "vite-plus/test";
 const mocks = vi.hoisted(() => ({ fetch: vi.fn() }));
 vi.mock("@/utils/tauri-fetch", () => ({ tauriFetch: mocks.fetch }));
 vi.mock("@/features/window/services/auth-api", () => ({ getAuthToken: async () => "token" }));
+vi.mock("@/utils/supabase-access-token", () => ({ getAccessToken: async () => "token" }));
 vi.mock("../intelligence/services/intelligence-connection", () => ({
   getIntelligenceConnection: async () => ({
     providerId: "blimy",
@@ -109,7 +110,7 @@ describe("Hosted Intelligence text requests", () => {
     expect(url.endsWith("/inline-edit")).toBe(true);
     const body = JSON.parse(String(init.body));
     expect(body.beforeSelection).toHaveLength(12000);
-    expect(body.afterSelection).toHaveLength(12000);
+    expect(body.afterSelection).toHaveLength(5000);
     expect(body.selectedText).toBe("const value = 1;");
     expect(body.recentEdits).toEqual([{ filePath: "/src/a.ts", snippet: "const value = 1;" }]);
     expect(body.diagnostics).toEqual([{ line: 3, severity: "error", message: "Missing return" }]);
