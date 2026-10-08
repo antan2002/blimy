@@ -25,14 +25,11 @@ import { ProviderKeysSection } from "../ai/provider-keys-section";
 import { TabCompletionSection } from "../ai/tab-completion-section";
 import Section, { SettingsView, SettingRow } from "../settings-section";
 
-/** Settings > AI: the blimy plan and the model everything uses unless told otherwise. */
 export function AIOverviewSettings() {
   return (
     <SettingsView>
-      <BlimyPlanSection />
       <DefaultModelSection />
       <FeatureModelsSection />
-      <HostedModelUsageSection />
     </SettingsView>
   );
 }

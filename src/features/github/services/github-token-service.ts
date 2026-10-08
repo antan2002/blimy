@@ -1,6 +1,6 @@
 import { invoke } from "@tauri-apps/api/core";
 import { tauriFetch } from "@/utils/tauri-fetch";
-import { getAuthToken } from "@/features/window/services/auth-api";
+import { getAccessToken } from "@/utils/supabase-access-token";
 import { getServiceUrls } from "@/config/services";
 
 export const GITHUB_ACCOUNT_API_BASE = getServiceUrls().apiBaseUrl;
@@ -39,7 +39,7 @@ const removeGitHubToken = async (): Promise<void> => {
 };
 
 export const syncGitHubTokenFromAccount = async (): Promise<GitHubTokenSyncResult> => {
-  const token = await getAuthToken();
+  const token = await getAccessToken();
   if (!token) {
     return { status: "notSignedIn" };
   }

@@ -6,6 +6,7 @@ import { installDevelopmentPerformanceMeasureCleanup } from "./features/bootstra
 import { recordStartupMilestone } from "./features/bootstrap/startup-performance.ts";
 import { initializeFrontendTerminalSession } from "./features/terminal/utils/frontend-terminal-session.ts";
 import { traceWindowOpen } from "./features/window/utils/window-open-diagnostics.ts";
+import { removeLegacyAuthTokenOnce } from "./features/auth/lib/migrate-legacy-auth-key.ts";
 
 if (import.meta.env.DEV) {
   installDevelopmentPerformanceMeasureCleanup();
@@ -13,6 +14,8 @@ if (import.meta.env.DEV) {
 
 traceWindowOpen("frontend:entry");
 recordStartupMilestone("frontend:entry");
+
+removeLegacyAuthTokenOnce().catch(console.error);
 
 const renderStartedAt = performance.now();
 traceWindowOpen("reactRender:start");

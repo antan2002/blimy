@@ -1,5 +1,5 @@
 import { getEdgeFunctionsBase } from "@/utils/api-base";
-import { getSupabaseAccessToken } from "@/utils/supabase-access-token";
+import { getAccessToken } from "@/utils/supabase-access-token";
 import { tauriFetch } from "@/utils/tauri-fetch";
 import type { ShareInput, ShareOptions } from "../types/share.types";
 
@@ -30,7 +30,7 @@ export async function shareRequest<T>(
   options?: RequestInit,
   token?: string,
 ): Promise<T> {
-  const bearer = token ?? (await getSupabaseAccessToken());
+  const bearer = token ?? (await getAccessToken());
   if (!bearer) throw new ShareRequestError("Not signed in.", 401);
   // `/api/cloud-sessions` is the function's own root; `/api/shares...` become subpaths of it.
   const subpath = path.replace(/^\/api/, "");

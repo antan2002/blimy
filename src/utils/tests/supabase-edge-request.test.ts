@@ -9,7 +9,7 @@ const state = vi.hoisted(() => ({
 
 vi.mock("@/utils/tauri-fetch", () => ({ tauriFetch: state.fetch }));
 vi.mock("@/utils/supabase-access-token", () => ({
-  getSupabaseAccessToken: state.token,
+  getAccessToken: state.token,
   refreshSupabaseSession: state.refresh,
 }));
 vi.mock("@/utils/api-base", () => ({ getEdgeFunctionsBase: () => "https://edge.test" }));

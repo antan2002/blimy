@@ -3,6 +3,7 @@ import { openUrl } from "@tauri-apps/plugin-opener";
 import { toast } from "sonner";
 import { ProviderApiKeyCommand } from "../provider-api-key-command";
 import { HOSTED_BILLING_CODES, resolveBillingUrl } from "@/features/ai/lib/api-error";
+import { getServiceUrls } from "@/config/services";
 import { openNewAgentChat } from "@/features/ai/lib/open-new-agent-chat";
 import { useDesktopSignIn } from "@/features/window/hooks/use-desktop-sign-in";
 import { useUIState } from "@/features/window/stores/ui-state.store";
@@ -28,6 +29,8 @@ export function ApiErrorActions({
   const hosted = providerId === "blimy";
   const authentication = code === "401";
   const tooLarge = serverCode === "request_too_large" || code === "413";
+  // A locked model is not a billing balance problem: it opens the plans page, not billing.
+  const locked = hosted && serverCode === "model_locked";
   const payment = !tooLarge && (code === "402" || HOSTED_BILLING_CODES.has(serverCode ?? ""));
   const configure = authentication || code === "403" || payment;
   const run = async (action: () => void | Promise<void>) => {
@@ -46,6 +49,7 @@ export function ApiErrorActions({
       openNewAgentChat();
       return;
     }
+    if (locked) return openUrl(getServiceUrls().pricingUrl);
     if (hosted && payment) return openUrl(resolveBillingUrl(billingUrl));
     if (hosted && authentication) return signIn();
     if (configure && !hosted) {
@@ -58,19 +62,21 @@ export function ApiErrorActions({
   };
   const label = tooLarge
     ? "Start new chat"
-    : hosted && payment
-      ? serverCode === "allowance_exhausted" || serverCode === "insufficient_balance"
-        ? "Add credit"
-        : "Manage billing"
-      : hosted && authentication
-        ? "Sign in to blimy"
-        : configure && !hosted
-          ? "Configure provider"
-          : hosted && code === "403"
-            ? "Configure models"
-            : onRetry
-              ? "Try again"
-              : "Configure models";
+    : locked
+      ? "Upgrade plan"
+      : hosted && payment
+        ? serverCode === "allowance_exhausted" || serverCode === "insufficient_balance"
+          ? "Add credit"
+          : "Manage billing"
+        : hosted && authentication
+          ? "Sign in to blimy"
+          : configure && !hosted
+            ? "Configure provider"
+            : hosted && code === "403"
+              ? "Configure models"
+              : onRetry
+                ? "Try again"
+                : "Configure models";
   return (
     <div className="flex flex-wrap items-center gap-1.5">
       <Button variant="default" disabled={busy || isSigningIn} onClick={() => void run(recover)}>

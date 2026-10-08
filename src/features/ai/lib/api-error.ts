@@ -26,6 +26,7 @@ const SERVER_CODE_STATUS: Record<string, number> = {
   payment_required: 402,
   request_too_large: 413,
   entitlement_required: 402,
+  model_locked: 402,
   provider_rejected: 502,
   timeout: 408,
   unauthorized: 401,
@@ -110,7 +111,7 @@ export function readErrorBody(body: string | undefined): {
   if (!json) return {};
   const nested =
     json.error && typeof json.error === "object" ? (json.error as Record<string, unknown>) : null;
-  const code = [nested?.code, json.code, nested?.type].find(
+  const code = [nested?.code, json.code, nested?.type, json.reason].find(
     (value): value is string => typeof value === "string" && value.length > 0,
   );
   const message = [nested?.message, json.error, json.message].find(

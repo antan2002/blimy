@@ -1,7 +1,7 @@
 import { useIntelligenceSettingsStore } from "@/features/ai/intelligence/stores/intelligence-settings.store";
 import { useAuthStore } from "@/features/window/stores/auth.store";
 import { getIntelligenceApiBase } from "@/utils/api-base";
-import { getSupabaseAccessToken } from "@/utils/supabase-access-token";
+import { getAccessToken } from "@/utils/supabase-access-token";
 import { tauriFetch } from "@/utils/tauri-fetch";
 import {
   AIProvider,
@@ -31,7 +31,7 @@ export class BlimyProvider extends AIProvider {
   async buildHeaders(): Promise<ProviderHeaders> {
     const userId = useAuthStore.getState().user?.id;
     const scope = useIntelligenceSettingsStore.getState().scope;
-    const token = await getSupabaseAccessToken();
+    const token = await getAccessToken();
     if (
       useAuthStore.getState().user?.id !== userId ||
       useIntelligenceSettingsStore.getState().scope !== scope
@@ -76,18 +76,12 @@ export class BlimyProvider extends AIProvider {
         signal: AbortSignal.timeout(15000),
       });
     } catch (error) {
-      // The HTTP plugin rejects with a bare string, which the menu would reduce to a generic line.
-      const host = new URL(getIntelligenceApiBase()).host;
-      throw new Error(
-        error instanceof DOMException && error.name === "TimeoutError"
-          ? `Blimy at ${host} took too long to answer.`
-          : `Could not reach Blimy at ${host}.`,
-      );
+      throw new Error("Blimy models are not available yet.");
     }
     if (response.status === 401)
-      throw new Error("Your Blimy session has expired. Sign out and sign in again.");
+      throw new Error("Sign in to use Blimy models.");
     if (response.status === 402) throw new HostedEntitlementError();
-    if (!response.ok) throw new Error(`Could not connect to Blimy (${response.status}).`);
+    if (!response.ok) throw new Error("Blimy models are not available yet.");
     const result = (await response.json()) as { enabled: boolean; data: ProviderModel[] };
     if (!result.enabled) {
       // Every signed-in tier reaches hosted models, so reaching this branch means the server
@@ -98,6 +92,6 @@ export class BlimyProvider extends AIProvider {
   }
 
   async validateApiKey(): Promise<boolean> {
-    return Boolean(await getSupabaseAccessToken());
+    return Boolean(await getAccessToken());
   }
 }

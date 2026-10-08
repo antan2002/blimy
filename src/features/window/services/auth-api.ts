@@ -1,6 +1,10 @@
 import { invoke } from "@tauri-apps/api/core";
 import { tauriFetch } from "@/utils/tauri-fetch";
 import { getApiBase, isLocalApiBase } from "@/utils/api-base";
+import { getSupabaseAuthStorageKey } from "@/features/auth/lib/auth-storage-key";
+import { getAccessToken, refreshSupabaseSession } from "@/utils/supabase-access-token";
+import { toast } from "sonner";
+import { useDesktopSignInStore } from "@/features/window/stores/desktop-sign-in.store";
 
 const API_BASE = getApiBase();
 const DESKTOP_AUTH_POLL_INTERVAL_MS = 1500;
@@ -592,15 +596,16 @@ function getPreferredAuthApiBase(apiBase?: string): string {
 }
 
 // Secure token storage via Rust backend
-export const getAuthToken = async (key: string = "blimy_auth_token"): Promise<string | null> => {
-  if (key in authTokenCache) {
-    return authTokenCache[key] ?? null;
+export const getAuthToken = async (key?: string): Promise<string | null> => {
+  const actualKey = key ?? getSupabaseAuthStorageKey();
+  if (actualKey in authTokenCache) {
+    return authTokenCache[actualKey] ?? null;
   }
 
   try {
-    const token = await invoke<string | null>("get_auth_token", { key });
+    const token = await invoke<string | null>("get_auth_token", { key: actualKey });
     if (token !== null) {
-      authTokenCache[key] = token;
+      authTokenCache[actualKey] = token;
     }
     return token;
   } catch {
@@ -610,19 +615,22 @@ export const getAuthToken = async (key: string = "blimy_auth_token"): Promise<st
 
 export const storeAuthToken = async (
   token: string,
-  key: string = "blimy_auth_token",
+  key?: string,
 ): Promise<void> => {
-  await invoke("store_auth_token", { token, key });
-  authTokenCache[key] = token;
+  const actualKey = key ?? getSupabaseAuthStorageKey();
+  await invoke("store_auth_token", { token, key: actualKey });
+  authTokenCache[actualKey] = token;
 };
 
-export const removeAuthToken = async (key: string = "blimy_auth_token"): Promise<void> => {
-  delete authTokenCache[key];
-  await invoke("remove_auth_token", { key });
+export const removeAuthToken = async (key?: string): Promise<void> => {
+  const actualKey = key ?? getSupabaseAuthStorageKey();
+  delete authTokenCache[actualKey];
+  await invoke("remove_auth_token", { key: actualKey });
 };
 
-export const clearAuthTokenCache = (key: string = "blimy_auth_token"): void => {
-  delete authTokenCache[key];
+export const clearAuthTokenCache = (key?: string): void => {
+  const actualKey = key ?? getSupabaseAuthStorageKey();
+  delete authTokenCache[actualKey];
 };
 
 const DEFAULT_AUTHENTICATED_FETCH_TIMEOUT_MS = 10_000;
@@ -652,30 +660,45 @@ export async function authenticatedFetch(
   options: AuthenticatedFetchOptions = {},
   tokenOverride?: string,
 ): Promise<Response> {
-  let token = tokenOverride ?? (await getAuthToken());
+  const doFetch = async (tokenStr: string) => {
+    const { timeoutMs, signal, ...requestOptions } = options;
+    return tauriFetch(`${getPreferredAuthApiBase()}${path}`, {
+      ...requestOptions,
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${tokenStr}`,
+        ...options.headers,
+      },
+      signal: authenticatedFetchSignal(signal, timeoutMs),
+    });
+  };
+
+  let token = tokenOverride ?? (await getAccessToken());
   if (!token) {
     throw new Error("Not authenticated");
   }
 
-  if (token.startsWith("{")) {
-    try {
-      const parsed = JSON.parse(token);
-      token = parsed.access_token || token;
-    } catch {
-      // Ignored
+  let response = await doFetch(token);
+  if (response.status === 401) {
+    const refreshed = await refreshSupabaseSession();
+    if (refreshed) {
+      response = await doFetch(refreshed);
     }
   }
 
-  const { timeoutMs, signal, ...requestOptions } = options;
-  return tauriFetch(`${getPreferredAuthApiBase()}${path}`, {
-    ...requestOptions,
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-      ...options.headers,
-    },
-    signal: authenticatedFetchSignal(signal, timeoutMs),
-  });
+  if (response.status === 401) {
+    toast.error("Please sign in again", {
+      action: {
+        label: "Sign in",
+        onClick: () => {
+          useDesktopSignInStore.getState().actions.signIn();
+        },
+      },
+      duration: Number.POSITIVE_INFINITY,
+    });
+  }
+
+  return response;
 }
 
 export async function fetchCurrentUser(tokenOverride?: string): Promise<AuthUser> {
@@ -729,9 +752,8 @@ export async function fetchSubscriptionStatus(tokenOverride?: string): Promise<S
   }
 
   const { data, error } = await supabase
-    .from("subscriptions")
+    .from("my_entitlement")
     .select("*")
-    .eq("user_id", sessionData.session.user.id)
     .single();
 
   // No row yet means the signup trigger or the backstop has not run. Treating that as a free

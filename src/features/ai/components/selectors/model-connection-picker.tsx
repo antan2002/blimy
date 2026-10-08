@@ -8,6 +8,7 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuEmpty,
+  DropdownMenuLabel,
   DropdownMenuRadioGroup,
   DropdownMenuRadioItem,
   DropdownMenuSearch,
@@ -131,37 +132,40 @@ export function ModelConnectionPicker({
               <DropdownMenuSeparator />
             </>
           ) : null}
-          {isContentMounted ? (
-            <ModelResultsProvider value={reportResults}>
-              {purpose === "completion" ? (
-                <ModelSection
-                  id="blimy"
-                  label="blimy"
-                  models={[{ id: "auto", name: BLIMY_TAB_MODEL_LABEL, keywords: ["automatic"] }]}
-                  selected={value && providerId === "blimy" ? modelId || "auto" : ""}
-                  onSelect={(id) => onChange({ providerId: "blimy", modelId: id })}
-                  providerId="blimy"
-                  search={search}
-                />
-              ) : (
-                <BlimyModelSections
-                  selected={value && providerId === "blimy" ? modelId || "auto" : ""}
-                  search={search}
-                  onSelect={(id) => onChange({ providerId: "blimy", modelId: id })}
-                />
-              )}
-              {providers.map((item) => (
-                <ProviderModels
-                  key={item.id}
-                  providerId={item.id}
-                  providerName={item.name}
-                  selected={item.id === providerId ? modelId : ""}
-                  search={search}
-                  onSelect={(id) => onChange({ providerId: item.id, modelId: id })}
-                />
-              ))}
-            </ModelResultsProvider>
-          ) : null}
+{isContentMounted ? (
+                <ModelResultsProvider value={reportResults}>
+                  {purpose === "completion" ? (
+                    <ModelSection
+                      id="blimy"
+                      label="blimy"
+                      models={[{ id: "auto", name: BLIMY_TAB_MODEL_LABEL, keywords: ["automatic"] }]}
+                      selected={value && providerId === "blimy" ? modelId || "auto" : ""}
+                      onSelect={(id) => onChange({ providerId: "blimy", modelId: id })}
+                      providerId="blimy"
+                      search={search}
+                    />
+                  ) : (
+                    <BlimyModelSections
+                      selected={value && providerId === "blimy" ? modelId || "auto" : ""}
+                      search={search}
+                      onSelect={(id) => onChange({ providerId: "blimy", modelId: id })}
+                    />
+                  )}
+                  {providers.length > 0 && !search.isSearching ? (
+                    <DropdownMenuLabel>Your API keys</DropdownMenuLabel>
+                  ) : null}
+                  {providers.map((item) => (
+                    <ProviderModels
+                      key={item.id}
+                      providerId={item.id}
+                      providerName={item.name}
+                      selected={item.id === providerId ? modelId : ""}
+                      search={search}
+                      onSelect={(id) => onChange({ providerId: item.id, modelId: id })}
+                    />
+                  ))}
+                </ModelResultsProvider>
+              ) : null}
           {isContentMounted && search.isSearching && hasNoResults ? (
             <DropdownMenuEmpty>No matching models</DropdownMenuEmpty>
           ) : null}

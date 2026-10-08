@@ -121,8 +121,7 @@ export const AccountMenu = memo(function AccountMenu() {
 
   const isTeams = Boolean(subscription?.collaboration?.enabled);
   const planLabel = getAccountPlanLabel(subscription, isAuthenticated);
-  const connectedGitHubLogin =
-    githubAccountStatus === "connected" ? githubCurrentUser || user?.github_username : null;
+  const connectedGitHubLogin = githubCurrentUser || user?.github_username || null;
   const {
     name: accountName,
     detail: accountDetail,

@@ -38,75 +38,7 @@ const AI_PROVIDERS: ModelProvider[] = [
     apiUrl: getIntelligenceApiBase(),
     requiresApiKey: false,
     requiresAuth: true,
-    models: [
-      // Shown until the server's catalog arrives, which then replaces this list. `auto` runs on
-      // Kimi K2.7 Code, a steady-priced coding model that reads images. The tiers mirror the
-      // server's split: Automatic is free, Claude/GPT/Gemini are pro, Kimi/GLM/DeepSeek are plus.
-      { id: "auto", name: "Automatic", maxOutputTokens: 32000, supportsImages: true, tier: "free" },
-      {
-        id: "anthropic/claude-opus-5.5",
-        name: "Claude Opus 5.5",
-        maxOutputTokens: 32000,
-        supportsImages: true,
-        tier: "pro",
-      },
-      {
-        id: "anthropic/claude-sonnet-5",
-        name: "Claude Sonnet 5",
-        maxOutputTokens: 32000,
-        supportsImages: true,
-        tier: "pro",
-      },
-      {
-        id: "openai/gpt-5.6-sol",
-        name: "GPT 5.6 Sol",
-        maxOutputTokens: 32000,
-        supportsImages: true,
-        tier: "pro",
-      },
-      {
-        id: "openai/gpt-5.3-codex",
-        name: "GPT 5.3 Codex",
-        maxOutputTokens: 32000,
-        supportsImages: true,
-        tier: "pro",
-      },
-      {
-        id: "google/gemini-3.1-pro-preview",
-        name: "Gemini 3.1 Pro Preview",
-        maxOutputTokens: 32000,
-        supportsImages: true,
-        tier: "pro",
-      },
-      {
-        id: "moonshotai/kimi-k2.7-code",
-        name: "Kimi K2.7 Code",
-        maxOutputTokens: 32000,
-        supportsImages: true,
-        tier: "plus",
-      },
-      {
-        id: "zai/glm-5.3",
-        name: "GLM 5.3",
-        maxOutputTokens: 32000,
-        supportsImages: false,
-        tier: "plus",
-      },
-      {
-        id: "deepseek/deepseek-v4-pro",
-        name: "DeepSeek V4 Pro",
-        maxOutputTokens: 32000,
-        supportsImages: false,
-        tier: "plus",
-      },
-      {
-        id: "deepseek/deepseek-v4-flash",
-        name: "DeepSeek V4 Flash",
-        maxOutputTokens: 32000,
-        supportsImages: false,
-        tier: "plus",
-      },
-    ],
+    models: [],
   },
   {
     id: "anthropic",

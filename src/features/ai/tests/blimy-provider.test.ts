@@ -8,7 +8,7 @@ const state = vi.hoisted(() => ({
 }));
 vi.mock("@/utils/tauri-fetch", () => ({ tauriFetch: state.fetch }));
 vi.mock("@/utils/supabase-access-token", () => ({
-  getSupabaseAccessToken: async () => "token",
+  getAccessToken: async () => "token",
 }));
 vi.mock("@/utils/api-base", () => ({ getIntelligenceApiBase: () => "https://api.test" }));
 vi.mock("@/features/window/stores/auth.store", () => ({

@@ -26,6 +26,7 @@ import {
   DropdownMenuEmpty,
   DropdownMenuFooter,
   DropdownMenuItem,
+  DropdownMenuLabel,
   DropdownMenuSearch,
   DropdownMenuTrigger,
   DropdownMenuViewport,
@@ -186,6 +187,9 @@ export function ComposerAgentSelector({
                   search={search}
                   onSelect={(id) => onModelChange(id, "blimy")}
                 />
+                {configuredProviders.length > 0 && !search.isSearching ? (
+                  <DropdownMenuLabel>Your API keys</DropdownMenuLabel>
+                ) : null}
                 {configuredProviders.map((provider) => (
                   <ProviderModels
                     key={provider.id}
@@ -226,7 +230,7 @@ export function ComposerAgentSelector({
                 ) : null}
                 <ModelSection
                   id="agents"
-                  label="Agents"
+                  label="CLI agents"
                   models={otherAgents.map((agent) => ({
                     id: agent.id,
                     name: agent.name,

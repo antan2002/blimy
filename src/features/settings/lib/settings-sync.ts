@@ -475,7 +475,7 @@ function clearSettingsSubscription() {
 
 function getSettingsSyncErrorMessage(error: unknown): string {
   if (isAuthInvalidError(error)) {
-    return "Cloud settings sync could not access your account. Your session is still signed in.";
+    return "";
   }
 
   return error instanceof Error ? error.message : "Settings sync failed.";

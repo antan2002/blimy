@@ -1,5 +1,5 @@
 import { tauriFetch } from "@/utils/tauri-fetch";
-import { getSupabaseAccessToken } from "@/utils/supabase-access-token";
+import { getAccessToken } from "@/utils/supabase-access-token";
 import { useAuthStore } from "@/features/window/stores/auth.store";
 import { getEdgeFunctionsBase } from "@/utils/api-base";
 import { parseIntelligencePreferences } from "../lib/intelligence-preferences";
@@ -22,7 +22,7 @@ export async function fetchIntelligenceSettings(
   },
   expectedUserId?: number,
 ): Promise<IntelligenceSnapshot> {
-  const token = await getSupabaseAccessToken();
+  const token = await getAccessToken();
   if (expectedUserId !== undefined && useAuthStore.getState().user?.id !== expectedUserId) {
     throw new IntelligenceSettingsError("The active account changed. Try again.", 409);
   }

@@ -1,5 +1,5 @@
 import { tauriFetch } from "@/utils/tauri-fetch";
-import { getAuthToken } from "@/features/window/services/auth-api";
+import { getAccessToken } from "@/utils/supabase-access-token";
 import { getApiBase } from "@/utils/api-base";
 import { useAuthStore } from "@/features/window/stores/auth.store";
 import {
@@ -25,7 +25,7 @@ export async function requestUIExtensionGeneration(params: {
   contributionType: UIExtensionContributionType;
   description: string;
 }): Promise<UIExtensionGenerationResult> {
-  const token = await getAuthToken();
+  const token = await getAccessToken();
   if (!token) {
     throw new UIExtensionGenerationError("Sign in to use blimy AI.", 401);
   }

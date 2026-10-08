@@ -17,7 +17,7 @@ vi.mock("react", () => ({
   },
 }));
 vi.mock("@/utils/supabase-access-token", () => ({
-  getSupabaseAccessToken: async () => "token",
+  getAccessToken: async () => "token",
 }));
 vi.mock("@/features/window/stores/auth.store", () => ({
   useAuthStore: Object.assign(() => state.userId, {

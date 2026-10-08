@@ -65,6 +65,12 @@ function describeHostedBillingFailure(
         message:
           "blimy models need Pro or pay-as-you-go credit. Upgrade or add credit in billing to use them.",
       };
+    case "model_locked":
+      return {
+        title: "Model needs a higher plan",
+        message:
+          "This model is included with a higher plan. Upgrade your plan to use it, or pick a model your plan already includes.",
+      };
     default:
       return null;
   }
@@ -95,7 +101,7 @@ export function describeAgentTurnFailure(input: {
     title = "Authentication Error";
     message =
       providerId === "blimy"
-        ? "Your blimy session has expired. Sign in to continue."
+        ? "Sign in to use Blimy models."
         : "The provider rejected your API key. Check its configuration to continue.";
   } else if (isRequestTooLarge({ code: serverCode, status })) {
     title = "Conversation too large";

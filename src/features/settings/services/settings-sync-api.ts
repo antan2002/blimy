@@ -1,5 +1,5 @@
 import { getEdgeFunctionsBase } from "@/utils/api-base";
-import { getSupabaseAccessToken } from "@/utils/supabase-access-token";
+import { getAccessToken } from "@/utils/supabase-access-token";
 import { tauriFetch } from "@/utils/tauri-fetch";
 
 export interface CloudSettingsSyncSnapshot {
@@ -26,7 +26,7 @@ export function isAuthInvalidError(error: unknown): boolean {
 const SETTINGS_SYNC_FUNCTION = "settings-sync";
 
 async function request<T>(init?: RequestInit): Promise<T> {
-  const token = await getSupabaseAccessToken();
+  const token = await getAccessToken();
   if (!token) throw new SettingsSyncApiError("Not signed in.", 401);
   const response = await tauriFetch(`${getEdgeFunctionsBase()}/${SETTINGS_SYNC_FUNCTION}`, {
     ...init,

@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useAuthStore } from "@/features/window/stores/auth.store";
-import { getSupabaseAccessToken } from "@/utils/supabase-access-token";
+import { getAccessToken } from "@/utils/supabase-access-token";
 import { useAIChatStore } from "@/features/ai/stores/ai-chat.store";
 import {
   initChatDatabase,
@@ -57,7 +57,7 @@ export function SharingRuntime() {
       }
       isSyncing = true;
       try {
-        const token = await getSupabaseAccessToken();
+        const token = await getAccessToken();
         if (!token || !current()) return;
         const options = await fetchShareOptions(token);
         if (!current()) return;

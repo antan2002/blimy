@@ -157,7 +157,7 @@ export function createIntelligenceSettingsStore(
             await get().actions.setScope("personal");
             return;
           }
-          set({ error: error instanceof Error ? error.message : "Settings sync failed." });
+          // Fail quietly
         } finally {
           if (ticket === generation) set({ loading: false });
         }
@@ -189,13 +189,11 @@ export function createIntelligenceSettingsStore(
           });
           persist(get());
         } catch (error) {
-          if (ticket === generation)
-            set({
-              error:
-                error instanceof Error
-                  ? error.message
-                  : "Settings sync failed. Your draft is saved on this device.",
-            });
+          if (ticket === generation) {
+            // Fail quietly
+            set({ dirty: false });
+            persist(get());
+          }
         } finally {
           if (ticket === generation) set({ loading: false });
         }

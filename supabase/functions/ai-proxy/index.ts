@@ -14,6 +14,9 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.39.3";
 /** Mirrors what the client appends to the base URL, so the two agree on one endpoint. */
 const CHAT_PATH = "/chat/completions";
 
+/** The hosted text-feature route: inline edits and commit titles share it. */
+const TEXT_PATH = "/inline-edit";
+
 /**
  * The route the caller asked for, independent of the function mount path.
  *
@@ -208,6 +211,55 @@ function consumeDenied(result: Record<string, unknown>, headers: Record<string, 
   );
 }
 
+/** Rejects a request whose model needs a higher plan than the account holds. */
+function tierGateResponse(
+  requiredTier: ModelTier,
+  plan: ModelTier,
+  headers: Record<string, string>,
+): Response | null {
+  if (TIER_RANK[requiredTier] <= TIER_RANK[plan]) return null;
+  return json(
+    {
+      error: "This model needs a higher plan. Upgrade to use it.",
+      reason: "model_locked",
+      requiredTier,
+    },
+    402,
+    headers,
+  );
+}
+
+/**
+ * Runs the safety quota for a request. Returns the 401/402/429 response when the request must
+ * not proceed, or null when it consumed a slot and can continue.
+ */
+async function consumeGate(
+  supabase: ReturnType<typeof clientFor>,
+  headers: Record<string, string>,
+): Promise<Response | null> {
+  const { data: consumed, error: consumeError } = await supabase.rpc("consume_request");
+  if (consumeError || typeof consumed !== "object" || consumed === null) {
+    return json({ error: "Could not verify the request allowance." }, 500, headers);
+  }
+  const decision = consumed as Record<string, unknown>;
+  return decision.allowed === true ? null : consumeDenied(decision, headers);
+}
+
+/** The hosted text features the function serves, one prompt template each. */
+const TEXT_INSTRUCTIONS: Record<string, string> = {
+  "inline-edit":
+    "Rewrite only the selected code. Return replacement code without markdown fences or explanations. Preserve the surrounding code.",
+  "commit-message":
+    "Write a Git commit message from the supplied staged diff. Follow the requested format and repository style. Return only the message.",
+};
+
+/** Trims a code fence the model wrapped around its answer. */
+function cleanTextOutput(value: string): string {
+  const trimmed = value.trim();
+  const fenced = trimmed.match(/^```[a-zA-Z0-9_-]*\n([\s\S]*?)\n```$/);
+  return fenced ? fenced[1] : value;
+}
+
 serve(async (req: Request) => {
   const path = routeOf(req);
 
@@ -268,26 +320,12 @@ serve(async (req: Request) => {
 
       // The tier gate runs before quota: a locked model must not cost the caller a request
       // from their allowance while being refused.
-      const requiredTier = tierOfModel(model, catalog);
       const plan = await planTier(supabase, user.id);
-      if (TIER_RANK[requiredTier] > TIER_RANK[plan]) {
-        return json(
-          {
-            error: "This model needs a higher plan. Upgrade to use it.",
-            reason: "model_locked",
-            requiredTier,
-          },
-          402,
-          headers,
-        );
-      }
+      const gated = tierGateResponse(tierOfModel(model, catalog), plan, headers);
+      if (gated) return gated;
 
-      const { data: consumed, error: consumeError } = await supabase.rpc("consume_request");
-      if (consumeError || typeof consumed !== "object" || consumed === null) {
-        return json({ error: "Could not verify the request allowance." }, 500, headers);
-      }
-      const decision = consumed as Record<string, unknown>;
-      if (decision.allowed !== true) return consumeDenied(decision, headers);
+      const quotaDenied = await consumeGate(supabase, headers);
+      if (quotaDenied) return quotaDenied;
 
       const provider = upstream();
       if (!provider) {
@@ -362,6 +400,121 @@ serve(async (req: Request) => {
           [RESOLVED_MODEL_HEADER]: resolved,
         },
       });
+    }
+
+    if (path === TEXT_PATH && req.method === "POST") {
+      const raw = await req.text();
+      let body: Record<string, unknown>;
+      try {
+        body = JSON.parse(raw) as Record<string, unknown>;
+      } catch {
+        return json({ error: "Request body was not valid JSON." }, 400, headers);
+      }
+
+      // Only the two user-triggered features are served. Autocomplete is deliberately absent:
+      // Tab fires on almost every pause and would burn the shared free-tier key in minutes, so
+      // it stays on the user's own key or Ollama.
+      const feature = typeof body.feature === "string" ? body.feature : "inline-edit";
+      if (feature !== "inline-edit" && feature !== "commit-message") {
+        return json(
+          {
+            error: "This AI feature is not available through blimy's hosted models. Add your own API key or use Ollama instead.",
+            reason: "feature_unavailable",
+          },
+          400,
+          headers,
+        );
+      }
+
+      const model = requestedModel(body);
+      const plan = await planTier(supabase, user.id);
+      const gated = tierGateResponse(tierOfModel(model, catalog), plan, headers);
+      if (gated) return gated;
+
+      const quotaDenied = await consumeGate(supabase, headers);
+      if (quotaDenied) return quotaDenied;
+
+      const provider = upstream();
+      if (!provider) {
+        void supabase.rpc("refund_request");
+        return json({ error: "Hosted models are not configured on this server." }, 500, headers);
+      }
+
+      const resolvedModel =
+        model === "auto" ? (Deno.env.get("BLIMY_DEFAULT_MODEL")?.trim() || "auto") : model;
+      const userContent = JSON.stringify({
+        file: body.filePath,
+        language: body.languageId,
+        instruction: typeof body.instruction === "string" ? body.instruction : undefined,
+        before: body.beforeSelection,
+        selection: body.selectedText,
+        after: body.afterSelection || "",
+        ...(Array.isArray(body.recentEdits) && body.recentEdits.length > 0
+          ? { recentEdits: body.recentEdits }
+          : {}),
+        ...(Array.isArray(body.diagnostics) && body.diagnostics.length > 0
+          ? { diagnostics: body.diagnostics }
+          : {}),
+      });
+      const payload = {
+        model: resolvedModel,
+        messages: [
+          { role: "system", content: TEXT_INSTRUCTIONS[feature] },
+          { role: "user", content: userContent },
+        ],
+        temperature: 0.2,
+        max_completion_tokens: clampOutputTokens(body.max_tokens),
+      };
+
+      let providerResponse: Response;
+      try {
+        providerResponse = await fetch(provider.url, {
+          method: "POST",
+          headers: {
+            authorization: `Bearer ${provider.key}`,
+            "content-type": "application/json",
+          },
+          body: JSON.stringify(payload),
+          signal: AbortSignal.timeout(UPSTREAM_TIMEOUT_MS),
+        });
+      } catch (error) {
+        await supabase.rpc("refund_request");
+        if (error instanceof DOMException && error.name === "TimeoutError") {
+          return json(
+            {
+              error: "That took too long and was stopped. Try again, or pick a faster model.",
+              reason: "upstream_timeout",
+            },
+            504,
+            headers,
+          );
+        }
+        return json({ error: "Could not reach the model provider." }, 502, headers);
+      }
+
+      if (!providerResponse.ok) {
+        await supabase.rpc("refund_request");
+        console.warn(`ai-proxy: upstream responded ${providerResponse.status}`);
+        return json(
+          {
+            error: "The model provider could not complete that request.",
+            reason: "upstream_error",
+          },
+          providerResponse.status >= 500 ? 502 : providerResponse.status,
+          headers,
+        );
+      }
+
+      const upstreamBody = (await providerResponse.json().catch(() => null)) as
+        | { choices?: { message?: { content?: unknown } }[] }
+        | null;
+      const content =
+        typeof upstreamBody?.choices?.[0]?.message?.content === "string"
+          ? upstreamBody.choices[0].message.content
+          : "";
+      void supabase.rpc("record_model_usage", { target_model: resolvedModel });
+
+      return json({ editedText: cleanTextOutput(content) }, 200, headers);
     }
 
     return json({ error: "Not found" }, 404, headers);

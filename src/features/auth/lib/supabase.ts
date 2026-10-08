@@ -1,21 +1,21 @@
 import { createClient } from "@supabase/supabase-js";
 import { getAuthToken, storeAuthToken, removeAuthToken } from "@/features/window/services/auth-api";
 
+import { getSupabaseAuthStorageKey } from "./auth-storage-key";
+
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || "https://dummy.supabase.co";
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || "dummy-anon-key";
+const STORAGE_KEY = getSupabaseAuthStorageKey(supabaseUrl);
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   auth: {
-    storageKey: "blimy_auth_token",
+    storageKey: STORAGE_KEY,
     flowType: "pkce",
     storage: {
       getItem: async (key: string) => {
         const token = await getAuthToken(key);
         if (!token) return null;
-        // Supabase expects a JSON object for the main session token. Legacy tokens are JWTs (e.g., 'ey...').
-        // Hide legacy tokens from Supabase to prevent gotrue-js from failing to parse
-        // them as JSON and subsequently deleting them from secure storage.
-        if (key === "blimy_auth_token" && !token.startsWith("{")) {
+        if (key === STORAGE_KEY && !token.startsWith("{")) {
           return null;
         }
         return token;

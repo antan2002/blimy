@@ -8,8 +8,8 @@ import { getModelById, getProviderById } from "@/features/ai/types/providers.typ
 import { useSettingsStore } from "@/features/settings/stores/settings.store";
 import { useAuthStore } from "@/features/window/stores/auth.store";
 import { useIntelligenceSettingsStore } from "../stores/intelligence-settings.store";
-import { getAuthToken } from "@/features/window/services/auth-api";
-import { getApiBase } from "@/utils/api-base";
+import { getAccessToken } from "@/utils/supabase-access-token";
+import { getIntelligenceApiBase } from "@/utils/api-base";
 import { processStreamingResponse } from "@/utils/stream-utils";
 import {
   getIntelligenceConnection,
@@ -18,10 +18,9 @@ import {
 import { shouldUseTauriFetchForProvider } from "@/features/ai/services/providers/ai-provider-registry";
 import { toIntelligenceSdkPrompt } from "../lib/intelligence-sdk-prompt";
 
-const API_BASE = getApiBase();
+const API_BASE = getIntelligenceApiBase();
 const DEFAULT_INLINE_EDIT_INSTRUCTION = "Improve this code while preserving behavior.";
 export const HOSTED_TEXT_FIELD_LIMIT = 12000;
-const HOSTED_AUTOCOMPLETE_SUFFIX_LIMIT = 4000;
 
 type IntelligenceTextFeature = NonNullable<InlineEditRequest["feature"]>;
 
@@ -147,7 +146,7 @@ async function sendInlineEditRequest(
     return result;
   }
 
-  const token = await getAuthToken();
+  const token = await getAccessToken();
   if (
     (useAuthStore.getState().user?.id ?? null) !== connection.userId ||
     useIntelligenceSettingsStore.getState().scope !== connection.scope
@@ -159,6 +158,18 @@ async function sendInlineEditRequest(
   }
 
   const autocomplete = request.feature === "autocomplete";
+  // Hosted autocomplete is deliberately not served: Tab fires on almost every pause and would
+  // burn a shared key. It runs on the user's own key or Ollama, and this is the hill they hit
+  // when nothing else is configured.
+  if (autocomplete) {
+    // Hosted-autocomplete is not served, so a 402 with `hosted` false reads as a key/configure
+    // problem rather than a missing-credit notice.
+    throw new InlineEditError(
+      "Add your own key or use Ollama for Tab completion.",
+      402,
+      { hosted: false },
+    );
+  }
   if (normalizedRequest.selectedText.length > HOSTED_TEXT_FIELD_LIMIT) {
     throw new InlineEditError(
       `The selection is too large for blimy AI. Select at most ${HOSTED_TEXT_FIELD_LIMIT.toLocaleString("en-US")} characters.`,
@@ -166,16 +177,11 @@ async function sendInlineEditRequest(
     );
   }
   const beforeSelection = normalizedRequest.beforeSelection.slice(-HOSTED_TEXT_FIELD_LIMIT);
-  const afterSelection = normalizedRequest.afterSelection.slice(
-    0,
-    autocomplete ? HOSTED_AUTOCOMPLETE_SUFFIX_LIMIT : HOSTED_TEXT_FIELD_LIMIT,
-  );
+  const afterSelection = normalizedRequest.afterSelection.slice(0, HOSTED_TEXT_FIELD_LIMIT);
   options.signal.throwIfAborted();
   const response = await tauriFetch(
-    // Hosted text features are not yet served by the edge function, which today routes only
-    // chat. They keep the existing blimy.dev path until that is added, so Tab completion and
-    // inline edit behave exactly as they did before this change.
-    `${API_BASE}/api/ai/${autocomplete ? "autocomplete" : "inline-edit"}`,
+    // The hosted text route on the edge function, which serves user-triggered features only.
+    `${API_BASE}/inline-edit`,
     {
       signal: options.signal,
       method: "POST",
@@ -184,19 +190,7 @@ async function sendInlineEditRequest(
         Authorization: `Bearer ${token}`,
         "X-blimy-Intelligence-Scope": connection.scope,
       },
-      body: JSON.stringify(
-        autocomplete
-          ? {
-              model: normalizedRequest.model || undefined,
-              beforeCursor: beforeSelection,
-              afterCursor: afterSelection,
-              filePath: normalizedRequest.filePath,
-              languageId: normalizedRequest.languageId,
-              ...(request.recentEdits?.length ? { recentEdits: request.recentEdits } : {}),
-              ...(request.diagnostics?.length ? { diagnostics: request.diagnostics } : {}),
-            }
-          : { ...normalizedRequest, beforeSelection, afterSelection },
-      ),
+      body: JSON.stringify({ ...normalizedRequest, beforeSelection, afterSelection }),
     },
   );
 
@@ -220,13 +214,12 @@ async function sendInlineEditRequest(
   }
 
   options.signal.throwIfAborted();
-  const field = autocomplete ? "completion" : "editedText";
   const editedText =
     body &&
     typeof body === "object" &&
-    field in body &&
-    typeof (body as Record<string, unknown>)[field] === "string"
-      ? (body as Record<string, string>)[field]
+    "editedText" in body &&
+    typeof (body as Record<string, unknown>).editedText === "string"
+      ? (body as Record<string, string>).editedText
       : "";
 
   if (

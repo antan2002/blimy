@@ -77,24 +77,40 @@ describe("Hosted Intelligence text requests", () => {
     expect(await pending).not.toBeInstanceOf(InlineEditError);
   });
 
-  it("sends bounded autocomplete context with recent edits and diagnostics", async () => {
-    mocks.fetch.mockResolvedValue(jsonResponse({ completion: "value;\nreturn value;" }));
-    const result = await requestInlineEdit({
+  it("refuses hosted autocomplete so Tab stays on user keys or Ollama", async () => {
+    const error = await requestInlineEdit({
       feature: "autocomplete",
       model: "",
-      beforeSelection: "a".repeat(13000),
+      beforeSelection: "const value = 1;",
       selectedText: "",
+      afterSelection: ";",
+    }).catch((reason: unknown) => reason);
+    expect(error).toBeInstanceOf(InlineEditError);
+    expect((error as InlineEditError).status).toBe(402);
+    expect((error as InlineEditError).message).toContain("Ollama");
+    expect(mocks.fetch).not.toHaveBeenCalled();
+  });
+
+  it("posts bounded inline-edit context to the edge function route", async () => {
+    mocks.fetch.mockResolvedValue(
+      jsonResponse({ editedText: "const value = 2;" }),
+    );
+    const result = await requestInlineEdit({
+      feature: "inline-edit",
+      model: "",
+      beforeSelection: "a".repeat(13000),
+      selectedText: "const value = 1;",
       afterSelection: "b".repeat(5000),
       recentEdits: [{ filePath: "/src/a.ts", snippet: "const value = 1;" }],
       diagnostics: [{ line: 3, severity: "error", message: "Missing return" }],
     });
-    expect(result.editedText).toBe("value;\nreturn value;");
+    expect(result.editedText).toBe("const value = 2;");
     const [url, init] = mocks.fetch.mock.calls[0] as [string, RequestInit];
-    expect(url).toMatch(/\/api\/ai\/autocomplete$/);
+    expect(url.endsWith("/inline-edit")).toBe(true);
     const body = JSON.parse(String(init.body));
-    expect(body.beforeCursor).toHaveLength(12000);
-    expect(body.afterCursor).toHaveLength(4000);
-    expect(body.model).toBeUndefined();
+    expect(body.beforeSelection).toHaveLength(12000);
+    expect(body.afterSelection).toHaveLength(12000);
+    expect(body.selectedText).toBe("const value = 1;");
     expect(body.recentEdits).toEqual([{ filePath: "/src/a.ts", snippet: "const value = 1;" }]);
     expect(body.diagnostics).toEqual([{ line: 3, severity: "error", message: "Missing return" }]);
   });

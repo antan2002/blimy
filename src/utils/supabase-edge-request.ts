@@ -1,5 +1,5 @@
 import { getEdgeFunctionsBase } from "@/utils/api-base";
-import { getSupabaseAccessToken, refreshSupabaseSession } from "@/utils/supabase-access-token";
+import { getAccessToken, refreshSupabaseSession } from "@/utils/supabase-access-token";
 import { tauriFetch } from "@/utils/tauri-fetch";
 
 export interface EdgeRequestResult {
@@ -33,7 +33,7 @@ export async function supabaseEdgeRequest(
       signal: AbortSignal.timeout(10000),
     });
 
-  const first = tokenOverride ?? (await getSupabaseAccessToken());
+  const first = tokenOverride ?? (await getAccessToken());
   if (!first) return { ok: false, status: 401, body: { error: "Not signed in." } };
 
   let response = await execute(first);

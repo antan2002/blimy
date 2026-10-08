@@ -1,4 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useState } from "react";
+import { openUrl } from "@tauri-apps/plugin-opener";
+import { getServiceUrls } from "@/config/services";
 import { ProviderIcon } from "@/features/ai/components/icons/provider-icons";
 import { useAIModelOptions } from "@/features/ai/hooks/use-ai-model-options";
 import { useAvailableProviders } from "@/features/ai/hooks/use-available-providers";
@@ -9,7 +11,9 @@ import {
   getModelVendorName,
   pickRecommendedModels,
 } from "@/features/ai/lib/model-vendor";
+import { LOCKED_MODEL_HINT, isModelLocked, planTierOf } from "@/features/ai/lib/model-tier";
 import { useAIChatStore } from "@/features/ai/stores/ai-chat.store";
+import { useProFeature } from "@/features/window/hooks/use-pro-feature";
 import {
   DropdownMenuGroup,
   DropdownMenuItem,
@@ -17,7 +21,7 @@ import {
   DropdownMenuRadioGroup,
   DropdownMenuRadioItem,
 } from "@/ui/dropdown";
-import { ArrowClockwiseIcon, WarningIcon } from "@/ui/icons";
+import { ArrowClockwiseIcon, LockIcon, SparkleIcon, WarningIcon } from "@/ui/icons";
 import type { MenuSearch } from "@/ui/menu-search";
 import { Spinner } from "@/ui/spinner";
 
@@ -80,6 +84,11 @@ export interface ModelOption {
   iconId?: string;
   iconUrl?: string | null;
   disabled?: boolean;
+  /**
+   * The row belongs to a higher plan. It stays clickable so it can offer the upgrade page,
+   * instead of being `disabled` (which the menu renders pointer-events-none).
+   */
+  locked?: boolean;
 }
 
 interface ModelSectionProps {
@@ -160,37 +169,61 @@ export function ModelSection({
         </DropdownMenuItem>
       ) : null}
       <DropdownMenuRadioGroup value={selected} onValueChange={onSelect}>
-        {filtered.map((model) => (
-          <DropdownMenuRadioItem
-            key={model.id}
-            value={model.id}
-            closeOnClick
-            disabled={disabled || model.disabled}
-            title={model.tooltip ?? model.name}
-          >
-            <ProviderIcon
-              providerId={model.iconId ?? getModelIconId(providerId, model.id)}
-              iconUrl={model.iconUrl}
-            />
-            <span className="min-w-0 flex-1 truncate">{model.name}</span>
-          </DropdownMenuRadioItem>
-        ))}
+        {filtered.map((model) =>
+          model.locked ? (
+            <DropdownMenuItem
+              key={model.id}
+              closeOnClick={false}
+              disabled={disabled}
+              onClick={() => void openUrl(getServiceUrls().pricingUrl)}
+              title={LOCKED_MODEL_HINT}
+              aria-label={`${model.name}. ${LOCKED_MODEL_HINT}`}
+            >
+              <ProviderIcon
+                providerId={model.iconId ?? getModelIconId(providerId, model.id)}
+                iconUrl={model.iconUrl}
+              />
+              <span className="min-w-0 flex-1 truncate">{model.name}</span>
+              <LockIcon />
+            </DropdownMenuItem>
+          ) : (
+            <DropdownMenuRadioItem
+              key={model.id}
+              value={model.id}
+              closeOnClick
+              disabled={disabled || model.disabled}
+              title={model.tooltip ?? model.name}
+            >
+              <ProviderIcon
+                providerId={model.iconId ?? getModelIconId(providerId, model.id)}
+                iconUrl={model.iconUrl}
+              />
+              <span className="min-w-0 flex-1 truncate">{model.name}</span>
+            </DropdownMenuRadioItem>
+          ),
+        )}
       </DropdownMenuRadioGroup>
     </DropdownMenuGroup>
   );
 }
 
-function toBlimyOption(model: {
-  id: string;
-  name: string;
-  contextWindow?: number;
-  input?: number;
-  output?: number;
-}): ModelOption {
+function toBlimyOption(
+  model: {
+    id: string;
+    name: string;
+    contextWindow?: number;
+    input?: number;
+    output?: number;
+    tier?: string;
+  },
+  plan: ReturnType<typeof planTierOf>,
+): ModelOption {
+  const locked = isModelLocked(model.tier, plan);
   if (model.id === "auto")
     return {
       id: model.id,
       name: model.name,
+      locked,
       tooltip: joinTooltip([model.name, "blimy picks the model for each request"]),
     };
   const vendor = getModelVendorName(model.id);
@@ -199,6 +232,7 @@ function toBlimyOption(model: {
     id: model.id,
     name: model.name,
     keywords: vendor ? [vendor] : undefined,
+    locked,
     tooltip: joinTooltip([
       model.name,
       vendor,
@@ -210,8 +244,10 @@ function toBlimyOption(model: {
 
 /**
  * The blimy catalog as two sections: a short "Recommended" pick (hidden while searching, since
- * every pick also sits in the full list) and "blimy" with every hosted model. Recommended only
- * shows while the catalog is reachable, which is what having blimy access looks like here.
+ * every pick also sits in the full list) and "Blimy models" with every hosted model. Recommended
+ * only shows while the catalog is reachable, which is what having blimy access looks like here.
+ * Rows above the account's plan carry a lock and point the click at the upgrade page; the
+ * "Recommended" pick never offers those, because a locked model is not a good recommendation.
  */
 export function BlimyModelSections({
   selected,
@@ -226,9 +262,13 @@ export function BlimyModelSections({
     "blimy",
     selected || "auto",
   );
+  const plan = planTierOf(useProFeature().subscriptionStatus);
   const catalog = useAIChatStore((state) => state.dynamicModels.blimy);
-  const models = (catalog ?? availableModels).map(toBlimyOption);
-  const recommended = modelFetchError ? [] : pickRecommendedModels(models);
+  const models = (catalog ?? availableModels).map((model) => toBlimyOption(model, plan));
+  const recommended = modelFetchError
+    ? []
+    : pickRecommendedModels(models.filter((model) => !model.locked));
+  const showsPlansUpgrade = models.some((model) => model.locked) && !search.isSearching;
 
   return (
     <>
@@ -245,7 +285,7 @@ export function BlimyModelSections({
       ) : null}
       <ModelSection
         id="blimy"
-        label="blimy"
+        label="Blimy models"
         models={models}
         selected={selected}
         onSelect={onSelect}
@@ -255,6 +295,15 @@ export function BlimyModelSections({
         error={modelFetchError}
         retry={retry}
       />
+      {showsPlansUpgrade ? (
+        <DropdownMenuItem
+          closeOnClick={false}
+          onClick={() => void openUrl(getServiceUrls().pricingUrl)}
+        >
+          <SparkleIcon />
+          <span className="min-w-0 flex-1 truncate">Upgrade plan</span>
+        </DropdownMenuItem>
+      ) : null}
     </>
   );
 }

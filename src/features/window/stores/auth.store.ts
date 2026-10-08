@@ -9,12 +9,12 @@ import {
   describeSessionCheckFailure,
   fetchCurrentUser,
   fetchSubscriptionStatus,
-  getAuthToken,
   isAuthInvalidError,
   logoutFromServer,
   removeAuthToken,
   storeAuthToken,
 } from "@/features/window/services/auth-api";
+import { getAccessToken } from "@/utils/supabase-access-token";
 import { createSelectors } from "@/utils/zustand-selectors";
 
 const SESSION_CHANGED_EVENT = "auth:session-changed";
@@ -62,7 +62,7 @@ interface AuthStore extends AuthState {
 export interface AuthStoreDependencies {
   fetchCurrentUser: typeof fetchCurrentUser;
   fetchSubscriptionStatus: typeof fetchSubscriptionStatus;
-  getAuthToken: typeof getAuthToken;
+  getAuthToken: typeof getAccessToken;
   isAuthInvalidError: typeof isAuthInvalidError;
   logoutFromServer: typeof logoutFromServer;
   removeAuthToken: typeof removeAuthToken;
@@ -105,7 +105,7 @@ function waitForBrowserReconnect(retry: () => void, attempt: number): () => void
 const defaultAuthStoreDependencies: AuthStoreDependencies = {
   fetchCurrentUser,
   fetchSubscriptionStatus,
-  getAuthToken,
+  getAuthToken: getAccessToken,
   isAuthInvalidError,
   logoutFromServer,
   removeAuthToken,

@@ -12,7 +12,7 @@ import {
 import { useSettingsStore } from "@/features/settings/stores/settings.store";
 import { normalizeOllamaBaseUrl } from "@/features/ai/lib/ollama-endpoint";
 import { getIntelligenceApiBase } from "@/utils/api-base";
-import { getSupabaseAccessToken } from "@/utils/supabase-access-token";
+import { getAccessToken } from "@/utils/supabase-access-token";
 import { createIntelligenceModelFetch } from "./intelligence-model-fetch";
 
 export interface IntelligenceSdkModelOptions {
@@ -53,7 +53,7 @@ export async function getIntelligenceSdkModel(
     idempotencyKey: blimy ? (index) => `${runId}-${index}` : undefined,
     // The live session token is read again on each retry, so a refresh mid-run is picked up
     // instead of the retry loop re-sending the stale header it already failed with.
-    refreshToken: blimy ? async () => getSupabaseAccessToken() : undefined,
+    refreshToken: blimy ? async () => getAccessToken() : undefined,
     onCost: options.onCost,
   });
   if (providerId === "anthropic") return createAnthropic({ apiKey, fetch: retryingFetch })(modelId);

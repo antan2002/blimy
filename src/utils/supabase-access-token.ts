@@ -14,34 +14,21 @@
  * Imported dynamically so this module stays free of the supabase client's runtime and cannot
  * join a static import cycle.
  */
-export async function getSupabaseAccessToken(): Promise<string | null> {
+export async function getAccessToken(): Promise<string | null> {
   const { supabase } = await import("@/features/auth/lib/supabase");
   const { data } = await supabase.auth.getSession();
   const session = data.session;
 
-  const getFallbackToken = async () => {
-    const { getAuthToken } = await import("@/features/window/services/auth-api");
-    const raw = await getAuthToken();
-    if (!raw) return null;
-    if (raw.startsWith("{")) {
-      try {
-        const parsed = JSON.parse(raw);
-        return parsed.access_token || raw;
-      } catch {
-        return raw;
-      }
-    }
-    return raw;
-  };
+  if (!session?.access_token) return null;
 
-  if (!session?.access_token) return getFallbackToken();
+
 
   const expiresAtSeconds = session.expires_at;
   const isExpired = expiresAtSeconds == null || expiresAtSeconds * 1000 - Date.now() <= 30_000;
   if (!isExpired) return session.access_token;
 
   const { data: refreshed, error } = await supabase.auth.refreshSession();
-  if (error || !refreshed.session?.access_token) return getFallbackToken();
+  if (error || !refreshed.session?.access_token) return null;
   return refreshed.session.access_token;
 }
 
