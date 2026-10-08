@@ -16,6 +16,7 @@
         "title": "Blimy",
         "width": 1200,
         "height": 800,
+        "visible": false,
         "decorations": true,
         "titleBarStyle": "Overlay",
         "hiddenTitle": true,

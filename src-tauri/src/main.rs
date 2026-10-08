@@ -556,6 +556,10 @@ take_pending_deep_links,
 fn window_state_flags() -> StateFlags {
    let mut flags = StateFlags::all();
    flags.remove(StateFlags::DECORATIONS);
+   // Visibility is owned by the frontend: the window is created hidden and the React shell
+   // calls `getCurrentWindow().show()` once it has painted, so a restore must never repaint an
+   // empty window over the loading webview (the black start).
+   flags.remove(StateFlags::VISIBLE);
    flags
 }
 
@@ -570,6 +574,11 @@ mod tests {
       assert!(!flags.contains(StateFlags::DECORATIONS));
       assert!(flags.contains(StateFlags::SIZE));
       assert!(flags.contains(StateFlags::POSITION));
+   }
+
+   #[test]
+   fn window_state_never_restores_visibility() {
+      assert!(!window_state_flags().contains(StateFlags::VISIBLE));
    }
 }
 

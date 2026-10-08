@@ -743,6 +743,16 @@ const FREE_TIER_CAPABILITIES: ProductCapabilities = {
   ownModelsOnly: true,
 };
 
+/** The subscription an account holds when there is no plan row or the plan server did not answer. */
+function makeFreeSubscriptionInfo(): SubscriptionInfo {
+  return {
+    status: "free",
+    capabilities: FREE_TIER_CAPABILITIES,
+    subscription: { plan: "free", renews_at: null, ends_at: null },
+    enterprise: { has_access: false, is_admin: false, policy: null },
+  };
+}
+
 export async function fetchSubscriptionStatus(tokenOverride?: string): Promise<SubscriptionInfo> {
   const { supabase } = await import("@/features/auth/lib/supabase");
   const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
@@ -760,20 +770,15 @@ export async function fetchSubscriptionStatus(tokenOverride?: string): Promise<S
   // account is right, but only if the capabilities match the free plan rather than an older,
   // stricter shape that would hide Blimy models from a signed-in user.
   if (error && error.code === "PGRST116") {
-    return {
-      status: "free",
-      capabilities: FREE_TIER_CAPABILITIES,
-      subscription: { plan: "free", renews_at: null, ends_at: null },
-      enterprise: { has_access: false, is_admin: false, policy: null },
-    };
+    return makeFreeSubscriptionInfo();
   }
 
-  if (error) {
-    throw new AuthApiError("Could not read your plan. Try again in a moment.", 503);
-  }
-
-  if (!data) {
-    throw new AuthApiError("Could not read your plan. Try again in a moment.", 503);
+  // The plan read failed or came back empty (migrations not applied yet, a transient Postgres
+  // error, or a policy gap). Falling back to the free capability set keeps a signed-in account
+  // usable instead of presenting "plan unavailable" and hiding Blimy models until the server
+  // answers. This matches the server: an unknown subscription is treated as free.
+  if (error || !data) {
+    return makeFreeSubscriptionInfo();
   }
 
   return {

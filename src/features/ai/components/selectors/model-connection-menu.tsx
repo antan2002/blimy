@@ -246,8 +246,9 @@ function toBlimyOption(
  * The blimy catalog as two sections: a short "Recommended" pick (hidden while searching, since
  * every pick also sits in the full list) and "Blimy models" with every hosted model. Recommended
  * only shows while the catalog is reachable, which is what having blimy access looks like here.
- * Rows above the account's plan carry a lock and point the click at the upgrade page; the
- * "Recommended" pick never offers those, because a locked model is not a good recommendation.
+ * Rows above the account's plan stay fully visible and carry a lock; nothing is hidden or
+ * dimmed, and a locked model is still offered in Recommended with its lock so every model is
+ * reachable in one glance.
  */
 export function BlimyModelSections({
   selected,
@@ -265,9 +266,7 @@ export function BlimyModelSections({
   const plan = planTierOf(useProFeature().subscriptionStatus);
   const catalog = useAIChatStore((state) => state.dynamicModels.blimy);
   const models = (catalog ?? availableModels).map((model) => toBlimyOption(model, plan));
-  const recommended = modelFetchError
-    ? []
-    : pickRecommendedModels(models.filter((model) => !model.locked));
+  const recommended = modelFetchError ? [] : pickRecommendedModels(models);
   const showsPlansUpgrade = models.some((model) => model.locked) && !search.isSearching;
 
   return (
