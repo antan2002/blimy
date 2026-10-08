@@ -21,8 +21,6 @@ export async function getAccessToken(): Promise<string | null> {
 
   if (!session?.access_token) return null;
 
-
-
   const expiresAtSeconds = session.expires_at;
   const isExpired = expiresAtSeconds == null || expiresAtSeconds * 1000 - Date.now() <= 30_000;
   if (!isExpired) return session.access_token;
@@ -38,4 +36,3 @@ export async function refreshSupabaseSession(): Promise<string | null> {
   if (error || !refreshed.session?.access_token) return null;
   return refreshed.session.access_token;
 }
-

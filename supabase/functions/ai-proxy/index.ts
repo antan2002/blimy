@@ -65,15 +65,69 @@ interface CatalogEntry {
  */
 const BUILT_IN_CATALOG: Omit<CatalogEntry, "provider">[] = [
   { id: "auto", name: "Automatic", tier: "free", maxOutputTokens: 32000, supportsImages: true },
-  { id: "anthropic/claude-opus-5.5", name: "Claude Opus 5.5", tier: "pro", maxOutputTokens: 32000, supportsImages: true },
-  { id: "anthropic/claude-sonnet-5", name: "Claude Sonnet 5", tier: "pro", maxOutputTokens: 32000, supportsImages: true },
-  { id: "openai/gpt-5.6-sol", name: "GPT 5.6 Sol", tier: "pro", maxOutputTokens: 32000, supportsImages: true },
-  { id: "openai/gpt-5.3-codex", name: "GPT 5.3 Codex", tier: "pro", maxOutputTokens: 32000, supportsImages: true },
-  { id: "google/gemini-3.1-pro-preview", name: "Gemini 3.1 Pro Preview", tier: "pro", maxOutputTokens: 32000, supportsImages: true },
-  { id: "moonshotai/kimi-k2.7-code", name: "Kimi K2.7 Code", tier: "plus", maxOutputTokens: 32000, supportsImages: true },
-  { id: "zai/glm-5.3", name: "GLM 5.3", tier: "plus", maxOutputTokens: 32000, supportsImages: false },
-  { id: "deepseek/deepseek-v4-pro", name: "DeepSeek V4 Pro", tier: "plus", maxOutputTokens: 32000, supportsImages: false },
-  { id: "deepseek/deepseek-v4-flash", name: "DeepSeek V4 Flash", tier: "plus", maxOutputTokens: 32000, supportsImages: false },
+  {
+    id: "anthropic/claude-opus-5.5",
+    name: "Claude Opus 5.5",
+    tier: "pro",
+    maxOutputTokens: 32000,
+    supportsImages: true,
+  },
+  {
+    id: "anthropic/claude-sonnet-5",
+    name: "Claude Sonnet 5",
+    tier: "pro",
+    maxOutputTokens: 32000,
+    supportsImages: true,
+  },
+  {
+    id: "openai/gpt-5.6-sol",
+    name: "GPT 5.6 Sol",
+    tier: "pro",
+    maxOutputTokens: 32000,
+    supportsImages: true,
+  },
+  {
+    id: "openai/gpt-5.3-codex",
+    name: "GPT 5.3 Codex",
+    tier: "pro",
+    maxOutputTokens: 32000,
+    supportsImages: true,
+  },
+  {
+    id: "google/gemini-3.1-pro-preview",
+    name: "Gemini 3.1 Pro Preview",
+    tier: "pro",
+    maxOutputTokens: 32000,
+    supportsImages: true,
+  },
+  {
+    id: "moonshotai/kimi-k2.7-code",
+    name: "Kimi K2.7 Code",
+    tier: "plus",
+    maxOutputTokens: 32000,
+    supportsImages: true,
+  },
+  {
+    id: "zai/glm-5.3",
+    name: "GLM 5.3",
+    tier: "plus",
+    maxOutputTokens: 32000,
+    supportsImages: false,
+  },
+  {
+    id: "deepseek/deepseek-v4-pro",
+    name: "DeepSeek V4 Pro",
+    tier: "plus",
+    maxOutputTokens: 32000,
+    supportsImages: false,
+  },
+  {
+    id: "deepseek/deepseek-v4-flash",
+    name: "DeepSeek V4 Flash",
+    tier: "plus",
+    maxOutputTokens: 32000,
+    supportsImages: false,
+  },
 ];
 
 function isModelTier(value: unknown): value is ModelTier {
@@ -99,8 +153,12 @@ function modelCatalog(): CatalogEntry[] {
             name: typeof row.name === "string" && row.name ? row.name : (row.id as string),
             tier: isModelTier(row.tier) ? row.tier : "free",
             provider: "blimy" as const,
-            ...(typeof row.maxOutputTokens === "number" ? { maxOutputTokens: row.maxOutputTokens } : {}),
-            ...(typeof row.supportsImages === "boolean" ? { supportsImages: row.supportsImages } : {}),
+            ...(typeof row.maxOutputTokens === "number"
+              ? { maxOutputTokens: row.maxOutputTokens }
+              : {}),
+            ...(typeof row.supportsImages === "boolean"
+              ? { supportsImages: row.supportsImages }
+              : {}),
           }));
         if (rows.length > 0) return rows;
       }
@@ -129,7 +187,10 @@ function tierOfModel(requested: string, catalog: CatalogEntry[]): ModelTier {
  * The tier the caller's subscription grants. An unknown or missing status is free, so a
  * half-loaded account can never appear to own a paid tier.
  */
-async function planTier(supabase: ReturnType<typeof clientFor>, userId: string): Promise<ModelTier> {
+async function planTier(
+  supabase: ReturnType<typeof clientFor>,
+  userId: string,
+): Promise<ModelTier> {
   const { data } = await supabase
     .from("subscriptions")
     .select("status")
@@ -147,11 +208,9 @@ function json(body: unknown, status: number, headers: Record<string, string> = {
 }
 
 function clientFor(req: Request) {
-  return createClient(
-    Deno.env.get("SUPABASE_URL") ?? "",
-    Deno.env.get("SUPABASE_ANON_KEY") ?? "",
-    { global: { headers: { Authorization: req.headers.get("Authorization") ?? "" } } },
-  );
+  return createClient(Deno.env.get("SUPABASE_URL") ?? "", Deno.env.get("SUPABASE_ANON_KEY") ?? "", {
+    global: { headers: { Authorization: req.headers.get("Authorization") ?? "" } },
+  });
 }
 
 /**
@@ -190,7 +249,11 @@ function consumeDenied(result: Record<string, unknown>, headers: Record<string, 
   const reason = typeof result.reason === "string" ? result.reason : "quota";
   if (reason === "not_signed_in") return json({ error: "Unauthorized" }, 401, headers);
   if (reason === "no_subscription") {
-    return json({ error: "This account has no active plan.", reason: "entitlement_required" }, 402, headers);
+    return json(
+      { error: "This account has no active plan.", reason: "entitlement_required" },
+      402,
+      headers,
+    );
   }
   const message =
     reason === "minute_limit"
@@ -335,7 +398,7 @@ serve(async (req: Request) => {
       }
 
       const resolvedModel =
-        model === "auto" ? (Deno.env.get("BLIMY_DEFAULT_MODEL")?.trim() || "auto") : model;
+        model === "auto" ? Deno.env.get("BLIMY_DEFAULT_MODEL")?.trim() || "auto" : model;
       const payload = {
         ...body,
         model: resolvedModel,
@@ -387,16 +450,14 @@ serve(async (req: Request) => {
 
       // Counted only once the provider accepted the request, so a failure never shows up as
       // usage. Best-effort: a counter that fails to write must not fail the turn.
-      const resolved =
-        providerResponse.headers.get(RESOLVED_MODEL_HEADER) ?? resolvedModel;
+      const resolved = providerResponse.headers.get(RESOLVED_MODEL_HEADER) ?? resolvedModel;
       void supabase.rpc("record_model_usage", { target_model: resolved });
 
       return new Response(providerResponse.body, {
         status: 200,
         headers: {
           ...headers,
-          "content-type":
-            providerResponse.headers.get("content-type") ?? "text/event-stream",
+          "content-type": providerResponse.headers.get("content-type") ?? "text/event-stream",
           [RESOLVED_MODEL_HEADER]: resolved,
         },
       });
@@ -418,7 +479,8 @@ serve(async (req: Request) => {
       if (feature !== "inline-edit" && feature !== "commit-message") {
         return json(
           {
-            error: "This AI feature is not available through blimy's hosted models. Add your own API key or use Ollama instead.",
+            error:
+              "This AI feature is not available through blimy's hosted models. Add your own API key or use Ollama instead.",
             reason: "feature_unavailable",
           },
           400,
@@ -441,7 +503,7 @@ serve(async (req: Request) => {
       }
 
       const resolvedModel =
-        model === "auto" ? (Deno.env.get("BLIMY_DEFAULT_MODEL")?.trim() || "auto") : model;
+        model === "auto" ? Deno.env.get("BLIMY_DEFAULT_MODEL")?.trim() || "auto" : model;
       const userContent = JSON.stringify({
         file: body.filePath,
         language: body.languageId,
@@ -505,9 +567,9 @@ serve(async (req: Request) => {
         );
       }
 
-      const upstreamBody = (await providerResponse.json().catch(() => null)) as
-        | { choices?: { message?: { content?: unknown } }[] }
-        | null;
+      const upstreamBody = (await providerResponse.json().catch(() => null)) as {
+        choices?: { message?: { content?: unknown } }[];
+      } | null;
       const content =
         typeof upstreamBody?.choices?.[0]?.message?.content === "string"
           ? upstreamBody.choices[0].message.content

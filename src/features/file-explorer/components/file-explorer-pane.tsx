@@ -45,7 +45,7 @@ function FileExplorerPaneComponent() {
       >
         <AccordionItem
           value="folders"
-          className="flex flex-col min-h-0 shrink-0 has-[[aria-expanded=true]]:flex-1 [&>[data-slot=accordion-content]]:flex-1 [&>[data-slot=accordion-content]]:flex [&>[data-slot=accordion-content]]:flex-col [&>[data-slot=accordion-content]]:min-h-0"
+          className="flex flex-col min-h-0 shrink-0 has-aria-expanded:flex-1 *:data-[slot=accordion-content]:flex-1 *:data-[slot=accordion-content]:flex *:data-[slot=accordion-content]:flex-col *:data-[slot=accordion-content]:min-h-0"
         >
           <AccordionTrigger className="uppercase text-xs font-semibold">Folders</AccordionTrigger>
           <AccordionContent className="flex-1 flex flex-col min-h-0 h-full overflow-hidden relative">
@@ -80,7 +80,7 @@ function FileExplorerPaneComponent() {
 
         <AccordionItem
           value="outline"
-          className="flex flex-col min-h-0 shrink-0 has-[[aria-expanded=true]]:flex-1 border-t border-border [&>[data-slot=accordion-content]]:flex-1 [&>[data-slot=accordion-content]]:flex [&>[data-slot=accordion-content]]:flex-col [&>[data-slot=accordion-content]]:min-h-0"
+          className="flex flex-col min-h-0 shrink-0 has-aria-expanded:flex-1 border-t border-border *:data-[slot=accordion-content]:flex-1 *:data-[slot=accordion-content]:flex *:data-[slot=accordion-content]:flex-col *:data-[slot=accordion-content]:min-h-0"
         >
           <AccordionTrigger
             className="uppercase text-xs font-semibold"
@@ -101,7 +101,7 @@ function FileExplorerPaneComponent() {
 
         <AccordionItem
           value="timeline"
-          className="flex flex-col min-h-0 shrink-0 has-[[aria-expanded=true]]:flex-1 border-t border-border [&>[data-slot=accordion-content]]:flex-1 [&>[data-slot=accordion-content]]:flex [&>[data-slot=accordion-content]]:flex-col [&>[data-slot=accordion-content]]:min-h-0"
+          className="flex flex-col min-h-0 shrink-0 has-aria-expanded:flex-1 border-t border-border *:data-[slot=accordion-content]:flex-1 *:data-[slot=accordion-content]:flex *:data-[slot=accordion-content]:flex-col *:data-[slot=accordion-content]:min-h-0"
         >
           <AccordionTrigger className="uppercase text-xs font-semibold" disabled={!activeBufferId}>
             Timeline

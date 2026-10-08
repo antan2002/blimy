@@ -53,12 +53,7 @@ export const ModelResultsProvider = ModelResultsContext;
  */
 export function useConnectedModelProviders(selectedProviderIds: string[] = []) {
   const providers = useAvailableProviders();
-  const providerKeys = useAIChatStore((state) => state.providerApiKeys);
-  return providers.filter(
-    (provider) =>
-      provider.id !== "blimy" &&
-      (selectedProviderIds.includes(provider.id) || providerKeys.get(provider.id)),
-  );
+  return providers.filter((provider) => provider.id !== "blimy");
 }
 
 /** A model's display name, from the fetched catalog first and the static list second. */
@@ -249,6 +244,10 @@ function toBlimyOption(
  * Rows above the account's plan stay fully visible and carry a lock; nothing is hidden or
  * dimmed, and a locked model is still offered in Recommended with its lock so every model is
  * reachable in one glance.
+ *
+ * A sign-in problem is not shown inside this menu: the composer notice and the plan section
+ * already own that message, and the static catalog keeps listing every model meanwhile. Only a
+ * server or network failure surfaces here, with its retry.
  */
 export function BlimyModelSections({
   selected,
@@ -266,8 +265,12 @@ export function BlimyModelSections({
   const plan = planTierOf(useProFeature().subscriptionStatus);
   const catalog = useAIChatStore((state) => state.dynamicModels.blimy);
   const models = (catalog ?? availableModels).map((model) => toBlimyOption(model, plan));
-  const recommended = modelFetchError ? [] : pickRecommendedModels(models);
+  const recommended = pickRecommendedModels(models);
   const showsPlansUpgrade = models.some((model) => model.locked) && !search.isSearching;
+  const isAuthFailure =
+    modelFetchError != null &&
+    /sign in|signed in|expired|session|Authentication/i.test(modelFetchError);
+  const menuError = isAuthFailure ? null : modelFetchError;
 
   return (
     <>
@@ -285,21 +288,20 @@ export function BlimyModelSections({
       <ModelSection
         id="blimy"
         label="Blimy models"
-        models={models}
+        models={models.filter((m) => m.id !== "auto")}
         selected={selected}
         onSelect={onSelect}
         providerId="blimy"
         search={search}
         loading={isLoadingModels}
-        error={modelFetchError}
-        retry={retry}
+        error={menuError}
+        retry={menuError ? retry : undefined}
       />
       {showsPlansUpgrade ? (
         <DropdownMenuItem
           closeOnClick={false}
           onClick={() => void openUrl(getServiceUrls().pricingUrl)}
         >
-          <SparkleIcon />
           <span className="min-w-0 flex-1 truncate">Upgrade plan</span>
         </DropdownMenuItem>
       ) : null}

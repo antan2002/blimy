@@ -78,8 +78,7 @@ export class BlimyProvider extends AIProvider {
     } catch (error) {
       throw new Error("Blimy models are not available yet.");
     }
-    if (response.status === 401)
-      throw new Error("Sign in to use Blimy models.");
+    if (response.status === 401) throw new Error("Sign in to use Blimy models.");
     if (response.status === 402) throw new HostedEntitlementError();
     if (!response.ok) throw new Error("Blimy models are not available yet.");
     const result = (await response.json()) as { enabled: boolean; data: ProviderModel[] };

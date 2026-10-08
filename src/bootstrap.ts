@@ -1,10 +1,31 @@
 import { ensureStartupAppearanceApplied } from "@/features/settings/lib/appearance-bootstrap";
 
-ensureStartupAppearanceApplied();
+function renderFatal(message: string, detail?: unknown) {
+  const detailText =
+    detail instanceof Error ? detail.stack || detail.message : String(detail ?? "");
+  const root = document.getElementById("root");
+  if (!root) return;
+  root.innerHTML = `
+    <div style="font-family: system-ui, sans-serif; padding: 24px; max-width: 560px;" role="alert">
+      <div style="font-size: 15px; font-weight: 600; margin-bottom: 8px;">${message}</div>
+      ${
+        detailText
+          ? `<pre style="font-size: 12px; opacity: 0.8; white-space: pre-wrap; margin: 0;">${detailText}</pre>`
+          : ""
+      }
+    </div>`;
+}
 
 window.addEventListener("error", (e) => {
-  document.body.innerHTML += `<div style="position:fixed;top:0;left:0;right:0;background:red;color:white;padding:20px;z-index:999999;font-size:16px;">ERROR: ${e.message} <br/><pre>${e.error?.stack}</pre></div>`;
+  renderFatal("Blimy hit a startup error.", e.error ?? e.message);
 });
 window.addEventListener("unhandledrejection", (e) => {
-  document.body.innerHTML += `<div style="position:fixed;top:0;left:0;right:0;background:red;color:white;padding:20px;z-index:999999;font-size:16px;">PROMISE REJECTION: ${e.reason?.message || e.reason} <br/><pre>${e.reason?.stack}</pre></div>`;
+  renderFatal("Blimy hit a startup error.", e.reason);
 });
+
+try {
+  ensureStartupAppearanceApplied();
+} catch (error) {
+  console.error("Failed to apply startup appearance:", error);
+  // Theme bootstrap must never block the app; defaults apply in CSS instead.
+}

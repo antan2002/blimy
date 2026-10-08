@@ -1,6 +1,0 @@
-Complete project rename from athas to blimy in Rust files
-
-Run .tmp-rename-crates.ps1 and .tmp-rename-rust.ps1 to update the
-remaining legacy athas identifiers in src-tauri to blimy. This fixes
-152 compiler errors where src-tauri could not resolve dependencies
-like athas_github, athas_terminal, etc. after the crates were renamed.

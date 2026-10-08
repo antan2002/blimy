@@ -25,6 +25,7 @@ import {
   DropdownMenuContent,
   DropdownMenuEmpty,
   DropdownMenuFooter,
+  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSearch,
@@ -188,7 +189,9 @@ export function ComposerAgentSelector({
                   onSelect={(id) => onModelChange(id, "blimy")}
                 />
                 {configuredProviders.length > 0 && !search.isSearching ? (
-                  <DropdownMenuLabel>Your API keys</DropdownMenuLabel>
+                  <DropdownMenuGroup>
+                    <DropdownMenuLabel>Your API keys</DropdownMenuLabel>
+                  </DropdownMenuGroup>
                 ) : null}
                 {configuredProviders.map((provider) => (
                   <ProviderModels

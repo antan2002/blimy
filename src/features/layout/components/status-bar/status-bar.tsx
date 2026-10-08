@@ -130,7 +130,7 @@ export function StatusBar() {
           </>
         )}
 
-        <span className="flex h-full items-center [&_button]:!h-full [&_button]:!w-auto [&_button]:!px-1.5 [&_button]:!rounded-none [&_button]:!bg-transparent [&_button:hover]:!bg-accent-foreground/10 [&_button]:!text-current [&_svg]:!size-4">
+        <span className="flex h-full items-center [&_button]:h-full! [&_button]:w-auto! [&_button]:px-1.5! [&_button]:rounded-none! [&_button]:bg-transparent! [&_button:hover]:!bg-accent-foreground/10 [&_button]:text-current! [&_svg]:size-4!">
           <NotificationsTrigger size="lg" />
         </span>
       </div>

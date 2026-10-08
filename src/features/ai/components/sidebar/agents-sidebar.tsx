@@ -277,7 +277,7 @@ export function AgentsSidebar() {
     return (
       <SidebarPanel data-slot="agents-sidebar" className="flex flex-col h-full bg-background">
         <div className="flex items-center justify-between p-2 border-b border-border shrink-0">
-          <SidebarSectionLabel className="m-0 py-0 text-sm font-semibold truncate max-w-[150px]">
+          <SidebarSectionLabel className="m-0 py-0 text-sm font-semibold truncate max-w-37.5">
             {currentChat ? currentChat.title : "AI Chat"}
           </SidebarSectionLabel>
           <div className="flex gap-1 items-center">

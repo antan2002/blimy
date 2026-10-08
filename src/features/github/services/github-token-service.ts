@@ -48,6 +48,7 @@ export const syncGitHubTokenFromAccount = async (): Promise<GitHubTokenSyncResul
     headers: {
       Authorization: `Bearer ${token}`,
     },
+    signal: AbortSignal.timeout(10000),
   });
 
   if (response.status === 401 || response.status === 403) {

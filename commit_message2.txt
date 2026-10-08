@@ -1,5 +1,0 @@
-Rename shell integration references from athas to blimy
-
-Rename the remaining legacy athas references in the terminal crate
-and shell integration scripts to match the new blimy project name,
-resolving the build errors caused by missing inclusion paths.

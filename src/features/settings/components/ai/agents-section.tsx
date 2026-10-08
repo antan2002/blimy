@@ -96,11 +96,7 @@ export function AgentsSection() {
               }
             >
               <div className="flex size-9 items-center justify-center overflow-hidden rounded-[10px] border border-white/20 bg-white shadow-lg backdrop-blur-md transition-transform duration-500 hover:scale-125 hover:z-10 cursor-default">
-                <img
-                  src={item.logo}
-                  alt="Agent Logo"
-                  className="size-full object-contain p-[3px]"
-                />
+                <img src={item.logo} alt="Agent Logo" className="size-full object-contain p-0.75" />
               </div>
             </div>
           ))}

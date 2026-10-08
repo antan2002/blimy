@@ -9,7 +9,23 @@
   </head>
 
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <div
+        style="
+          position: fixed;
+          inset: 0;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-family: system-ui, sans-serif;
+          font-size: 14px;
+          color: #888;
+          background: var(--surface, var(--background, #1e1e1e));
+        "
+      >
+        Starting Blimy...
+      </div>
+    </div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

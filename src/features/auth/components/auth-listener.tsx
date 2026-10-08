@@ -113,9 +113,10 @@ export function AuthListener() {
               const provider = data.session.user?.app_metadata?.provider;
               const providers = data.session.user?.app_metadata?.providers || [];
               const isGitHub = provider === "github" || providers.includes("github");
-              
+
               if (isGitHub && data.session.provider_token) {
-                const { storeGitHubToken } = await import("@/features/github/services/github-token-service");
+                const { storeGitHubToken } =
+                  await import("@/features/github/services/github-token-service");
                 await storeGitHubToken(data.session.provider_token).catch((err) => {
                   console.error("[auth] Failed to store GitHub token locally:", err);
                 });

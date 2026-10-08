@@ -613,10 +613,7 @@ export const getAuthToken = async (key?: string): Promise<string | null> => {
   }
 };
 
-export const storeAuthToken = async (
-  token: string,
-  key?: string,
-): Promise<void> => {
+export const storeAuthToken = async (token: string, key?: string): Promise<void> => {
   const actualKey = key ?? getSupabaseAuthStorageKey();
   await invoke("store_auth_token", { token, key: actualKey });
   authTokenCache[actualKey] = token;
@@ -761,10 +758,7 @@ export async function fetchSubscriptionStatus(tokenOverride?: string): Promise<S
     throw new AuthApiError("Your session is no longer available. Sign in again.", 401);
   }
 
-  const { data, error } = await supabase
-    .from("my_entitlement")
-    .select("*")
-    .single();
+  const { data, error } = await supabase.from("my_entitlement").select("*").single();
 
   // No row yet means the signup trigger or the backstop has not run. Treating that as a free
   // account is right, but only if the capabilities match the free plan rather than an older,

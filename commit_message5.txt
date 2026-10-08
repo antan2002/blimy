@@ -1,7 +1,0 @@
-Complete project rename from athas to blimy in frontend files
-
-Run custom scripts to comprehensively replace all remaining athas
-references, identifiers, and filenames across the src, extensions,
-and public directories. This fixes the black screen issue caused by
-Tauri IPC mismatches where the frontend was invoking athas commands
-that had already been renamed to blimy in the backend crates.

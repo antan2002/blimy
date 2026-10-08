@@ -24,10 +24,10 @@ export function LoginScreen() {
     <div className="flex h-screen w-full items-center justify-center bg-black p-4 lg:p-8 overflow-hidden">
       {/* Background radial gradient to give that soft fade effect */}
       <div className="pointer-events-none absolute inset-0 flex items-center justify-center overflow-hidden">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white/5 blur-[200px] size-[800px]" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white/5 blur-[200px] size-200" />
       </div>
 
-      <div className="relative z-10 flex h-full max-h-[800px] w-full max-w-[1200px] flex-row gap-0 rounded-3xl overflow-hidden bg-[#050505] shadow-2xl ring-1 ring-white/10">
+      <div className="relative z-10 flex h-full max-h-200 w-full max-w-300 flex-row gap-0 rounded-3xl overflow-hidden bg-[#050505] shadow-2xl ring-1 ring-white/10">
         {/* Left Side: Image Pane */}
         <div className="relative hidden w-1/2 md:block">
           {/* Image */}
@@ -43,13 +43,13 @@ export function LoginScreen() {
             </span>
           </div>
           {/* Soft fade into the black background on the right edge */}
-          <div className="absolute inset-y-0 right-0 w-32 bg-gradient-to-l from-[#050505] to-transparent" />
+          <div className="absolute inset-y-0 right-0 w-32 bg-linear-to-l from-[#050505] to-transparent" />
         </div>
 
         {/* Right Side: Auth Pane */}
         <div className="flex w-full flex-col justify-center px-8 sm:px-16 md:w-1/2 bg-[#050505]">
           <div className="max-w-md w-full mx-auto flex flex-col items-start">
-            <h1 className="text-[2.5rem] font-medium leading-tight tracking-tight text-white mb-12 max-w-[350px]">
+            <h1 className="text-[2.5rem] font-medium leading-tight tracking-tight text-white mb-12 max-w-87.5">
               Unlock your flow with blimy
             </h1>
 

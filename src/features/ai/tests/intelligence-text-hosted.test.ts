@@ -93,9 +93,7 @@ describe("Hosted Intelligence text requests", () => {
   });
 
   it("posts bounded inline-edit context to the edge function route", async () => {
-    mocks.fetch.mockResolvedValue(
-      jsonResponse({ editedText: "const value = 2;" }),
-    );
+    mocks.fetch.mockResolvedValue(jsonResponse({ editedText: "const value = 2;" }));
     const result = await requestInlineEdit({
       feature: "inline-edit",
       model: "",

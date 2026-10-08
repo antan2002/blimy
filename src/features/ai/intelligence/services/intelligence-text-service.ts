@@ -164,11 +164,9 @@ async function sendInlineEditRequest(
   if (autocomplete) {
     // Hosted-autocomplete is not served, so a 402 with `hosted` false reads as a key/configure
     // problem rather than a missing-credit notice.
-    throw new InlineEditError(
-      "Add your own key or use Ollama for Tab completion.",
-      402,
-      { hosted: false },
-    );
+    throw new InlineEditError("Add your own key or use Ollama for Tab completion.", 402, {
+      hosted: false,
+    });
   }
   if (normalizedRequest.selectedText.length > HOSTED_TEXT_FIELD_LIMIT) {
     throw new InlineEditError(

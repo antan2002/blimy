@@ -191,10 +191,19 @@ export function createAgentNativeNotificationService(
       }
       if (!(await dependencies.isPermissionGranted())) return "permission-denied";
 
+      if (settings.sound) {
+        try {
+          const audio = new window.Audio("/success.mp3");
+          audio.volume = 0.6;
+          void audio.play();
+        } catch (e) {
+          console.error("Failed to play custom agent sound:", e);
+        }
+      }
+
       dependencies.send({
         ...getAgentNativeNotificationContent(request.kind),
         group: "blimy-agent",
-        ...(settings.sound ? { sound: getAgentNotificationSound(dependencies.platform) } : {}),
         extra: {
           blimyRoute: "agent",
           chatId: request.chatId,
