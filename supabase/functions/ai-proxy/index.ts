@@ -17,6 +17,15 @@ const CHAT_PATH = "/chat/completions";
 /** The hosted text-feature route: inline edits and commit titles share it. */
 const TEXT_PATH = "/inline-edit";
 
+/** The hosted web-search route: `web_search` and `fetch_url` for the built-in agent. */
+const WEB_SEARCH_PATH = "/web/search";
+
+/** The hosted web-fetch route: reads a page's readable text for the agent. */
+const WEB_FETCH_PATH = "/web/fetch";
+
+/** How long an Exa call may take; search and retrieval are fast, so a long crawl is a failure. */
+const EXA_TIMEOUT_MS = 20_000;
+
 /**
  * The route the caller asked for, independent of the function mount path.
  *
@@ -209,8 +218,20 @@ function json(body: unknown, status: number, headers: Record<string, string> = {
 
 function clientFor(req: Request) {
   return createClient(Deno.env.get("SUPABASE_URL") ?? "", Deno.env.get("SUPABASE_ANON_KEY") ?? "", {
+    auth: { persistSession: false, autoRefreshToken: false },
     global: { headers: { Authorization: req.headers.get("Authorization") ?? "" } },
   });
+}
+
+/**
+ * The caller's access token, or null when the request carried no `Bearer` credential. The token
+ * is passed to `auth.getUser()` explicitly: the edge runtime has no stored session, and relying
+ * on the client to splice the `global` header into an auth call has been wrong for some
+ * supabase-js builds, which is how a valid token still reads as Unauthorized.
+ */
+function bearerToken(req: Request): string | null {
+  const header = req.headers.get("Authorization") ?? "";
+  return header.startsWith("Bearer ") ? header.slice("Bearer ".length).trim() : null;
 }
 
 /**
@@ -323,6 +344,162 @@ function cleanTextOutput(value: string): string {
   return fenced ? fenced[1] : value;
 }
 
+/**
+ * The Exa upstream for web search. The key is a Supabase secret like the model key, and never
+ * reaches the client. Returns null when the server was deployed without it, so the route can
+ * answer a configuration error rather than guess.
+ */
+function exaUpstream(): { url: string; key: string } | null {
+  const key = Deno.env.get("EXA_API_KEY");
+  if (!key) return null;
+  return { url: "https://api.exa.ai", key };
+}
+
+/**
+ * One result the built-in agent sees from `web_search`: the headline fields plus a highlighted
+ * page excerpt. Highlights carry only what it needs for a summary, so a busy page does not
+ * flood the request context.
+ */
+interface ExaSearchHit {
+  title?: unknown;
+  url?: unknown;
+  published_date?: unknown;
+  highlights?: unknown;
+}
+
+/** Cleans an Exa hit into the shape the agent's tool returns. */
+function searchHit(hit: ExaSearchHit): {
+  title: string;
+  url: string;
+  publishedDate: string | null;
+  snippet: string;
+} {
+  const title = typeof hit.title === "string" ? hit.title : "";
+  const url = typeof hit.url === "string" ? hit.url : "";
+  const snippet =
+    Array.isArray(hit.highlights) && typeof hit.highlights[0] === "string" ? hit.highlights[0] : "";
+  const publishedDate = typeof hit.published_date === "string" ? hit.published_date : null;
+  return { title, url, publishedDate, snippet };
+}
+
+/**
+ * Runs a `web_search` for the agent: semantic search with token-efficient highlights and no
+ * extra decoration, per the Exa guidance. Recency is expressed in the query the agent sends.
+ */
+async function runWebSearch(
+  body: Record<string, unknown>,
+  headers: Record<string, string>,
+): Promise<Response> {
+  const upstream = exaUpstream();
+  if (!upstream) {
+    return json({ error: "Web search is not configured on this server." }, 500, headers);
+  }
+  const query = typeof body.query === "string" ? body.query.trim() : "";
+  if (!query) return json({ error: "A search query is required." }, 400, headers);
+
+  const payload: Record<string, unknown> = {
+    query,
+    type: "auto",
+    contents: { highlights: true },
+  };
+  // A result count is a tool-capacity decision, not boilerplate: only forward one when the
+  // agent asked for a bound.
+  if (typeof body.maxResults === "number" && Number.isFinite(body.maxResults)) {
+    payload.numResults = Math.min(Math.max(Math.floor(body.maxResults), 1), 20);
+  }
+
+  let exaResponse: Response;
+  try {
+    exaResponse = await fetch(`${upstream.url}/search`, {
+      method: "POST",
+      headers: {
+        "x-api-key": upstream.key,
+        "content-type": "application/json",
+      },
+      body: JSON.stringify(payload),
+      signal: AbortSignal.timeout(EXA_TIMEOUT_MS),
+    });
+  } catch (error) {
+    if (error instanceof DOMException && error.name === "TimeoutError") {
+      return json({ error: "The web search timed out. Try a more specific query." }, 504, headers);
+    }
+    return json({ error: "Could not reach the web search service." }, 502, headers);
+  }
+
+  if (!exaResponse.ok) {
+    console.warn(`ai-proxy: exa search responded ${exaResponse.status}`);
+    return json(
+      { error: "The web search could not complete that request." },
+      exaResponse.status >= 500 ? 502 : exaResponse.status,
+      headers,
+    );
+  }
+
+  const upstreamBody = (await exaResponse.json().catch(() => null)) as {
+    results?: ExaSearchHit[];
+  } | null;
+  const results = Array.isArray(upstreamBody?.results) ? upstreamBody.results.map(searchHit) : [];
+  return json({ results }, 200, headers);
+}
+
+/**
+ * Runs a `fetch_url` for the agent: known-URL extraction with highlights at the top level (the
+ * contents endpoint's shape). The caller asked for one URL, so no pagination is involved.
+ */
+async function runWebFetch(
+  body: Record<string, unknown>,
+  headers: Record<string, string>,
+): Promise<Response> {
+  const upstream = exaUpstream();
+  if (!upstream) {
+    return json({ error: "Web fetch is not configured on this server." }, 500, headers);
+  }
+  const url = typeof body.url === "string" ? body.url.trim() : "";
+  if (!url) return json({ error: "A URL is required." }, 400, headers);
+
+  let exaResponse: Response;
+  try {
+    exaResponse = await fetch(`${upstream.url}/contents`, {
+      method: "POST",
+      headers: {
+        "x-api-key": upstream.key,
+        "content-type": "application/json",
+      },
+      body: JSON.stringify({ urls: [url], highlights: true }),
+      signal: AbortSignal.timeout(EXA_TIMEOUT_MS),
+    });
+  } catch (error) {
+    if (error instanceof DOMException && error.name === "TimeoutError") {
+      return json({ error: "Fetching that page timed out." }, 504, headers);
+    }
+    return json({ error: "Could not reach the web fetch service." }, 502, headers);
+  }
+
+  if (!exaResponse.ok) {
+    console.warn(`ai-proxy: exa contents responded ${exaResponse.status}`);
+    return json(
+      { error: "Fetching that page could not be completed." },
+      exaResponse.status >= 500 ? 502 : exaResponse.status,
+      headers,
+    );
+  }
+
+  const upstreamBody = (await exaResponse.json().catch(() => null)) as {
+    results?: { highlights?: unknown }[];
+    statuses?: { id?: unknown; status?: unknown }[];
+  } | null;
+  const first = upstreamBody?.results?.[0];
+  const highlight =
+    Array.isArray(first?.highlights) && typeof first.highlights[0] === "string"
+      ? first.highlights[0]
+      : "";
+  const status = upstreamBody?.statuses?.find((entry) => entry.id === url)?.status ?? "success";
+  if (!highlight && status !== "success") {
+    return json({ error: `That page could not be read (${status}).` }, 502, headers);
+  }
+  return json({ text: highlight }, 200, headers);
+}
+
 serve(async (req: Request) => {
   const path = routeOf(req);
 
@@ -337,12 +514,16 @@ serve(async (req: Request) => {
   try {
     const supabase = clientFor(req);
 
-    // auth.getUser() is called explicitly rather than relying on the gateway having verified the
-    // token: this is the boundary where a caller would otherwise reach the provider.
+    // auth.getUser(token) is called explicitly rather than relying on the gateway having verified
+    // the token or on the client splicing its Authorization header into the auth call: this is the
+    // boundary where a caller would otherwise reach the provider, and the token must arrive here
+    // named, not guessed.
+    const token = bearerToken(req);
+    if (!token) return json({ error: "Unauthorized" }, 401, headers);
     const {
       data: { user },
       error: userError,
-    } = await supabase.auth.getUser();
+    } = await supabase.auth.getUser(token);
     if (userError || !user) return json({ error: "Unauthorized" }, 401, headers);
 
     const catalog = modelCatalog();
@@ -577,6 +758,28 @@ serve(async (req: Request) => {
       void supabase.rpc("record_model_usage", { target_model: resolvedModel });
 
       return json({ editedText: cleanTextOutput(content) }, 200, headers);
+    }
+
+    if (path === WEB_SEARCH_PATH && req.method === "POST") {
+      const raw = await req.text();
+      let body: Record<string, unknown>;
+      try {
+        body = JSON.parse(raw) as Record<string, unknown>;
+      } catch {
+        return json({ error: "Request body was not valid JSON." }, 400, headers);
+      }
+      return await runWebSearch(body, headers);
+    }
+
+    if (path === WEB_FETCH_PATH && req.method === "POST") {
+      const raw = await req.text();
+      let body: Record<string, unknown>;
+      try {
+        body = JSON.parse(raw) as Record<string, unknown>;
+      } catch {
+        return json({ error: "Request body was not valid JSON." }, 400, headers);
+      }
+      return await runWebFetch(body, headers);
     }
 
     return json({ error: "Not found" }, 404, headers);

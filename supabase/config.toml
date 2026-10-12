@@ -388,8 +388,14 @@ deno_version = 2
 
 [functions.ai-proxy]
 # The function re-verifies the caller's token with auth.getUser() before it reaches the upstream
-# provider, so the gateway check here is defence in depth rather than the only boundary.
-verify_jwt = true
+# provider, so the gateway check here is defence in depth rather than the only boundary. It is
+# left off intentionally: the gateway's own JWT validation can reject a token the function would
+# accept (for example when the app's session uses a publishable key), which surfaces as a generic
+# "API Error" or "Unauthorized" with no actionable cause. The function gate below is the real one.
+verify_jwt = false
+# Server-side search backend for the built-in agent's web_search/fetch_url tools. Set as a
+# Supabase secret (supabase secrets set EXA_API_KEY=...); it never reaches the app.
+# exa_api_key = "env(EXA_API_KEY)"
 
 [functions.ai-settings]
 # AI model preferences. Reads its own user from the JWT with auth.getUser(), so an unverified
