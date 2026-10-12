@@ -55,7 +55,7 @@ function AlertTitle({ className, ...props }: ComponentProps<"div">) {
     <div
       data-slot="alert-title"
       className={cn(
-        "font-medium text-foreground group-data-[tone=error]/alert:text-destructive group-has-[>svg]/alert:col-start-2",
+        "font-medium text-foreground group-data-[tone=error]/alert:text-destructive group-has-[>svg]/alert:col-start-2 min-w-0 wrap-break-word",
         className,
       )}
       {...props}
@@ -68,7 +68,7 @@ function AlertDescription({ className, ...props }: ComponentProps<"div">) {
     <div
       data-slot="alert-description"
       className={cn(
-        "leading-normal text-muted-foreground group-has-[>svg]/alert:col-start-2 [&_a]:underline [&_a]:underline-offset-4",
+        "leading-normal text-muted-foreground group-has-[>svg]/alert:col-start-2 [&_a]:underline [&_a]:underline-offset-4 min-w-0 wrap-break-word",
         className,
       )}
       {...props}

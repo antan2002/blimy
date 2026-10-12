@@ -556,9 +556,9 @@ take_pending_deep_links,
 fn window_state_flags() -> StateFlags {
    let mut flags = StateFlags::all();
    flags.remove(StateFlags::DECORATIONS);
-   // Visibility is owned by the frontend: the window is created hidden and the React shell
-   // calls `getCurrentWindow().show()` once it has painted, so a restore must never repaint an
-   // empty window over the loading webview (the black start).
+   // The window starts visible so index.html's fallback paints immediately, even while Vite
+   // bundles dependencies on a cold start. Visibility stays out of the restored state so a
+   // window-state restore can never re-hide a window the platform is showing.
    flags.remove(StateFlags::VISIBLE);
    flags
 }

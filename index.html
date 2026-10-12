@@ -17,15 +17,45 @@
           display: flex;
           align-items: center;
           justify-content: center;
-          font-family: system-ui, sans-serif;
-          font-size: 14px;
-          color: #888;
           background: var(--surface, var(--background, #1e1e1e));
         "
       >
-        Starting Blimy...
+        <img
+          src="/logo.png"
+          alt="Blimy"
+          style="
+            width: 72px;
+            height: 72px;
+            object-fit: contain;
+            user-select: none;
+            -webkit-user-drag: none;
+            animation: blimy-glow 2.4s ease-in-out infinite;
+            filter: drop-shadow(0 0 12px var(--primary, #6699ff))
+              drop-shadow(0 0 28px color-mix(in srgb, var(--primary, #6699ff) 45%, transparent));
+          "
+        />
       </div>
     </div>
+    <style>
+      @keyframes blimy-glow {
+        0%,
+        100% {
+          transform: scale(1);
+          filter: drop-shadow(0 0 10px var(--primary, #6699ff))
+            drop-shadow(0 0 22px color-mix(in srgb, var(--primary, #6699ff) 40%, transparent));
+        }
+        50% {
+          transform: scale(1.06);
+          filter: drop-shadow(0 0 22px var(--primary, #6699ff))
+            drop-shadow(0 0 44px color-mix(in srgb, var(--primary, #6699ff) 60%, transparent));
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        #root img {
+          animation: none;
+        }
+      }
+    </style>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

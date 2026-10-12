@@ -99,3 +99,6 @@ extensions/generated/
 
 # local codex settings
 src-tauri/.claude/settings.local.json
+
+# scratch scripts and temporary test files
+scratch/

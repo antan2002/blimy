@@ -1,7 +1,7 @@
-import { lazy, Suspense, useEffect, useMemo } from "react";
+import { lazy, Suspense, useEffect, useMemo, useState } from "react";
 import { getCurrentWindow } from "@tauri-apps/api/window";
 import { parseDetachedWindowUrl } from "@/features/window/detached/detached-window-protocol";
-import { Skeleton } from "@/ui/skeleton";
+import { Spinner } from "@/ui/spinner";
 import { recordStartupMilestoneAfterFrame } from "@/features/bootstrap/startup-performance";
 import {
   getWindowOpenDiagnostics,
@@ -40,8 +40,8 @@ function InitialWindowShell() {
         data-tauri-drag-region
         onMouseDown={handleInitialWindowShellMouseDown}
       />
-      <div className="absolute inset-0 flex items-center justify-center">
-        <Skeleton className="h-6 w-40" />
+      <div className="absolute inset-0 flex items-center justify-center text-muted-foreground">
+        <Spinner className="size-6" />
       </div>
     </div>
   );
@@ -68,6 +68,18 @@ function WorkbenchBoundary({ blankWindowOpen }: WorkbenchBoundaryProps) {
 function App() {
   const detachedWindow = useMemo(() => parseDetachedWindowUrl(new URL(window.location.href)), []);
   const blankWindowOpen = useMemo(() => isBlankWindowOpen(), []);
+  const [isOffline, setIsOffline] = useState(!navigator.onLine);
+
+  useEffect(() => {
+    const handleOnline = () => setIsOffline(false);
+    const handleOffline = () => setIsOffline(true);
+    window.addEventListener("online", handleOnline);
+    window.addEventListener("offline", handleOffline);
+    return () => {
+      window.removeEventListener("online", handleOnline);
+      window.removeEventListener("offline", handleOffline);
+    };
+  }, []);
 
   useEffect(() => {
     const mountedAt = performance.now();
@@ -87,17 +99,25 @@ function App() {
   }, [blankWindowOpen]);
 
   return (
-    <Suspense fallback={<InitialWindowShell />}>
-      {detachedWindow?.kind === "agent" ? (
-        <DetachedAgentWindow />
-      ) : detachedWindow?.kind === "standalone" ? (
-        <StandaloneContentWindow />
-      ) : detachedWindow?.kind === "resource" ? (
-        <DetachedResourceWindow />
-      ) : (
-        <WorkbenchBoundary blankWindowOpen={blankWindowOpen} />
+    <>
+      {isOffline && (
+        <div className="fixed top-0 left-0 right-0 z-9999 bg-destructive text-destructive-foreground text-xs font-semibold px-4 py-1.5 text-center flex items-center justify-center gap-2 shadow-md">
+          <span className="w-2 h-2 rounded-full bg-current animate-pulse" />
+          blimy-offline: Internet connection lost. AI web search features are unavailable.
+        </div>
       )}
-    </Suspense>
+      <Suspense fallback={<InitialWindowShell />}>
+        {detachedWindow?.kind === "agent" ? (
+          <DetachedAgentWindow />
+        ) : detachedWindow?.kind === "standalone" ? (
+          <StandaloneContentWindow />
+        ) : detachedWindow?.kind === "resource" ? (
+          <DetachedResourceWindow />
+        ) : (
+          <WorkbenchBoundary blankWindowOpen={blankWindowOpen} />
+        )}
+      </Suspense>
+    </>
   );
 }
 
