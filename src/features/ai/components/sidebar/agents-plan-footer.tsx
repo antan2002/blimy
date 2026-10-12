@@ -39,7 +39,6 @@ export function AgentsPlanFooter() {
           align="start"
           onClick={() => void openUrl(services.pricingUrl)}
         >
-          <SparkleIcon />
           <span>Upgrade to Pro</span>
         </Button>
       </div>

@@ -8,9 +8,10 @@ export type ComposerCommandAction =
   | { type: "review" }
   | { type: "new" }
   | { type: "clear" }
-  | { type: "skill"; skillId: string };
+  | { type: "skill"; skillId: string }
+  | { type: "mcp"; serverId: string };
 
 export interface ComposerSlashCommand extends SlashCommand {
-  source: "agent" | "built-in" | "skill";
+  source: "agent" | "built-in" | "skill" | "mcp";
   action?: ComposerCommandAction;
 }

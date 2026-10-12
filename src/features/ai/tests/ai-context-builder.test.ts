@@ -36,4 +36,13 @@ describe("AI context builder", () => {
     expect(prompt).toContain("todo_write");
     expect(prompt).not.toMatch(/\bRead tool\b|\bGlob\b/);
   });
+
+  it("tells the agent to seek the web for time-sensitive questions", () => {
+    const prompt = buildSystemPrompt("", "chat");
+
+    expect(prompt).toContain("web_search");
+    expect(prompt).toContain("fetch_url");
+    expect(prompt).toContain("call web_search before answering");
+    expect(prompt).toContain("instead of reasoning from memory");
+  });
 });

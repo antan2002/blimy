@@ -107,6 +107,48 @@ function SkillsSubmenu({ onSelectSkill }: { onSelectSkill: (skill: AIChatSkill) 
   );
 }
 
+function McpServersSubmenu() {
+  const search = useMenuSearch();
+  const mcpServers = useSettingsStore((state) => state.settings.mcpServers);
+  const activeServers = mcpServers.filter((s) => s.enabled !== false);
+  const filteredServers = search.filter(activeServers, (server) => [
+    server.name,
+    server.command,
+    server.url,
+  ]);
+
+  return (
+    <DropdownMenuSub onOpenChange={(open) => !open && search.reset()}>
+      <DropdownMenuSubTrigger>
+        <PreferenceLabel>MCP Servers</PreferenceLabel>
+        {activeServers.length > 0 ? (
+          <CurrentValue>{String(activeServers.length)}</CurrentValue>
+        ) : null}
+      </DropdownMenuSubTrigger>
+      <DropdownMenuSubContent size="wide" viewport="searchable">
+        <DropdownMenuSearch
+          value={search.query}
+          onChange={(event) => search.setQuery(event.target.value)}
+          placeholder="Search MCP servers..."
+          autoFocus
+        />
+        <DropdownMenuViewport>
+          {filteredServers.map((server) => (
+            <DropdownMenuItem key={server.id} onSelect={(e) => e.preventDefault()}>
+              <span className="min-w-0 flex-1 truncate">{server.name}</span>
+            </DropdownMenuItem>
+          ))}
+          {filteredServers.length === 0 ? (
+            <DropdownMenuEmpty>
+              {search.query ? "No MCP servers match your search." : "No active MCP servers found."}
+            </DropdownMenuEmpty>
+          ) : null}
+        </DropdownMenuViewport>
+      </DropdownMenuSubContent>
+    </DropdownMenuSub>
+  );
+}
+
 function CodexCatalogError({
   label,
   message,
@@ -421,7 +463,10 @@ export function ChatPreferencesMenu({
               onSelectSkill={(skill) => onSelectCodexSkill(skill.name)}
             />
           ) : (
-            <SkillsSubmenu onSelectSkill={onSelectSkill} />
+            <>
+              <SkillsSubmenu onSelectSkill={onSelectSkill} />
+              <McpServersSubmenu />
+            </>
           )}
         </DropdownMenuGroup>
         <DropdownMenuSeparator />

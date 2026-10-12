@@ -641,7 +641,7 @@ function ToolActivityGroup({
                 {title ? (
                   <>
                     <span className="text-muted-foreground tabular-nums">{title}</span>
-                    <span aria-hidden="true"> Â· </span>
+                    <span aria-hidden="true"> &middot; </span>
                   </>
                 ) : null}
                 <Shimmer active={isRunning}>{detail}</Shimmer>

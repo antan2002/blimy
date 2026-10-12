@@ -142,6 +142,8 @@ const AIChatInputBar = memo(function AIChatInputBar({
 
   // Local state for input emptiness check (to avoid subscribing to full input text)
   const [hasInputText, setHasInputText] = useState(false);
+  const [historyIndex, setHistoryIndex] = useState(-1);
+  const draftMessageRef = useRef("");
   const [terminalCommand, setTerminalCommand] = useState<string | null>(null);
   const terminalHintId = useId();
   const isTerminalMode = terminalCommand !== null;
@@ -240,11 +242,13 @@ const AIChatInputBar = memo(function AIChatInputBar({
   );
 
   const skills = useSettingsStore((state) => state.settings.aiSkills);
+  const mcpServers = useSettingsStore((state) => state.settings.mcpServers);
   const availableSlashCommands = useMemo(
     () =>
       mergeComposerSlashCommands({
         agentCommands: acpSession.slashCommands,
         skills,
+        mcpServers,
         isBuiltInAgent: isCustomAgent,
         availableModeIntents: modeSource.options.flatMap((option) =>
           option.intent ? [option.intent] : [],
@@ -622,6 +626,35 @@ const AIChatInputBar = memo(function AIChatInputBar({
         e.preventDefault();
         hideMention();
       }
+    } else if (e.key === "ArrowUp" && !e.shiftKey && !e.metaKey && !e.ctrlKey) {
+      const isAtStart = getTextBeforeCaret() === "";
+      if (isAtStart) {
+        const userMessages = session?.messages.filter((m) => m.role === "user") || [];
+        if (userMessages.length > 0) {
+          const nextIndex = historyIndex + 1;
+          if (nextIndex < userMessages.length) {
+            e.preventDefault();
+            if (historyIndex === -1) draftMessageRef.current = inputValueRef.current;
+            setHistoryIndex(nextIndex);
+            const msg = userMessages[userMessages.length - 1 - nextIndex];
+            replaceInput(typeof msg.content === "string" ? msg.content : "");
+          }
+        }
+      }
+    } else if (e.key === "ArrowDown" && !e.shiftKey && !e.metaKey && !e.ctrlKey) {
+      const isAtEnd = getTextBeforeCaret().length === getPlainTextFromDiv().length;
+      if (historyIndex >= 0 && isAtEnd) {
+        e.preventDefault();
+        const nextIndex = historyIndex - 1;
+        setHistoryIndex(nextIndex);
+        if (nextIndex === -1) {
+          replaceInput(draftMessageRef.current);
+        } else {
+          const userMessages = session?.messages.filter((m) => m.role === "user") || [];
+          const msg = userMessages[userMessages.length - 1 - nextIndex];
+          replaceInput(typeof msg.content === "string" ? msg.content : "");
+        }
+      }
     } else if (e.key === "Backspace" || e.key === "Delete") {
       // Handle composer token deletion
       const selection = window.getSelection();
@@ -726,6 +759,7 @@ const AIChatInputBar = memo(function AIChatInputBar({
     // Only update if content actually changed
     if (plainTextFromDiv !== currentInput) {
       setInput(plainTextFromDiv);
+      setHistoryIndex(-1);
 
       // Update local state for button enabled/disabled
       setHasInputText(plainTextFromDiv.trim().length > 0);
@@ -1002,6 +1036,12 @@ const AIChatInputBar = memo(function AIChatInputBar({
         if (skill) insertSkillAtCursor(skill);
         return;
       }
+      case "mcp": {
+        notify(
+          `MCP Server selected: ${mcpServers.find((s) => s.id === action.serverId)?.name || "Unknown"}`,
+        );
+        return;
+      }
       case "new":
         openNewAgentChat(currentAgentId);
         return;
@@ -1136,6 +1176,8 @@ const AIChatInputBar = memo(function AIChatInputBar({
 
     setInput("");
     setHasInputText(false);
+    setHistoryIndex(-1);
+    draftMessageRef.current = "";
     clearPastedImages();
     if (inputRef.current) {
       inputRef.current.innerHTML = "";
@@ -1404,7 +1446,11 @@ const AIChatInputBar = memo(function AIChatInputBar({
                 setIsContextDropdownOpen(open);
               }}
             />
-            <ComposerModeSelector source={modeSource} onBeforeOpen={closeInlineMenus} />
+            <ComposerModeSelector
+              source={modeSource}
+              agentId={currentAgentId}
+              onBeforeOpen={closeInlineMenus}
+            />
             <ComposerAgentSelector
               cwd={projectPath}
               currentAgentId={currentAgentId}

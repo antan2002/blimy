@@ -5,6 +5,7 @@ import type {
   ComposerSlashCommand,
 } from "@/features/ai/types/composer-slash-command.types";
 import type { ComposerModeIntent } from "@/features/ai/types/composer-mode.types";
+import type { McpServerSetting } from "@/features/ai/types/mcp-server.types";
 
 interface BuiltInCommand {
   name: string;
@@ -61,11 +62,13 @@ export function toSkillCommandName(title: string): string {
 export function mergeComposerSlashCommands({
   agentCommands,
   skills,
+  mcpServers = [],
   isBuiltInAgent,
   availableModeIntents,
 }: {
   agentCommands: SlashCommand[];
   skills: AIChatSkill[];
+  mcpServers?: McpServerSetting[];
   isBuiltInAgent: boolean;
   availableModeIntents: ComposerModeIntent[];
 }): ComposerSlashCommand[] {
@@ -97,6 +100,15 @@ export function mergeComposerSlashCommands({
       description: skill.description || `Skill: ${skill.title}`,
       source: "skill",
       action: { type: "skill", skillId: skill.id },
+    });
+  }
+  for (const server of mcpServers) {
+    if (server.enabled === false) continue;
+    add({
+      name: toSkillCommandName(server.name),
+      description: `MCP Server: ${server.name}`,
+      source: "mcp",
+      action: { type: "mcp", serverId: server.id },
     });
   }
   return commands;

@@ -13,9 +13,11 @@ import {
 /** The chat's mode as a composer chip: Agent, Ask and Plan, or whatever modes the agent offers. */
 export function ComposerModeSelector({
   source,
+  agentId,
   onBeforeOpen,
 }: {
   source: ChatModeSource;
+  agentId?: string;
   onBeforeOpen?: () => void;
 }) {
   const current = getCurrentModeOption(source);

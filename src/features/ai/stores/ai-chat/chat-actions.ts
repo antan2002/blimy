@@ -127,14 +127,17 @@ async function loadChatMessages(set: SetAIChatStore, chatId: string) {
   try {
     const fullChat = await loadChatFromDb(chatId);
     set((state) => {
+      if (state.chatMessageLoadStates[chatId] !== "loading") {
+        return;
+      }
+
       const chatIndex = state.chats.findIndex((candidate) => candidate.id === chatId);
       if (chatIndex !== -1) {
         state.chats[chatIndex] = fullChat;
-        state.chatMessageLoadStates[chatId] = "loaded";
       } else {
-        // The chat left the list mid-fetch; don't leave a stuck "loading" behind.
-        delete state.chatMessageLoadStates[chatId];
+        state.chats.push(fullChat);
       }
+      state.chatMessageLoadStates[chatId] = "loaded";
     });
   } catch (error) {
     if (String(error).includes("Query returned no rows")) {
@@ -648,9 +651,15 @@ export function createChatActions(set: SetAIChatStore, get: GetAIChatStore): Cha
         if (pending) applyPendingUpdates(chat, pending);
         const message = chat.messages.find((candidate) => candidate.id === messageId);
         if (!message) return;
+        const wasStreaming = message.isStreaming;
         Object.assign(message, normalizeMessageFollowUpActions({ ...message, ...updates }));
         // A turn moves its session up the list when it starts and when it ends, not per token.
-        if (!message.isStreaming) chat.lastMessageAt = new Date();
+        if (!message.isStreaming) {
+          chat.lastMessageAt = new Date();
+          if (wasStreaming && message.role === "assistant") {
+            import("@/utils/sound").then((m) => m.playNotificationSound());
+          }
+        }
       });
       scheduleChatSync(get, chatId);
     },

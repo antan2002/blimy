@@ -37,6 +37,7 @@ import {
 } from "./intelligence-command-allowlist";
 import { getCommandAllowPrefix } from "../lib/intelligence-command-policy";
 import { getExtraTools, type ExtraTools, type McpToolCallRequest } from "./intelligence-mcp";
+import { fetchIntelligenceUrl, searchIntelligenceWeb } from "./intelligence-web";
 import { allowMcpTool, isMcpToolAllowed } from "./intelligence-mcp-allowlist";
 import { IntelligenceAgentError, toIntelligenceAgentError } from "../lib/intelligence-agent-error";
 import {
@@ -56,6 +57,7 @@ import type { IntelligenceAgentResult } from "../types/intelligence-agent.types"
 import { parseExtensionViewNode } from "@/extensions/ui/services/extension-view-schema";
 
 import { beginIntelligenceAgent, finishIntelligenceAgent } from "./intelligence-agent-session";
+import { tauriFetch } from "@/utils/tauri-fetch";
 
 const READ_LINES = 250;
 const READ_CHARS = 24000;
@@ -332,6 +334,35 @@ export async function runIntelligenceAgent(params: {
     }
     const builtInTools = root
       ? {
+          search_web: tool({
+            description:
+              "Search the web for real-time information or answers you do not know natively. Uses a free headless search engine to retrieve recent summaries.",
+            inputSchema: z.object({ query: z.string().min(1).max(200) }),
+            execute: async (input, { toolCallId }) =>
+              runTool("search_web", "search", input, toolCallId, async () => {
+                try {
+                  const res = await tauriFetch(`https://lite.duckduckgo.com/lite/`, {
+                    method: "POST",
+                    headers: {
+                      "User-Agent":
+                        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+                      "Content-Type": "application/x-www-form-urlencoded",
+                    },
+                    body: `q=${encodeURIComponent(input.query)}`,
+                  });
+                  const html = await res.text();
+                  const snippets = html.match(/<td class='result-snippet'>([\s\S]*?)<\/td>/gi);
+                  if (!snippets) return { results: "No web results found." };
+                  const results = snippets
+                    .slice(0, 5)
+                    .map((s) => s.replace(/<[^>]*>?/gm, "").trim())
+                    .join("\n\n");
+                  return { results };
+                } catch (err: any) {
+                  return { error: `Failed to search the web: ${err.message}` };
+                }
+              }),
+          }),
           list_files: tool({
             description:
               "List workspace files in path order, respecting .gitignore and leaving out credentials. Returns one page: pass nextOffset back as offset for the next. Narrow with path (a folder) or glob (like *.ts or src/**/*.rs).",
@@ -436,6 +467,15 @@ export async function runIntelligenceAgent(params: {
                   completed: entries.filter((entry) => entry.status === "completed").length,
                   total: entries.length,
                 };
+              }),
+          }),
+          think: tool({
+            description:
+              "Use this to think out loud, plan, or reason before taking actions. The user will see your thought process. Use this for complex multi-step reasoning.",
+            inputSchema: z.object({ thought: z.string().min(1) }),
+            execute: async (input, { toolCallId }) =>
+              runTool("think", "think", input, toolCallId, async () => {
+                return { text: input.thought };
               }),
           }),
           ...(!params.readOnly
@@ -632,7 +672,42 @@ export async function runIntelligenceAgent(params: {
             : {}),
         }
       : {};
-    let tools: ToolSet = { ...extraTools.tools, ...builtInTools };
+    // Web tools need no workspace and are read-only, so they are offered in every mode and are
+    // never gated behind the write-capable toolset.
+    const webTools: ToolSet = {
+      web_search: tool({
+        description:
+          'Search the web for current information: news, docs, prices, or anything past the model\'s training cutoff. Returns cited results with titles, URLs, publication dates, and excerpts. Use it for time-sensitive questions instead of answering from memory, then fetch_url a result to read the full page. Recency belongs in the query (for example "latest" or a year) rather than a filter.',
+        inputSchema: z.object({
+          query: z.string().min(1).max(500),
+          maxResults: z.number().int().min(1).max(20).optional(),
+        }),
+        execute: async (input, { toolCallId }) =>
+          runTool("web_search", "fetch", input, toolCallId, async () => {
+            const outcome = await searchIntelligenceWeb(input.query, {
+              maxResults: input.maxResults,
+              signal,
+            });
+            return {
+              query: outcome.query,
+              results: outcome.results.slice(0, input.maxResults ?? 10),
+            };
+          }),
+      }),
+      fetch_url: tool({
+        description:
+          "Read a web page from its URL and return its readable text, so you can summarize actual content rather than only search excerpts. Pair it with web_search to go from a headline to the full article or documentation page.",
+        inputSchema: z.object({
+          url: z.string().min(1).max(2048),
+        }),
+        execute: async (input, { toolCallId }) =>
+          runTool("fetch_url", "fetch", input, toolCallId, async () => {
+            const outcome = await fetchIntelligenceUrl(input.url, { signal });
+            return { url: outcome.url, text: outcome.text };
+          }),
+      }),
+    };
+    let tools: ToolSet = { ...extraTools.tools, ...builtInTools, ...webTools };
     // Ollama rejects tools for models that cannot call them. Say so up front in Agent mode rather
     // than letting the model claim edits it never made; Ask and Plan answer without the workspace.
     if (params.providerId === "ollama" && Object.keys(tools).length > 0) {
