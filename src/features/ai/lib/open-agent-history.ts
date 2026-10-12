@@ -1,5 +1,4 @@
 import { useAIChatStore } from "@/features/ai/stores/ai-chat.store";
-import { useBufferStore } from "@/features/editor/stores/buffer.store";
 import { agentIsDetached } from "@/features/ai/detached/agent-window.store";
 import {
   focusAgentWindow,

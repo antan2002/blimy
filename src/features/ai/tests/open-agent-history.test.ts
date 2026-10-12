@@ -8,7 +8,9 @@ const mocks = vi.hoisted(() => ({
   },
   pendingAgentLaunchRequest: null as { chatId: string } | null,
   loadChatMessages: vi.fn(() => Promise.resolve()),
-  openAgentBuffer: vi.fn(() => "agent://chat-1"),
+  switchToChat: vi.fn(),
+  setActiveRightSidebarView: vi.fn(),
+  setIsRightSidebarVisible: vi.fn(),
 }));
 
 vi.mock("@/features/ai/stores/ai-chat.store", () => ({
@@ -18,15 +20,17 @@ vi.mock("@/features/ai/stores/ai-chat.store", () => ({
       actions: {
         getChatById: vi.fn(() => mocks.chat),
         loadChatMessages: mocks.loadChatMessages,
+        switchToChat: mocks.switchToChat,
       },
     })),
   },
 }));
 
-vi.mock("@/features/editor/stores/buffer.store", () => ({
-  useBufferStore: {
+vi.mock("@/features/window/stores/ui-state.store", () => ({
+  useUIState: {
     getState: vi.fn(() => ({
-      actions: { openAgentBuffer: mocks.openAgentBuffer },
+      setActiveRightSidebarView: mocks.setActiveRightSidebarView,
+      setIsRightSidebarVisible: mocks.setIsRightSidebarVisible,
     })),
   },
 }));
@@ -39,11 +43,13 @@ describe("open agent history", () => {
   });
 
   it("hydrates persisted messages before opening a history tab", () => {
-    const bufferId = openAgentHistoryChat("chat-1");
+    const result = openAgentHistoryChat("chat-1");
 
     expect(mocks.loadChatMessages).toHaveBeenCalledWith("chat-1");
-    expect(mocks.openAgentBuffer).toHaveBeenCalledWith("chat-1");
-    expect(bufferId).toBe("agent://chat-1");
+    expect(mocks.switchToChat).toHaveBeenCalledWith("chat-1");
+    expect(mocks.setActiveRightSidebarView).toHaveBeenCalledWith("agents");
+    expect(mocks.setIsRightSidebarVisible).toHaveBeenCalledWith(true);
+    expect(result).toBe("chat-1");
   });
 
   it("does not reload an active in-memory conversation", () => {
@@ -52,7 +58,7 @@ describe("open agent history", () => {
     openAgentHistoryChat("chat-1");
 
     expect(mocks.loadChatMessages).not.toHaveBeenCalled();
-    expect(mocks.openAgentBuffer).toHaveBeenCalledWith("chat-1");
+    expect(mocks.switchToChat).toHaveBeenCalledWith("chat-1");
   });
 
   it("does not race a newly launched agent session", () => {
@@ -61,6 +67,6 @@ describe("open agent history", () => {
     openAgentHistoryChat("chat-1");
 
     expect(mocks.loadChatMessages).not.toHaveBeenCalled();
-    expect(mocks.openAgentBuffer).toHaveBeenCalledWith("chat-1");
+    expect(mocks.switchToChat).toHaveBeenCalledWith("chat-1");
   });
 });

@@ -29,6 +29,7 @@ import { Empty, EmptyDescription } from "@/ui/empty";
 import {
   ArchiveIcon,
   ChevronDownIcon,
+  ChevronLeftIcon,
   ChevronRightIcon,
   DotsIcon,
   DownloadIcon,
@@ -68,6 +69,7 @@ interface AgentRowContext {
   aiModelId: string;
   currentBranch: string | null;
   workspacePath: string | null;
+  onOpenChat: (chatId: string) => void;
 }
 
 function AgentRow({ chat, context }: { chat: Chat; context: AgentRowContext }) {
@@ -122,7 +124,7 @@ function AgentRow({ chat, context }: { chat: Chat; context: AgentRowContext }) {
           projectName={getProjectNameFromPath(chat.workspacePath || context.workspacePath || "")}
           workspacePath={chat.workspacePath || context.workspacePath}
           branch={chat.branch || context.currentBranch}
-          onOpen={() => openAgentHistoryChat(chat.id)}
+          onOpen={() => context.onOpenChat(chat.id)}
           onOpenInNewWindow={() => void openAgentInNewWindow(chat.id)}
           actionsDisabled={isInAnotherWindow}
           onPinChange={(pinned) => setChatPinned(chat.id, pinned)}
@@ -165,7 +167,13 @@ function AgentRow({ chat, context }: { chat: Chat; context: AgentRowContext }) {
   );
 }
 
-function ArchivedAgentRow({ chat }: { chat: Chat }) {
+function ArchivedAgentRow({
+  chat,
+  onOpenChat,
+}: {
+  chat: Chat;
+  onOpenChat: (chatId: string) => void;
+}) {
   const { deleteChat, setChatArchived } = useAIChatStore((state) => state.actions);
 
   return (
@@ -200,7 +208,7 @@ function ArchivedAgentRow({ chat }: { chat: Chat }) {
         >
           <SidebarListItem
             leading={<AgentSessionIcon session={chat} size={16} />}
-            onClick={() => openAgentHistoryChat(chat.id)}
+            onClick={() => onOpenChat(chat.id)}
           >
             {chat.title}
           </SidebarListItem>
@@ -245,15 +253,21 @@ export function AgentsSidebar() {
   const [query, setQuery] = useState("");
   const [showArchived, setShowArchived] = useState(false);
 
+  const [isViewingHistory, setIsViewingHistory] = useState(false);
+
+  const handleOpenChat = (chatId: string) => {
+    openAgentHistoryChat(chatId);
+    setIsViewingHistory(false);
+  };
+
   const context: AgentRowContext = {
     currentChatId,
     aiProviderId,
     aiModelId,
     currentBranch,
     workspacePath,
+    onOpenChat: handleOpenChat,
   };
-
-  const [isViewingHistory, setIsViewingHistory] = useState(false);
 
   const { pinned, recent, archived } = useMemo(() => {
     const matches = (chat: Chat) => matchesSearchQuery(query, [chat.title]);
@@ -340,7 +354,7 @@ export function AgentsSidebar() {
         actions={
           <>
             <SidebarIconButton tooltip="Back to Chat" onClick={() => setIsViewingHistory(false)}>
-              <ChevronRightIcon />
+              <ChevronLeftIcon />
             </SidebarIconButton>
             {browseSessionsAgentId ? (
               <SidebarIconButton
@@ -399,7 +413,13 @@ export function AgentsSidebar() {
                   Archived ({archived.length})
                 </SidebarListItem>
                 {showArchived
-                  ? archived.map((chat) => <ArchivedAgentRow key={chat.id} chat={chat} />)
+                  ? archived.map((chat) => (
+                      <ArchivedAgentRow
+                        key={chat.id}
+                        chat={chat}
+                        onOpenChat={handleOpenChat}
+                      />
+                    ))
                   : null}
               </section>
             ) : null}

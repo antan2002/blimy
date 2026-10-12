@@ -2,6 +2,7 @@ import type { MutableRefObject } from "react";
 import { getAgentMessageAccess } from "@/features/ai/lib/agent-message-access";
 import { getAgentStopNotice } from "@/features/ai/lib/agent-stop-notice";
 import { type AgentRunEnding, getAgentRunEnding } from "@/features/ai/lib/agent-message-queue";
+import { formatApiError } from "@/features/ai/lib/api-error";
 import {
   describeAgentTurnFailure,
   formatErrorBlock,
@@ -798,10 +799,17 @@ export async function runAgentTurn(request: AgentTurnRequest, host: AgentTurnHos
     );
   } catch (error) {
     console.error("Failed to start streaming:", error);
+    // Keep the status and server body on the failure so the chat shows the real cause (a
+    // 401/402/429 or an upstream rejection) instead of a generic "API Error".
     stream.fail(
       isBrowserOffline()
         ? "You're offline."
-        : `Failed to connect to the agent service: ${error instanceof Error ? error.message : String(error)}`,
+        : error &&
+            typeof error === "object" &&
+            (typeof (error as { statusCode?: unknown }).statusCode === "number" ||
+              typeof (error as { code?: unknown }).code === "string")
+          ? formatApiError(turn.providerId, error)
+          : `Failed to connect to the agent service: ${error instanceof Error ? error.message : String(error)}`,
       "stream",
     );
   }
