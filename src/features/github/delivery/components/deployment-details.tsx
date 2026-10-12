@@ -11,7 +11,14 @@ import { GitHubMetaChip, GitHubUserChip } from "../../components/github-chips";
 import { getTimeAgo } from "../../utils/github-viewer-utils";
 import type { Deployment } from "../types/github-delivery.types";
 import { deploymentState, deploymentStatusState, safeDeliveryUrl } from "../utils/github-delivery";
-
+import { useEffect, useState } from "react";
+import { getCommitDiff } from "@/features/git/api/git-diff-api";
+import { countDiffStats } from "@/features/git/utils/git-diff-helpers";
+import type { MultiFileDiff } from "@/features/git/types/git-diff.types";
+import GitDiffEditorStack from "@/features/git/components/diff/git-diff-editor-stack";
+import { Spinner } from "@/ui/spinner";
+import { Alert, AlertTitle, AlertDescription, AlertActions } from "@/ui/alert";
+import { fetchChanges } from "@/features/git/api/git-remotes-api";
 export function DeploymentSummary({
   deployment,
   actions,
@@ -57,8 +64,65 @@ export function DeploymentSummary({
   );
 }
 
-export function DeploymentDetails({ deployment }: { deployment: Deployment }) {
+export function DeploymentDetails({
+  deployment,
+  repoPath,
+}: {
+  deployment: Deployment;
+  repoPath: string;
+}) {
   const latest = deployment.statuses[0];
+  const [multiDiff, setMultiDiff] = useState<MultiFileDiff | null>(null);
+  const [diffLoading, setDiffLoading] = useState(true);
+  const [diffError, setDiffError] = useState<string | null>(null);
+  const [fetchAttempt, setFetchAttempt] = useState(0);
+  const [isFetchingRemote, setIsFetchingRemote] = useState(false);
+
+  useEffect(() => {
+    let active = true;
+    setDiffLoading(true);
+    getCommitDiff(repoPath, deployment.sha)
+      .then((diffs) => {
+        if (!active) return;
+        if (!diffs || diffs.length === 0) {
+          setMultiDiff(null);
+          setDiffError("No local changes found for this commit. You may need to fetch.");
+        } else {
+          const shortHash = deployment.sha.substring(0, 7);
+          const { additions, deletions } = countDiffStats(diffs);
+          setMultiDiff({
+            title: `Commit ${shortHash}`,
+            repoPath,
+            commitHash: deployment.sha,
+            commitMessage: deployment.description || undefined,
+            files: diffs,
+            totalFiles: diffs.length,
+            totalAdditions: additions,
+            totalDeletions: deletions,
+          });
+          setDiffError(null);
+        }
+      })
+      .catch((err) => {
+        if (active) setDiffError(String(err));
+      })
+      .finally(() => {
+        if (active) setDiffLoading(false);
+      });
+    return () => {
+      active = false;
+    };
+  }, [repoPath, deployment.sha, deployment.description, fetchAttempt]);
+
+  const handleFetch = async () => {
+    setIsFetchingRemote(true);
+    const result = await fetchChanges(repoPath);
+    if (!result.success) {
+      toast.error(`Failed to fetch: ${result.error || "Unknown error"}`);
+    }
+    setIsFetchingRemote(false);
+    setFetchAttempt((prev) => prev + 1);
+  };
   const environmentUrl = safeDeliveryUrl(latest?.environment_url);
   const open = (url: string) => {
     void openUrl(url).catch((error) => toast.error(String(error)));
@@ -138,6 +202,43 @@ export function DeploymentDetails({ deployment }: { deployment: Deployment }) {
               </Item>
             )}
           </ItemGroup>
+        </ResourceSection>
+
+        <ResourceSection title="Code Changes">
+          <div className="flex-1 min-h-125 border rounded-md overflow-hidden flex flex-col bg-background">
+            {diffLoading ? (
+              <div className="flex flex-col items-center justify-center p-8 text-subtle-foreground">
+                <Spinner />
+                <span className="mt-2 text-sm">Fetching commit changes...</span>
+              </div>
+            ) : diffError ? (
+              <div className="p-4">
+                <Alert tone="error">
+                  <AlertTitle>Could not load diff</AlertTitle>
+                  <AlertDescription>{diffError}</AlertDescription>
+                  <AlertActions>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={handleFetch}
+                      disabled={isFetchingRemote}
+                    >
+                      {isFetchingRemote ? <Spinner compact className="mr-2" /> : null}
+                      Fetch from Remote
+                    </Button>
+                  </AlertActions>
+                </Alert>
+              </div>
+            ) : multiDiff ? (
+              <div className="flex-1 min-h-0 bg-background overflow-hidden relative">
+                <GitDiffEditorStack
+                  bufferId={`deployment-diff-${deployment.id}`}
+                  multiDiff={multiDiff}
+                  defaultSidebarOpen={false}
+                />
+              </div>
+            ) : null}
+          </div>
         </ResourceSection>
       </div>
     </ResourceSidebarLayout>

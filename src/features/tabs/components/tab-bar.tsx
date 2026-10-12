@@ -51,6 +51,7 @@ import TabBarItem from "./tab-bar-item";
 import { TabHistoryNavigation } from "./tab-history-navigation";
 import { NewTabMenu } from "./new-tab-menu";
 import TabContextMenu from "./tab-context-menu";
+import { AgentTabBarActions } from "@/features/ai/components/chat/agent-tab-bar-actions";
 
 const EMPTY_TOKENS: EditorContent["tokens"] = [];
 const tabShellCache = new WeakMap<PaneContent, PaneContent>();
@@ -134,6 +135,7 @@ const TabBar = ({
   }, [buffers]);
   const activeBufferId =
     activeBufferCandidate && bufferById.has(activeBufferCandidate) ? activeBufferCandidate : null;
+  const activeBuffer = activeBufferId ? bufferById.get(activeBufferId) : null;
   const isPaneFullscreen = paneId ? fullscreenPaneId === paneId : false;
   const isPaneLocked = Boolean(pane?.locked);
   const isBottomPane = paneId === BOTTOM_PANE_ID;
@@ -810,7 +812,11 @@ const TabBar = ({
             {paneId && !isBottomPane && (
               <div className="flex items-center gap-0">
                 <RunActionsButton />
-                <NewTabMenu paneId={paneId} />
+                {activeBuffer?.type === "agent" ? (
+                  <AgentTabBarActions chatId={activeBuffer.sessionId} />
+                ) : (
+                  <NewTabMenu paneId={paneId} />
+                )}
               </div>
             )}
             {paneId && !disablePaneActions && !isBottomPane ? (

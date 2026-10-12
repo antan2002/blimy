@@ -316,7 +316,7 @@ export default function GitHubDeliveryViewer({ buffer }: { buffer: GitHubDeliver
       ) : release ? (
         <ReleaseDetails release={release} repoPath={repoPath} onBusyChange={setAssetBusy} />
       ) : deployment ? (
-        <DeploymentDetails deployment={deployment} />
+        <DeploymentDetails deployment={deployment} repoPath={repoPath} />
       ) : null}
       <AlertDialog
         open={confirm !== null}

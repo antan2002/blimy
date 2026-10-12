@@ -113,9 +113,11 @@ function buildGitHubReferenceUrl(remoteUrl: string, gitRef: string): string | nu
 const GitDiffEditorStack = memo(function GitDiffEditorStack({
   bufferId,
   multiDiff,
+  defaultSidebarOpen = true,
 }: {
   bufferId: string;
   multiDiff: MultiFileDiff;
+  defaultSidebarOpen?: boolean;
 }) {
   const diffBuffer = useBufferStore((state) => {
     return getBufferById(state.buffers, bufferId);
@@ -130,7 +132,7 @@ const GitDiffEditorStack = memo(function GitDiffEditorStack({
   const setIsFindVisible = useUIState((state) => state.setIsFindVisible);
   const [viewMode, setViewMode] = useState<"unified" | "split">("unified");
   const [showWhitespace, setShowWhitespace] = useState(false);
-  const [isNavigatorOpen, setIsNavigatorOpen] = useState(true);
+  const [isNavigatorOpen, setIsNavigatorOpen] = useState(defaultSidebarOpen);
   const [navigatorViewMode, setNavigatorViewMode] = useState<FileNavigatorViewMode>("flat");
   const isWorkingTree = multiDiff.commitHash === "working-tree";
   const isCommitDiff = /^[0-9a-f]{7,40}$/i.test(multiDiff.commitHash);
