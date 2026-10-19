@@ -309,7 +309,7 @@ function validateChecksumFile(checksumText, expectedAssets) {
 function validateLocal() {
   const tag = requireArg("--tag");
   const dir = requireArg("--dir");
-  const repo = getArg("--repo", "blimydev/blimy");
+  const repo = getArg("--repo", process.env.GITHUB_REPOSITORY || "antan2002/blimy");
   const version = versionFromTag(tag);
   const channel = channelFromTag(tag);
   const { filesByName, assets } = collectRequiredAssets(dir, version, channel);

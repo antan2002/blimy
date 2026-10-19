@@ -371,6 +371,16 @@ const terminalCommands: Command[] = [
       window.dispatchEvent(new CustomEvent("terminal-copy-last-command-output"));
     },
   },
+  {
+    id: "terminal.sendToChat",
+    title: "Send to Chat",
+    category: "Terminal",
+    execute: () => {
+      void import("@/features/terminal/services/send-terminal-to-chat").then((m) =>
+        m.sendTerminalToChat(),
+      );
+    },
+  },
 ];
 
 const lspCommands: Command[] = [

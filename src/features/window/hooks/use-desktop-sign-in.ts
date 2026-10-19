@@ -16,19 +16,30 @@ export function useDesktopSignIn(options: UseDesktopSignInOptions = {}) {
    * Shows the outcome as a toast. It also rejects on failure so callers can stop a
    * follow-up step; a caller that only starts sign-in must catch that rejection.
    */
-  const signIn = async (provider: AuthProvider = "github") => {
-    const completed = await actions.signIn(provider);
+  const settle = async (attempt: Promise<boolean>) => {
+    const completed = await attempt;
     if (completed) {
       toast.success("Signed in to blimy Desktop.");
       options.onSuccess?.();
-    } else {
-      const reason = useDesktopSignInStore.getState().error;
-      if (reason) {
-        toast.error(reason);
-        throw new Error(reason);
-      }
+      return;
+    }
+    const reason = useDesktopSignInStore.getState().error;
+    if (reason) {
+      toast.error(reason);
+      throw new Error(reason);
     }
   };
 
-  return { signIn, isSigningIn, error, cancel: actions.cancel, reopen: actions.reopen };
+  const signIn = (provider: AuthProvider = "github") => settle(actions.signIn(provider));
+
+  const signInWithSso = (domain: string) => settle(actions.signInWithSso(domain));
+
+  return {
+    signIn,
+    signInWithSso,
+    isSigningIn,
+    error,
+    cancel: actions.cancel,
+    reopen: actions.reopen,
+  };
 }

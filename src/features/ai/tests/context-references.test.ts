@@ -124,6 +124,19 @@ describe("context references", () => {
     expect(folder.content).not.toContain("API_KEY=secret");
   });
 
+  it("omits files and folders the AI ignore rules exclude", async () => {
+    const ignored = new Set(["/w/src/lib", "/w/src/a.ts"]);
+    const [folder] = await resolveContextReferences(
+      [formatContextReference({ kind: "folder", path: "/w/src" })],
+      { projectRoot: "/w", sources: sources({ isIgnored: (path) => ignored.has(path) }) },
+    );
+
+    expect(folder.content).toContain("Folder tree (4 entries):");
+    expect(folder.content).toContain("big.ts");
+    expect(folder.content).not.toContain("lib/b.ts");
+    expect(folder.content).not.toContain("--- a.ts ---");
+  });
+
   it("resolves working tree and staged diffs separately", async () => {
     const [working, staged] = await resolveContextReferences(
       ["blimy-context:git-diff:working", "blimy-context:git-diff:staged"],

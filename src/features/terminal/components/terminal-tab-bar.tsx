@@ -23,6 +23,7 @@ import { getChromeNavigationIndex } from "@/features/layout/utils/chrome-keyboar
 import { activateBufferInPaneAndSync } from "@/features/panes/utils/pane-activation";
 import { getOrCreatePaneDropTarget } from "@/features/panes/utils/pane-drop-actions";
 import { useTerminalStore } from "@/features/terminal/stores/terminal.store";
+import { getTerminalInstance } from "../services/terminal-session-registry";
 import type { PaneNode, SplitPlacement } from "@/features/panes/types/pane.types";
 import type { Terminal, TerminalSplitDirection } from "@/features/terminal/types/terminal.types";
 import { findTerminalLayout } from "@/features/terminal/utils/terminal-layout";
@@ -59,6 +60,7 @@ import {
 import { useUIState } from "@/features/window/stores/ui-state.store";
 import TerminalTabBarItem from "./terminal-tab-bar-item";
 import TerminalTabContextMenu from "./terminal-tab-context-menu";
+import { sendTerminalToChat } from "../services/send-terminal-to-chat";
 
 interface ToolbarContextMenuProps {
   isOpen: boolean;
@@ -737,6 +739,11 @@ const TerminalTabBar = ({
             onCloseAll={onCloseAllTabs || (() => {})}
             onCloseToRight={onCloseTabsToRight || (() => {})}
             onClear={(terminalId) => {
+              const instance = getTerminalInstance(terminalId);
+              if (instance?.clear) {
+                instance.clear();
+                return;
+              }
               const session = useTerminalStore.getState().actions.getSession(terminalId);
               if (session?.ref?.current) {
                 session.ref.current.clear();
@@ -752,11 +759,13 @@ const TerminalTabBar = ({
               startRename(terminalId);
             }}
             onExport={async (terminalId) => {
+              const instance = getTerminalInstance(terminalId);
               const session = useTerminalStore.getState().actions.getSession(terminalId);
               const terminal = terminals.find((t) => t.id === terminalId);
-              if (session?.ref?.current && terminal) {
+              const handle = instance || session?.ref?.current;
+              if (handle && terminal) {
                 try {
-                  const content = session.ref.current.serialize();
+                  const content = handle.serialize ? handle.serialize() : handle.getBufferText();
                   if (!content) {
                     console.warn("No terminal content to export");
                     return;
@@ -785,6 +794,9 @@ const TerminalTabBar = ({
                   console.error("Failed to export terminal output:", error);
                 }
               }
+            }}
+            onSendToChat={(terminalId) => {
+              void sendTerminalToChat(terminalId);
             }}
           />
           <ToolbarContextMenu

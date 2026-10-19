@@ -69,13 +69,16 @@ export class BlimyProvider extends AIProvider {
   }
 
   override async getModels(): Promise<ProviderModel[]> {
+    // Read the headers before the fetch so a sign-in problem ("Sign in to Blimy...") reaches
+    // the caller with its real reason instead of being rewritten as a reachability failure.
+    const headers = await this.buildHeaders();
     let response: Response;
     try {
       response = await tauriFetch(this.buildUrl(), {
-        headers: await this.buildHeaders(),
+        headers,
         signal: AbortSignal.timeout(15000),
       });
-    } catch (error) {
+    } catch {
       throw new Error("Blimy models are not available yet.");
     }
     if (response.status === 401) throw new Error("Sign in to use Blimy models.");

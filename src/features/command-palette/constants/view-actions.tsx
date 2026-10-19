@@ -1,5 +1,6 @@
 import { toast } from "sonner";
 import { renameTerminalWithIntelligence } from "@/features/terminal/services/intelligence-terminal-title";
+import { sendTerminalToChat } from "@/features/terminal/services/send-terminal-to-chat";
 import {
   ArrowCounterClockwiseIcon,
   ArrowDownIcon,
@@ -7,6 +8,7 @@ import {
   ArrowRightIcon,
   ArrowUpIcon,
   BroomIcon,
+  ChatBubbleTextIcon,
   ColumnsIcon,
   CopyIcon,
   ListIcon,
@@ -235,6 +237,18 @@ export const createViewActions = (params: ViewActionsParams): Action[] => {
           error: (error) =>
             error instanceof Error ? error.message : "Could not generate terminal name",
         });
+      },
+    },
+    {
+      id: "terminal-send-to-chat",
+      label: "Terminal: Send to Chat",
+      description: "Send active terminal output or selection to AI Chat",
+      icon: <ChatBubbleTextIcon />,
+      category: "Terminal",
+      commandId: "terminal.sendToChat",
+      action: () => {
+        onClose();
+        void sendTerminalToChat();
       },
     },
     {

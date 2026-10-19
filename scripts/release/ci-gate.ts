@@ -4,7 +4,7 @@ import { promisify } from "node:util";
 
 const execute = promisify(execFile);
 
-const repository = "Blimydev/blimy";
+const repository = process.env.GITHUB_REPOSITORY || "antan2002/blimy";
 const requiredJobs = ["Bun — typecheck, frontend check", "Rust — fmt, check, clippy, test"];
 
 export interface CiRun {

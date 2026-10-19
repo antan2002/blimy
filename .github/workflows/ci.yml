@@ -13,8 +13,8 @@ concurrency:
 
 jobs:
   bun:
-    if: github.repository == 'blimydev/blimy'
-    name: Bun â€” typecheck, frontend check
+    if: github.repository == 'antan2002/blimy' || github.repository == 'blimydev/blimy'
+    name: Bun — typecheck, frontend check
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
@@ -38,8 +38,8 @@ jobs:
         run: bash scripts/check/frontend.sh
 
   rust:
-    if: github.repository == 'blimydev/blimy'
-    name: Rust â€” fmt, check, clippy, test
+    if: github.repository == 'antan2002/blimy' || github.repository == 'blimydev/blimy'
+    name: Rust — fmt, check, clippy, test
     runs-on: ubuntu-latest
     env:
       CARGO_TERM_COLOR: always
@@ -64,8 +64,8 @@ jobs:
         run: bash scripts/check/rust.sh
 
   audit:
-    if: github.repository == 'blimydev/blimy'
-    name: Audit â€” cargo audit, bun audit
+    if: github.repository == 'antan2002/blimy' || github.repository == 'blimydev/blimy'
+    name: Audit — cargo audit, bun audit
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6

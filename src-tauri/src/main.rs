@@ -131,9 +131,9 @@ fn main() {
          git_commit,
          git_add_all,
          git_reset_all,
-          git_log,
-          git_log_for_path,
-          git_diff_file,
+         git_log,
+         git_log_for_path,
+         git_diff_file,
          git_diff_file_with_content,
          git_status_diff_stats,
          git_commit_diff,
@@ -479,10 +479,10 @@ fn main() {
          get_cli_install_command,
          get_importable_ide_projects,
          take_pending_cli_open_requests,
-take_pending_deep_links,
-      start_auth_loopback,
-      stop_auth_loopback,
-      // Runtime commands
+         take_pending_deep_links,
+         start_auth_loopback,
+         stop_auth_loopback,
+         // Runtime commands
          ensure_runtime,
          get_runtime_status,
          get_runtime_version,
@@ -528,6 +528,11 @@ take_pending_deep_links,
          menu::toggle_menu_bar,
          menu::rebuild_menu_themes,
          menu::sync_native_menu_state,
+         // Docs indexing commands
+         crawl_and_index_docs,
+         query_indexed_docs,
+         // Browser automation commands
+         execute_browser_action,
       ])
       .build(context)
       .expect("error while building tauri application")
@@ -583,4 +588,3 @@ mod tests {
 }
 
 // Force rebuild to embed new icon
-

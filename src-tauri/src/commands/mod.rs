@@ -1,8 +1,10 @@
 // Domain-organized command modules
 pub mod ai;
 pub mod app_logs;
+pub mod browser;
 pub mod database;
 pub mod development;
+pub mod docs;
 pub mod editor;
 pub mod project;
 pub mod ui;
@@ -15,8 +17,10 @@ pub mod fuzzy;
 // Re-export all commands from domain modules
 pub use ai::*;
 pub use app_logs::*;
+pub use browser::*;
 pub use database::*;
 pub use development::*;
+pub use docs::*;
 pub use editor::*;
 // Re-export standalone modules
 pub use extensions::*;

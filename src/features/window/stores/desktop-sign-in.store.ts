@@ -14,6 +14,8 @@ interface State {
   error: string | null;
   actions: {
     signIn: (provider?: "github" | "google") => Promise<boolean>;
+    /** Starts an enterprise SSO sign-in for the given email domain or SSO provider id. */
+    signInWithSso: (domain: string) => Promise<boolean>;
     cancel: () => void;
     reopen: () => Promise<void>;
   };
@@ -61,6 +63,43 @@ export function createDesktopSignInStore(dependencies: Dependencies) {
           } finally {
             // A browser failure will never produce a deep link callback, so the wait is over.
             // A success keeps isSigningIn set until AuthListener cancels it after the exchange.
+            if (get().error !== null) {
+              set({ isSigningIn: false, loginUrl: null });
+            }
+          }
+        })();
+        pending = request;
+        return request;
+      },
+      signInWithSso: (domain: string) => {
+        if (pending) return pending;
+        const attempt = new AbortController();
+        controller = attempt;
+        set({ isSigningIn: true, error: null });
+        const request = (async () => {
+          try {
+            const { supabase } = await import("@/features/auth/lib/supabase");
+            const { data, error } = await supabase.auth.signInWithSSO({
+              domain: domain.trim(),
+              options: {
+                redirectTo: await resolveOAuthRedirect(),
+                skipBrowserRedirect: true,
+              },
+            });
+            attempt.signal.throwIfAborted();
+            if (error || !data?.url) {
+              throw new Error(
+                error?.message || "Failed to get a Supabase SSO URL for that domain.",
+              );
+            }
+            set({ loginUrl: data.url });
+            await dependencies.open(data.url);
+            return true;
+          } catch (error) {
+            if (attempt.signal.aborted) return false;
+            set({ error: error instanceof Error ? error.message : "Sign-in failed." });
+            return false;
+          } finally {
             if (get().error !== null) {
               set({ isSigningIn: false, loginUrl: null });
             }

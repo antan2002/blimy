@@ -15,11 +15,9 @@ import { useSettingsStore } from "@/features/settings/stores/settings.store";
 import NumberInput from "@/ui/number-input";
 import Switch from "@/ui/switch";
 import { AgentsSection } from "../ai/agents-section";
-import { BlimyPlanSection } from "../ai/blimy-plan-section";
 import { CustomEndpointSection } from "../ai/custom-endpoint-section";
 import { DefaultModelSection } from "../ai/default-model-section";
 import { FeatureModelsSection } from "../ai/feature-models-section";
-import { HostedModelUsageSection } from "../ai/hosted-model-usage-section";
 import { OllamaSection } from "../ai/ollama-section";
 import { ProviderKeysSection } from "../ai/provider-keys-section";
 import { TabCompletionSection } from "../ai/tab-completion-section";
@@ -57,6 +55,7 @@ function AgentBehaviorSection() {
   const settings = useSettingsStore(
     useShallow((state) => ({
       aiFollowAgent: state.settings.aiFollowAgent,
+      aiBugFinder: state.settings.aiBugFinder,
       aiAgentMaxSteps: state.settings.aiAgentMaxSteps,
     })),
   );
@@ -73,6 +72,25 @@ function AgentBehaviorSection() {
         <Switch
           checked={settings.aiFollowAgent}
           onChange={(checked) => updateSetting("aiFollowAgent", checked)}
+        />
+      </SettingRow>
+      <SettingRow
+        label="Bug finder"
+        description="Reviews a file after you save it and marks findings in the editor"
+        onReset={() => updateSetting("aiBugFinder", getDefaultSetting("aiBugFinder"))}
+        canReset={settings.aiBugFinder !== getDefaultSetting("aiBugFinder")}
+      >
+        <Switch
+          checked={settings.aiBugFinder}
+          onChange={(checked) => {
+            updateSetting("aiBugFinder", checked);
+
+            if (!checked) {
+              void import("@/features/ai/bug-finder/bug-finder-runtime").then(
+                ({ clearBugFinderDiagnostics }) => clearBugFinderDiagnostics(),
+              );
+            }
+          }}
         />
       </SettingRow>
       <SettingRow

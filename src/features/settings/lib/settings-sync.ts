@@ -78,6 +78,7 @@ type SyncableSettingsKey =
   | "aiAutocompleteCustomBaseUrl"
   | "aiAutocompleteCustomModelId"
   | "aiDefaultSessionMode"
+  | "aiBugFinder"
   | "aiSkills"
   | "v0DesignSystems"
   | "activeV0DesignSystemId"
@@ -200,6 +201,7 @@ const SYNCABLE_SETTINGS_KEYS: SyncableSettingsKey[] = [
   "aiAutocompleteCustomBaseUrl",
   "aiAutocompleteCustomModelId",
   "aiDefaultSessionMode",
+  "aiBugFinder",
   "aiSkills",
   "v0DesignSystems",
   "activeV0DesignSystemId",

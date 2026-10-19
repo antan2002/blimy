@@ -132,6 +132,8 @@ export interface Settings {
   aiAgentNotificationSound: boolean;
   /** Whether new agent chats start with "Follow agent" on. */
   aiFollowAgent: boolean;
+  /** Reviews a file after the user saves it and marks findings in the editor. */
+  aiBugFinder: boolean;
   /** Model requests one built-in agent turn may make before it pauses to ask to continue. */
   aiAgentMaxSteps: number;
   /**

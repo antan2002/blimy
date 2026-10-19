@@ -1,5 +1,5 @@
 {
-  "websiteBaseUrl": "https://blimy.dev",
+  "websiteBaseUrl": "https://blimy.framer.website",
   "apiBaseUrl": "https://blimy.dev",
   "docsUrl": "https://blimy.dev/docs",
   "telemetryDocsUrl": "https://blimy.dev/docs/telemetry",
@@ -11,6 +11,6 @@
   "extensionsCdnBaseUrl": "https://blimy.dev/extensions",
   "stableUpdateUrl": "https://blimy.dev/api/update/stable",
   "previewUpdateUrl": "https://blimy.dev/api/update/preview",
-  "githubReleasesBaseUrl": "https://github.com/blimydev/blimy/releases",
-  "githubReleasesApiBaseUrl": "https://api.github.com/repos/blimydev/blimy/releases"
+  "githubReleasesBaseUrl": "https://github.com/antan2002/blimy/releases",
+  "githubReleasesApiBaseUrl": "https://api.github.com/repos/antan2002/blimy/releases"
 }

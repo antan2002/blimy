@@ -37,7 +37,7 @@ import {
   PlusIcon,
   TrashIcon,
   ArrowCounterClockwiseIcon,
-  XIcon as Close,
+  XIcon,
 } from "@/ui/icons";
 import { InlineRenameInput } from "@/ui/input";
 import {
@@ -326,7 +326,7 @@ export function AgentsSidebar() {
               tooltip="Close Sidebar"
               onClick={() => useUIState.getState().setIsRightSidebarVisible(false)}
             >
-              <Close />
+              <XIcon />
             </SidebarIconButton>
           </div>
         </div>
@@ -414,11 +414,7 @@ export function AgentsSidebar() {
                 </SidebarListItem>
                 {showArchived
                   ? archived.map((chat) => (
-                      <ArchivedAgentRow
-                        key={chat.id}
-                        chat={chat}
-                        onOpenChat={handleOpenChat}
-                      />
+                      <ArchivedAgentRow key={chat.id} chat={chat} onOpenChat={handleOpenChat} />
                     ))
                   : null}
               </section>

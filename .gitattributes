@@ -1,4 +1,8 @@
 *.wasm binary
 
+# The repository keeps LF in the index and on disk on every platform so the
+# formatter gate (vp check) does not depend on the checkout's core.autocrlf.
+* text=auto eol=lf
+
 # Vendored font files and their upstream licenses are kept byte-identical.
 public/fonts/** -whitespace

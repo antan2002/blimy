@@ -70,8 +70,10 @@ export const marketplaceMcpServers: MarketplaceMcpServer[] = [
     id: "github",
     name: "GitHub",
     category: "core dev — the universal core",
-    description: "Manage repositories, pull requests, issues, and code search across your organization without leaving the editor.",
-    gotcha: "Scope token to read-only unless the agent genuinely needs to push. Official GitHub Copilot MCP server.",
+    description:
+      "Manage repositories, pull requests, issues, and code search across your organization without leaving the editor.",
+    gotcha:
+      "Scope token to read-only unless the agent genuinely needs to push. Official GitHub Copilot MCP server.",
     link: "https://github.com/github/github-mcp-server",
     settings: {
       name: "github",
@@ -88,7 +90,8 @@ export const marketplaceMcpServers: MarketplaceMcpServer[] = [
     id: "context7",
     name: "Context7",
     category: "core dev — the universal core",
-    description: "Prevents code hallucinations by fetching up-to-date, version-pinned library documentation at query time.",
+    description:
+      "Prevents code hallucinations by fetching up-to-date, version-pinned library documentation at query time.",
     gotcha: "Free to use, with an optional API key for higher rate limits.",
     link: "https://context7.com",
     settings: {
@@ -106,7 +109,8 @@ export const marketplaceMcpServers: MarketplaceMcpServer[] = [
     id: "playwright",
     name: "Playwright",
     category: "core dev — the universal core",
-    description: "Drives a headless browser to open web pages, click, fill forms, take screenshots, and run interactive tests.",
+    description:
+      "Drives a headless browser to open web pages, click, fill forms, take screenshots, and run interactive tests.",
     gotcha: "Great for exploratory testing and debugging web interfaces. Maintained by Microsoft.",
     link: "https://github.com/microsoft/playwright-mcp",
     settings: {
@@ -124,7 +128,8 @@ export const marketplaceMcpServers: MarketplaceMcpServer[] = [
     id: "filesystem",
     name: "Filesystem",
     category: "core dev — the universal core",
-    description: "Provides scoped local directory and file read/write access beyond the workspace root.",
+    description:
+      "Provides scoped local directory and file read/write access beyond the workspace root.",
     gotcha: "Only expose directories you want reachable. Broad file system access.",
     link: "https://github.com/modelcontextprotocol/servers/tree/main/src/filesystem",
     settings: {
@@ -142,7 +147,8 @@ export const marketplaceMcpServers: MarketplaceMcpServer[] = [
     id: "brave-search",
     name: "Brave Search",
     category: "core dev — the universal core",
-    description: "Fast, real-time web search capabilities to ground agent answers in live web results.",
+    description:
+      "Fast, real-time web search capabilities to ground agent answers in live web results.",
     gotcha: "Requires a free API key from brave.com/search/api.",
     link: "https://github.com/brave/brave-search-mcp-server",
     settings: {
@@ -162,7 +168,8 @@ export const marketplaceMcpServers: MarketplaceMcpServer[] = [
     id: "postgres",
     name: "PostgreSQL",
     category: "databases & backend",
-    description: "Direct SQL queries against PostgreSQL databases for schema-aware inspection and debugging.",
+    description:
+      "Direct SQL queries against PostgreSQL databases for schema-aware inspection and debugging.",
     gotcha: "Read-only by default. Avoid pointing at production write instances.",
     link: "https://github.com/modelcontextprotocol/servers-archived/tree/main/src/postgres",
     settings: {
@@ -180,7 +187,8 @@ export const marketplaceMcpServers: MarketplaceMcpServer[] = [
     id: "supabase",
     name: "Supabase",
     category: "databases & backend",
-    description: "Complete backend control through chat: database queries, auth, storage, and edge functions.",
+    description:
+      "Complete backend control through chat: database queries, auth, storage, and edge functions.",
     gotcha: "Start in read-only mode to prevent unintended destructive migrations.",
     link: "https://github.com/supabase-community/supabase-mcp",
     settings: {
@@ -198,7 +206,8 @@ export const marketplaceMcpServers: MarketplaceMcpServer[] = [
     id: "neon",
     name: "Neon",
     category: "databases & backend",
-    description: "Serverless Postgres with copy-on-write database branching for safe migration testing.",
+    description:
+      "Serverless Postgres with copy-on-write database branching for safe migration testing.",
     gotcha: "Hosted remote MCP server. Authenticate via Neon API token or OAuth.",
     link: "https://github.com/neondatabase/mcp-server-neon",
     settings: {
@@ -234,7 +243,8 @@ export const marketplaceMcpServers: MarketplaceMcpServer[] = [
     id: "redis",
     name: "Redis",
     category: "databases & backend",
-    description: "Inspect keys, query TTLs, manage caches, and monitor memory usage without CLI memorization.",
+    description:
+      "Inspect keys, query TTLs, manage caches, and monitor memory usage without CLI memorization.",
     gotcha: "Use a read-only ACL user for the agent connection string.",
     link: "https://github.com/redis/mcp-redis",
     settings: {
@@ -254,7 +264,8 @@ export const marketplaceMcpServers: MarketplaceMcpServer[] = [
     id: "cloudflare",
     name: "Cloudflare",
     category: "ops, infra & cloud",
-    description: "Manage Workers, DNS records, R2 buckets, KV stores, and Zero Trust settings across Cloudflare.",
+    description:
+      "Manage Workers, DNS records, R2 buckets, KV stores, and Zero Trust settings across Cloudflare.",
     gotcha: "Supports 2,500+ endpoints through compact schema search.",
     link: "https://github.com/cloudflare/mcp",
     settings: {
@@ -272,7 +283,8 @@ export const marketplaceMcpServers: MarketplaceMcpServer[] = [
     id: "vercel",
     name: "Vercel",
     category: "ops, infra & cloud",
-    description: "Inspect deployment logs, view project domains, and update project environment variables.",
+    description:
+      "Inspect deployment logs, view project domains, and update project environment variables.",
     gotcha: "Keep a human in the loop when applying production configuration changes.",
     link: "https://vercel.com/docs/mcp",
     settings: {
@@ -290,7 +302,8 @@ export const marketplaceMcpServers: MarketplaceMcpServer[] = [
     id: "aws",
     name: "AWS",
     category: "ops, infra & cloud",
-    description: "Interact with EC2, S3, Lambda, RDS, and CloudWatch metrics using natural language.",
+    description:
+      "Interact with EC2, S3, Lambda, RDS, and CloudWatch metrics using natural language.",
     gotcha: "Scope IAM permissions tightly to read-only roles before connecting.",
     link: "https://github.com/awslabs/mcp",
     settings: {
@@ -312,7 +325,8 @@ export const marketplaceMcpServers: MarketplaceMcpServer[] = [
     id: "docker",
     name: "Docker",
     category: "ops, infra & cloud",
-    description: "Manage container lifecycle, inspect images, inspect volumes, and check running container logs.",
+    description:
+      "Manage container lifecycle, inspect images, inspect volumes, and check running container logs.",
     gotcha: "Requires local Docker engine or daemon running.",
     link: "https://hub.docker.com",
     settings: {
@@ -330,7 +344,8 @@ export const marketplaceMcpServers: MarketplaceMcpServer[] = [
     id: "sentry",
     name: "Sentry",
     category: "ops, infra & cloud",
-    description: "Retrieve production stack traces, error issues, and breadcrumbs for instant debugging.",
+    description:
+      "Retrieve production stack traces, error issues, and breadcrumbs for instant debugging.",
     gotcha: "Stack traces can carry sensitive data. Scope issue access appropriately.",
     link: "https://docs.sentry.io/product/sentry-mcp/",
     settings: {
@@ -348,7 +363,8 @@ export const marketplaceMcpServers: MarketplaceMcpServer[] = [
     id: "kubernetes",
     name: "Kubernetes",
     category: "ops, infra & cloud",
-    description: "Cluster inspection, namespace monitoring, and kubectl-style pod diagnostics in plain English.",
+    description:
+      "Cluster inspection, namespace monitoring, and kubectl-style pod diagnostics in plain English.",
     gotcha: "Point at a non-production or read-only kubeconfig context first.",
     link: "https://github.com/Flux159/mcp-server-kubernetes",
     settings: {
@@ -368,8 +384,10 @@ export const marketplaceMcpServers: MarketplaceMcpServer[] = [
     id: "slack",
     name: "Slack",
     category: "corporate / team & productivity",
-    description: "Search message history, read channel threads, and post team updates directly from chat.",
-    gotcha: "Requires Slack Bot Token and App Token. Posting to public channels notifies your team.",
+    description:
+      "Search message history, read channel threads, and post team updates directly from chat.",
+    gotcha:
+      "Requires Slack Bot Token and App Token. Posting to public channels notifies your team.",
     link: "https://github.com/zencoderai/slack-mcp-server",
     settings: {
       name: "slack",
@@ -389,7 +407,8 @@ export const marketplaceMcpServers: MarketplaceMcpServer[] = [
     id: "linear",
     name: "Linear",
     category: "corporate / team & productivity",
-    description: "Manage issues, view sprint planning, update ticket statuses, and search team backlogs.",
+    description:
+      "Manage issues, view sprint planning, update ticket statuses, and search team backlogs.",
     gotcha: "Official remote server. Inherits your Linear workspace permissions.",
     link: "https://linear.app/docs/mcp",
     settings: {
@@ -425,7 +444,8 @@ export const marketplaceMcpServers: MarketplaceMcpServer[] = [
     id: "atlassian",
     name: "Jira & Confluence",
     category: "corporate / team & productivity",
-    description: "Search Jira tickets, manage issue statuses, and read Confluence knowledge base pages.",
+    description:
+      "Search Jira tickets, manage issue statuses, and read Confluence knowledge base pages.",
     gotcha: "Official Atlassian Rovo endpoint (OAuth 2.1). Respects existing access controls.",
     link: "https://www.atlassian.com/platform/remote-mcp-server",
     settings: {
@@ -443,7 +463,8 @@ export const marketplaceMcpServers: MarketplaceMcpServer[] = [
     id: "gdrive",
     name: "Google Drive",
     category: "corporate / team & productivity",
-    description: "Search, read, and summarize files, spreadsheets, and docs stored in Google Drive.",
+    description:
+      "Search, read, and summarize files, spreadsheets, and docs stored in Google Drive.",
     gotcha: "Grant read-only scope and limit to specific folders where possible.",
     link: "https://github.com/modelcontextprotocol/servers-archived/tree/main/src/gdrive",
     settings: {
@@ -515,7 +536,8 @@ export const marketplaceMcpServers: MarketplaceMcpServer[] = [
     id: "airtable",
     name: "Airtable",
     category: "corporate / team & productivity",
-    description: "Query table records, create entries, and inspect database schema in Airtable bases.",
+    description:
+      "Query table records, create entries, and inspect database schema in Airtable bases.",
     gotcha: "Scope your Personal Access Token to specific bases and tables.",
     link: "https://github.com/domdomegg/airtable-mcp-server",
     settings: {
@@ -535,7 +557,8 @@ export const marketplaceMcpServers: MarketplaceMcpServer[] = [
     id: "stripe",
     name: "Stripe",
     category: "payments & fintech",
-    description: "Query customer accounts, check subscription statuses, and inspect payment transactions.",
+    description:
+      "Query customer accounts, check subscription statuses, and inspect payment transactions.",
     gotcha: "Use a restricted API key with read-only permissions for safety.",
     link: "https://docs.stripe.com/mcp",
     settings: {
@@ -553,7 +576,8 @@ export const marketplaceMcpServers: MarketplaceMcpServer[] = [
     id: "paypal",
     name: "PayPal",
     category: "payments & fintech",
-    description: "Official PayPal toolkit for tracking invoices, payments, and transaction history.",
+    description:
+      "Official PayPal toolkit for tracking invoices, payments, and transaction history.",
     gotcha: "Money-moving tools require supervision; confirm every write.",
     link: "https://www.paypal.ai",
     settings: {
@@ -571,7 +595,8 @@ export const marketplaceMcpServers: MarketplaceMcpServer[] = [
     id: "plaid",
     name: "Plaid",
     category: "payments & fintech",
-    description: "Aggregate bank account balances, verify institutions, and view transaction history.",
+    description:
+      "Aggregate bank account balances, verify institutions, and view transaction history.",
     gotcha: "Sensitive financial data. Use Plaid Sandbox credentials when testing.",
     link: "https://plaid.com/docs/",
     settings: {
@@ -612,8 +637,10 @@ export const marketplaceMcpServers: MarketplaceMcpServer[] = [
     id: "base",
     name: "Base MCP",
     category: "blockchain & web3",
-    description: "Coinbase official non-custodial gateway for token swaps, portfolio tracking, and DeFi protocols.",
-    gotcha: "Never holds private keys; transactions build locally and must be approved in your Base app.",
+    description:
+      "Coinbase official non-custodial gateway for token swaps, portfolio tracking, and DeFi protocols.",
+    gotcha:
+      "Never holds private keys; transactions build locally and must be approved in your Base app.",
     link: "https://github.com/base/base-mcp",
     settings: {
       name: "base",
@@ -632,7 +659,7 @@ export const marketplaceMcpServers: MarketplaceMcpServer[] = [
     category: "blockchain & web3",
     description: "Interact with Solana smart contracts, check token balances, and execute swaps.",
     gotcha: "Never store private keys with real mainnet funds in config files.",
-    link: "https://github.com/sendaifun/solana-agent-kit" ,
+    link: "https://github.com/sendaifun/solana-agent-kit",
     settings: {
       name: "solana",
       transport: "stdio",
@@ -651,7 +678,8 @@ export const marketplaceMcpServers: MarketplaceMcpServer[] = [
     id: "thirdweb",
     name: "Thirdweb",
     category: "blockchain & web3",
-    description: "Deploy and interact with EVM smart contracts, read ABI methods, and inspect tokens.",
+    description:
+      "Deploy and interact with EVM smart contracts, read ABI methods, and inspect tokens.",
     gotcha: "Test on testnets (e.g. Sepolia) first to avoid gas costs on mistakes.",
     link: "https://portal.thirdweb.com",
     settings: {
@@ -669,7 +697,8 @@ export const marketplaceMcpServers: MarketplaceMcpServer[] = [
     id: "the-graph",
     name: "The Graph",
     category: "blockchain & web3",
-    description: "Query decentralized protocol subgraphs for indexed onchain data without running local nodes.",
+    description:
+      "Query decentralized protocol subgraphs for indexed onchain data without running local nodes.",
     gotcha: "Read-only GraphQL queries. Safe for background data analysis.",
     link: "https://thegraph.com/docs/",
     settings: {
@@ -725,7 +754,8 @@ export const marketplaceMcpServers: MarketplaceMcpServer[] = [
     id: "alpaca",
     name: "Alpaca",
     category: "trading & markets",
-    description: "Trade US equities, ETFs, and crypto with real-time market data and paper trading support.",
+    description:
+      "Trade US equities, ETFs, and crypto with real-time market data and paper trading support.",
     gotcha: "Start with paper trading credentials. Use limit orders to control slippage.",
     link: "https://github.com/alpacahq/alpaca-mcp-server",
     settings: {
@@ -746,7 +776,8 @@ export const marketplaceMcpServers: MarketplaceMcpServer[] = [
     id: "ccxt",
     name: "CCXT",
     category: "trading & markets",
-    description: "Unified cryptocurrency exchange data across Binance, Coinbase, Kraken, Bybit, and OKX.",
+    description:
+      "Unified cryptocurrency exchange data across Binance, Coinbase, Kraken, Bybit, and OKX.",
     gotcha: "Use read-only exchange API keys for market monitoring.",
     link: "https://github.com/lazy-dinosaur/ccxt-mcp",
     settings: {
@@ -782,7 +813,8 @@ export const marketplaceMcpServers: MarketplaceMcpServer[] = [
     id: "coingecko",
     name: "CoinGecko",
     category: "trading & markets",
-    description: "Comprehensive cryptocurrency prices, token metadata, volume, and global market caps.",
+    description:
+      "Comprehensive cryptocurrency prices, token metadata, volume, and global market caps.",
     gotcha: "Free tier rate-limited; ideal for token research and pricing.",
     link: "https://docs.coingecko.com",
     settings: {
@@ -838,7 +870,8 @@ export const marketplaceMcpServers: MarketplaceMcpServer[] = [
     id: "davinci-resolve",
     name: "DaVinci Resolve",
     category: "creator tools — media & design",
-    description: "Control video editing timelines, media pools, color grading, and export rendering via scripting API.",
+    description:
+      "Control video editing timelines, media pools, color grading, and export rendering via scripting API.",
     gotcha: "Requires DaVinci Resolve Studio open with external scripting enabled.",
     link: "https://github.com/samuelgursky/davinci-resolve-mcp",
     settings: {
@@ -892,7 +925,8 @@ export const marketplaceMcpServers: MarketplaceMcpServer[] = [
     id: "blender",
     name: "Blender",
     category: "creator tools — media & design",
-    description: "Control Blender 3D: create objects, generate geometry, adjust lighting, and apply materials.",
+    description:
+      "Control Blender 3D: create objects, generate geometry, adjust lighting, and apply materials.",
     gotcha: "Requires Blender running with companion addon enabled.",
     link: "https://github.com/ahujasid/blender-mcp",
     settings: {
@@ -910,7 +944,8 @@ export const marketplaceMcpServers: MarketplaceMcpServer[] = [
     id: "canva",
     name: "Canva",
     category: "creator tools — media & design",
-    description: "Generate and customize marketing assets, presentations, and social graphics from templates.",
+    description:
+      "Generate and customize marketing assets, presentations, and social graphics from templates.",
     gotcha: "OAuth flow on initial connection.",
     link: "https://www.canva.dev/docs/apps/mcp-server/",
     settings: {
@@ -928,7 +963,8 @@ export const marketplaceMcpServers: MarketplaceMcpServer[] = [
     id: "ableton",
     name: "Ableton Live",
     category: "creator tools — media & design",
-    description: "Manipulate live sets, add MIDI tracks, control synth parameters, and generate beats.",
+    description:
+      "Manipulate live sets, add MIDI tracks, control synth parameters, and generate beats.",
     gotcha: "Requires Ableton Live with remote MIDI script bridge.",
     link: "https://github.com/ahujasid/ableton-mcp",
     settings: {
@@ -966,7 +1002,8 @@ export const marketplaceMcpServers: MarketplaceMcpServer[] = [
     id: "sequential-thinking",
     name: "Sequential Thinking",
     category: "the reasoning & memory layer",
-    description: "Forces the AI agent to systematically decompose complex problems into ordered, verifiable reasoning steps.",
+    description:
+      "Forces the AI agent to systematically decompose complex problems into ordered, verifiable reasoning steps.",
     gotcha: "Zero external dependencies or network access; runs locally to boost agent reasoning.",
     link: "https://github.com/modelcontextprotocol/servers/tree/main/src/sequentialthinking",
     settings: {
@@ -984,7 +1021,8 @@ export const marketplaceMcpServers: MarketplaceMcpServer[] = [
     id: "memory",
     name: "Memory",
     category: "the reasoning & memory layer",
-    description: "Knowledge graph persistent memory that lets the agent remember facts, preferences, and context across sessions.",
+    description:
+      "Knowledge graph persistent memory that lets the agent remember facts, preferences, and context across sessions.",
     gotcha: "Stores graph database locally on disk.",
     link: "https://github.com/modelcontextprotocol/servers/tree/main/src/memory",
     settings: {

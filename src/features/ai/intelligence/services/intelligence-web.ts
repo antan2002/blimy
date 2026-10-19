@@ -40,10 +40,7 @@ function jsonHeaders(token: string) {
   };
 }
 
-async function responseError(
-  response: Response,
-  fallback: string,
-): Promise<IntelligenceWebError> {
+async function responseError(response: Response, fallback: string): Promise<IntelligenceWebError> {
   const body = await response.json().catch(() => null);
   const message =
     body &&

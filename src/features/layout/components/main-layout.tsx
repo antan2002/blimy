@@ -4,6 +4,7 @@ import { useChatInitialization } from "@/features/ai/hooks/use-chat-initializati
 import { useCollaborationPresence } from "@/features/collaboration/hooks/use-collaboration-presence";
 import { initializeDebuggerEventBridge } from "@/features/debugger/services/debug-adapter-events";
 import { useBufferStore } from "@/features/editor/stores/buffer.store";
+import { useOpenActiveFileInBrowser } from "@/features/editor/hooks/use-open-active-file-in-browser";
 import { getSymlinkInfo } from "@/features/file-system/controllers/platform";
 import { useFileSystemStore } from "@/features/file-system/stores/file-system.store";
 import { useFileSystemFolderDrop } from "@/features/file-system/hooks/use-file-system-folder-drop";
@@ -27,15 +28,7 @@ import { recordStartupMilestone } from "@/features/bootstrap/startup-performance
 import { getInternalTabDragData } from "@/features/tabs/utils/internal-tab-drag";
 import { getCollapsedActivityBarWidth } from "@/features/layout/utils/activity-bar-layout";
 import { WorkbenchFullscreenRootContext } from "@/features/window/components/workbench-fullscreen-surface";
-import {
-  SparkleIcon,
-  UserIcon,
-  SidebarIcon,
-  TerminalWindowIcon,
-  SidebarRightIcon,
-  SearchIcon,
-  SettingsIcon,
-} from "@/ui/icons";
+import { SidebarIcon, TerminalWindowIcon, SidebarRightIcon, SearchIcon } from "@/ui/icons";
 // import removed
 import TitleBarWithSettings from "../../window/components/title-bar/title-bar";
 import { TitleLeading } from "../../window/components/title-bar/title-leading";
@@ -85,6 +78,7 @@ export function MainLayout() {
   useChatInitialization();
   usePaneKeyboard();
   useCollaborationPresence();
+  const openActiveFileInBrowser = useOpenActiveFileInBrowser();
 
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const isAuthLoading = useAuthStore((state) => state.isLoading);
@@ -382,7 +376,7 @@ export function MainLayout() {
               {/* Layout Controls */}
               <button
                 className={cn(
-                  "flex h-full items-center justify-center px-1.5 transition-colors hover:bg-muted hover:text-foreground",
+                  "flex h-full items-center justify-center px-1.5 transition-colors hover:bg-accent hover:text-foreground",
                   renderedSidebarVisible ? "text-foreground" : "text-muted-foreground",
                 )}
                 onClick={() => {
@@ -395,7 +389,7 @@ export function MainLayout() {
               </button>
               <button
                 className={cn(
-                  "flex h-full items-center justify-center px-1.5 transition-colors hover:bg-muted hover:text-foreground",
+                  "flex h-full items-center justify-center px-1.5 transition-colors hover:bg-accent hover:text-foreground",
                   isEditorBottomPaneVisible || (terminalWidthMode === "full" && isBottomPaneVisible)
                     ? "text-foreground"
                     : "text-muted-foreground",
@@ -410,7 +404,7 @@ export function MainLayout() {
               </button>
               <button
                 className={cn(
-                  "flex h-full items-center justify-center px-1.5 transition-colors hover:bg-muted hover:text-foreground",
+                  "flex h-full items-center justify-center px-1.5 transition-colors hover:bg-accent hover:text-foreground",
                   renderedRightSidebarVisible ? "text-foreground" : "text-muted-foreground",
                 )}
                 onClick={() => {
@@ -426,7 +420,7 @@ export function MainLayout() {
 
               {/* Search */}
               <button
-                className="flex h-full items-center justify-center px-1.5 text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+                className="flex h-full items-center justify-center px-1.5 text-muted-foreground hover:bg-accent hover:text-foreground transition-colors"
                 onClick={() => {
                   useUIState.getState().setIsQuickOpenVisible(true);
                 }}
@@ -439,9 +433,9 @@ export function MainLayout() {
 
               {/* Chrome Button */}
               <button
-                className="flex h-full items-center justify-center px-1.5 transition-colors hover:bg-muted"
+                className="flex h-full items-center justify-center px-1.5 transition-colors hover:bg-accent"
                 onClick={() => {
-                  // TODO: Chrome action
+                  void openActiveFileInBrowser();
                 }}
                 title="Browser Preview"
               >

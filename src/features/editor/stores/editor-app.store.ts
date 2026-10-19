@@ -172,6 +172,12 @@ async function saveEditorBufferById(bufferId: string): Promise<boolean> {
       }
     }
 
+    if (settings.aiBugFinder) {
+      const { reviewSavedFile } = await import("@/features/ai/bug-finder/bug-finder-runtime");
+
+      void reviewSavedFile({ filePath: activeBuffer.path, content: contentToSave });
+    }
+
     const rootFolderPath = useFileSystemStore.getState().rootFolderPath;
     if (rootFolderPath) {
       emitGitChanged({

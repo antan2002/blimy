@@ -37,6 +37,8 @@ import {
 } from "./intelligence-command-allowlist";
 import { getCommandAllowPrefix } from "../lib/intelligence-command-policy";
 import { getExtraTools, type ExtraTools, type McpToolCallRequest } from "./intelligence-mcp";
+import { buildLocalTools } from "@/features/ai/tools/registry";
+import { createSubagentManager } from "@/features/ai/subagents/subagent-manager";
 import { fetchIntelligenceUrl, searchIntelligenceWeb } from "./intelligence-web";
 import { allowMcpTool, isMcpToolAllowed } from "./intelligence-mcp-allowlist";
 import { IntelligenceAgentError, toIntelligenceAgentError } from "../lib/intelligence-agent-error";
@@ -133,6 +135,14 @@ function hasUnsavedBuffer(path: string) {
   );
 }
 
+/** One level of nesting: a turn may spawn children, and a child may not spawn its own. */
+const MAX_SUBAGENT_DEPTH = 1;
+/** Model requests one child may make, and how many children may run at once. */
+const SUBAGENT_MAX_STEPS = 8;
+const SUBAGENT_MAX_CONCURRENT = 3;
+/** Longest child report handed back to the parent, so one child cannot flood the turn. */
+const SUBAGENT_MAX_SUMMARY_CHARS = 6000;
+
 export async function runIntelligenceAgent(params: {
   sessionId: string;
   providerId: string;
@@ -142,6 +152,11 @@ export async function runIntelligenceAgent(params: {
   readOnly: boolean;
   /** Model requests this turn may make; defaults to `DEFAULT_INTELLIGENCE_AGENT_STEPS`. */
   maxSteps?: number;
+  /**
+   * How many levels of nested agents may run under this one. Omitted for a normal
+   * turn, which may spawn one level of children; children cannot spawn their own.
+   */
+  subagentDepth?: number;
   /**
    * Dollars this turn may spend before it stops, or `null` for no limit. Applied
    * to direct providers, whose responses report tokens but no cost.
@@ -707,7 +722,58 @@ export async function runIntelligenceAgent(params: {
           }),
       }),
     };
-    let tools: ToolSet = { ...extraTools.tools, ...builtInTools, ...webTools };
+    const subagentDepth = (params.subagentDepth ?? 0) + 1;
+    // Children run the same loop with their own session id, so nothing they do
+    // reaches the parent's transcript except the report this manager returns.
+    const subagentManager = createSubagentManager({
+      buildSessionId: (index) => `${params.sessionId}::subagent-${index}`,
+      maxSteps: SUBAGENT_MAX_STEPS,
+      maxConcurrent: SUBAGENT_MAX_CONCURRENT,
+      maxSummaryChars: SUBAGENT_MAX_SUMMARY_CHARS,
+      runAgent: async ({ sessionId, prompt: task, maxSteps: childSteps }) => {
+        let text = "";
+        const child = await runIntelligenceAgent({
+          sessionId,
+          providerId: params.providerId,
+          modelId: params.modelId,
+          messages: [{ role: "user", content: task }],
+          root: params.root,
+          // A child reads and reports. The parent applies anything it agrees with,
+          // so two levels of the same edit never race on one file.
+          readOnly: true,
+          maxSteps: childSteps,
+          maxOutputTokens: params.maxOutputTokens,
+          subagentDepth,
+          onChunk: (chunk) => {
+            text += chunk;
+          },
+        });
+        // A child's spend belongs to the turn that started it.
+        costUsd = (costUsd ?? 0) + (child.costUsd ?? 0);
+        return {
+          outcome: child.outcome,
+          text,
+          steps: child.steps,
+          costUsd: child.costUsd,
+          truncated: child.stopReason === "max_turn_requests" || child.stopReason === "max_tokens",
+        };
+      },
+    });
+    const localTools = root
+      ? buildLocalTools({
+          root,
+          readOnly: Boolean(params.readOnly),
+          signal,
+          runTool,
+          ...(subagentDepth <= MAX_SUBAGENT_DEPTH
+            ? {
+                runSubagent: (input: { task: string; maxSteps?: number }) =>
+                  subagentManager.run(input),
+              }
+            : {}),
+        })
+      : {};
+    let tools: ToolSet = { ...extraTools.tools, ...builtInTools, ...webTools, ...localTools };
     // Ollama rejects tools for models that cannot call them. Say so up front in Agent mode rather
     // than letting the model claim edits it never made; Ask and Plan answer without the workspace.
     if (params.providerId === "ollama" && Object.keys(tools).length > 0) {

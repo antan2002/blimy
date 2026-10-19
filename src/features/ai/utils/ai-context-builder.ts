@@ -335,6 +335,10 @@ Web search behavior:
 - Put recency in the query itself (for example "latest Nvidia news October 2026") rather than guessing at filters
 - When a search excerpt is not enough, use fetch_url to read the page and answer from its actual content
 
+@Docs and @Web behavior:
+- If the user prompt contains "@docs <url>", first call crawl_and_index_docs with the URL to index it (showing a subtle notification context), then use query_indexed_docs to find relevant chunks before answering.
+- If the user prompt contains "@web", you MUST use the search_web tool to look up recent information before answering.
+
 File opening behavior:
 - When asked to "open", "show", or "view" a file, read it with read_file so it opens in the editor
 - If the exact path is unknown, locate it first with list_files or search_files, then read it

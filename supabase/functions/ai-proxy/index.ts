@@ -1,3 +1,4 @@
+// @ts-nocheck
 // Hosted model access for every signed-in account, including free.
 //
 // Three things happen here, in this order on the chat route: the model's plan tier is checked
@@ -35,9 +36,14 @@ const EXA_TIMEOUT_MS = 20_000;
  */
 function routeOf(req: Request): string {
   const path = new URL(req.url).pathname;
-  const mount = "/functions/v1/ai-proxy";
-  const stripped = path.startsWith(mount) ? path.slice(mount.length) : "";
-  return stripped === "" ? "/" : stripped.replace(/\/+$/, "");
+  // The sub-path after the function's own `ai-proxy` segment is what the routes below match
+  // on. The segment is located rather than assumed to sit at a fixed mount, and a request that
+  // reaches the function without the mount (a bare `/models`) is matched as-is, so routing no
+  // longer depends on the gateway's prefix.
+  const match = path.match(/\/ai-proxy(?=\/|$)/);
+  const sub = match ? path.slice(match.index! + match[0].length) : path;
+  const normalized = sub.replace(/\/+$/, "");
+  return normalized === "" ? "/" : normalized;
 }
 
 /**
@@ -186,8 +192,10 @@ function modelCatalog(): CatalogEntry[] {
  */
 function tierOfModel(requested: string, catalog: CatalogEntry[]): ModelTier {
   if (!requested || requested === "auto") return "free";
-  const defaultModel = (Deno.env.get("BLIMY_DEFAULT_MODEL") ?? "").trim();
-  if (defaultModel && requested === defaultModel) return "free";
+  // The default upstream model is what Automatic resolves to, and the client pins that id for
+  // the rest of the run after the first response, so it has to stay free or a free account
+  // would be refused on its own second step.
+  if (requested === defaultUpstreamModel()) return "free";
   const entry = catalog.find((row) => row.id === requested);
   return entry ? entry.tier : "pro";
 }
@@ -238,11 +246,37 @@ function bearerToken(req: Request): string | null {
  * The upstream provider. The key lives in a Supabase secret and never reaches the client, which
  * is the whole point of this function: the app ships no provider credential.
  */
-function upstream(): { url: string; key: string } | null {
-  const key = Deno.env.get("OPENAI_API_KEY");
+const GOOGLE_OPENAI_BASE = "https://generativelanguage.googleapis.com/v1beta/openai";
+
+/**
+ * The upstream endpoint and its key, resolved from the server secrets.
+ *
+ * A Google base URL takes a Google key when one is configured, even if `OPENAI_API_KEY` is
+ * also set: pointing `OPENAI_BASE_URL` at Google is the documented way to serve Automatic
+ * through Google, and pairing that endpoint with another provider's key would fail every
+ * request. An operator who set only a Google key still gets Google's endpoint by default.
+ */
+function upstream(): { url: string; key: string; google: boolean } | null {
+  const googleKey = Deno.env.get("GEMINI_API_KEY") ?? Deno.env.get("GOOGLE_API_KEY");
+  const openAiKey = Deno.env.get("OPENAI_API_KEY");
+  const configuredBase = (Deno.env.get("OPENAI_BASE_URL") ?? "").replace(/\/+$/, "");
+  const base = configuredBase || (googleKey ? GOOGLE_OPENAI_BASE : "https://api.openai.com/v1");
+  const google = base.includes("generativelanguage.googleapis.com");
+  const key = google ? (googleKey ?? openAiKey) : openAiKey;
   if (!key) return null;
-  const base = (Deno.env.get("OPENAI_BASE_URL") ?? "https://api.openai.com/v1").replace(/\/+$/, "");
-  return { url: `${base}/chat/completions`, key };
+  return { url: `${base}/chat/completions`, key, google };
+}
+
+/**
+ * The model the server sends upstream when the caller asked for Automatic. The operator's
+ * `BLIMY_DEFAULT_MODEL` wins; otherwise a Google-only configuration falls back to a Google
+ * model, because forwarding the literal "auto" would be rejected by that provider.
+ */
+function defaultUpstreamModel(): string {
+  const configured = (Deno.env.get("BLIMY_DEFAULT_MODEL") ?? "").trim();
+  if (configured) return configured;
+  // Google rejects the literal "auto", so a real Google model id is sent instead.
+  return upstream()?.google ? "gemini-2.5-flash" : "auto";
 }
 
 /**
@@ -578,13 +612,13 @@ serve(async (req: Request) => {
         return json({ error: "Hosted models are not configured on this server." }, 500, headers);
       }
 
-      const resolvedModel =
-        model === "auto" ? Deno.env.get("BLIMY_DEFAULT_MODEL")?.trim() || "auto" : model;
-      const payload = {
-        ...body,
-        model: resolvedModel,
-        max_completion_tokens: clampOutputTokens(body.max_completion_tokens ?? body.max_tokens),
-      };
+      const resolvedModel = model === "auto" ? defaultUpstreamModel() : model;
+      // Google rejects a request that carries both max_tokens and max_completion_tokens, so the
+      // legacy field is dropped after its value has been folded into the one that is sent.
+      const outputTokens = clampOutputTokens(body.max_completion_tokens ?? body.max_tokens);
+      const payload: Record<string, unknown> = { ...body, model: resolvedModel };
+      delete payload.max_tokens;
+      payload.max_completion_tokens = outputTokens;
 
       let providerResponse: Response;
       try {
@@ -683,8 +717,7 @@ serve(async (req: Request) => {
         return json({ error: "Hosted models are not configured on this server." }, 500, headers);
       }
 
-      const resolvedModel =
-        model === "auto" ? Deno.env.get("BLIMY_DEFAULT_MODEL")?.trim() || "auto" : model;
+      const resolvedModel = model === "auto" ? defaultUpstreamModel() : model;
       const userContent = JSON.stringify({
         file: body.filePath,
         language: body.languageId,

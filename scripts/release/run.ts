@@ -293,12 +293,13 @@ async function release() {
     success(`Created commit: ${commitMessage}`);
 
     const releaseSha = (await $`git rev-parse HEAD`.text()).trim();
+    const targetRepo = process.env.GITHUB_REPOSITORY || "antan2002/blimy";
     log("\nPushing to remote...\n", "magenta");
     if (tagOnly) {
       const validationBranch = `release-validation/v${newVersion}`;
       await $`git push origin ${`${releaseSha}:refs/heads/${validationBranch}`}`;
       try {
-        await $`gh workflow run ci.yml --repo Blimydev/blimy --ref ${validationBranch}`;
+        await $`gh workflow run ci.yml --repo ${targetRepo} --ref ${validationBranch}`;
         await waitForReleaseCi(releaseSha);
       } finally {
         await $`git push origin --delete ${validationBranch}`;
@@ -320,7 +321,7 @@ async function release() {
 
     log("\n✨ Release process complete!\n", "green");
     log(`GitHub Actions will now build draft release v${newVersion}`, "cyan");
-    log("View the progress at: https://github.com/Blimydev/blimy/actions\n", "cyan");
+    log(`View the progress at: https://github.com/${targetRepo}/actions\n`, "cyan");
     log(
       `After the workflow finishes, verify it with: bun release:verify --tag v${newVersion}`,
       "cyan",

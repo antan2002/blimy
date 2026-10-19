@@ -273,7 +273,7 @@ impl LspClient {
                line.clear();
                match reader.read_line(&mut line) {
                   Ok(0) => {
-                // EOF, or the server process has exited
+                     // EOF, or the server process has exited
                      log::warn!("LSP server stdout closed (server crashed or exited)");
                      mark_stopped(
                         "LSP server stdout closed (server crashed or exited)".to_string(),

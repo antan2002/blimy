@@ -95,7 +95,11 @@ describe("searchIntelligenceWeb", () => {
     mocks.fetch
       .mockResolvedValueOnce(jsonResponse({ error: "Unauthorized" }, 401))
       .mockResolvedValueOnce(
-        jsonResponse({ results: [{ title: "After refresh", url: "https://a.b", publishedDate: null, snippet: "" }] }),
+        jsonResponse({
+          results: [
+            { title: "After refresh", url: "https://a.b", publishedDate: null, snippet: "" },
+          ],
+        }),
       );
 
     const outcome = await searchIntelligenceWeb("query");

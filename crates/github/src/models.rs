@@ -478,12 +478,24 @@ pub struct RepositoryInfo {
    pub id: i64,
    #[serde(default, deserialize_with = "deserialize_string_or_default")]
    pub name: String,
-   #[serde(rename(deserialize = "full_name", serialize = "fullName"), default, deserialize_with = "deserialize_string_or_default")]
+   #[serde(
+      rename(deserialize = "full_name", serialize = "fullName"),
+      default,
+      deserialize_with = "deserialize_string_or_default"
+   )]
    pub full_name: String,
    #[serde(default, deserialize_with = "deserialize_bool_or_default")]
    pub private: bool,
-   #[serde(rename(deserialize = "html_url", serialize = "htmlUrl"), default, deserialize_with = "deserialize_string_or_default")]
+   #[serde(
+      rename(deserialize = "html_url", serialize = "htmlUrl"),
+      default,
+      deserialize_with = "deserialize_string_or_default"
+   )]
    pub html_url: String,
-   #[serde(rename(deserialize = "clone_url", serialize = "cloneUrl"), default, deserialize_with = "deserialize_string_or_default")]
+   #[serde(
+      rename(deserialize = "clone_url", serialize = "cloneUrl"),
+      default,
+      deserialize_with = "deserialize_string_or_default"
+   )]
    pub clone_url: String,
 }

@@ -100,6 +100,7 @@ export const defaultSettings: Settings = {
   aiAgentFinishNotifications: true,
   aiAgentNotificationSound: false,
   aiFollowAgent: false,
+  aiBugFinder: false,
   aiAgentMaxSteps: DEFAULT_INTELLIGENCE_AGENT_STEPS,
   aiAgentBudgetUsd: DEFAULT_AGENT_BUDGET_USD,
   aiSkills: [],

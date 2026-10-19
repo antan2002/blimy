@@ -14,7 +14,7 @@ on:
 
 jobs:
   validate:
-    if: github.repository == 'blimydev/blimy'
+    if: github.repository == 'antan2002/blimy' || github.repository == 'blimydev/blimy'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

@@ -148,6 +148,7 @@ async function resolveFolder(
       continue;
     }
     for (const entry of entries) {
+      if (sources.isIgnored?.(entry.path)) continue;
       if (entryCount >= FOLDER_MAX_ENTRIES) {
         truncated = true;
         break;
@@ -289,6 +290,7 @@ async function getDefaultSources(projectRoot: string): Promise<ContextReferenceS
     { useDiagnosticsStore },
     { useAIChatStore },
     { loadChatFromDb },
+    { loadAiIgnore },
   ] = await Promise.all([
     import("@/features/file-system/services/workspace-resource-provider"),
     import("@/features/git/api/git-status-api"),
@@ -296,11 +298,16 @@ async function getDefaultSources(projectRoot: string): Promise<ContextReferenceS
     import("@/features/diagnostics/stores/diagnostics.store"),
     import("@/features/ai/stores/ai-chat.store"),
     import("@/features/ai/services/ai-chat-history-service"),
+    import("@/features/ai/lib/ai-ignore"),
   ]);
   const provider = getWorkspaceResourceProvider(projectRoot);
+  const { matcher: isIgnoredRelative } = await loadAiIgnore(projectRoot).catch(() => ({
+    matcher: () => false,
+  }));
   return {
     readDirectory: (path) => provider.readDirectory(path, projectRoot),
     readText: (path) => provider.readText(path),
+    isIgnored: (path) => isIgnoredRelative(normalizePath(getRelativePath(path, projectRoot))),
     getGitStatus,
     getFileDiff,
     getDiagnostics: () => useDiagnosticsStore.getState().actions.getAllDiagnostics(),

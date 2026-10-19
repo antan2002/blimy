@@ -1,14 +1,7 @@
 import { invoke } from "@tauri-apps/api/core";
 import type { ISearchOptions } from "@xterm/addon-search";
 import { Terminal } from "@xterm/xterm";
-import {
-  useCallback,
-  useEffect,
-  useImperativeHandle,
-  useRef,
-  useState,
-  type DragEvent,
-} from "react";
+import { useCallback, useEffect, useRef, useState, type DragEvent } from "react";
 import { connectionStore } from "@/features/remote/stores/remote-connection.store";
 import { parseRemotePath } from "@/features/remote/utils/remote-path";
 import { getWslShellId, parseWslPath } from "@/features/wsl/utils/wsl-path";
@@ -40,6 +33,11 @@ import { TerminalLinkTooltip } from "../lib/terminal-link-tooltip";
 import { TerminalShellIntegration } from "../lib/terminal-shell-integration";
 import { useTerminalTheme, type TerminalTheme } from "../hooks/use-terminal-theme";
 import { useTerminalStore } from "../stores/terminal.store";
+import {
+  extractTerminalBufferLines,
+  registerTerminalInstance,
+  type TerminalInstanceHandle,
+} from "../services/terminal-session-registry";
 import type {
   TerminalCommandNavigationDirection,
   TerminalCommandSummary,
@@ -951,31 +949,51 @@ export const TerminalEmulator = ({
     terminalRef.current?.focus();
   }, [clearSearch]);
 
-  useImperativeHandle(
-    getSession(sessionId)?.ref,
-    () => ({
+  const getBufferText = useCallback(() => {
+    const term = terminalRef.current;
+    if (!term) return "";
+    return extractTerminalBufferLines(term).join("\n");
+  }, []);
+
+  const serializeTerminal = useCallback(() => {
+    if (terminalRef.current && addonsRef.current?.serializeAddon) {
+      try {
+        const text = addonsRef.current.serializeAddon.serialize();
+        if (text) return text;
+      } catch {
+        // Fall back to buffer text
+      }
+    }
+    return getBufferText();
+  }, [getBufferText]);
+
+  useEffect(() => {
+    if (!isInitialized || !terminalRef.current) return;
+
+    const handle: TerminalInstanceHandle = {
       terminal: terminalRef.current,
-      searchAddon: addonsRef.current?.searchAddon,
-      focus: () => terminalRef.current?.focus(),
-      showSearch: () => setIsSearchVisible(true),
-      blur: () => terminalRef.current?.blur(),
+      getSelection: () => terminalRef.current?.getSelection() || "",
+      getBufferText,
+      serialize: serializeTerminal,
       clear: () => terminalRef.current?.clear(),
       selectAll: () => terminalRef.current?.selectAll(),
       clearSelection: () => terminalRef.current?.clearSelection(),
-      getSelection: () => terminalRef.current?.getSelection() || "",
-      paste: (text: string) => terminalRef.current?.paste(text),
+      focus: () => terminalRef.current?.focus(),
+      blur: () => terminalRef.current?.blur(),
+      showSearch: () => setIsSearchVisible(true),
       scrollToTop: () => terminalRef.current?.scrollToTop(),
       scrollToBottom: () => terminalRef.current?.scrollToBottom(),
-      findNext: (term: string) => addonsRef.current?.searchAddon.findNext(term),
-      findPrevious: (term: string) => addonsRef.current?.searchAddon.findPrevious(term),
-      scrollToPreviousCommand: () =>
-        shellIntegrationRef.current?.scrollToPreviousCommand() ?? false,
-      scrollToNextCommand: () => shellIntegrationRef.current?.scrollToNextCommand() ?? false,
-      serialize: () => (terminalRef.current ? addonsRef.current?.serializeAddon.serialize() : ""),
       resize: () => fitTerminal(),
-    }),
-    [fitTerminal],
-  );
+    };
+
+    const unregister = registerTerminalInstance(sessionId, handle);
+    updateSession(sessionId, { ref: { current: handle } });
+
+    return () => {
+      unregister();
+      updateSession(sessionId, { ref: undefined });
+    };
+  }, [fitTerminal, getBufferText, isInitialized, serializeTerminal, sessionId, updateSession]);
 
   return (
     <div className="relative flex size-full min-w-0 flex-col overflow-hidden bg-background">

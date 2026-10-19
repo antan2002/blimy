@@ -163,7 +163,8 @@ fn to_repo_relative_path(repo: &Repository, file_path: &str) -> String {
 }
 
 fn blob_id(repo: &Repository, tree: &git2::Tree, file_path: &str) -> Option<git2::Oid> {
-   tree.get_path(Path::new(file_path))
+   tree
+      .get_path(Path::new(file_path))
       .ok()
       .and_then(|entry| entry.to_object(repo).ok())
       .map(|object| object.id())
@@ -291,14 +292,20 @@ mod tests {
       }
 
       fn commit(&self, message: &str) {
-         let tree_id = self.repo.index().expect("index").write_tree().expect("write tree");
+         let tree_id = self
+            .repo
+            .index()
+            .expect("index")
+            .write_tree()
+            .expect("write tree");
          let tree = self.repo.find_tree(tree_id).expect("find tree");
          let parents: Vec<git2::Commit> = match self.repo.head() {
             Ok(head) => vec![head.peel_to_commit().expect("peel head")],
             Err(_) => Vec::new(),
          };
          let parent_refs: Vec<&git2::Commit> = parents.iter().collect();
-         self.repo
+         self
+            .repo
             .commit(
                Some("HEAD"),
                &self.signature,
@@ -311,7 +318,8 @@ mod tests {
       }
 
       fn workdir(&self) -> String {
-         self.repo
+         self
+            .repo
             .workdir()
             .expect("workdir")
             .to_string_lossy()
@@ -338,7 +346,10 @@ mod tests {
       repo.write("tracked.txt", "two");
       repo.commit("change tracked");
 
-      assert_eq!(repo.messages("tracked.txt"), ["change tracked", "add tracked"]);
+      assert_eq!(
+         repo.messages("tracked.txt"),
+         ["change tracked", "add tracked"]
+      );
    }
 
    #[test]

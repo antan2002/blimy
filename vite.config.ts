@@ -143,6 +143,10 @@ export default defineConfig({
   },
   test: {
     testTimeout: 10_000,
+    // zod's entry re-exports `z` as a namespace binding. Left external, the test runtime resolves
+    // it through bun's cache and drops that binding, so every tool schema built with `z.object`
+    // throws. Inlining makes Vite transform zod and keep the export.
+    server: { deps: { inline: ["zod"] } },
     // The runner's default exclude only covers node_modules/.git, so it would
     // otherwise discover stale duplicate suites inside generated or vendored
     // trees â€” notably the direnv-materialized copy of the source under

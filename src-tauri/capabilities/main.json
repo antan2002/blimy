@@ -53,6 +53,9 @@
       "identifier": "http:default",
       "allow": [
         {
+          "url": "https://blimy.framer.website/**"
+        },
+        {
           "url": "https://blimy.dev/**"
         },
         {

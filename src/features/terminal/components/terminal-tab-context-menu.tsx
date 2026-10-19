@@ -3,6 +3,7 @@ import { renameTerminalWithIntelligence } from "../services/intelligence-termina
 import { openTerminalWindow } from "@/features/window/detached/standalone-content-service";
 import {
   ArrowCounterClockwiseIcon,
+  ChatBubbleTextIcon,
   ColumnsIcon,
   CopyIcon,
   DownloadIcon,
@@ -34,6 +35,7 @@ interface TerminalTabContextMenuProps {
   onDuplicate: (terminalId: string) => void;
   onRename: (terminalId: string) => void;
   onExport: (terminalId: string) => void;
+  onSendToChat: (terminalId: string) => void;
 }
 
 const TerminalTabContextMenu = ({
@@ -54,6 +56,7 @@ const TerminalTabContextMenu = ({
   onDuplicate,
   onRename,
   onExport,
+  onSendToChat,
 }: TerminalTabContextMenuProps) => {
   const groups: ContextMenuGroupData[] = terminal
     ? [
@@ -149,6 +152,12 @@ const TerminalTabContextMenu = ({
               label: "Export Output",
               icon: <DownloadIcon optical="md" />,
               onClick: () => onExport(terminal.id),
+            },
+            {
+              id: "send-to-chat",
+              label: "Send to Chat",
+              icon: <ChatBubbleTextIcon />,
+              onClick: () => onSendToChat(terminal.id),
             },
           ],
         },

@@ -66,6 +66,8 @@ blimy-github = { path = "../crates/github" }
 blimy-fff-search = { path = "../crates/fff-search" }
 blimy-debugger = { path = "../crates/debugger", default-features = false }
 blimy-database = { path = "../crates/database", default-features = false, features = ["sqlite"] }
+blimy-docs-indexer = { path = "../crates/docs-indexer" }
+blimy-browser-automation = { path = "../crates/browser-automation" }
 mimalloc = { version = "0.1", default-features = false }
 log = "0.4.27"
 percent-encoding = "2"
@@ -77,66 +79,57 @@ rustls = { version = "0.23", default-features = false, features = ["ring", "std"
 roxmltree = "0.20"
 rusqlite = { version = "0.29.0", features = ["bundled"] }
 sha256 = "1.5"
-tar = "0.4"
-flate2 = "1.0"
-serde = { version = "1.0", features = ["derive"] }
 sha2 = "0.10"
+fontdb = "0.23.0"
+ttf-parser = "0.25.1"
+toml = "0.8"
+nucleo-matcher = "0.3.1"
+window-vibrancy = "0.6.0"
+serde = { version = "1", features = ["derive"] }
 serde_json = "1.0"
-keyring = { version = "3.6.3", features = [
-  "apple-native",
-  "crypto-rust",
-  "sync-secret-service",
-  "windows-native",
-] }
-tauri = { version = "2", default-features = false, features = [
+tauri = { git = "https://github.com/tauri-apps/tauri", rev = "d3a685323977d5618cdc8fe1ad9b8f3c80c6c26c", default-features = false, features = [
   "compression",
   "common-controls-v6",
   "dynamic-acl",
   "macos-private-api",
+  "wry",
   "protocol-asset",
-  "test",
+  "tray-icon",
+  "image-png",
+  "image-ico",
+  "rustls-tls",
   "unstable",
 ] }
-tauri-plugin-dialog = { version = "2", default-features = false, features = ["xdg-portal"] }
-tauri-plugin-fs = "2"
-tauri-plugin-http = "2"
-tauri-plugin-notification = "2.3.3"
-tauri-plugin-log = "2"
-tauri-plugin-opener = "2"
-tauri-plugin-os = "2"
-tauri-plugin-process = "2"
-tauri-plugin-shell = "2"
-tauri-plugin-single-instance = "2"
-tauri-plugin-store = "2"
-tauri-plugin-updater = "2"
-tokio = { version = "1.0", features = ["full"] }
-tokio-tungstenite = "0.24"
-unicode-width = "0.2.1"
-url = "2.5"
-uuid = { version = "1.0", features = ["v4", "serde"] }
-vt100 = "0.15"
-walkdir = "2.5.0"
-which = "7.0"
-zip = "2.2"
-window-vibrancy = "0.6.0"
-tempfile = "3.20.0"
-fontdb = "0.23.0"
-ttf-parser = "0.25.1"
-nucleo = "0.5.0"
-nucleo-matcher = "0.3.1"
-toml = "0.8"
-tauri-plugin-clipboard-manager = "2"
 tauri-plugin-deep-link = "2"
-tauri-plugin-drag = "2.1.1"
-async-trait = "0.1"
-tokio-util = { version = "0.7", features = ["compat"] }
-
-
-[target.'cfg(not(any(target_os = "android", target_os = "ios")))'.dependencies]
+tauri-plugin-fs = "2"
+tauri-plugin-notification = "2"
+tauri-plugin-os = "2"
+tauri-plugin-store = "2"
+tauri-plugin-log = { version = "2", features = ["colored"] }
+tauri-plugin-shell = "2"
+tauri-plugin-drag = "2"
+tauri-plugin-opener = "2"
+tauri-plugin-http = "2"
+tauri-plugin-dialog = { version = "2", default-features = false, features = ["xdg-portal"] }
 tauri-plugin-window-state = "2"
-
-[target.'cfg(target_os = "linux")'.dependencies]
+tauri-plugin-clipboard-manager = "2"
+tauri-plugin-updater = "2"
+tauri-plugin-process = "2"
+tauri-plugin-single-instance = "2"
 tauri-runtime-cef = { git = "https://github.com/tauri-apps/tauri", rev = "d3a685323977d5618cdc8fe1ad9b8f3c80c6c26c", optional = true }
-
+tokio = { version = "1", features = ["full", "tracing"] }
+uuid = { version = "1.0", features = ["v4", "serde"] }
+url = "2.5"
+walkdir = "2"
+tar = "0.4"
+flate2 = "1"
+keyring = { version = "3", features = ["apple-native", "windows-native", "sync-secret-service"] }
 [target.'cfg(target_os = "macos")'.dependencies]
 objc = "0.2"
+[dev-dependencies]
+tauri = { git = "https://github.com/tauri-apps/tauri", rev = "d3a685323977d5618cdc8fe1ad9b8f3c80c6c26c", default-features = false, features = [
+  "macos-private-api",
+  "wry",
+  "test",
+] }
+tempfile = "3.20"

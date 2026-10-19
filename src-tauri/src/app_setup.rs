@@ -202,7 +202,7 @@ pub fn handle_single_instance_open(
    cwd: String,
 ) {
    let open_requests = commands::development::cli_args::parse_cli_argv(&args, &PathBuf::from(cwd));
-   
+
    let mut deep_links = Vec::new();
    for arg in &args {
       if arg.starts_with("blimy://") || arg.starts_with("blimy-preview://") {

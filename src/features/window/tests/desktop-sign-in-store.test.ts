@@ -5,12 +5,15 @@ const oauthUrl = "https://project.supabase.co/auth/v1/authorize?provider=github"
 
 const mocks = vi.hoisted(() => ({
   signInWithOAuth: vi.fn(),
+  signInWithSSO: vi.fn(),
   resolveOAuthRedirect: vi.fn(),
   stopAuthLoopback: vi.fn(),
 }));
 
 vi.mock("@/features/auth/lib/supabase", () => ({
-  supabase: { auth: { signInWithOAuth: mocks.signInWithOAuth } },
+  supabase: {
+    auth: { signInWithOAuth: mocks.signInWithOAuth, signInWithSSO: mocks.signInWithSSO },
+  },
 }));
 
 vi.mock("@/features/auth/lib/auth-callback-url", () => ({
@@ -22,12 +25,15 @@ vi.mock("@/features/auth/lib/auth-loopback", () => ({
 }));
 
 const signInWithOAuth = mocks.signInWithOAuth;
+const signInWithSSO = mocks.signInWithSSO;
 const resolveOAuthRedirect = mocks.resolveOAuthRedirect;
 const stopAuthLoopback = mocks.stopAuthLoopback;
 
 beforeEach(() => {
   signInWithOAuth.mockReset();
   signInWithOAuth.mockResolvedValue({ data: { url: oauthUrl }, error: null });
+  signInWithSSO.mockReset();
+  signInWithSSO.mockResolvedValue({ data: { url: oauthUrl }, error: null });
   resolveOAuthRedirect.mockReset();
   resolveOAuthRedirect.mockResolvedValue("http://127.0.0.1:38217/callback");
   stopAuthLoopback.mockReset();
@@ -119,6 +125,32 @@ describe("shared desktop sign-in", () => {
     } as never);
     expect(await store.getState().actions.signIn()).toBe(false);
     expect(store.getState().error).toBe("provider unavailable");
+    expect(store.getState().isSigningIn).toBe(false);
+  });
+
+  it("starts an enterprise SSO sign-in for the given domain", async () => {
+    const { store, dependencies } = setup();
+    expect(await store.getState().actions.signInWithSso("acme.com")).toBe(true);
+    expect(signInWithSSO).toHaveBeenCalledWith({
+      domain: "acme.com",
+      options: {
+        redirectTo: "http://127.0.0.1:38217/callback",
+        skipBrowserRedirect: true,
+      },
+    });
+    expect(dependencies.open).toHaveBeenCalledWith(oauthUrl);
+    expect(store.getState().loginUrl).toBe(oauthUrl);
+  });
+
+  it("trims the SSO domain and surfaces a failure without waiting", async () => {
+    const { store } = setup();
+    signInWithSSO.mockResolvedValueOnce({
+      data: null,
+      error: { message: "SSO provider not configured" },
+    } as never);
+    expect(await store.getState().actions.signInWithSso("  acme.com  ")).toBe(false);
+    expect(signInWithSSO).toHaveBeenCalledWith(expect.objectContaining({ domain: "acme.com" }));
+    expect(store.getState().error).toBe("SSO provider not configured");
     expect(store.getState().isSigningIn).toBe(false);
   });
 });

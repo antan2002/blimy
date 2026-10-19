@@ -28,6 +28,8 @@ export interface ContextReferenceEntry {
 export interface ContextReferenceSources {
   readDirectory(path: string): Promise<ContextReferenceEntry[]>;
   readText(path: string): Promise<string>;
+  /** True for paths the project's AI ignore files exclude from context. */
+  isIgnored?(path: string): boolean;
   getGitStatus(repoPath: string): Promise<GitStatus | null>;
   getFileDiff(repoPath: string, filePath: string, staged: boolean): Promise<GitDiff | null>;
   getDiagnostics(): Diagnostic[];

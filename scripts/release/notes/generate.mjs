@@ -116,13 +116,13 @@ async function formatCommitLine(commit, repo) {
   return `* ${commit.subject} by ${formatAuthor(authorLogin, commit.authorName)} in https://github.com/${repo}/commit/${commit.sha}`;
 }
 
-function formatBody(githubNotes, tag, previousTag) {
+function formatBody(githubNotes, tag, previousTag, repo = "antan2002/blimy") {
   const compareRange = previousTag ? `${previousTag}...${tag}` : tag;
   const lines = [...githubNotes];
   if (lines.length > 0) {
     lines.push("");
   }
-  lines.push(`**Full Changelog**: https://github.com/blimydev/blimy/compare/${compareRange}`);
+  lines.push(`**Full Changelog**: https://github.com/${repo}/compare/${compareRange}`);
 
   return lines.join("\n");
 }
@@ -165,11 +165,11 @@ if (!tag) {
 }
 
 const outputPath = getArg("--github-output");
-const repo = getArg("--repo") || process.env.GITHUB_REPOSITORY || "blimydev/blimy";
+const repo = getArg("--repo") || process.env.GITHUB_REPOSITORY || "antan2002/blimy";
 const previousTag = await getPreviousTag(tag);
 const githubNotes = await generateGithubNotes(tag, previousTag, repo);
 const releaseEntries = await formatReleaseEntries(tag, previousTag, repo, githubNotes);
-const releaseBody = formatBody(releaseEntries, tag, previousTag);
+const releaseBody = formatBody(releaseEntries, tag, previousTag, repo);
 const version = tag.replace(/^v/, "");
 const isPrerelease = /-preview\.\d+$/.test(version) ? "true" : "false";
 const releaseName = `Blimy ${tag}`;

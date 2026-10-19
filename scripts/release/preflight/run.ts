@@ -1,5 +1,6 @@
 #!/usr/bin/env bun
 import { $ } from "bun";
+import { existsSync } from "node:fs";
 import {
   getWindowsMsiVersion,
   parsePrerelease,
@@ -167,11 +168,13 @@ async function main() {
     return { passed: true };
   });
 
-  await runCheck("Origin remote targets Blimydev/blimy", async () => {
-    const remoteUrl = (await $`git remote get-url origin`.text()).trim();
+  await runCheck("Origin remote targets antan2002/blimy", async () => {
+    const remoteUrl = (await $`git remote get-url origin`.text()).trim().toLowerCase();
     const isExpectedRemote =
-      remoteUrl.includes("github.com/Blimydev/blimy") ||
-      remoteUrl.includes("github.com:Blimydev/blimy");
+      remoteUrl.includes("github.com/antan2002/blimy") ||
+      remoteUrl.includes("github.com:antan2002/blimy") ||
+      remoteUrl.includes("github.com/blimydev/blimy") ||
+      remoteUrl.includes("github.com:blimydev/blimy");
 
     if (!isExpectedRemote) {
       return {
@@ -474,8 +477,7 @@ async function main() {
 
   await runCheck("GitHub release workflow exists", async () => {
     const workflowPath = `${process.cwd()}/.github/workflows`;
-    const workflowDirCheck = await $`test -d ${workflowPath}`.nothrow();
-    if (workflowDirCheck.exitCode !== 0) {
+    if (!existsSync(workflowPath)) {
       return { passed: false, message: "Missing .github/workflows directory" };
     }
 

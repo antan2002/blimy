@@ -121,14 +121,14 @@ function McpMarketplaceList({
   return (
     <div className="flex flex-col gap-px rounded-lg bg-surface">
       {/* Header */}
-      <div className="sticky top-0 z-10 flex items-center justify-between shrink-0 px-4 py-3 border-b border-border bg-surface">
+      <div className="sticky top-0 z-10 flex items-center justify-between gap-4 shrink-0 px-4 py-3 border-b border-border bg-surface">
         <DropdownMenu>
           <DropdownMenuTrigger
             render={
-              <button className="flex items-center gap-2 rounded-md py-1.5 px-2 hover:bg-accent text-foreground font-semibold ui-text-chrome transition-colors outline-none focus-visible:ring-2 focus-visible:ring-focus" />
+              <button className="flex items-center gap-2 rounded-md py-1.5 px-2 hover:bg-accent text-foreground font-semibold ui-text-chrome transition-colors outline-none focus-visible:ring-2 focus-visible:ring-focus shrink-0 whitespace-nowrap" />
             }
           >
-            <span className="ui-text-base">
+            <span className="ui-text-base whitespace-nowrap">
               MCP servers
               {category === "Enabled" ? " · Enabled" : ""}
               {activeCategoryInfo
@@ -137,7 +137,7 @@ function McpMarketplaceList({
                   ? ` · ${category}`
                   : ""}
             </span>
-            <ChevronDownIcon className="text-muted-foreground" size={16} />
+            <ChevronDownIcon className="text-muted-foreground shrink-0" size={16} />
           </DropdownMenuTrigger>
           <DropdownMenuContent viewport="default" size="panel" align="start">
             <DropdownMenuItem
@@ -188,7 +188,7 @@ function McpMarketplaceList({
                     onClick={() => setCategory(cat.name)}
                     className={cn(
                       "flex items-start gap-3 py-2 px-2.5 rounded-md cursor-pointer transition-colors",
-                      isSelected && "bg-accent text-accent-foreground font-medium",
+                      isSelected && "bg-accent font-medium text-foreground",
                     )}
                   >
                     <span className="font-mono ui-text-caption font-semibold text-muted-foreground w-5 shrink-0 pt-0.5">
@@ -217,7 +217,7 @@ function McpMarketplaceList({
           </DropdownMenuContent>
         </DropdownMenu>
 
-        <div className="flex items-center gap-2 w-full max-w-md ml-auto">
+        <div className="flex items-center gap-2 w-64 sm:w-72 shrink-0 ml-auto">
           <Input
             value={search}
             onChange={(e) => setSearch(e.target.value)}
@@ -558,7 +558,7 @@ export function McpServerSettings() {
 
   return (
     <div className="flex flex-col">
-      <div className="relative mb-6 h-40 w-full overflow-hidden rounded-xl border border-overlay-border bg-surface shadow-sm">
+      <div className="relative mb-6 h-40 w-full overflow-hidden rounded-xl border border-border bg-surface shadow-sm">
         {MCP_BANNER_IMAGE ? (
           <img
             src={MCP_BANNER_IMAGE}
@@ -566,9 +566,9 @@ export function McpServerSettings() {
             className="block h-full w-full object-cover object-center"
           />
         ) : (
-          <div className="h-full w-full bg-gradient-to-r from-surface via-accent/30 to-surface" />
+          <div className="h-full w-full bg-linear-to-r from-surface via-accent/30 to-surface" />
         )}
-        <div className="absolute inset-0 bg-black/5 backdrop-blur-[1px]" />
+        <div className="absolute inset-0 bg-black/5 backdrop-blur-xs" />
       </div>
       <McpMarketplaceList servers={servers} saveServers={saveServers} />
     </div>

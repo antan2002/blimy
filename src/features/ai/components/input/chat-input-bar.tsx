@@ -3,7 +3,6 @@ import { isComposingKeyboardEvent } from "@/features/keymaps/utils/is-composing-
 import { getProviderAccessFromMap } from "@/features/ai/stores/ai-chat/provider-actions";
 import {
   ArrowRightIcon,
-  ArrowUpIcon,
   BoltIcon,
   FilePlusIcon,
   MicrophoneIcon,
@@ -32,6 +31,10 @@ import {
   AI_CHAT_INSERT_SKILL_EVENT,
   type AIChatSkillInsertDetail,
 } from "@/features/ai/lib/skill-events";
+import {
+  AI_CHAT_INSERT_TEXT_EVENT,
+  type AIChatInsertTextDetail,
+} from "@/features/ai/lib/chat-text-events";
 import { useAIChatStore } from "@/features/ai/stores/ai-chat.store";
 import { selectChatAcpSession } from "@/features/ai/lib/acp-session-state";
 import { useVoiceInput } from "@/features/ai/hooks/use-voice-input";
@@ -165,7 +168,18 @@ const AIChatInputBar = memo(function AIChatInputBar({
     }),
     restoreDraft: (draft) => {
       inputValueRef.current = draft.text;
-      if (inputRef.current) inputRef.current.textContent = draft.text;
+      if (inputRef.current) {
+        inputRef.current.textContent = draft.text;
+        if (draft.text.trim().length > 0) {
+          inputRef.current.focus();
+          const range = document.createRange();
+          range.selectNodeContents(inputRef.current);
+          range.collapse(false);
+          const sel = window.getSelection();
+          sel?.removeAllRanges();
+          sel?.addRange(range);
+        }
+      }
       setHasInputText(draft.text.trim().length > 0);
       setTerminalCommand(getComposerTerminalCommand(draft.text));
       setPastedImages(draft.images);
@@ -922,7 +936,21 @@ const AIChatInputBar = memo(function AIChatInputBar({
 
     window.addEventListener(AI_CHAT_INSERT_SKILL_EVENT, handleInsertSkill);
     return () => window.removeEventListener(AI_CHAT_INSERT_SKILL_EVENT, handleInsertSkill);
-  }, [insertSkillAtCursor, isActiveSurface]);
+  }, [insertSkillAtCursor, isActiveSurface, surfaceId]);
+
+  useEffect(() => {
+    const handleInsertText = (event: Event) => {
+      const detail = (event as CustomEvent<AIChatInsertTextDetail>).detail;
+      if (!isActiveSurface) return;
+      if (detail?.surfaceId && detail.surfaceId !== surfaceId) return;
+      if (detail?.text) {
+        insertSkillContentAtCursor(detail.text);
+      }
+    };
+
+    window.addEventListener(AI_CHAT_INSERT_TEXT_EVENT, handleInsertText);
+    return () => window.removeEventListener(AI_CHAT_INSERT_TEXT_EVENT, handleInsertText);
+  }, [insertSkillContentAtCursor, isActiveSurface, surfaceId]);
 
   // Handle paste - strip HTML formatting, keep only plain text. Images are added to preview.
   const handlePaste = useCallback(

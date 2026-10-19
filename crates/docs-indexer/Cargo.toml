@@ -1,0 +1,14 @@
+[package]
+name = "blimy-docs-indexer"
+version = "0.1.0"
+edition = "2021"
+
+[lints]
+workspace = true
+
+[dependencies]
+anyhow = "1"
+reqwest = { version = "0.12", features = ["blocking", "rustls-tls"] }
+scraper = "0.20"
+rusqlite = { version = "0.29.0", features = ["bundled"] }
+serde = { version = "1", features = ["derive"] }
