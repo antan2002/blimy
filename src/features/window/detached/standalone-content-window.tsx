@@ -1,5 +1,5 @@
 import { getCurrentWindow } from "@tauri-apps/api/window";
-import { lazy, Suspense, useEffect, useMemo, useRef } from "react";
+import { Suspense, useEffect, useMemo, useRef } from "react";
 import { useBufferStore } from "@/features/editor/stores/buffer.store";
 import { useFileSystemStore } from "@/features/file-system/stores/file-system.store";
 import {
@@ -13,15 +13,18 @@ import { ViewerLoadingState } from "@/features/viewer/components/viewer-state";
 import { parseResourceWindowPayload } from "./detached-resource-service";
 import { DetachedWindowShell } from "./detached-window-shell";
 import { useDetachedWindow } from "./use-detached-window";
+import { lazyWithRetry } from "@/utils/lazy-with-retry";
 
-const SettingsView = lazy(() => import("@/features/settings/components/settings-workbench-view"));
-const ExtensionsView = lazy(() =>
+const SettingsView = lazyWithRetry(
+  () => import("@/features/settings/components/settings-workbench-view"),
+);
+const ExtensionsView = lazyWithRetry(() =>
   import("@/extensions/ui/components/extensions-view").then((module) => ({
     default: module.ExtensionsView,
   })),
 );
 
-const ExtensionDetails = lazy(() =>
+const ExtensionDetails = lazyWithRetry(() =>
   import("@/extensions/ui/components/extensions-view").then((module) => ({
     default: module.ExtensionDetails,
   })),

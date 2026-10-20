@@ -1,5 +1,9 @@
 import { beforeEach, describe, expect, it, vi } from "vite-plus/test";
-import { openPreviewInBrowser, toFileUrl } from "@/features/editor/utils/open-preview-in-browser";
+import {
+  isBrowserPreviewableFile,
+  openPreviewInBrowser,
+  toFileUrl,
+} from "@/features/editor/utils/open-preview-in-browser";
 
 const mocks = vi.hoisted(() => ({ open: vi.fn() }));
 
@@ -24,13 +28,32 @@ describe("toFileUrl", () => {
   });
 });
 
+describe("isBrowserPreviewableFile", () => {
+  it("accepts html and htm files regardless of case", () => {
+    expect(isBrowserPreviewableFile("/workspace/index.html")).toBe(true);
+    expect(isBrowserPreviewableFile("/workspace/PAGE.HTM")).toBe(true);
+  });
+
+  it("rejects source files and missing paths", () => {
+    expect(isBrowserPreviewableFile("/workspace/app.tsx")).toBe(false);
+    expect(isBrowserPreviewableFile("/workspace/readme.md")).toBe(false);
+    expect(isBrowserPreviewableFile(null)).toBe(false);
+    expect(isBrowserPreviewableFile("")).toBe(false);
+  });
+});
+
 describe("openPreviewInBrowser", () => {
   beforeEach(() => mocks.open.mockReset());
 
-  it("opens the file url in the system browser", async () => {
+  it("opens an html file url in the system browser", async () => {
     mocks.open.mockResolvedValue(undefined);
     await expect(openPreviewInBrowser("/home/ada/index.html")).resolves.toBe(true);
     expect(mocks.open).toHaveBeenCalledWith("file:///home/ada/index.html");
+  });
+
+  it("does not hand non-html files to the OS", async () => {
+    await expect(openPreviewInBrowser("/home/ada/app.tsx")).resolves.toBe(false);
+    expect(mocks.open).not.toHaveBeenCalled();
   });
 
   it("does nothing when the path has no browser address", async () => {

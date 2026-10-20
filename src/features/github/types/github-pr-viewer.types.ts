@@ -32,7 +32,7 @@ export interface DiffSectionRef {
 
 export type DiffSectionIndex = Record<string, DiffSectionRef>;
 
-export type TabType = "activity" | "files";
+export type TabType = "activity" | "files" | "review";
 export type FileStatusFilter = "all" | "added" | "deleted" | "modified" | "renamed";
 export type FilePatchState = {
   loading: boolean;

@@ -1,4 +1,3 @@
-import { lazy } from "react";
 import { useGitHubStore } from "@/features/github/stores/github.store";
 import {
   getPullRequestStatus,
@@ -16,13 +15,19 @@ import {
   TagIcon,
 } from "@/ui/icons";
 
-const GitHubPRViewer = lazy(() => import("@/features/github/components/github-pr-viewer"));
-const GitHubIssueViewer = lazy(() => import("@/features/github/components/github-issue-viewer"));
-const GitHubDeliveryViewer = lazy(
+import { lazyWithRetry } from "@/utils/lazy-with-retry";
+
+const GitHubPRViewer = lazyWithRetry(() => import("@/features/github/components/github-pr-viewer"));
+const GitHubIssueViewer = lazyWithRetry(
+  () => import("@/features/github/components/github-issue-viewer"),
+);
+const GitHubDeliveryViewer = lazyWithRetry(
   () => import("@/features/github/delivery/components/github-delivery-viewer"),
 );
-const GitHubActionViewer = lazy(() => import("@/features/github/components/github-action-viewer"));
-const GitHubCreateView = lazy(() =>
+const GitHubActionViewer = lazyWithRetry(
+  () => import("@/features/github/components/github-action-viewer"),
+);
+const GitHubCreateView = lazyWithRetry(() =>
   import("@/features/github/components/github-create-view").then((module) => ({
     default: module.GitHubCreateView,
   })),

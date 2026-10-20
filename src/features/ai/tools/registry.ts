@@ -4,6 +4,7 @@ import { createSubagentTools } from "@/features/ai/tools/spawn-subagent-tool";
 import { createDocsQueryTool } from "@/features/ai/tools/docs-query-tool";
 import { createWebSearchTool } from "@/features/ai/tools/web-search-tool";
 import { createBrowserTools } from "@/features/ai/tools/browser-tool";
+import { createGitHubPullRequestTools } from "@/features/ai/tools/github-pr-tool";
 import type { LocalToolContext, LocalToolFactory } from "@/features/ai/tools/types";
 
 /**
@@ -16,6 +17,7 @@ export const LOCAL_TOOL_FACTORIES: LocalToolFactory[] = [
   createDocsQueryTool,
   createWebSearchTool,
   createBrowserTools,
+  createGitHubPullRequestTools,
 ];
 
 /** Every locally built tool for one agent run, keyed by tool name. */

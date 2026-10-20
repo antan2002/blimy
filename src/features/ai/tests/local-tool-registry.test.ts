@@ -40,12 +40,15 @@ describe("local tool registry", () => {
       "cancel_scheduled_run",
       "list_scheduled_runs",
       "query_indexed_docs",
+      "read_pull_request",
       "schedule_agent_run",
       "search_web",
+      "submit_pull_request_review",
     ]);
     // A read-only run keeps tools that only read and drops the ones that change state.
     expect(Object.keys(buildLocalTools(context({ readOnly: true }))).sort()).toEqual([
       "query_indexed_docs",
+      "read_pull_request",
       "search_web",
     ]);
   });
@@ -74,8 +77,10 @@ describe("local tool registry", () => {
       "cancel_scheduled_run",
       "list_scheduled_runs",
       "query_indexed_docs",
+      "read_pull_request",
       "schedule_agent_run",
       "search_web",
+      "submit_pull_request_review",
     ]);
   });
 });

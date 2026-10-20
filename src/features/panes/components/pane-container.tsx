@@ -1,4 +1,5 @@
-import { lazy, Suspense, useCallback, useEffect, useRef, useState } from "react";
+import { Suspense, useCallback, useEffect, useRef, useState } from "react";
+import { lazyWithRetry } from "@/utils/lazy-with-retry";
 import { ResourceBufferView } from "./resource-buffer-view";
 import { useShallow } from "zustand/react/shallow";
 import { AgentLaunchInput } from "@/features/ai/components/agent-launch-input";
@@ -52,12 +53,12 @@ import {
 import { PaneSurfaceLayer } from "./pane-surface-layer";
 import { type DropZone, SplitDropOverlay } from "./split-drop-overlay";
 
-const AgentTab = lazy(() =>
+const AgentTab = lazyWithRetry(() =>
   import("@/features/ai/components/agent-tab").then((m) => ({
     default: m.AgentTab,
   })),
 );
-const CodeEditor = lazy(() => import("@/features/editor/components/code-editor"));
+const CodeEditor = lazyWithRetry(() => import("@/features/editor/components/code-editor"));
 
 const databaseViewerCache = new Map<
   DatabaseType,
@@ -65,72 +66,80 @@ const databaseViewerCache = new Map<
 >();
 function getDatabaseViewer(dbType: DatabaseType) {
   if (!databaseViewerCache.has(dbType)) {
-    databaseViewerCache.set(dbType, lazy(PROVIDER_REGISTRY[dbType].viewerComponent));
+    databaseViewerCache.set(dbType, lazyWithRetry(PROVIDER_REGISTRY[dbType].viewerComponent));
   }
   return databaseViewerCache.get(dbType)!;
 }
-const ExternalEditorTerminal = lazy(() =>
+const ExternalEditorTerminal = lazyWithRetry(() =>
   import("@/features/editor/components/external-editor-terminal").then((m) => ({
     default: m.ExternalEditorTerminal,
   })),
 );
-const DiffViewer = lazy(() => import("@/features/git/components/diff/git-diff-viewer"));
-const GlobalSearchBuffer = lazy(
+const DiffViewer = lazyWithRetry(() => import("@/features/git/components/diff/git-diff-viewer"));
+const GlobalSearchBuffer = lazyWithRetry(
   () => import("@/features/global-search/components/global-search-buffer"),
 );
-const DiagnosticsBuffer = lazy(
+const DiagnosticsBuffer = lazyWithRetry(
   () => import("@/features/diagnostics/components/diagnostics-buffer"),
 );
-const ReferencesBuffer = lazy(() => import("@/features/references/components/references-buffer"));
-const ContinuousAgentsResource = lazy(() => import("@/features/ai/continuous-agents/resource"));
-const AcpInspectorView = lazy(
+const ReferencesBuffer = lazyWithRetry(
+  () => import("@/features/references/components/references-buffer"),
+);
+const ContinuousAgentsResource = lazyWithRetry(
+  () => import("@/features/ai/continuous-agents/resource"),
+);
+const AcpInspectorView = lazyWithRetry(
   () => import("@/features/ai/acp-inspector/components/acp-inspector-view"),
 );
-const AgentEditsReviewView = lazy(() => import("@/features/ai/components/chat/agent-edits-review"));
-const WorkspaceManagementView = lazy(
+const AgentEditsReviewView = lazyWithRetry(
+  () => import("@/features/ai/components/chat/agent-edits-review"),
+);
+const WorkspaceManagementView = lazyWithRetry(
   () => import("@/features/workspace/team/components/workspace-management-view"),
 );
-const SettingsWorkbenchView = lazy(
+const SettingsWorkbenchView = lazyWithRetry(
   () => import("@/features/settings/components/settings-workbench-view"),
 );
-const ExtensionsView = lazy(() =>
+const ExtensionsView = lazyWithRetry(() =>
   import("@/extensions/ui/components/extensions-view").then((m) => ({
     default: m.ExtensionsView,
   })),
 );
 
-const ExtensionDetails = lazy(() =>
+const ExtensionDetails = lazyWithRetry(() =>
   import("@/extensions/ui/components/extensions-view").then((m) => ({
     default: m.ExtensionDetails,
   })),
 );
-const OnboardingView = lazy(() => import("@/features/onboarding/components/onboarding-view"));
-const CustomView = lazy(() =>
+const OnboardingView = lazyWithRetry(
+  () => import("@/features/onboarding/components/onboarding-view"),
+);
+const CustomView = lazyWithRetry(() =>
   import("@/features/views/components/custom-view").then((module) => ({
     default: module.CustomView,
   })),
 );
-const MarkdownDocumentView = lazy(() =>
+const MarkdownDocumentView = lazyWithRetry(() =>
   import("@/features/editor/markdown/markdown-document-view").then((module) => ({
     default: module.MarkdownDocumentView,
   })),
 );
-const ImageViewer = lazy(() =>
+const ImageViewer = lazyWithRetry(() =>
   import("@/features/viewer/image/components/image-viewer").then((m) => ({
     default: m.ImageViewer,
   })),
 );
-const PdfViewer = lazy(() =>
+const PdfViewer = lazyWithRetry(() =>
   import("@/features/viewer/pdf/components/pdf-viewer").then((m) => ({
     default: m.PdfViewer,
   })),
 );
-const BinaryFileViewer = lazy(() =>
+const BinaryFileViewer = lazyWithRetry(() =>
   import("@/features/viewer/binary/components/binary-file-viewer").then((m) => ({
     default: m.BinaryFileViewer,
   })),
 );
-const TerminalTab = lazy(() =>
+const TerminalTab = lazyWithRetry(() =>
   import("@/features/terminal/components/terminal-tab").then((m) => ({
     default: m.TerminalTab,
   })),

@@ -1,5 +1,5 @@
 import { PerformanceMonitor } from "./performance-monitor";
-import { lazy, Suspense, useCallback, useEffect, useRef, useState } from "react";
+import { Suspense, useCallback, useEffect, useRef, useState } from "react";
 import { useChatInitialization } from "@/features/ai/hooks/use-chat-initialization";
 import { useCollaborationPresence } from "@/features/collaboration/hooks/use-collaboration-presence";
 import { initializeDebuggerEventBridge } from "@/features/debugger/services/debug-adapter-events";
@@ -40,32 +40,36 @@ import { useResponsiveWorkbenchLayout } from "../hooks/use-responsive-workbench-
 import { LoginScreen } from "@/features/auth/components/login-screen";
 import { useAuthStore } from "@/features/window/stores/auth.store";
 
-const CommandPalette = lazy(() => import("@/features/command-palette/components/command-palette"));
-const ConnectionDialog = lazy(() =>
+import { lazyWithRetry } from "@/utils/lazy-with-retry";
+
+const CommandPalette = lazyWithRetry(
+  () => import("@/features/command-palette/components/command-palette"),
+);
+const ConnectionDialog = lazyWithRetry(() =>
   import("@/features/database/components/connection/connection-dialog").then((module) => ({
     default: module.ConnectionDialog,
   })),
 );
-const LinuxFolderPickerDialog = lazy(
+const LinuxFolderPickerDialog = lazyWithRetry(
   () => import("@/features/file-system/components/linux-folder-picker-dialog"),
 );
-const QuickOpen = lazy(() => import("@/features/quick-open/components/quick-open"));
-const WindowCloseGuard = lazy(() =>
+const QuickOpen = lazyWithRetry(() => import("@/features/quick-open/components/quick-open"));
+const WindowCloseGuard = lazyWithRetry(() =>
   import("@/features/window/components/window-close-guard").then((module) => ({
     default: module.WindowCloseGuard,
   })),
 );
-const ExtensionDialogs = lazy(() =>
+const ExtensionDialogs = lazyWithRetry(() =>
   import("@/extensions/ui/components/extension-dialog").then((module) => ({
     default: module.ExtensionDialogs,
   })),
 );
-const TerminalHost = lazy(() =>
+const TerminalHost = lazyWithRetry(() =>
   import("@/features/terminal/components/terminal-host").then((module) => ({
     default: module.TerminalHost,
   })),
 );
-const BottomPane = lazy(() => import("./bottom-pane/bottom-pane"));
+const BottomPane = lazyWithRetry(() => import("./bottom-pane/bottom-pane"));
 
 export function MainLayout() {
   const [deferredSurfacesReady, setDeferredSurfacesReady] = useState(false);
@@ -78,7 +82,7 @@ export function MainLayout() {
   useChatInitialization();
   usePaneKeyboard();
   useCollaborationPresence();
-  const openActiveFileInBrowser = useOpenActiveFileInBrowser();
+  const { openActiveFileInBrowser, canPreviewInBrowser } = useOpenActiveFileInBrowser();
 
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const isAuthLoading = useAuthStore((state) => state.isLoading);
@@ -433,11 +437,19 @@ export function MainLayout() {
 
               {/* Chrome Button */}
               <button
-                className="flex h-full items-center justify-center px-1.5 transition-colors hover:bg-accent"
+                className={cn(
+                  "flex h-full items-center justify-center px-1.5 transition-colors",
+                  canPreviewInBrowser
+                    ? "hover:bg-accent"
+                    : "cursor-not-allowed opacity-40 hover:bg-transparent",
+                )}
+                disabled={!canPreviewInBrowser}
                 onClick={() => {
                   void openActiveFileInBrowser();
                 }}
-                title="Browser Preview"
+                title={
+                  canPreviewInBrowser ? "Preview in Browser" : "Preview available for HTML files"
+                }
               >
                 <img src="/src/assets/chrome.svg" className="size-4" alt="Chrome" />
               </button>

@@ -3,6 +3,7 @@ import {
   buildPRBufferPath,
   isGitHubEntityLinkForRepository,
   isPRFilesViewPath,
+  isPRReviewViewPath,
   parseGitHubCheckSuiteId,
   parseGitHubEntityLink,
 } from "../utils/github-link-utils";
@@ -109,5 +110,14 @@ describe("pull request buffer paths", () => {
 
     expect(isPRFilesViewPath(path)).toBe(true);
     expect(isPRFilesViewPath(buildPRBufferPath(714))).toBe(false);
+  });
+
+  it("builds and recognizes the review view path", () => {
+    const path = buildPRBufferPath(714, null, "review");
+
+    expect(path).toBe("pr://714?view=review");
+    expect(isPRReviewViewPath(path)).toBe(true);
+    expect(isPRFilesViewPath(path)).toBe(false);
+    expect(isPRReviewViewPath(buildPRBufferPath(714))).toBe(false);
   });
 });

@@ -150,14 +150,24 @@ export function isPRFilesViewPath(path: string): boolean {
   }
 }
 
+export function isPRReviewViewPath(path: string): boolean {
+  try {
+    return new URL(path).searchParams.get("view") === "review";
+  } catch {
+    return false;
+  }
+}
+
+export type PRBufferView = "activity" | "files" | "review";
+
 export function buildPRBufferPath(
   prNumber: number,
   selectedFilePath?: string | null,
-  view: "activity" | "files" = selectedFilePath ? "files" : "activity",
+  view: PRBufferView = selectedFilePath ? "files" : "activity",
 ): string {
   const base = `pr://${prNumber}`;
   if (selectedFilePath) return `${base}?file=${encodeURIComponent(selectedFilePath)}`;
-  return view === "files" ? `${base}?view=files` : base;
+  return view === "activity" ? base : `${base}?view=${view}`;
 }
 
 function isNumericId(value: string | undefined): value is string {

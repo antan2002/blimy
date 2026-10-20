@@ -55,6 +55,7 @@ describe("GitHubPRTabs", () => {
         deletions={pr.deletions}
         onShowOverview={vi.fn()}
         onShowChanges={vi.fn()}
+        onShowReview={vi.fn()}
       />,
     );
 

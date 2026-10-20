@@ -3,7 +3,10 @@ import { toast } from "sonner";
 import { useShallow } from "zustand/react/shallow";
 import { useBufferStore } from "@/features/editor/stores/buffer.store";
 import { getBufferById, getBufferByPath } from "@/features/editor/utils/buffer-index";
-import { openPreviewInBrowser } from "@/features/editor/utils/open-preview-in-browser";
+import {
+  isBrowserPreviewableFile,
+  openPreviewInBrowser,
+} from "@/features/editor/utils/open-preview-in-browser";
 
 /** The file a preview buffer renders, or the buffer itself when it is a plain editor. */
 function previewSourcePath(
@@ -20,14 +23,24 @@ function previewSourcePath(
   return active.path;
 }
 
-/** Opens the active file in the system browser; used by the title bar's preview button. */
+/**
+ * Opens the active HTML file in the system browser; used by the title bar's
+ * preview button. `canPreviewInBrowser` tells the caller whether the active file
+ * is something a browser can render, so the control can be disabled instead of
+ * asking the OS to pick a program for a source file.
+ */
 export function useOpenActiveFileInBrowser() {
   const filePath = useBufferStore(
     useShallow((state) => previewSourcePath(state.buffers, state.activeBufferId)),
   );
+  const canPreviewInBrowser = isBrowserPreviewableFile(filePath);
 
-  return useCallback(async () => {
+  const openActiveFileInBrowser = useCallback(async () => {
     const opened = await openPreviewInBrowser(filePath);
-    if (!opened) toast.error("There is no file to preview in the browser.");
+    if (!opened) {
+      toast.error("Only HTML files can be previewed in the browser.");
+    }
   }, [filePath]);
+
+  return { openActiveFileInBrowser, canPreviewInBrowser };
 }

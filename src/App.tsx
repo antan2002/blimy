@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect, useMemo, useState } from "react";
+import { Suspense, useEffect, useMemo, useState } from "react";
 import { getCurrentWindow } from "@tauri-apps/api/window";
 import { parseDetachedWindowUrl } from "@/features/window/detached/detached-window-protocol";
 import { Spinner } from "@/ui/spinner";
@@ -8,14 +8,17 @@ import {
   traceWindowOpen,
   traceWindowOpenAfterFrame,
 } from "@/features/window/utils/window-open-diagnostics";
+import { lazyWithRetry } from "@/utils/lazy-with-retry";
 
-const WorkbenchApp = lazy(() => import("./workbench-app"));
-const DetachedAgentWindow = lazy(() => import("./features/ai/detached/detached-agent-window"));
-const DetachedResourceWindow = lazy(
+const WorkbenchApp = lazyWithRetry(() => import("./workbench-app"));
+const DetachedAgentWindow = lazyWithRetry(
+  () => import("./features/ai/detached/detached-agent-window"),
+);
+const DetachedResourceWindow = lazyWithRetry(
   () => import("./features/window/detached/detached-resource-window"),
 );
 
-const StandaloneContentWindow = lazy(
+const StandaloneContentWindow = lazyWithRetry(
   () => import("./features/window/detached/standalone-content-window"),
 );
 
@@ -101,7 +104,7 @@ function App() {
   return (
     <>
       {isOffline && (
-        <div className="fixed top-0 left-0 right-0 z-9999 bg-destructive text-destructive-foreground text-xs font-semibold px-4 py-1.5 text-center flex items-center justify-center gap-2 shadow-md">
+        <div className="fixed top-0 left-0 right-0 z-9999 bg-destructive text-white text-xs font-semibold px-4 py-1.5 text-center flex items-center justify-center gap-2 shadow-md">
           <span className="w-2 h-2 rounded-full bg-current animate-pulse" />
           blimy-offline: Internet connection lost. AI web search features are unavailable.
         </div>

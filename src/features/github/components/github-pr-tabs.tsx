@@ -1,16 +1,17 @@
 import { Button } from "@/ui/button";
-import { FilesIcon, InfoIcon } from "@/ui/icons";
+import { FilesIcon, InfoIcon, ShieldCheckIcon } from "@/ui/icons";
 import type { Commit } from "../types/github-pr-viewer.types";
 import { PRCommitsDropdown } from "./pr-commits-dropdown";
 
 interface GitHubPRTabsProps {
-  activeView: "activity" | "files";
+  activeView: "activity" | "files" | "review";
   commits: Commit[];
   repoPath?: string;
   additions: number;
   deletions: number;
   onShowOverview: () => void;
   onShowChanges: () => void;
+  onShowReview: () => void;
 }
 
 export function GitHubPRTabs({
@@ -21,6 +22,7 @@ export function GitHubPRTabs({
   deletions,
   onShowOverview,
   onShowChanges,
+  onShowReview,
 }: GitHubPRTabsProps) {
   return (
     <div className="flex min-w-0 items-center gap-1 py-1">
@@ -50,6 +52,17 @@ export function GitHubPRTabs({
           <span className="text-git-added">{`+${additions}`}</span>
           <span className="text-git-deleted">{`-${deletions}`}</span>
         </span>
+      </Button>
+      <Button
+        type="button"
+        variant="ghost"
+        size="sm"
+        active={activeView === "review"}
+        aria-pressed={activeView === "review"}
+        onClick={onShowReview}
+      >
+        <ShieldCheckIcon />
+        Review
       </Button>
     </div>
   );

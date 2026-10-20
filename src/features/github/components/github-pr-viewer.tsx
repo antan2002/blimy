@@ -24,6 +24,7 @@ import type { Commit, FilePatchState, TabType } from "../types/github-pr-viewer.
 import {
   buildPRBufferPath,
   isPRFilesViewPath,
+  isPRReviewViewPath,
   parseSelectedFilePathFromPRBufferPath,
 } from "../utils/github-link-utils";
 import {
@@ -43,6 +44,7 @@ import { PRTimeline } from "./pr-timeline";
 import { PRFilesPanel } from "./pr-files-panel";
 import { getMergeStatusInfo } from "./pr-status";
 import { GitHubPRTabs } from "./github-pr-tabs";
+import { PrReviewPanel } from "./pr-review-panel";
 import {
   GitHubPRBodySkeleton,
   GitHubPRSummarySkeleton,
@@ -55,6 +57,12 @@ import {
   type GitHubPRMergeMethod,
 } from "./github-pr-inline-action";
 import { GitHubBranchChip, GitHubMetaChip, GitHubUserChip } from "./github-chips";
+
+/** Which PR view a buffer path encodes. Review wins over the changed-files view. */
+function viewFromPRBufferPath(path: string): TabType {
+  if (isPRReviewViewPath(path)) return "review";
+  return isPRFilesViewPath(path) ? "files" : "activity";
+}
 
 interface GitHubPRViewerProps {
   prNumber: number;
@@ -88,7 +96,7 @@ const GitHubPRViewer = memo(({ prNumber, bufferId }: GitHubPRViewerProps) => {
   const repoPath = prBuffer?.repoPath ?? selectedRepoPath ?? rootFolderPath;
 
   const [activeTab, setActiveTab] = useState<TabType>(() =>
-    isPRFilesViewPath(prBuffer?.path ?? "") ? "files" : "activity",
+    viewFromPRBufferPath(prBuffer?.path ?? ""),
   );
   const [selectedFilePath, setSelectedFilePath] = useState<string | null>(
     () => parseSelectedFilePathFromPRBufferPath(prBuffer?.path ?? "") ?? null,
@@ -124,7 +132,7 @@ const GitHubPRViewer = memo(({ prNumber, bufferId }: GitHubPRViewerProps) => {
 
   useEffect(() => {
     const deepLinkedFilePath = parseSelectedFilePathFromPRBufferPath(prBuffer?.path ?? "");
-    setActiveTab(isPRFilesViewPath(prBuffer?.path ?? "") ? "files" : "activity");
+    setActiveTab(viewFromPRBufferPath(prBuffer?.path ?? ""));
     setSelectedFilePath(deepLinkedFilePath ?? null);
     setFilePatches({});
   }, [prNumber, repoPath]);
@@ -547,6 +555,25 @@ const GitHubPRViewer = memo(({ prNumber, bufferId }: GitHubPRViewerProps) => {
     handleShowView("files");
   }, [handleShowView]);
 
+  const handleShowReview = useCallback(() => {
+    handleShowView("review");
+  }, [handleShowView]);
+
+  const handleOpenReviewFile = useCallback(
+    (filePath: string) => {
+      if (prBuffer) {
+        updateBuffer({ ...prBuffer, path: buildPRBufferPath(prNumber, filePath, "files") });
+      }
+      setSelectedFilePath(filePath);
+      setActiveTab("files");
+    },
+    [prBuffer, prNumber, updateBuffer],
+  );
+
+  const handleCopyReview = useCallback((markdown: string) => {
+    void copyToClipboard(markdown, "Review copied");
+  }, []);
+
   const handleOpenChangedFile = useCallback(
     (relativePath: string) => {
       if (!repoPath) {
@@ -682,6 +709,7 @@ const GitHubPRViewer = memo(({ prNumber, bufferId }: GitHubPRViewerProps) => {
         deletions={pr.deletions}
         onShowOverview={handleShowOverview}
         onShowChanges={handleShowFiles}
+        onShowReview={handleShowReview}
       />
       <div className="flex shrink-0 items-center gap-1.5">{actions}</div>
     </div>
@@ -713,6 +741,18 @@ const GitHubPRViewer = memo(({ prNumber, bufferId }: GitHubPRViewerProps) => {
             onSelectFile={setSelectedFilePath}
             onOpenChangedFile={handleOpenChangedFile}
           />
+        </div>
+      ) : activeTab === "review" ? (
+        <div className="flex min-h-0 min-w-0 flex-1 flex-col">
+          {errorState}
+          {repoPath ? (
+            <PrReviewPanel
+              repoPath={repoPath}
+              prNumber={prNumber}
+              onOpenFile={handleOpenReviewFile}
+              onCopy={handleCopyReview}
+            />
+          ) : null}
         </div>
       ) : (
         <ResourceContent>
