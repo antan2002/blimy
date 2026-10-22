@@ -1,5 +1,5 @@
-import { invoke } from "@tauri-apps/api/core";
-import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
+import { invoke, isTauri } from "@tauri-apps/api/core";
+import { safeGetCurrentWebviewWindow } from "@/utils/safe-tauri-window";
 
 interface FrontendTerminalSession {
   windowLabel: string;
@@ -12,7 +12,7 @@ let frontendTerminalSessionReady: Promise<void> | null = null;
 export function getFrontendTerminalSessionArgs() {
   if (!frontendTerminalSession) {
     frontendTerminalSession = {
-      windowLabel: getCurrentWebviewWindow().label,
+      windowLabel: safeGetCurrentWebviewWindow()?.label ?? "main",
       frontendSessionId: crypto.randomUUID(),
     };
   }
@@ -22,11 +22,19 @@ export function getFrontendTerminalSessionArgs() {
 
 export function initializeFrontendTerminalSession() {
   if (!frontendTerminalSessionReady) {
+    if (!isTauri()) {
+      frontendTerminalSessionReady = Promise.resolve();
+      return frontendTerminalSessionReady;
+    }
     const { windowLabel, frontendSessionId } = getFrontendTerminalSessionArgs();
     frontendTerminalSessionReady = invoke("begin_frontend_terminal_session", {
       windowLabel,
       sessionId: frontendSessionId,
-    }).then(() => undefined);
+    })
+      .then(() => undefined)
+      .catch((error) => {
+        console.warn("Failed to begin frontend terminal session:", error);
+      });
   }
 
   return frontendTerminalSessionReady;

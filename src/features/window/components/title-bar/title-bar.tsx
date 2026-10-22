@@ -1,4 +1,5 @@
-import { getCurrentWindow, type Window as TauriWindow } from "@tauri-apps/api/window";
+import { type Window as TauriWindow } from "@tauri-apps/api/window";
+import { safeGetCurrentWindow } from "@/utils/safe-tauri-window";
 import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from "react";
 import { useNativeWindowChrome } from "@/features/window/hooks/use-native-window-chrome";
 import { ChromeBar, ChromeGroup, ChromeLabel } from "@/ui/chrome";
@@ -54,7 +55,8 @@ export default function TitleBar({
   }, [title, titleIcon]);
 
   useEffect(() => {
-    const window = getCurrentWindow();
+    const window = safeGetCurrentWindow();
+    if (!window) return;
     setCurrentWindow(window);
     let disposed = false;
     let unlistenResize: (() => void) | undefined;

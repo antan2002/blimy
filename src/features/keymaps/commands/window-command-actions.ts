@@ -41,8 +41,8 @@ export function maximizeWindow(): void {
 export async function quitApplication(): Promise<void> {
   if (!isMac()) return;
 
-  const { getCurrentWindow } = await import("@tauri-apps/api/window");
-  await getCurrentWindow().close();
+  const { safeGetCurrentWindow } = await import("@/utils/safe-tauri-window");
+  await safeGetCurrentWindow()?.close();
 }
 
 export async function toggleNativeMenuBar(): Promise<void> {

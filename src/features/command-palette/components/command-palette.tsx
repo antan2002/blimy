@@ -53,6 +53,7 @@ import { createDatabaseActions } from "../constants/database-actions";
 import { createFileActions } from "../constants/file-actions";
 import { createGitActions } from "../constants/git-actions";
 import { createGitHubActions } from "../constants/github-actions";
+import { parsePullRequestReference } from "@/features/github/utils/github-link-utils";
 import { createMarkdownActions } from "../constants/markdown-actions";
 import { createNavigationActions } from "../constants/navigation-actions";
 import { createPaneActions } from "../constants/pane-actions";
@@ -198,6 +199,7 @@ const CommandPaletteContent = ({ commandPaletteInitialView }: CommandPaletteCont
     switchToPreviousBuffer,
     reopenClosedTab,
     openGitHubFormBuffer,
+    openPRBuffer,
     openContent,
   } = useBufferStore.use.actions();
   const { zoomIn, zoomOut, resetZoom } = useZoomStore.use.actions();
@@ -388,6 +390,13 @@ const CommandPaletteContent = ({ commandPaletteInitialView }: CommandPaletteCont
         useBufferStore
           .getState()
           .actions.openContent({ type: "githubDelivery", kind: "releases", repoPath });
+      },
+      openPullRequest: (reference) => {
+        const target = parsePullRequestReference(reference);
+        if (!target) return false;
+
+        openPRBuffer(target.number, { repoPath: target.repoPath });
+        return true;
       },
       checkAuth: checkGitHubAuth,
       showToast,

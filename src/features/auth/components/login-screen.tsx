@@ -12,17 +12,17 @@ export function LoginScreen() {
 
   if (isLoading || isAuthenticated) {
     return (
-      <div className="flex h-screen w-full items-center justify-center bg-black">
+      <div className="flex h-screen w-full items-center justify-center bg-surface">
         <div className="flex flex-col items-center gap-4 text-white/50">
           <div className="size-8 animate-pulse rounded-full bg-white/20" />
-          <p className="text-sm">Starting blimy...</p>
+          <p className="ui-text-sm">Starting blimy...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="flex h-screen w-full items-center justify-center bg-black p-4 lg:p-8 overflow-hidden">
+    <div className="flex h-screen w-full items-center justify-center bg-surface p-4 lg:p-8 overflow-hidden">
       {/* Background radial gradient to give that soft fade effect */}
       <div className="pointer-events-none absolute inset-0 flex items-center justify-center overflow-hidden">
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white/5 blur-3xl size-200" />

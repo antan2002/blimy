@@ -1,5 +1,4 @@
 import { Suspense, useEffect, useMemo, useState } from "react";
-import { getCurrentWindow } from "@tauri-apps/api/window";
 import { parseDetachedWindowUrl } from "@/features/window/detached/detached-window-protocol";
 import { Spinner } from "@/ui/spinner";
 import { recordStartupMilestoneAfterFrame } from "@/features/bootstrap/startup-performance";
@@ -9,6 +8,7 @@ import {
   traceWindowOpenAfterFrame,
 } from "@/features/window/utils/window-open-diagnostics";
 import { lazyWithRetry } from "@/utils/lazy-with-retry";
+import { safeGetCurrentWindow } from "@/utils/safe-tauri-window";
 
 const WorkbenchApp = lazyWithRetry(() => import("./workbench-app"));
 const DetachedAgentWindow = lazyWithRetry(
@@ -30,8 +30,8 @@ function isBlankWindowOpen() {
 function handleInitialWindowShellMouseDown(event: React.MouseEvent<HTMLDivElement>) {
   if (event.button !== 0) return;
 
-  void getCurrentWindow()
-    .startDragging()
+  void safeGetCurrentWindow()
+    ?.startDragging()
     .catch(() => {});
 }
 
@@ -86,7 +86,7 @@ function App() {
 
   useEffect(() => {
     const mountedAt = performance.now();
-    void getCurrentWindow().show().catch(console.error);
+    void safeGetCurrentWindow()?.show().catch(console.error);
     traceWindowOpen("app:mounted", { shell: true, blankWindowOpen });
     const cleanupTrace = traceWindowOpenAfterFrame("app:firstFrame", () => ({
       shell: true,

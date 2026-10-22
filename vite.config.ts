@@ -158,6 +158,10 @@ export default defineConfig({
       "zod",
       "zustand",
     ],
+    // Serve requests as soon as the port is open instead of holding them until
+    // the initial dependency crawl finishes; combined with warmup below this
+    // keeps the Tauri window from waiting on a cold optimizer.
+    holdUntilCrawlEnd: false,
   },
   resolve: {
     alias: {
@@ -195,6 +199,11 @@ export default defineConfig({
     port: 1420,
     strictPort: true,
     host,
+    // Pre-transform the entry modules in the background so the first window
+    // load is served from warm caches instead of paying for cold transforms.
+    warmup: {
+      clientFiles: ["/src/main.tsx", "/src/bootstrap.ts"],
+    },
     hmr: host
       ? {
           protocol: "ws",

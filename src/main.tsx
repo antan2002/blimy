@@ -29,13 +29,13 @@ if (missingEnv.length > 0) {
   const root = document.getElementById("root");
   if (root) {
     root.innerHTML = `
-      <div style="font-family: system-ui, sans-serif; padding: 24px; max-width: 560px;">
-        <div style="font-size: 15px; font-weight: 600; margin-bottom: 8px;">
+      <div style="font-family: system-ui, sans-serif; padding: 24px; max-width: 560px; color: #f4f4f5; background: #18181b; border: 1px solid #27272a; border-radius: 8px; margin: 24px auto;">
+        <div style="font-size: 15px; font-weight: 600; margin-bottom: 8px; color: #f59e0b;">
           Blimy is not configured
         </div>
-        <div style="font-size: 13px; opacity: 0.8; line-height: 1.5;">
-          Missing environment variable(s): <strong>${names}</strong>. Add them to a
-          <code style="font-family: ui-monospace, monospace;">.env</code> file in the project root
+        <div style="font-size: 13px; opacity: 0.9; line-height: 1.5; color: #d4d4d8;">
+          Missing environment variable(s): <strong style="color: #ffffff;">${names}</strong>. Add them to a
+          <code style="font-family: ui-monospace, monospace; background: #27272a; padding: 2px 6px; border-radius: 4px;">.env</code> file in the project root
           and restart.
         </div>
       </div>`;

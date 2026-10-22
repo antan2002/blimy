@@ -1,6 +1,6 @@
-import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
-import { getCurrentWindow } from "@tauri-apps/api/window";
+import type { Window } from "@tauri-apps/api/window";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { safeGetCurrentWebviewWindow, safeGetCurrentWindow } from "@/utils/safe-tauri-window";
 import { useBufferStore } from "@/features/editor/stores/buffer.store";
 import { getBufferById } from "@/features/editor/utils/buffer-index";
 import { useEditorAppStore } from "@/features/editor/stores/editor-app.store";
@@ -18,14 +18,15 @@ interface PendingWindowClose {
   fileName: string;
 }
 
-type CloseRequestedHandler = Parameters<ReturnType<typeof getCurrentWindow>["onCloseRequested"]>[0];
+type CloseRequestedHandler = Parameters<Window["onCloseRequested"]>[0];
 
 async function listenForCloseGuard(
   handleCloseRequested: CloseRequestedHandler,
   continueCloseOrPrompt: () => Promise<void>,
 ) {
-  const currentWindow = getCurrentWindow();
-  const currentWebviewWindow = getCurrentWebviewWindow();
+  const currentWindow = safeGetCurrentWindow();
+  const currentWebviewWindow = safeGetCurrentWebviewWindow();
+  if (!currentWindow || !currentWebviewWindow) return () => {};
   const [unlistenClose, unlistenQuit, unlistenMenuCloseWindow] = await Promise.all([
     currentWindow.onCloseRequested(handleCloseRequested),
     currentWebviewWindow.listen("menu_quit_app", () => void continueCloseOrPrompt()),
@@ -78,7 +79,7 @@ export function WindowCloseGuard() {
 
     persistSessionSnapshot();
     closeInProgressRef.current = true;
-    await getCurrentWindow().close();
+    await safeGetCurrentWindow()?.close();
   }, [persistSessionSnapshot]);
 
   const handleCloseRequested = useCallback<CloseRequestedHandler>(

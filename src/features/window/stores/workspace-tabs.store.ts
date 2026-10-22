@@ -1,4 +1,5 @@
-import { getAllWebviewWindows, getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
+import { getAllWebviewWindows } from "@tauri-apps/api/webviewWindow";
+import { safeGetCurrentWebviewWindow } from "@/utils/safe-tauri-window";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
@@ -41,15 +42,6 @@ interface WorkspaceTabsActions {
   renameRemoteProjectTabs: (connectionId: string, connectionName: string) => void;
   setProjectIcon: (projectId: string, iconPath: string | undefined) => void;
   setProjectTheme: (projectId: string, theme: string) => void;
-}
-
-function safeGetCurrentWebviewWindow() {
-  if (typeof window === "undefined") return null;
-  try {
-    return getCurrentWebviewWindow();
-  } catch {
-    return null;
-  }
 }
 
 const currentWebviewWindow = safeGetCurrentWebviewWindow();

@@ -1,5 +1,5 @@
 import { invoke } from "@tauri-apps/api/core";
-import { getCurrentWindow } from "@tauri-apps/api/window";
+import { safeGetCurrentWindow } from "@/utils/safe-tauri-window";
 
 export type StartupMilestone =
   | "frontend:entry"
@@ -14,7 +14,7 @@ export type StartupMilestone =
 const recordedMilestones = new Set<StartupMilestone>();
 
 function isInitialWindow() {
-  return getCurrentWindow().label === "main";
+  return safeGetCurrentWindow()?.label === "main";
 }
 
 export function recordStartupMilestone(milestone: StartupMilestone) {

@@ -158,6 +158,42 @@ export function isPRReviewViewPath(path: string): boolean {
   }
 }
 
+export interface PullRequestReference {
+  owner: string;
+  repo: string;
+  number: number;
+  /** A repository reference the GitHub commands accept, such as `github://owner/name`. */
+  repoPath: string;
+}
+
+/**
+ * Resolves a typed pull request reference into an openable target. It accepts a
+ * full GitHub URL, `owner/repo#123`, or `owner/repo/123`, so a pull request from
+ * any repository can be opened without cloning it.
+ */
+export function parsePullRequestReference(value: string): PullRequestReference | null {
+  const trimmed = value.trim();
+  if (trimmed === "") return null;
+
+  const link = parseGitHubEntityLink(trimmed);
+  if (link?.kind === "pullRequest") {
+    return {
+      owner: link.owner,
+      repo: link.repo,
+      number: link.number,
+      repoPath: `github://${link.owner}/${link.repo}`,
+    };
+  }
+
+  const shorthand = trimmed.match(/^([A-Za-z0-9._-]+)\/([A-Za-z0-9._-]+)(?:#|\/)(\d+)$/);
+  if (shorthand) {
+    const [, owner, repo, number] = shorthand;
+    return { owner, repo, number: Number(number), repoPath: `github://${owner}/${repo}` };
+  }
+
+  return null;
+}
+
 export type PRBufferView = "activity" | "files" | "review";
 
 export function buildPRBufferPath(

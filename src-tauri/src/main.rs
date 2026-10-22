@@ -541,9 +541,15 @@ fn main() {
          tauri::RunEvent::Ready => {
             commands::ui::window::ensure_app_windows_reachable(app_handle);
             app_handle.state::<StartupTiming>().record("native:ready");
+            #[cfg(debug_assertions)]
+            commands::ui::spawn_renderer_watchdog(app_handle.clone());
          }
          #[cfg(not(target_os = "linux"))]
-         tauri::RunEvent::Ready => app_handle.state::<StartupTiming>().record("native:ready"),
+         tauri::RunEvent::Ready => {
+            app_handle.state::<StartupTiming>().record("native:ready");
+            #[cfg(debug_assertions)]
+            commands::ui::spawn_renderer_watchdog(app_handle.clone());
+         }
          #[cfg(target_os = "macos")]
          tauri::RunEvent::Reopen {
             has_visible_windows,

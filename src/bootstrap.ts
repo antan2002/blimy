@@ -6,11 +6,11 @@ function renderFatal(message: string, detail?: unknown) {
   const root = document.getElementById("root");
   if (!root) return;
   root.innerHTML = `
-    <div style="font-family: system-ui, sans-serif; padding: 24px; max-width: 560px;" role="alert">
-      <div style="font-size: 15px; font-weight: 600; margin-bottom: 8px;">${message}</div>
+    <div style="font-family: system-ui, sans-serif; padding: 24px; max-width: 560px; color: #f4f4f5; background: #18181b; border: 1px solid #27272a; border-radius: 8px; margin: 24px auto;" role="alert">
+      <div style="font-size: 15px; font-weight: 600; margin-bottom: 8px; color: #ef4444;">${message}</div>
       ${
         detailText
-          ? `<pre style="font-size: 12px; opacity: 0.8; white-space: pre-wrap; margin: 0;">${detailText}</pre>`
+          ? `<pre style="font-size: 12px; opacity: 0.9; white-space: pre-wrap; margin: 0; color: #d4d4d8; background: #09090b; padding: 12px; border-radius: 6px; overflow: auto; max-height: 400px;">${detailText}</pre>`
           : ""
       }
     </div>`;

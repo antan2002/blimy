@@ -10,6 +10,7 @@ import {
 } from "@/ui/icons";
 import type { Settings } from "@/features/settings/types/settings.types";
 import { GITHUB_CONNECTION_URL } from "@/features/github/services/github-token-service";
+import { showPromptDialog } from "@/ui/dialog";
 import type { Action } from "../types/action.types";
 
 type GitHubSidebarSection = "pull-requests" | "issues" | "actions" | "releases" | "deployments";
@@ -34,8 +35,12 @@ interface GitHubActionsParams {
     formKind: "pull-request" | "issue" | "action";
   }) => string;
   openReleaseDraft: (repoPath: string) => void;
+  /** Opens a pull request from any repository, given a URL or `owner/repo#123`. */
+  openPullRequest: (reference: string) => boolean;
   onClose: () => void;
 }
+
+const PR_REFERENCE_DIALOG_MESSAGE = "Paste a pull request URL, or type owner/repo#123.";
 
 export const createGitHubActions = (params: GitHubActionsParams): Action[] => {
   const {
@@ -48,6 +53,7 @@ export const createGitHubActions = (params: GitHubActionsParams): Action[] => {
     repoPath,
     openGitHubFormBuffer,
     openReleaseDraft,
+    openPullRequest,
     onClose,
   } = params;
 
@@ -151,6 +157,31 @@ export const createGitHubActions = (params: GitHubActionsParams): Action[] => {
       category: "GitHub",
       commandId: "workbench.showGitHub",
       action: () => void openGitHubSection("pull-requests"),
+    },
+    {
+      id: "github-open-pull-request",
+      label: "GitHub: Open Pull Request",
+      description: "Review a pull request from any repository by URL",
+      icon: <GitPullRequestIcon />,
+      category: "GitHub",
+      action: async () => {
+        const reference = await showPromptDialog(PR_REFERENCE_DIALOG_MESSAGE, {
+          title: "Open pull request",
+          placeholder: "https://github.com/owner/repo/pull/123",
+        });
+
+        if (reference === null) return;
+
+        if (!openPullRequest(reference)) {
+          showToast({
+            message: "That is not a pull request. Use a URL or owner/repo#123.",
+            type: "error",
+          });
+          return;
+        }
+
+        onClose();
+      },
     },
     {
       id: "github-show-issues",

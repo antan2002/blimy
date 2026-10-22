@@ -295,7 +295,7 @@ pub fn configure_app_window(window: &tauri::WebviewWindow<BlimyRuntime>) {
 
    #[cfg(all(not(target_os = "macos"), not(target_os = "windows")))]
    {
-      let _ = window.set_background_color(Some(tauri::window::Color(0, 0, 0, 255)));
+      let _ = window.set_background_color(Some(tauri::window::Color(30, 30, 30, 255)));
    }
 
    #[cfg(target_os = "windows")]
@@ -337,7 +337,7 @@ fn set_windows_window_transparency(
          .map_err(|e| format!("Failed to apply Windows acrylic: {e}"))?;
    } else {
       let _ = clear_acrylic(window);
-      let _ = window.set_background_color(Some(tauri::window::Color(0, 0, 0, 255)));
+      let _ = window.set_background_color(Some(tauri::window::Color(30, 30, 30, 255)));
    }
 
    Ok(())
@@ -415,7 +415,7 @@ fn sync_macos_window_appearance(
       )
       .map_err(|e| format!("Failed to refresh macOS vibrancy: {e}"))?;
    } else {
-      let _ = window.set_background_color(Some(tauri::window::Color(0, 0, 0, 255)));
+      let _ = window.set_background_color(Some(tauri::window::Color(30, 30, 30, 255)));
       let _ = clear_vibrancy(window);
    }
 
@@ -487,7 +487,7 @@ pub fn set_window_transparency_enabled(
             log::warn!("Failed to apply macOS window vibrancy: {error}");
          }
       } else {
-         let _ = window.set_background_color(Some(tauri::window::Color(0, 0, 0, 255)));
+         let _ = window.set_background_color(Some(tauri::window::Color(30, 30, 30, 255)));
          let _ = clear_vibrancy(&window);
       }
    }

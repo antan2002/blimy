@@ -1,7 +1,6 @@
 import { invoke } from "@tauri-apps/api/core";
 import { toast } from "sonner";
-import { getCurrentWindow } from "@tauri-apps/api/window";
-import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
+import { safeGetCurrentWebviewWindow, safeGetCurrentWindow } from "@/utils/safe-tauri-window";
 import { exit } from "@tauri-apps/plugin-process";
 import type React from "react";
 import { useCallback, useEffect, useMemo, useRef } from "react";
@@ -46,7 +45,8 @@ const WindowMenuBar = ({
 
   useEffect(() => {
     let disposed = false;
-    const window = getCurrentWindow();
+    const window = safeGetCurrentWindow();
+    if (!window) return;
 
     const restoreWindowLevel = async () => {
       const previous = menuWindowRaiseRef.current;
@@ -99,8 +99,10 @@ const WindowMenuBar = ({
 
   const handleClickEmit = useCallback(
     (event: string, payload?: unknown) => {
-      const currentWindow = getCurrentWebviewWindow();
-      void currentWindow.emitTo(currentWindow.label, event, payload);
+      const currentWindow = safeGetCurrentWebviewWindow();
+      if (currentWindow) {
+        void currentWindow.emitTo(currentWindow.label, event, payload);
+      }
       closeMenu();
     },
     [closeMenu],
@@ -450,7 +452,7 @@ const WindowMenuBar = ({
           <MenubarItem
             shortcut="alt+f9"
             onClick={async () => {
-              await getCurrentWindow().minimize();
+              await safeGetCurrentWindow()?.minimize();
               closeMenu();
             }}
           >
@@ -459,7 +461,7 @@ const WindowMenuBar = ({
           <MenubarItem
             shortcut="alt+f10"
             onClick={async () => {
-              await getCurrentWindow().maximize();
+              await safeGetCurrentWindow()?.maximize();
               closeMenu();
             }}
           >
@@ -477,9 +479,11 @@ const WindowMenuBar = ({
           <MenubarItem
             shortcut="f11"
             onClick={async () => {
-              const window = getCurrentWindow();
-              const isFull = await window.isFullscreen();
-              await window.setFullscreen(!isFull);
+              const window = safeGetCurrentWindow();
+              if (window) {
+                const isFull = await window.isFullscreen();
+                await window.setFullscreen(!isFull);
+              }
               closeMenu();
             }}
           >

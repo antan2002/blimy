@@ -6,6 +6,7 @@ import {
   isPRReviewViewPath,
   parseGitHubCheckSuiteId,
   parseGitHubEntityLink,
+  parsePullRequestReference,
 } from "../utils/github-link-utils";
 
 describe("parseGitHubEntityLink", () => {
@@ -119,5 +120,43 @@ describe("pull request buffer paths", () => {
     expect(isPRReviewViewPath(path)).toBe(true);
     expect(isPRFilesViewPath(path)).toBe(false);
     expect(isPRReviewViewPath(buildPRBufferPath(714))).toBe(false);
+  });
+});
+
+describe("parsePullRequestReference", () => {
+  it("accepts a full pull request URL", () => {
+    expect(parsePullRequestReference("https://github.com/flutter/flutter/pull/160000")).toEqual({
+      owner: "flutter",
+      repo: "flutter",
+      number: 160000,
+      repoPath: "github://flutter/flutter",
+    });
+  });
+
+  it("accepts a URL with extra path segments and whitespace", () => {
+    expect(
+      parsePullRequestReference("  https://github.com/blimydev/blimy/pull/734/files#diff-1  "),
+    ).toMatchObject({ number: 734, repoPath: "github://blimydev/blimy" });
+  });
+
+  it("accepts owner/repo shorthand with a hash or slash", () => {
+    expect(parsePullRequestReference("facebook/react#28000")).toMatchObject({
+      owner: "facebook",
+      repo: "react",
+      number: 28000,
+      repoPath: "github://facebook/react",
+    });
+    expect(parsePullRequestReference("facebook/react/28000")).toMatchObject({
+      number: 28000,
+    });
+  });
+
+  it("rejects anything it cannot resolve", () => {
+    expect(parsePullRequestReference("")).toBeNull();
+    expect(parsePullRequestReference("   ")).toBeNull();
+    expect(parsePullRequestReference("just some words")).toBeNull();
+    expect(parsePullRequestReference("https://github.com/blimydev/blimy/issues/714")).toBeNull();
+    expect(parsePullRequestReference("https://github.com/blimydev/blimy/pull/abc")).toBeNull();
+    expect(parsePullRequestReference("facebook/react#abc")).toBeNull();
   });
 });
