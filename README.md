@@ -3,7 +3,8 @@
   <h1>blimy</h1>
   <p>A lightweight, cross-platform code editor, built with <a href="https://tauri.app/" title="Tauri">Tauri</a> (Rust and React) with Git support, AI agents, vim keybindings.</p>
   <p><em>*Originally forked from and inspired by Athas.*</em></p>
-  <img src="public/screenshot.png" alt="blimy screenshot" width="800">
+ <img width="1535" height="815" alt="Screenshot 2026-10-18 212557" src="https://github.com/user-attachments/assets/701ff5fd-9de6-43a8-aa72-ec9b0b59b59f" />
+
 </div>
 
 ## Features
