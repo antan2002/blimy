@@ -263,6 +263,15 @@ fn main() {
          load_chat_checkpoints,
          search_chats,
          get_chat_stats,
+         // Capsule commands
+         init_capsule_database,
+         save_capsule,
+         load_capsule,
+         list_capsules,
+         add_capsule_context,
+         add_capsule_run,
+         add_capsule_evidence,
+         delete_capsule,
          // Window commands
          create_app_window,
          note_recent_document,

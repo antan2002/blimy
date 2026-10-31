@@ -18,6 +18,7 @@ members = [
   "crates/database",
   "crates/docs-indexer",
   "crates/browser-automation",
+  "crates/capsules",
 ]
 exclude = ["vendor/phf_generator-0.8.0"]
 resolver = "2"

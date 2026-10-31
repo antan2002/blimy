@@ -62,6 +62,7 @@ blimy-version-control = { path = "../crates/version-control" }
 blimy-extensions = { path = "../crates/extensions", default-features = false }
 blimy-terminal = { path = "../crates/terminal", default-features = false }
 blimy-ai = { path = "../crates/ai", default-features = false }
+blimy-capsules = { path = "../crates/capsules" }
 blimy-github = { path = "../crates/github" }
 blimy-fff-search = { path = "../crates/fff-search" }
 blimy-debugger = { path = "../crates/debugger", default-features = false }

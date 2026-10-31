@@ -2,6 +2,7 @@
 pub mod ai;
 pub mod app_logs;
 pub mod browser;
+pub mod capsules;
 pub mod database;
 pub mod development;
 pub mod docs;
@@ -18,6 +19,7 @@ pub mod fuzzy;
 pub use ai::*;
 pub use app_logs::*;
 pub use browser::*;
+pub use capsules::*;
 pub use database::*;
 pub use development::*;
 pub use docs::*;
