@@ -1255,18 +1255,19 @@ export async function pushSettingsSyncSnapshot(input: {
   return data.snapshot;
 }
 
+/**
+ * Revokes the account's refresh tokens through GoTrue.
+ *
+ * This used to call `DELETE /api/auth/logout` on the first-party host, which no longer
+ * answers, so signing out left a valid refresh token behind. `scope: "global"` revokes
+ * every session for the account, which is what the remote logout was meant to do.
+ */
 export async function logoutFromServer(): Promise<void> {
-  const apiBase = getPreferredAuthApiBase();
   try {
-    const token = await getAuthToken();
-    if (!token) return;
-    await tauriFetch(`${apiBase}/api/auth/logout`, {
-      method: "DELETE",
-      headers: { Authorization: `Bearer ${token}` },
-      signal: AbortSignal.timeout(5000),
-    });
+    const { supabase } = await import("@/features/auth/lib/supabase");
+    await supabase.auth.signOut({ scope: "global" });
   } catch {
-    // Even if server logout fails, we still clear the local token
+    // Even if the server logout fails, we still clear the local token
   }
 }
 
