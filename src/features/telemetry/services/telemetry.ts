@@ -19,9 +19,8 @@ import {
   type AiEditOutcomeInput,
   type AiFailureInput,
 } from "@/features/telemetry/lib/ai-signals";
-import { getApiBase } from "@/utils/api-base";
+import { getEdgeFunctionsBase } from "@/utils/api-base";
 
-const API_BASE = getApiBase();
 const STARTUP_DELAY_MS = 10_000;
 const FLUSH_INTERVAL_MS = 5 * 60 * 1000;
 const HEARTBEAT_INTERVAL_MS = 5 * 60 * 1000;
@@ -449,7 +448,7 @@ async function flushTelemetryQueue(): Promise<boolean> {
 
       await Promise.all(
         chunks.map(async (chunk) => {
-          const response = await tauriFetch(`${API_BASE}/api/telemetry/events`, {
+          const response = await tauriFetch(`${getEdgeFunctionsBase()}/telemetry`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({

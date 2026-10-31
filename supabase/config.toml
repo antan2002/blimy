@@ -402,6 +402,12 @@ verify_jwt = false
 # request is rejected before it touches the table.
 verify_jwt = true
 
+[functions.telemetry]
+# Opt-in, anonymous batches: the client sends a random per-install device id and no
+# Authorization header, so there is no JWT for the gateway to check. The function validates and
+# bounds the body itself before writing through service_role.
+verify_jwt = false
+
 [analytics]
 enabled = true
 port = 54327
