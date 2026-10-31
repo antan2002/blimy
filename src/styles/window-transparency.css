@@ -17,6 +17,14 @@
   overflow: hidden;
 }
 
+/* Only an explicitly enabled glass mode may be see-through. Anything else,
+   including a missing theme, keeps an opaque plane so the window never
+   falls through to the OS black surface. */
+html[data-window-transparency="enabled"],
+html[data-window-transparency="enabled"] body {
+  background: transparent;
+}
+
 html:is(.platform-macos, .platform-windows):not([data-window-transparency="disabled"]) {
   --blimy-glass-shell-bg: color-mix(in srgb, var(--surface) 12%, transparent);
   --blimy-glass-island-bg: color-mix(in srgb, var(--background) 70%, transparent);
@@ -105,12 +113,12 @@ html:is(.platform-macos, .platform-windows):not([data-window-transparency="disab
 
 /* Transparency off: opaque planes exactly as the theme defines them. */
 html[data-window-transparency="disabled"] .window-container {
-  background: var(--background) !important;
+  background: var(--background, #1e1e1e) !important;
 }
 
 html[data-window-transparency="disabled"] .blimy-layout-shell:not([data-window-surface="content"]),
 html[data-window-transparency="disabled"] .blimy-resizable-pane {
-  background: var(--surface) !important;
+  background: var(--surface, var(--background, #1e1e1e)) !important;
 }
 
 /* OS "reduce transparency": keep the layout, drop the see-through materials. */

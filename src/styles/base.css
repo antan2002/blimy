@@ -3,17 +3,20 @@
     border-color: var(--border);
   }
 
+  /* Opaque by default. Theme colors arrive from JS after the module graph loads,
+     so without a fallback a failed or slow bootstrap leaves the transparent
+     Tauri window with nothing painted, which the OS renders as black. */
   html {
     overflow: hidden;
     overscroll-behavior: none;
-    background: transparent;
+    background: var(--background, #1e1e1e);
     scroll-behavior: smooth;
   }
 
   body {
     overflow: hidden;
     overscroll-behavior: none;
-    background: transparent;
+    background: var(--background, #1e1e1e);
     font-size: var(--ui-text-base);
     /* Chrome is not selectable, like a native app. Text surfaces opt back in below. */
     user-select: none;

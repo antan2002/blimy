@@ -201,9 +201,15 @@ export default defineConfig({
     host,
     // Pre-transform the entry modules in the background so the first window
     // load is served from warm caches instead of paying for cold transforms.
-    warmup: {
-      clientFiles: ["/src/main.tsx", "/src/bootstrap.ts"],
-    },
+    // These are project-root-relative: a leading slash makes Vite resolve them
+    // as OS-absolute paths ("/@fs/src/main.tsx"), which never exist on Windows.
+    ...(isVitest
+      ? {}
+      : {
+          warmup: {
+            clientFiles: ["src/main.tsx", "src/bootstrap.ts"],
+          },
+        }),
     hmr: host
       ? {
           protocol: "ws",

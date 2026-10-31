@@ -301,8 +301,12 @@ pub fn configure_app_window(window: &tauri::WebviewWindow<BlimyRuntime>) {
    #[cfg(target_os = "windows")]
    {
       let _ = window.set_decorations(false);
-      if let Err(error) = set_windows_window_transparency(window, true, None) {
-         log::warn!("Failed to initialize Windows window transparency: {error}");
+      // Start opaque. Acrylic is a transparent native surface, and enabling it
+      // before the frontend paints is what leaves WebView2 showing black. The
+      // frontend calls set_window_transparency_enabled once settings load, so
+      // acrylic still turns on for users who asked for it.
+      if let Err(error) = set_windows_window_transparency(window, false, None) {
+         log::warn!("Failed to initialize Windows window background: {error}");
       }
    }
 
