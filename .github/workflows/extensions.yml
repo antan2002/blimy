@@ -37,7 +37,7 @@ jobs:
           )
 
   package-databases:
-    if: github.repository == 'blimydev/blimy' && github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+    if: github.repository == 'antan2002/blimy' && github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
     needs: validate
     runs-on: macos-latest
     steps:
@@ -76,7 +76,7 @@ jobs:
           retention-days: 1
 
   deploy:
-    if: github.repository == 'blimydev/blimy' && github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+    if: github.repository == 'antan2002/blimy' && github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
     needs: [validate, package-databases]
     runs-on: ubuntu-latest
     steps:
@@ -91,16 +91,37 @@ jobs:
           name: extensions-cdn
           path: extensions/generated/cdn/
 
+      - name: Check CDN configuration
+        run: |
+          set -euo pipefail
+          if [ -z "${{ secrets.EXTENSIONS_CDN_PUBLIC_URL }}" ]; then
+            echo "Missing EXTENSIONS_CDN_PUBLIC_URL."
+            echo "Set it to the bucket's public origin and use the same value for"
+            echo "extensionsCdnBaseUrl in src/config/services.json."
+            exit 1
+          fi
+
+      # The bucket must have public access enabled. `extensionsCdnBaseUrl` in
+      # src/config/services.json must be that bucket's public origin, because the app and
+      # `extensions:verify-cdn` both read it from there.
       - name: Deploy extensions CDN
-        uses: burnett01/rsync-deployments@7.0.2
-        with:
-          switches: -avz --delete
-          path: extensions/generated/cdn/
-          remote_path: ${{ secrets.EXTENSIONS_CDN_ROOT }}/
-          remote_host: ${{ secrets.VPS_HOST }}
-          remote_user: ${{ secrets.VPS_USER }}
-          remote_key: ${{ secrets.VPS_SSH_KEY }}
-          remote_port: ${{ secrets.VPS_PORT || 22 }}
+        env:
+          R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          R2_BUCKET: ${{ secrets.R2_BUCKET }}
+        run: |
+          set -euo pipefail
+
+          rclone config create r2 s3 \
+            provider Cloudflare \
+            access_key_id "$R2_ACCESS_KEY_ID" \
+            secret_access_key "$R2_SECRET_ACCESS_KEY" \
+            endpoint "https://${R2_ACCOUNT_ID}.r2.cloudflarestorage.com" \
+            --non-interactive
+
+          rclone sync extensions/generated/cdn/ "r2:${R2_BUCKET}/" \
+            --checksum --delete-after --verbose
 
       - name: Verify installable packages on CDN
         run: bun run extensions:verify-cdn

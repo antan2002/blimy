@@ -8,9 +8,9 @@
   "dashboardBillingUrl": "https://blimy.dev/dashboard/settings/billing",
   "dashboardIntegrationsUrl": "https://blimy.dev/dashboard/settings/integrations",
   "dashboardCollaborationUrl": "https://blimy.dev/dashboard/collaboration",
-  "extensionsCdnBaseUrl": "https://blimy.dev/extensions",
-  "stableUpdateUrl": "https://blimy.dev/api/update/stable",
-  "previewUpdateUrl": "https://blimy.dev/api/update/preview",
+  "extensionsCdnBaseUrl": "https://extensions-cdn.invalid",
+  "stableUpdateUrl": "https://github.com/antan2002/blimy/releases/latest/download/latest.json",
+  "previewUpdateUrl": "https://github.com/antan2002/blimy/releases/download/preview/latest.json",
   "githubReleasesBaseUrl": "https://github.com/antan2002/blimy/releases",
   "githubReleasesApiBaseUrl": "https://api.github.com/repos/antan2002/blimy/releases"
 }

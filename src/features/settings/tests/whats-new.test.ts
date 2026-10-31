@@ -104,7 +104,9 @@ describe("resolveWhatsNewInfo", () => {
       body: "Fixed release notes.",
       date: "2026-07-08",
     });
-    expect(fetchCalls).toEqual(["https://blimy.dev/api/update/stable"]);
+    expect(fetchCalls).toEqual([
+      "https://github.com/antan2002/blimy/releases/latest/download/latest.json",
+    ]);
   });
 
   it("falls back to the GitHub release when the updater manifest is for another version", async () => {
@@ -113,7 +115,7 @@ describe("resolveWhatsNewInfo", () => {
       const href = String(url);
       fetchCalls.push(href);
 
-      if (href.includes("blimy.dev")) {
+      if (href.endsWith("latest.json")) {
         return Response.json({ version: "1.3.0", notes: "Newer release." });
       }
 
@@ -129,8 +131,8 @@ describe("resolveWhatsNewInfo", () => {
       date: "2026-07-07",
     });
     expect(fetchCalls).toEqual([
-      "https://blimy.dev/api/update/stable",
-      "https://api.github.com/repos/blimydev/blimy/releases/tags/v1.2.0",
+      "https://github.com/antan2002/blimy/releases/latest/download/latest.json",
+      "https://api.github.com/repos/antan2002/blimy/releases/tags/v1.2.0",
     ]);
   });
 

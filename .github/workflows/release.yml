@@ -574,6 +574,28 @@ jobs:
             prepared-release/* \
             --clobber
 
+      - name: Publish preview update manifest
+        if: ${{ needs.release-metadata.outputs.is_prerelease == 'true' }}
+        env:
+          GH_TOKEN: ${{ secrets.BLIMY_RELEASE_TOKEN || secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+
+          # The preview updater reads one fixed URL, so the manifest has to live on a rolling
+          # release rather than on each version tag. Only `latest.json` is re-uploaded; the
+          # asset URLs inside it still point at the version tag that produced it.
+          if ! gh release view preview --repo "${{ github.repository }}" >/dev/null 2>&1; then
+            gh release create preview \
+              --repo "${{ github.repository }}" \
+              --prerelease \
+              --title "Preview update channel" \
+              --notes "Rolling manifest for the preview updater. Not an installable release."
+          fi
+
+          gh release upload preview prepared-release/latest.json \
+            --repo "${{ github.repository }}" \
+            --clobber
+
       - name: Validate release
         env:
           GH_TOKEN: ${{ secrets.BLIMY_RELEASE_TOKEN || secrets.GITHUB_TOKEN }}

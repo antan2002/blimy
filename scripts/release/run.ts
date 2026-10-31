@@ -106,7 +106,7 @@ async function bumpVersion(currentVersion: string, args: string[]): Promise<stri
 
 async function getCommitsSinceLastTag(): Promise<string[]> {
   try {
-    const lastTag = await $`git describe --tags --abbrev=0`.text();
+    const lastTag = await $`git describe --tags --abbrev=0 --match "v[0-9]*"`.text();
     const tag = lastTag.trim();
 
     const commits = await $`git log ${tag}..HEAD --pretty=format:"%s"`.text();
