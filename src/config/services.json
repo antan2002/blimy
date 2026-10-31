@@ -8,7 +8,7 @@
   "dashboardBillingUrl": "https://blimy.dev/dashboard/settings/billing",
   "dashboardIntegrationsUrl": "https://blimy.dev/dashboard/settings/integrations",
   "dashboardCollaborationUrl": "https://blimy.dev/dashboard/collaboration",
-  "extensionsCdnBaseUrl": "https://extensions-cdn.invalid",
+  "extensionsCdnBaseUrl": "https://antan2002.github.io/blimy",
   "stableUpdateUrl": "https://github.com/antan2002/blimy/releases/latest/download/latest.json",
   "previewUpdateUrl": "https://github.com/antan2002/blimy/releases/download/preview/latest.json",
   "githubReleasesBaseUrl": "https://github.com/antan2002/blimy/releases",

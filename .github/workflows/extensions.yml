@@ -79,6 +79,13 @@ jobs:
     if: github.repository == 'antan2002/blimy' && github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
     needs: [validate, package-databases]
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
 
@@ -91,37 +98,19 @@ jobs:
           name: extensions-cdn
           path: extensions/generated/cdn/
 
-      - name: Check CDN configuration
-        run: |
-          set -euo pipefail
-          if [ -z "${{ secrets.EXTENSIONS_CDN_PUBLIC_URL }}" ]; then
-            echo "Missing EXTENSIONS_CDN_PUBLIC_URL."
-            echo "Set it to the bucket's public origin and use the same value for"
-            echo "extensionsCdnBaseUrl in src/config/services.json."
-            exit 1
-          fi
+      # GitHub Pages serves the artifact at the site root, so `extensionsCdnBaseUrl` in
+      # src/config/services.json must be the Pages URL; the app and `extensions:verify-cdn`
+      # both read it from there.
+      - uses: actions/configure-pages@v5
+        with:
+          enablement: true
 
-      # The bucket must have public access enabled. `extensionsCdnBaseUrl` in
-      # src/config/services.json must be that bucket's public origin, because the app and
-      # `extensions:verify-cdn` both read it from there.
-      - name: Deploy extensions CDN
-        env:
-          R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
-          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
-          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
-          R2_BUCKET: ${{ secrets.R2_BUCKET }}
-        run: |
-          set -euo pipefail
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: extensions/generated/cdn/
 
-          rclone config create r2 s3 \
-            provider Cloudflare \
-            access_key_id "$R2_ACCESS_KEY_ID" \
-            secret_access_key "$R2_SECRET_ACCESS_KEY" \
-            endpoint "https://${R2_ACCOUNT_ID}.r2.cloudflarestorage.com" \
-            --non-interactive
-
-          rclone sync extensions/generated/cdn/ "r2:${R2_BUCKET}/" \
-            --checksum --delete-after --verbose
+      - id: deployment
+        uses: actions/deploy-pages@v4
 
       - name: Verify installable packages on CDN
         run: bun run extensions:verify-cdn
