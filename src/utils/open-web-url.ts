@@ -6,13 +6,21 @@ import { openUrl } from "@tauri-apps/plugin-opener";
  * link; doing so would route inside the app or trip the external-navigation guard.
  */
 export async function openWebUrl(url: string): Promise<void> {
-  if (!url.trim()) return;
+  if (!isOpenableWebUrl(url)) return;
+  await openUrl(url);
+}
+
+/**
+ * Whether a URL is one the app opens externally. Only absolute http and https
+ * addresses qualify, so local files and custom schemes never reach the OS.
+ */
+export function isOpenableWebUrl(url: string): boolean {
+  if (!url.trim()) return false;
   let parsed: URL;
   try {
     parsed = new URL(url);
   } catch {
-    return;
+    return false;
   }
-  if (parsed.protocol !== "http:" && parsed.protocol !== "https:") return;
-  await openUrl(url);
+  return parsed.protocol === "http:" || parsed.protocol === "https:";
 }
