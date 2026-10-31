@@ -2,6 +2,32 @@ use base64::Engine;
 use serde::{Deserialize, Serialize};
 use std::path::Path;
 
+/// Schemes the automation browser is allowed to reach. `file://` and other local
+/// schemes stay blocked so a page or model prompt cannot read arbitrary disk files.
+const ALLOWED_SCHEMES: [&str; 2] = ["http", "https"];
+
+/// Rejects anything that is not a plain web URL. The host is intentionally not
+/// restricted, so localhost dev servers work, but local-file and custom schemes do not.
+pub fn validate_browser_url(url: &str) -> Result<(), anyhow::Error> {
+   let scheme = url
+      .split_once("://")
+      .map(|(scheme, _)| scheme.to_ascii_lowercase())
+      .unwrap_or_default();
+
+   if !ALLOWED_SCHEMES.contains(&scheme.as_str()) {
+      anyhow::bail!(
+         "Blocked URL scheme '{}'. Only http and https URLs can be opened.",
+         if scheme.is_empty() {
+            "unknown"
+         } else {
+            &scheme
+         }
+      );
+   }
+
+   Ok(())
+}
+
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct BrowserResult {
    pub success: bool,
@@ -35,11 +61,44 @@ pub fn execute_browser_action(
       error: None,
    };
 
+   validate_browser_url(&input.url)?;
+
    let browser = headless_chrome::Browser::default()?;
    let tab = browser.new_tab()?;
 
    tab.navigate_to(&input.url)?;
    tab.wait_until_navigated()?;
+
+   let action = input.action.as_deref().unwrap_or("read");
+
+   match action {
+      "read" | "navigate" => {}
+      "click" => {
+         let selector = require_selector(input.selector.as_deref(), "click")?;
+         tab.wait_for_element(selector)?.click()?;
+      }
+      "type" => {
+         let selector = require_selector(input.selector.as_deref(), "type")?;
+         let element = tab.wait_for_element(selector)?;
+         element.click()?;
+         element.type_into(input.text.as_deref().unwrap_or_default())?;
+      }
+      "scroll" => {
+         let direction = input.text.as_deref().unwrap_or("down");
+         let script = match direction {
+            "up" => "window.scrollBy(0, -window.innerHeight)",
+            "top" => "window.scrollTo(0, 0)",
+            "bottom" => "window.scrollTo(0, document.body.scrollHeight)",
+            _ => "window.scrollBy(0, window.innerHeight)",
+         };
+         tab.evaluate(script, false)?;
+      }
+      "wait_for" => {
+         let selector = require_selector(input.selector.as_deref(), "wait_for")?;
+         tab.wait_for_element(selector)?;
+      }
+      other => anyhow::bail!("Unknown browser action '{}'", other),
+   }
 
    let title = tab.get_title()?;
    result.title = Some(title);
@@ -67,6 +126,12 @@ pub fn execute_browser_action(
 
    result.success = true;
    Ok(result)
+}
+
+fn require_selector<'a>(selector: Option<&'a str>, action: &str) -> Result<&'a str, anyhow::Error> {
+   selector
+      .filter(|value| !value.trim().is_empty())
+      .ok_or_else(|| anyhow::anyhow!("The '{}' action needs a CSS selector.", action))
 }
 
 pub async fn execute_browser_action_async(
@@ -109,5 +174,22 @@ mod tests {
       assert!(input.action.is_none());
       assert!(input.selector.is_none());
       assert!(input.text.is_none());
+   }
+
+   #[test]
+   fn url_policy_allows_web_and_localhost_hosts() {
+      assert!(super::validate_browser_url("https://example.com").is_ok());
+      assert!(super::validate_browser_url("http://localhost:3000/app").is_ok());
+      assert!(super::validate_browser_url("http://127.0.0.1:5173").is_ok());
+   }
+
+   #[test]
+   fn url_policy_blocks_local_files_and_other_schemes() {
+      assert!(super::validate_browser_url("file:///etc/passwd").is_err());
+      assert!(super::validate_browser_url("file:///C:/Users/me/.ssh/id_rsa").is_err());
+      assert!(super::validate_browser_url("data:text/html,<h1>hi</h1>").is_err());
+      assert!(super::validate_browser_url("javascript:alert(1)").is_err());
+      assert!(super::validate_browser_url("ftp://example.com").is_err());
+      assert!(super::validate_browser_url("not a url").is_err());
    }
 }
