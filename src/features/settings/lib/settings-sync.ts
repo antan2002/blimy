@@ -68,6 +68,7 @@ type SyncableSettingsKey =
   | "hiddenSidebarActivityItems"
   | "pinnedSidebarExtensionItems"
   | "openFoldersInNewWindow"
+  | "aiEnabled"
   | "aiProviderId"
   | "aiModelId"
   | "aiCustomBaseUrl"
@@ -191,6 +192,7 @@ const SYNCABLE_SETTINGS_KEYS: SyncableSettingsKey[] = [
   "hiddenSidebarActivityItems",
   "pinnedSidebarExtensionItems",
   "openFoldersInNewWindow",
+  "aiEnabled",
   "aiProviderId",
   "aiModelId",
   "aiCustomBaseUrl",

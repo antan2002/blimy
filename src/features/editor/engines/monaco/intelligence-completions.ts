@@ -92,6 +92,7 @@ export function createIntelligenceCompletionsProvider(): Monaco.languages.Inline
       if (
         token.isCancellationRequested ||
         context.selectedSuggestionInfo ||
+        !useSettingsStore.getState().settings.aiEnabled ||
         !useSettingsStore.getState().settings.aiCompletion ||
         useIntelligenceCompletionStore.getState().status.kind === "paused" ||
         !isBlimyEditorModel(model) ||

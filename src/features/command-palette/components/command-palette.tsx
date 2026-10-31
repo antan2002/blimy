@@ -136,6 +136,7 @@ const CommandPaletteContent = ({ commandPaletteInitialView }: CommandPaletteCont
 
   const lastEnteredActions = useActionsStore.use.lastEnteredActionsStack();
   const pushAction = useActionsStore.use.actions().pushAction;
+  const aiEnabled = useSettingsStore((state) => state.settings.aiEnabled);
   const aiCompletion = useSettingsStore((state) => state.settings.aiCompletion);
   const autoCompletion = useSettingsStore((state) => state.settings.autoCompletion);
   const autoDetectLanguage = useSettingsStore((state) => state.settings.autoDetectLanguage);
@@ -206,6 +207,7 @@ const CommandPaletteContent = ({ commandPaletteInitialView }: CommandPaletteCont
 
   const commandSettings = useMemo(
     () => ({
+      aiEnabled,
       aiCompletion,
       autoCompletion,
       autoDetectLanguage,
@@ -234,6 +236,7 @@ const CommandPaletteContent = ({ commandPaletteInitialView }: CommandPaletteCont
       wordWrap,
     }),
     [
+      aiEnabled,
       aiCompletion,
       autoCompletion,
       autoDetectLanguage,

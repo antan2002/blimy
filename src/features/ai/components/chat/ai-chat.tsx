@@ -414,6 +414,11 @@ const AIChat = memo(function AIChat({
     (messageContent: string, images?: ImageContent[]): AgentMessageSubmitResult => {
       if (agentIsDetached(effectiveChatId))
         return { accepted: false, error: "This agent is open in another window." };
+      // AI is off by default. Sending a message is an explicit call, so arm the master
+      // switch here instead of asking the user to flip it first.
+      if (!useSettingsStore.getState().settings.aiEnabled) {
+        void useSettingsStore.getState().actions.updateSetting("aiEnabled", true);
+      }
       if (!messageContent.trim() && !images?.length) return { accepted: false };
       const access = getAgentMessageAccess(currentAgentId, hasSessionApiKey);
       if (!access.accepted) {

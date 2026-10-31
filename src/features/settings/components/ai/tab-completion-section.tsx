@@ -32,9 +32,12 @@ function useConnectionName(connection: IntelligenceConnection | null) {
 export function TabCompletionSection() {
   const state = useAIModelSettings();
   const enabled = useSettingsStore((store) => store.settings.aiCompletion);
+  const aiEnabled = useSettingsStore((store) => store.settings.aiEnabled);
   const updateSetting = useSettingsStore((store) => store.actions.updateSetting);
   const policy = useAuthStore((store) => store.subscription?.enterprise?.policy);
   const allowed = policy?.managedMode ? policy.aiCompletionEnabled : true;
+  /** The master switch gates Tab completion, so the row reads as off while AI is off. */
+  const available = aiEnabled && allowed;
 
   const stored = state.preferences.tasks.autocomplete;
   const choice = stored && stored.providerId !== "auto" ? stored : null;
@@ -65,20 +68,26 @@ export function TabCompletionSection() {
     <Section title="Suggestions">
       <SettingRow
         label="Tab completion"
-        description={allowed ? undefined : "Turned off by your organization"}
+        description={
+          !allowed
+            ? "Turned off by your organization"
+            : !aiEnabled
+              ? "Turn AI on in the title bar first"
+              : undefined
+        }
         onReset={() => updateSetting("aiCompletion", getDefaultSetting("aiCompletion"))}
         canReset={enabled !== getDefaultSetting("aiCompletion")}
       >
         <Switch
-          checked={allowed ? enabled : false}
+          checked={available ? enabled : false}
           onChange={(checked) => updateSetting("aiCompletion", checked)}
-          disabled={!allowed}
+          disabled={!available}
         />
       </SettingRow>
       <SettingRow
         label="Model"
         labelAccessory={
-          allowed && enabled && !resolved ? <Badge tone="warning">Off until chosen</Badge> : null
+          available && enabled && !resolved ? <Badge tone="warning">Off until chosen</Badge> : null
         }
         description={describeModel()}
       >

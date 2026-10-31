@@ -116,6 +116,8 @@ export interface Settings {
   pinnedSidebarExtensionItems: string[];
   openFoldersInNewWindow: boolean;
   // AI
+  /** Master switch. While off, no AI feature runs: no chat request, no Tab completion. */
+  aiEnabled: boolean;
   aiProviderId: string;
   aiModelId: string;
   aiCustomBaseUrl: string;

@@ -29,6 +29,7 @@ import type { CommandPaletteViewId } from "../types/view.types";
 
 type CommandPaletteSettings = Pick<
   AppSettings,
+  | "aiEnabled"
   | "aiCompletion"
   | "autoCompletion"
   | "autoDetectLanguage"
@@ -402,6 +403,19 @@ export const createSettingsActions = (params: SettingsActionsParams): Action[] =
       category: "Language",
       action: () => {
         updateSetting("semanticTokens", !settings.semanticTokens);
+        onClose();
+      },
+    },
+    {
+      id: "toggle-ai",
+      label: settings.aiEnabled ? "AI: Turn AI Off" : "AI: Turn AI On",
+      description: settings.aiEnabled
+        ? "Stop every AI feature: no chat requests and no Tab completion"
+        : "Allow AI features to run when you ask for them",
+      icon: <SparkleIcon />,
+      category: "AI",
+      action: () => {
+        updateSetting("aiEnabled", !settings.aiEnabled);
         onClose();
       },
     },

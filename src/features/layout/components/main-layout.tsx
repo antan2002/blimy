@@ -31,6 +31,7 @@ import { WorkbenchFullscreenRootContext } from "@/features/window/components/wor
 import { SidebarIcon, TerminalWindowIcon, SidebarRightIcon, SearchIcon } from "@/ui/icons";
 // import removed
 import TitleBarWithSettings from "../../window/components/title-bar/title-bar";
+import { AIToggle } from "../../window/components/title-bar/ai-toggle";
 import { TitleLeading } from "../../window/components/title-bar/title-leading";
 import { ResizablePane } from "./resizable-pane";
 import { ActivityBar } from "./sidebar/activity-bar";
@@ -377,6 +378,8 @@ export function MainLayout() {
           overlay
           titleActions={
             <div className="flex items-center h-full gap-1">
+              {/* AI master switch — first, so it is the top-level control next to the layout toggles */}
+              <AIToggle />
               {/* Layout Controls */}
               <button
                 className={cn(

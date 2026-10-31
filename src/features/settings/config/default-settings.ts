@@ -86,6 +86,9 @@ export const defaultSettings: Settings = {
   pinnedSidebarExtensionItems: [],
   openFoldersInNewWindow: true,
   // AI
+  // Off until the user turns it on from the title bar, so installing the app never
+  // starts calling a model on its own.
+  aiEnabled: false,
   aiProviderId: DEFAULT_AI_PROVIDER_ID,
   aiModelId: DEFAULT_AI_MODEL_ID,
   aiCustomBaseUrl: DEFAULT_AI_CUSTOM_BASE_URL,

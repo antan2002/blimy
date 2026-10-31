@@ -172,7 +172,7 @@ async function saveEditorBufferById(bufferId: string): Promise<boolean> {
       }
     }
 
-    if (settings.aiBugFinder) {
+    if (settings.aiEnabled && settings.aiBugFinder) {
       const { reviewSavedFile } = await import("@/features/ai/bug-finder/bug-finder-runtime");
 
       void reviewSavedFile({ filePath: activeBuffer.path, content: contentToSave });

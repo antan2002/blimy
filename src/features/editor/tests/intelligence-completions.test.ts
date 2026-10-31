@@ -6,6 +6,7 @@ const mocks = vi.hoisted(() => ({
   editors: vi.fn(),
   markers: vi.fn(() => [] as unknown[]),
   enabled: true,
+  aiEnabled: true,
   authenticated: true,
   listeners: new Set<(...args: any[]) => void>(),
   tokenListeners: new Set<(providerId: string) => void>(),
@@ -40,7 +41,7 @@ vi.mock("@/features/ai/intelligence/services/intelligence-text-service", () => {
 vi.mock("sonner", () => ({ toast: { warning: vi.fn() } }));
 vi.mock("@/features/settings/stores/settings.store", () => ({
   useSettingsStore: {
-    getState: () => ({ settings: { aiCompletion: mocks.enabled } }),
+    getState: () => ({ settings: { aiEnabled: mocks.aiEnabled, aiCompletion: mocks.enabled } }),
     subscribe: (listener: (...args: any[]) => void) => {
       mocks.settingsListeners.add(listener);
       return () => mocks.settingsListeners.delete(listener);
@@ -134,6 +135,7 @@ function setup(path = "/project/file.ts") {
 beforeEach(() => {
   vi.clearAllMocks();
   mocks.enabled = true;
+  mocks.aiEnabled = true;
   mocks.authenticated = true;
   mocks.markers.mockReturnValue([]);
   mocks.listeners.clear();
@@ -181,6 +183,18 @@ describe("Intelligence editor completions", () => {
     ]);
     await state.run();
     expect(mocks.request).not.toHaveBeenCalled();
+  });
+
+  it("does not request completions while the master AI switch is off", async () => {
+    const state = setup();
+    mocks.aiEnabled = false;
+    await state.run();
+    expect(mocks.request).not.toHaveBeenCalled();
+
+    mocks.aiEnabled = true;
+    mocks.request.mockResolvedValue({ editedText: "compute()" });
+    await state.run();
+    expect(mocks.request).toHaveBeenCalledTimes(1);
   });
 
   it.each(["edit", "account"])("cancels and discards results after %s changes", async (reason) => {

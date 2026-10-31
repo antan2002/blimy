@@ -79,7 +79,10 @@ export function getBugFinderService(): BugFinderService {
     setDiagnostics: (filePath, diagnostics, owner) => {
       useDiagnosticsStore.getState().actions.setDiagnostics(filePath, diagnostics, owner);
     },
-    isEnabled: () => useSettingsStore.getState().settings.aiBugFinder,
+    isEnabled: () => {
+      const settings = useSettingsStore.getState().settings;
+      return settings.aiEnabled && settings.aiBugFinder;
+    },
     isIgnored: (filePath) => {
       const projectRoot = useFileSystemStore.getState().rootFolderPath;
 
@@ -107,7 +110,8 @@ export async function reviewSavedFile(input: {
   filePath: string;
   content: string;
 }): Promise<BugFinding[]> {
-  if (!useSettingsStore.getState().settings.aiBugFinder) {
+  const settings = useSettingsStore.getState().settings;
+  if (!settings.aiEnabled || !settings.aiBugFinder) {
     return [];
   }
 
